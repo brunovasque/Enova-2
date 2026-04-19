@@ -19,6 +19,16 @@ Escopo: <o que está incluído>
 Fora de escopo: <o que NÃO está incluído>
 ```
 
+## Leitura obrigatória antes de qualquer tarefa
+1. `schema/A00_PLANO_CANONICO_MACRO.md`
+2. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
+3. `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
+4. Contrato da frente ativa (formato em `schema/CONTRACT_SCHEMA.md`)
+5. Status vivo da frente (`schema/status/<FRENTE>_STATUS.md`)
+6. Último handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`)
+7. Índice do legado mestre (`schema/legacy/INDEX_LEGADO_MESTRE.md`)
+8. Blocos aplicáveis do legado mestre (`schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
+
 ## Regras mandatórias
 1. Executar apenas o escopo explicitamente contratado.
 2. Aplicar patch cirúrgico e mínimo necessário.
@@ -28,6 +38,17 @@ Fora de escopo: <o que NÃO está incluído>
 6. Declarar sempre qual contrato está ativo e qual item do A01 está sendo atendido.
 7. Ao final de cada tarefa, emitir resposta no formato definido pelo CODEX_WORKFLOW.
 8. Se houver ambiguidade estrutural, conflito documental ou falta de contrato ativo: parar e reportar.
+
+## Atualização obrigatória ao final de cada tarefa
+1. Atualizar o status vivo da frente (`schema/status/<FRENTE>_STATUS.md`)
+2. Atualizar o handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`)
+3. Confirmar o item do A01 atendido
+4. Declarar o próximo passo autorizado
+
+## Schemas de governança
+- `schema/CONTRACT_SCHEMA.md` — formato de contrato novo
+- `schema/STATUS_SCHEMA.md` — formato de status vivo
+- `schema/HANDOFF_SCHEMA.md` — formato de handoff persistido
 
 ## Proibições nesta fase fundadora
 - Criar app funcional
