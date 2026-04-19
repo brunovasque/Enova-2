@@ -230,56 +230,101 @@ O conteúdo é organizado em dois grandes blocos:
 ## BLOCO C — 9 DOCUMENTOS COMPLEMENTARES
 
 ### C01 — Documento Complementar 1
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 
 ### C02 — Documento Complementar 2
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 
 ### C03 — Documento Complementar 3
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 
 ### C04 — Documento Complementar 4
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 
 ### C05 — Documento Complementar 5
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 
 ### C06 — Documento Complementar 6
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 
 ### C07 — Documento Complementar 7
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 
 ### C08 — Documento Complementar 8
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 
 ### C09 — Documento Complementar 9
+<!-- Classe: Complementar -->
+<!-- Domínio: A definir após incorporação do PDF -->
+<!-- Função: A definir após incorporação do PDF -->
+<!-- Frentes: A definir -->
 > **PENDENTE DE TRANSCRIÇÃO**
 > Conteúdo original será transcrito do PDF mestre quando disponível.
+> Título, função e frentes serão definidos após incorporação.
 
 ---
 

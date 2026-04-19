@@ -44,17 +44,17 @@ A00 > A01 > A02 > contrato específico da frente ativa > legado mestre (blocos a
 
 ## Bloco C — 9 Documentos Complementares
 
-| Código | Nome                             | Função                                                          | Quando usar                                      | Âncora no mestre | Status de assimilação |
-|--------|----------------------------------|-----------------------------------------------------------------|--------------------------------------------------|------------------|-----------------------|
-| C01    | Documento Complementar 1         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c01`           | Pendente              |
-| C02    | Documento Complementar 2         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c02`           | Pendente              |
-| C03    | Documento Complementar 3         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c03`           | Pendente              |
-| C04    | Documento Complementar 4         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c04`           | Pendente              |
-| C05    | Documento Complementar 5         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c05`           | Pendente              |
-| C06    | Documento Complementar 6         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c06`           | Pendente              |
-| C07    | Documento Complementar 7         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c07`           | Pendente              |
-| C08    | Documento Complementar 8         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c08`           | Pendente              |
-| C09    | Documento Complementar 9         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | `#c09`           | Pendente              |
+| Código | Nome                             | Função                                                          | Quando usar                                      | Frentes que conversam         | Âncora no mestre | Status de assimilação |
+|--------|----------------------------------|-----------------------------------------------------------------|--------------------------------------------------|-------------------------------|------------------|-----------------------|
+| C01    | Documento Complementar 1         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c01`           | Pendente              |
+| C02    | Documento Complementar 2         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c02`           | Pendente              |
+| C03    | Documento Complementar 3         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c03`           | Pendente              |
+| C04    | Documento Complementar 4         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c04`           | Pendente              |
+| C05    | Documento Complementar 5         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c05`           | Pendente              |
+| C06    | Documento Complementar 6         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c06`           | Pendente              |
+| C07    | Documento Complementar 7         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c07`           | Pendente              |
+| C08    | Documento Complementar 8         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c08`           | Pendente              |
+| C09    | Documento Complementar 9         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c09`           | Pendente              |
 
 ---
 
