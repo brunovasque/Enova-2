@@ -7,8 +7,10 @@ Toda execução começa com leitura nesta sequência:
 1. `schema/A00_PLANO_CANONICO_MACRO.md`
 2. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
 3. `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
-4. Contrato específico da frente ativa
-5. Legados aplicáveis indicados pelo A02
+4. Contrato específico da frente ativa (seguindo formato de `schema/CONTRACT_SCHEMA.md`)
+5. Status vivo da frente ativa (`schema/status/<FRENTE>_STATUS.md`)
+6. Último handoff da frente ativa (`schema/handoffs/<FRENTE>_LATEST.md`)
+7. Legados aplicáveis indicados pelo A02 e pelo `schema/legacy/INDEX_19_LEGADOS.md`
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
@@ -90,12 +92,38 @@ Provas
 
 ## 6. Regra de atualização documental pós-tarefa
 
-Ao final de cada tarefa, se o estado da frente mudou:
-- Atualizar o documento correspondente (contrato da frente, A01 ou handoff) para refletir a nova realidade.
+Ao final de cada tarefa, se o estado da frente mudou, atualizar obrigatoriamente:
+
+1. **Status vivo da frente** (`schema/status/<FRENTE>_STATUS.md`) — atualizar estado atual, última PR, último commit, entregas, pendências, bloqueios e próximo passo autorizado.
+2. **Handoff da frente** (`schema/handoffs/<FRENTE>_LATEST.md`) — atualizar ou criar novo handoff com contexto, diagnóstico, o que foi feito, o que não foi feito, riscos e provas.
+3. **Item do A01** — confirmar qual item do A01 foi atendido (total ou parcialmente).
+4. **Próximo passo autorizado** — declarar explicitamente o próximo passo, coerente com A01 e contrato ativo.
+5. **Índices** (`schema/status/_INDEX.md` e `schema/handoffs/_INDEX.md`) — atualizar se houve mudança de estado ou novo handoff.
+
+Regras complementares:
 - Não deixar documentos desatualizados em relação ao estado executado.
 - A documentação deve sempre representar o estado real, não o estado planejado.
+- Atualizar o documento correspondente (contrato da frente, A01 ou handoff) para refletir a nova realidade.
 
-## 7. Regra de parada
+## 7. Schemas obrigatórios de governança
+
+Os seguintes schemas definem o formato obrigatório de artefatos de governança:
+
+- `schema/CONTRACT_SCHEMA.md` — formato obrigatório de qualquer contrato novo de frente.
+- `schema/STATUS_SCHEMA.md` — formato obrigatório de status vivo por frente.
+- `schema/HANDOFF_SCHEMA.md` — formato obrigatório de handoff persistido por frente.
+
+Nenhum contrato, status ou handoff deve ser criado fora destes formatos.
+
+## 8. Estrutura de contexto vivo
+
+O repositório mantém contexto vivo em:
+
+- `schema/status/` — status vivos por frente (índice em `_INDEX.md`)
+- `schema/handoffs/` — handoffs persistidos por frente (índice em `_INDEX.md`)
+- `schema/legacy/` — 19 legados incorporados (índice em `INDEX_19_LEGADOS.md`)
+
+## 9. Regra de parada
 
 Se qualquer das condições abaixo for identificada, parar e reportar em vez de improvisar:
 
