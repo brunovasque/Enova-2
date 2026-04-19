@@ -26,7 +26,8 @@ Fora de escopo: <o que NÃO está incluído>
 4. Contrato da frente ativa (formato em `schema/CONTRACT_SCHEMA.md`)
 5. Status vivo da frente (`schema/status/<FRENTE>_STATUS.md`)
 6. Último handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`)
-7. Legados aplicáveis (`schema/legacy/INDEX_19_LEGADOS.md`)
+7. Índice do legado mestre (`schema/legacy/INDEX_LEGADO_MESTRE.md`)
+8. Blocos aplicáveis do legado mestre (`schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
 
 ## Regras mandatórias
 1. Executar apenas o escopo explicitamente contratado.

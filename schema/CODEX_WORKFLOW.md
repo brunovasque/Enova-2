@@ -10,7 +10,8 @@ Toda execução começa com leitura nesta sequência:
 4. Contrato específico da frente ativa (seguindo formato de `schema/CONTRACT_SCHEMA.md`)
 5. Status vivo da frente ativa (`schema/status/<FRENTE>_STATUS.md`)
 6. Último handoff da frente ativa (`schema/handoffs/<FRENTE>_LATEST.md`)
-7. Legados aplicáveis indicados pelo A02 e pelo `schema/legacy/INDEX_19_LEGADOS.md`
+7. `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
+8. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
@@ -121,7 +122,8 @@ O repositório mantém contexto vivo em:
 
 - `schema/status/` — status vivos por frente (índice em `_INDEX.md`)
 - `schema/handoffs/` — handoffs persistidos por frente (índice em `_INDEX.md`)
-- `schema/legacy/` — 19 legados incorporados (índice em `INDEX_19_LEGADOS.md`)
+- `schema/legacy/` — legado mestre unificado (índice em `INDEX_LEGADO_MESTRE.md`, conteúdo em `LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
+- `schema/source/` — PDF mestre original (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`)
 
 ## 9. Regra de parada
 

@@ -288,3 +288,15 @@ A partir deste ponto, a pergunta operacional deixa de ser “quais dos 19 eu pre
 passa a ser “qual frente está ativa e qual é o menor pacote suficiente para ela?”.
 Isso reduz custo de contexto, facilita novas abas, preserva as regras legadas e mantém a
 implantação da ENOVA 2 sob uma única governança canônica.
+
+11. Atualização: modelo unificado de legados
+A partir da PR #2, os 19 legados e os 9 documentos complementares deixam de existir como
+arquivos separados no repositório. Eles são consolidados em um legado mestre único:
+- PDF mestre: schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf
+- Markdown mestre: schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md
+- Índice operacional: schema/legacy/INDEX_LEGADO_MESTRE.md
+A consulta passa a ser por blocos internos do legado mestre, usando as âncoras do índice
+operacional. As classes canônicas (L01-L19) e os 9 complementares (C01-C09) permanecem
+como referência semântica, mas apontam para blocos dentro do arquivo único.
+A regra de envio por frente (seção 6) continua válida — mas em vez de "enviar L03 + L07-L10",
+a instrução passa a ser "consultar blocos L03 + L07-L10 no legado mestre".

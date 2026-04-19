@@ -12,7 +12,8 @@ O `CODEX_WORKFLOW.md` define o ritual obrigatório de declaração, execução e
 5. Contrato específico da frente ativa (formato em `CONTRACT_SCHEMA.md`)
 6. Status vivo da frente ativa (`status/<FRENTE>_STATUS.md`)
 7. Último handoff da frente ativa (`handoffs/<FRENTE>_LATEST.md`)
-8. Legados aplicáveis indicados pelo A02 e pelo `legacy/INDEX_19_LEGADOS.md`
+8. `legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
+9. `legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
 
 ## Precedência documental
 **A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis**
@@ -33,11 +34,12 @@ Todo contrato segue o formato definido em `CONTRACT_SCHEMA.md`.
 O repo mantém memória operacional persistida em:
 - `schema/status/` — status vivo por frente (formato em `STATUS_SCHEMA.md`)
 - `schema/handoffs/` — handoff persistido por frente (formato em `HANDOFF_SCHEMA.md`)
-- `schema/legacy/` — 19 legados incorporados (índice em `legacy/INDEX_19_LEGADOS.md`)
+- `schema/legacy/` — legado mestre unificado (índice em `legacy/INDEX_LEGADO_MESTRE.md`, conteúdo em `legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
+- `schema/source/` — PDF mestre original (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`)
 
 Para saber o estado de qualquer frente: consultar `schema/status/_INDEX.md`.
 Para retomar qualquer frente: consultar `schema/handoffs/_INDEX.md`.
-Para saber quais legados ler: consultar `schema/legacy/INDEX_19_LEGADOS.md`.
+Para saber quais legados ler: consultar `schema/legacy/INDEX_LEGADO_MESTRE.md`.
 
 ## Pacote mínimo para abertura de nova aba/frente
 Nenhuma nova aba/frente inicia sem o pacote mínimo:

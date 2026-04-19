@@ -9,7 +9,7 @@
 | Última PR                 | PR #2 (contexto vivo e legados — documental)                 |
 | Último commit             | Nenhum commit de implementação técnica                       |
 | Próximo passo autorizado  | Abrir contrato do Core Mecânico 2                            |
-| Legados aplicáveis        | L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17 |
+| Legados aplicáveis        | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md) |
 | Última atualização        | 2026-04-19T22:44:00Z                                        |
 
 ---
@@ -37,7 +37,7 @@ A frente depende da conclusão da fundação documental (Fase 0) e da organizaç
 A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica.
 A fundação documental (A00 + A01 + A02 + CODEX_WORKFLOW) está pronta.
 A camada de contexto vivo (status, handoffs, schemas de contrato) está sendo estabelecida nesta PR.
-Os 19 legados estão organizados e amarrados ao repositório.
+Os legados estão organizados em legado mestre unificado, pronto para receber o PDF mestre.
 
 ## 5. Última PR
 
@@ -58,7 +58,7 @@ Nenhum commit de implementação técnica. Apenas commits documentais da fundaç
 - [x] STATUS_SCHEMA — formato obrigatório de status vivo
 - [x] HANDOFF_SCHEMA — formato obrigatório de handoff persistido
 - [x] Estrutura de status vivos e handoffs
-- [x] Incorporação dos 19 legados em estrutura canônica
+- [x] Incorporação dos legados em legado mestre unificado (estrutura pronta para PDF)
 
 ## 8. Pendências
 
@@ -76,18 +76,16 @@ Gate 1 do A01 se aplica: sem contrato da frente, não começa implementação.
 
 **Abrir contrato do Core Mecânico 2**, seguindo o formato definido em `schema/CONTRACT_SCHEMA.md`, com:
 - Escopo alinhado ao A01 (Prioridade 1)
-- Legados aplicáveis conforme A02 (L03 + famílias L04-L17)
+- Legados aplicáveis conforme A02 e INDEX_LEGADO_MESTRE.md (blocos L03 + L04-L17)
 - Dependências satisfeitas (trio-base + workflow + contexto vivo)
 
 ## 11. Legados aplicáveis
 
-Conforme A02, seções 4 e 5:
-- **L03** — Mapa canônico do funil (obrigatório sempre que a frente tocar funil, coleta, parse ou nextStage)
-- **L04–L06** — Topo do funil (contrato, parser e critérios do topo)
-- **L07–L10** — Meio A — estado civil e composição
-- **L11–L14** — Meio B — regime, renda e gates
-- **L15–L16** — Especiais / familiar / P3 / multi
-- **L17** — Final operacional / docs / visita / correspondente
+Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
+- **Legado mestre unificado**: `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+- **Blocos obrigatórios**: L03, L04–L17
+- **Blocos complementares**: L01–L02, L18, L19, C*
+- **Consulta por frente**: `schema/legacy/INDEX_LEGADO_MESTRE.md` — seção "Amarração por frente"
 
 ## 12. Última atualização
 

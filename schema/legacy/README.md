@@ -1,10 +1,10 @@
-# LEGADOS — Camada de Base de Negócio Herdada
+# LEGADOS — Camada de Base de Negócio Herdada (Modelo Unificado)
 
 ## Finalidade
 
-Este diretório contém a incorporação canônica dos 19 documentos legados da Enova 1 ao repositório da ENOVA 2.
+Este diretório contém a base de verdade de negócio herdada da Enova 1, consolidada em um **legado mestre único**.
 
-Os 19 legados são a **fonte de verdade de negócio** do projeto. Eles contêm as regras do MCMV, do funil, dos stages, das microregras, dos mapas de composição, da telemetria validada e da linguagem operacional que a ENOVA 2 herda.
+O legado mestre unifica os **19 documentos legados** da Enova 1 e os **9 documentos complementares** da ENOVA 2 em um único arquivo markdown derivado de um PDF mestre.
 
 ## O que os legados são
 
@@ -29,27 +29,23 @@ Conforme A00 (seção 7) e A02 (seção 3):
 
 ## Estrutura
 
-- `INDEX_19_LEGADOS.md` — Índice completo com amarração por frente, domínio, função e regra de uso.
-- `L01_*.md` até `L19_*.md` — Um arquivo por legado, seguindo nomenclatura canônica.
+- `INDEX_LEGADO_MESTRE.md` — Índice operacional unificado com amarração por frente, âncoras e status de assimilação.
+- `LEGADO_MESTRE_ENOVA1_ENOVA2.md` — Arquivo markdown canônico derivado do PDF mestre. Contém todos os blocos L01–L19 e C01–C09.
+
+## Fonte bruta
+
+- `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — PDF mestre original (a ser incorporado ao repo).
 
 ## Como usar
 
-1. Consultar `INDEX_19_LEGADOS.md` para saber quais legados se aplicam à frente ativa.
-2. Consultar o A02 (seção 4) para entender a classe/família de cada legado.
-3. Ler os legados aplicáveis antes de abrir contrato ou executar tarefa que toque regras de negócio.
-4. Nunca enviar todos os 19 por padrão — seguir a política de pacote mínimo do A02 (seção 6).
+1. Consultar `INDEX_LEGADO_MESTRE.md` para saber quais blocos se aplicam à frente ativa.
+2. Navegar às âncoras correspondentes no `LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+3. Nunca ler o documento inteiro por padrão — ler apenas os blocos indicados pelo índice e pelo A02.
 
 ## Regra de incorporação
 
-Cada arquivo `L0x_*.md` neste diretório deve conter:
-1. O conteúdo integral do documento legado original, transcrito na estrutura canônica.
-2. Enquanto o conteúdo original não estiver transcrito, o arquivo funciona como **placeholder estruturado** com:
-   - Nome canônico
-   - Classe/família (conforme A02)
-   - Função
-   - Domínio
-   - Frentes que dependem deste legado
-   - Instrução explícita de como incorporar o conteúdo original
-
-A incorporação deve ser feita **sem resumir demais** — o conteúdo original deve ser preservado com fidelidade.
-O objetivo é que o repositório contenha a base de verdade completa, sem depender de envio externo dos documentos.
+1. O PDF mestre deve ser colocado em `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`.
+2. O conteúdo do PDF é transcrito bloco a bloco no `LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+3. A transcrição deve preservar o conteúdo original com fidelidade — **não resumir demais**.
+4. Após transcrição de cada bloco, atualizar o status de assimilação no `INDEX_LEGADO_MESTRE.md`.
+5. Nenhum conteúdo de regra de negócio pode ser alterado na transcrição.
