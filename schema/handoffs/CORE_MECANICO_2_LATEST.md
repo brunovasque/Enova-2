@@ -3,61 +3,78 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T02:46:46Z                                                        |
-| Estado da frente                           | não iniciada (bootstrap infra + pipeline de deploy concluídos)               |
-| Classificação da tarefa                    | fora_de_contrato (infra — pipeline de deploy)                                |
-| Última PR relevante                        | PR #7 — Deploy automático em main + docs PowerShell/Windows/VSCode           |
-| Item do A01 atendido                       | Fase 1 — scaffold técnico: pipeline de deploy Cloudflare concluído           |
+| Data                                       | 2026-04-20T03:17:26Z                                                        |
+| Estado da frente                           | não iniciada (governança contratual concluída)                               |
+| Classificação da tarefa                    | governança (camada de execução contratual)                                   |
+| Última PR relevante                        | PR #8 — Camada formal de execução contratual                                 |
+| Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                  |
+| Recorte executado do contrato              | N/A — nenhum contrato ativo                                                  |
+| Pendência contratual remanescente          | N/A — aguardando abertura do contrato                                        |
+| Houve desvio de contrato?                  | não                                                                          |
+| Contrato encerrado nesta PR?               | não                                                                          |
+| Item do A01 atendido                       | Fase 0 — fundação documental: governança contratual formalizada              |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                            |
 | Próximo passo foi alterado?                | não                                                                          |
-| Tarefa fora de contrato?                   | sim — infra de pipeline alinhada à Fase 1 do A01, sem implementação funcional |
+| Tarefa fora de contrato?                   | não — tarefa de governança                                                   |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                      |
-| Permissões Cloudflare necessárias          | sim — Workers Scripts:Edit (necessário para wrangler deploy — aviso preventivo ativo) |
+| Permissões Cloudflare necessárias          | nenhuma adicional                                                            |
 
 ---
 
 ## 1. Contexto curto
 
-O repositório da ENOVA 2 estava com toda a governança pronta (trio-base, workflow, protocolo de dados, protocolo de permissões Cloudflare) e com o bootstrap técnico de Cloudflare Workers concluído (wrangler.toml + entrypoint placeholder). Esta PR #7 cria o pipeline de deploy via GitHub Actions — o entregável final do scaffold técnico da Fase 1 do A01.
+O repositório da ENOVA 2 estava com toda a governança pronta (trio-base, workflow 11 etapas, protocolos de dados e permissões Cloudflare) e com o bootstrap técnico de Cloudflare Workers concluído (wrangler.toml + entrypoint placeholder + pipeline de deploy). Esta PR #8 cria a camada formal de execução contratual, amarrando o plano macro às PRs micro.
 
-O pipeline é mínimo e limpo: disparo exclusivamente manual (`workflow_dispatch`), suporte a dois ambientes (`test` e `prod`), proteção explícita de branch para deploy em produção, uso dos secrets já existentes no repositório.
+A camada contratual inclui: índice de contratos ativos por frente (`_INDEX.md`), protocolo de execução contratual por PR (`CONTRACT_EXECUTION_PROTOCOL.md`), protocolo obrigatório de encerramento de contrato (`CONTRACT_CLOSEOUT_PROTOCOL.md`), diretórios `active/` e `archive/` para contratos. O CODEX_WORKFLOW foi atualizado de 11 para 16 etapas, incluindo leitura de contratos, vínculo contratual, checagem de desvio e closeout. PR template, AGENT_CONTRACT, HANDOFF_SCHEMA, STATUS_SCHEMA e CONTRACT_SCHEMA foram atualizados para refletir a governança contratual.
 
 Nenhuma implementação funcional foi aberta. O próximo passo autorizado não foi alterado.
 
 ## 2. Classificação da tarefa
 
-**fora_de_contrato**
+**governança**
 
-Não há contrato ativo do Core Mecânico 2. O pipeline de deploy é necessidade operacional da Fase 1 do A01 (scaffold técnico), executado antes do contrato do Core para preparar a infra de CI/CD sem abrir implementação funcional. O próximo passo autorizado não foi alterado.
+Não há contrato ativo do Core Mecânico 2. Esta tarefa cria a camada formal de execução contratual — protocolo de execução, protocolo de closeout, índice de contratos, atualização do workflow e dos schemas. Nenhuma implementação funcional aberta. O próximo passo autorizado não foi alterado.
 
 ## 3. Última PR relevante
 
-**PR #6** — Protocolo obrigatório de permissões Cloudflare (governança).
+**PR #7** — Pipeline de deploy GitHub Actions (deploy.yml — test e prod).
 
-## 4. O que a PR #6 fechou
+## 4. O que a PR #7 fechou
 
-- Protocolo obrigatório de permissões Cloudflare (`CLOUDFLARE_PERMISSION_PROTOCOL.md`).
-- Rastreabilidade total de permissões: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template.
-- Alinhamento da governança Cloudflare ao mesmo nível de clareza da governança Supabase.
+- Pipeline de deploy mínimo e limpo para Cloudflare Workers (test e prod).
+- Proteção de branch para produção.
+- Documentação de uso local.
+- Scaffold técnico completo da Fase 1 do A01.
 
-## 5. O que a PR #6 NÃO fechou
+## 5. O que a PR #7 NÃO fechou
 
-- Pipeline de deploy GitHub Actions (entregue nesta PR #7).
-- Contrato formal do Core Mecânico 2 (deliberadamente fora de escopo, preservado).
+- Contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
+- Camada de execução contratual formal (entregue nesta PR #8).
 
 ## 6. Diagnóstico confirmado
 
-- O repo tinha wrangler.toml + entrypoint placeholder, mas sem pipeline de deploy automatizado.
-- A Fase 1 do A01 prevê scaffold técnico completo, incluindo CI/CD.
-- O pipeline mínimo era a peça faltante para completar o scaffold técnico.
-- Os secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` já existiam no repositório.
-- Nenhum binding, secret de aplicação, KV, R2, D1, queue ou var precisou ser criado.
+- O repo tinha governança completa (workflow, protocolos, schemas) mas não tinha camada formal de execução contratual.
+- Não existia índice de contratos ativos por frente.
+- Não existia protocolo de execução contratual por PR (vínculo, anti-desvio, revisão).
+- Não existia protocolo formal de encerramento de contrato (closeout).
+- O workflow tinha 11 etapas e não incluía leitura de contratos, vínculo contratual nem checagem de desvio.
+- O PR template não pedia vínculo contratual, desvio de contrato nem closeout.
+- O AGENT_CONTRACT não tinha regras anti-desvio nem governança contratual explícita.
 
-## 7. O que foi feito (PR #7)
+## 7. O que foi feito (PR #8)
 
-- Criado `.github/workflows/deploy.yml`: disparo manual (`workflow_dispatch`) com input de ambiente (`test` | `prod`), proteção de branch para prod (falha se não for `main`), checkout, setup-node@v4, instalação de `wrangler@3.114.17` (versão patched — sem vulnerabilidade CVE), deploy com `wrangler deploy --env test` (test) ou `wrangler deploy` (prod), usando `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID`.
-- Atualizado `docs/BOOTSTRAP_CLOUDFLARE.md`: pipeline de deploy documentado, uso local via terminal/VSCode com exports de env vars, permissões Cloudflare declaradas, aviso preventivo explícito.
-- Atualizado `README.md`: referência ao pipeline criado e à documentação de uso local.
+- Criado `schema/contracts/_INDEX.md`: índice canônico de contratos ativos por frente, com status canônicos, regras e estrutura de diretórios.
+- Criado `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md`: relação macro → contrato → PR, regra de 1 contrato ativo por frente, declaração obrigatória de vínculo contratual, regra anti-desvio, protocolo de revisão contratual, regra de atualização obrigatória, integração com CODEX_WORKFLOW.
+- Criado `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`: condições de encerramento, checklist obrigatório, evidências mínimas, atualização de _INDEX.md, movimentação para archive, autorização do próximo contrato, proibição de encerramento implícito.
+- Criado `schema/contracts/active/.gitkeep` e `schema/contracts/archive/.gitkeep`.
+- Atualizado `schema/CODEX_WORKFLOW.md`: fluxo de 11 → 16 etapas, leitura obrigatória de contratos, vínculo contratual, checagem de desvio, closeout. ESTADO HERDADO e ESTADO ENTREGUE com campos contratuais. Regras de execução com anti-desvio e closeout. Schemas e contexto vivo atualizados. Regra de parada com desvio e encerramento implícito.
+- Atualizado `.github/PULL_REQUEST_TEMPLATE.md`: campos de objetivo imutável do contrato, recorte executado, o que fecha/não fecha do contrato, desvio de contrato, encerramento com checklist de closeout.
+- Atualizado `.github/AGENT_CONTRACT.md`: 16 etapas, leitura de contratos, ESTADO HERDADO com campos contratuais, regras anti-desvio e governança contratual.
+- Atualizado `schema/HANDOFF_SCHEMA.md`: campos de contrato ativo, recorte executado, pendência contratual, desvio, encerramento.
+- Atualizado `schema/STATUS_SCHEMA.md`: campos de estado do contrato, recorte da última PR, pendência contratual, encerramento.
+- Atualizado `schema/README_EXECUCAO.md`: ordem de leitura com contratos, 16 etapas, governança contratual, precedência atualizada.
+- Atualizado `README.md`: documentos canônicos, schemas, contexto vivo e protocolo de execução com referências contratuais.
+- Atualizado `schema/CONTRACT_SCHEMA.md`: regras de closeout, anti-desvio, diretórios active/archive.
 - Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`.
 - Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` (este arquivo).
 
@@ -65,19 +82,18 @@ Não há contrato ativo do Core Mecânico 2. O pipeline de deploy é necessidade
 
 - **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Próximo passo preservado.
 - **Implementação funcional** — nenhuma. Nenhum código de negócio.
-- **Bindings, secrets de aplicação, KV, R2, D1, queues, vars** — nenhum fictício adicionado.
-- **Routes customizadas** — nenhuma.
-- **Deploy automático em push** — não criado. Disparo exclusivamente manual.
-- **Matrix de ambientes** — não criada. Um job simples com condicionais.
-- **Secrets novos** — nenhum criado. Apenas os dois já existentes são usados.
+- **Criação de contrato ativo** — a pasta `active/` está vazia propositalmente. O primeiro contrato ativo será aberto na próxima PR.
 
 ## 9. O que esta PR fechou
 
-- Pipeline de deploy mínimo e limpo para Cloudflare Workers (test e prod).
-- Proteção de branch para produção (`main` = prod, explícito e enforçado no workflow).
-- Documentação de uso local via terminal e VSCode.
-- Declaração explícita de permissões Cloudflare necessárias (Workers Scripts:Edit).
-- Scaffold técnico completo da Fase 1 do A01.
+- Índice canônico de contratos ativos por frente (`schema/contracts/_INDEX.md`).
+- Protocolo de execução contratual por PR (`CONTRACT_EXECUTION_PROTOCOL.md`).
+- Protocolo obrigatório de encerramento de contrato (`CONTRACT_CLOSEOUT_PROTOCOL.md`).
+- Workflow atualizado para 16 etapas com vínculo contratual obrigatório.
+- PR template com campos de contrato, desvio e closeout.
+- Agent contract com regras anti-desvio e governança contratual.
+- Schemas (HANDOFF, STATUS, CONTRACT) com campos contratuais.
+- README e README_EXECUCAO atualizados.
 
 ## 10. O que continua pendente após esta PR
 
@@ -88,29 +104,54 @@ Não há contrato ativo do Core Mecânico 2. O pipeline de deploy é necessidade
 
 ## 11. Esta tarefa foi fora de contrato?
 
-**sim** — classificada como `fora_de_contrato`.
+**não** — classificada como `governança`.
 
-Justificativa: não há contrato ativo do Core Mecânico 2. O pipeline de deploy é necessidade operacional alinhada à Fase 1 do A01, controlada e sem drift. Não abre implementação funcional, não mexe em bindings reais, não cria lógica de negócio.
+Não há contrato ativo do Core Mecânico 2. Esta tarefa cria infraestrutura de governança contratual. Não é fora de contrato — é governança documental pura, alinhada à Fase 0 do A01 (fundação documental).
 
 Impacto no próximo passo autorizado: **não alterou** — próximo passo continua sendo abertura do contrato do Core Mecânico 2.
 
+### 11a. Contrato ativo
+Nenhum contrato ativo — aguardando abertura.
+
+### 11b. Recorte executado do contrato
+N/A — nenhum contrato ativo.
+
+### 11c. Pendência contratual remanescente
+N/A — aguardando abertura do contrato.
+
+### 11d. Houve desvio de contrato?
+não
+
+### 11e. Contrato encerrado nesta PR?
+não
+
 ## 12. Arquivos relevantes
 
-- `.github/workflows/deploy.yml` *(criado — pipeline de deploy)*
-- `docs/BOOTSTRAP_CLOUDFLARE.md` *(atualizado — pipeline + uso local + permissões Cloudflare)*
-- `README.md` *(atualizado — referência ao pipeline)*
+- `schema/contracts/_INDEX.md` *(criado — índice de contratos)*
+- `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` *(criado — protocolo de execução)*
+- `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` *(criado — protocolo de closeout)*
+- `schema/contracts/active/.gitkeep` *(criado — diretório para contratos ativos)*
+- `schema/contracts/archive/.gitkeep` *(criado — diretório para contratos arquivados)*
+- `schema/CODEX_WORKFLOW.md` *(atualizado — 16 etapas + vínculo contratual)*
+- `.github/PULL_REQUEST_TEMPLATE.md` *(atualizado — campos de contrato + desvio + closeout)*
+- `.github/AGENT_CONTRACT.md` *(atualizado — governança contratual)*
+- `schema/HANDOFF_SCHEMA.md` *(atualizado — campos contratuais)*
+- `schema/STATUS_SCHEMA.md` *(atualizado — campos contratuais)*
+- `schema/CONTRACT_SCHEMA.md` *(atualizado — coerência com closeout)*
+- `schema/README_EXECUCAO.md` *(atualizado — referências contratuais)*
+- `README.md` *(atualizado — referências contratuais)*
 - `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
 
 ## 13. Item do A01 atendido
 
-- **Fase 1** — scaffold técnico: pipeline de deploy completo. O repo está preparado para deploy manual com proteção de branch e ambientes canônicos corretos.
+- **Fase 0** — fundação documental: governança contratual formalizada. O repo está preparado para operar por contrato ativo, sem drift.
 
 ## 14. Estado atual da frente
 
-**não iniciada** (bootstrap infra + pipeline de deploy concluídos)
+**não iniciada** (governança contratual concluída)
 
-A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. O scaffold técnico completo está pronto: wrangler.toml + entrypoint placeholder + pipeline de deploy.
+A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. Toda a governança está pronta: trio-base, workflow 16 etapas, protocolos (dados, permissões, execução contratual, closeout), schemas, bootstrap Cloudflare, pipeline de deploy.
 
 ## 15. Próximo passo autorizado
 
@@ -119,26 +160,28 @@ A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técn
 - Escopo: Prioridade 1 do A01 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala
 - Legados: blocos L03 + famílias L04-L17 do legado mestre unificado conforme A02 e INDEX_LEGADO_MESTRE.md
 - Gate: Gate 1 será satisfeito com a aprovação do contrato
-- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões Cloudflare ✅, pipeline de deploy ✅
+- Contrato ativo: colocar em `schema/contracts/active/`
+- Atualizar `schema/contracts/_INDEX.md` ao abrir
+- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões Cloudflare ✅, pipeline de deploy ✅, camada de execução contratual ✅
 
-**Próximo passo preservado** — igual ao definido na PR #6.
+**Próximo passo preservado** — igual ao definido na PR #7.
 
 ## 16. Riscos
 
-- **Permissão do token Cloudflare** — O token `CLOUDFLARE_API_TOKEN` deve ter permissão `Workers Scripts:Edit` para que o deploy funcione. Verificar antes do primeiro deploy real. Onde ajustar: Cloudflare Dashboard > API Tokens > editar token.
-- **Entrypoint placeholder** — `src/worker.ts` é um placeholder sem lógica. Se alguém fizer deploy antes da implementação real, o worker responderá com uma mensagem de bootstrap. Isso é intencional e documentado.
 - **Conteúdo dos legados** — O legado mestre unificado contém placeholders por bloco. O PDF mestre deve ser incorporado antes da abertura do contrato do Core.
+- **Permissão do token Cloudflare** — Verificar antes do primeiro deploy real.
 
 ## 17. Provas
 
-- PR #7 criada com escopo exclusivo de pipeline de deploy de infraestrutura.
-- `.github/workflows/deploy.yml` criado com proteção de branch, disparo manual, test e prod.
-- `wrangler@3.114.17` pinado — versão patched, sem vulnerabilidade CVE em `wrangler pages deploy`.
-- Apenas os dois secrets já existentes no repositório são usados (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
-- `docs/BOOTSTRAP_CLOUDFLARE.md` atualizado com uso local e declaração de permissões.
-- Status e handoff do Core Mecânico 2 atualizados refletindo PR #7.
-- Mudanças em dados persistidos (Supabase): **nenhuma**.
-- Permissões Cloudflare necessárias: **sim — Workers Scripts:Edit** (declarado e documentado com aviso preventivo).
+- PR #8 criada com escopo exclusivo de governança contratual.
+- `schema/contracts/` criado com índice, protocolos, diretórios active/archive.
+- CODEX_WORKFLOW atualizado de 11 para 16 etapas com vínculo contratual obrigatório.
+- PR template atualizado com campos de contrato, desvio e closeout.
+- AGENT_CONTRACT atualizado com regras anti-desvio e governança contratual.
+- Schemas (HANDOFF, STATUS, CONTRACT) atualizados com campos contratuais.
+- Nenhuma implementação funcional aberta.
+- Nenhum contrato ativo criado — pasta active/ vazia propositalmente.
+- Status e handoff atualizados.
 
 ## 18. Mudanças em dados persistidos (Supabase)
 
@@ -146,28 +189,15 @@ A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técn
 Mudanças em dados persistidos (Supabase): nenhuma
 ```
 
-Esta PR é de infraestrutura de deploy. Nenhuma tabela, coluna, índice, constraint, relacionamento ou migration do Supabase foi criado, alterado ou removido.
+Esta PR é de governança documental. Nenhuma tabela, coluna, índice, constraint, relacionamento ou migration do Supabase foi criado, alterado ou removido.
 
 ## 19. Permissões Cloudflare necessárias
 
 ```
-Permissões Cloudflare necessárias: sim
-
-  Recurso Cloudflare afetado:          Workers Scripts
-  Ação pretendida:                      Publicar/atualizar worker via wrangler deploy (prod e test)
-  Permissões atuais suficientes?        incerto — depende do escopo do token CLOUDFLARE_API_TOKEN configurado no repositório
-  Permissões adicionais necessárias:    Workers Scripts:Edit (mínimo necessário para wrangler deploy)
-  Motivo:                               Pipeline de deploy cria/atualiza o worker nv-enova-2 (prod) e nv-enova-2-test (test)
-  Impacto se não tiver permissão:       wrangler deploy falha; worker não é atualizado; deploy retorna erro de autenticação
-  Pode prosseguir sem ampliar?          não — sem esta permissão, o deploy não ocorre
-  Onde ajustar:                         Cloudflare Dashboard > API Tokens > editar token CLOUDFLARE_API_TOKEN
+Permissões Cloudflare necessárias: nenhuma adicional
 ```
 
-> **AVISO PREVENTIVO DE PERMISSÃO CLOUDFLARE:**
-> Esta PR cria dependência de Workers Scripts (wrangler deploy). Se o token `CLOUDFLARE_API_TOKEN`
-> não tiver permissão `Workers Scripts:Edit`, o deploy falhará no pipeline e localmente.
-> Verificar o escopo do token antes do primeiro deploy real.
-> Onde ajustar: Cloudflare Dashboard > API Tokens > editar token.
+Esta PR é de governança documental e não exige nova permissão operacional além das já documentadas.
 
 ---
 
