@@ -26,6 +26,7 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 14. `schema/HANDOFF_SCHEMA.md`
 15. `schema/status/CORE_MECANICO_2_STATUS.md`
 16. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
+17. `docs/BOOTSTRAP_CLOUDFLARE.md`
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
