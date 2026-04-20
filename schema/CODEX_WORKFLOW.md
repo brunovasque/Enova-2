@@ -35,6 +35,11 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 19. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
 20. `docs/BOOTSTRAP_CLOUDFLARE.md`
 21. `wrangler.toml`
+22. `.github/workflows/pr-governance-check.yml`
+23. `.github/PULL_REQUEST_TEMPLATE.md`
+24. `.github/AGENT_CONTRACT.md`
+25. `scripts/validate_pr_governance.js`
+  
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
