@@ -3,24 +3,24 @@
 | Campo                                      | Valor                                                                                     |
 |--------------------------------------------|-------------------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                           |
-| Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                               |
-| Estado do contrato                         | aguardando abertura                                                                       |
-| Última PR executou qual recorte            | N/A — nenhum contrato ativo                                                               |
-| Pendência contratual                       | N/A — aguardando abertura do contrato                                                     |
+| Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`                                    |
+| Estado do contrato                         | aberto                                                                                    |
+| Última PR executou qual recorte            | N/A — contrato recém-aberto, nenhuma execução contratual ainda                            |
+| Pendência contratual                       | Contrato inteiro em aberto — nenhum recorte executado                                     |
 | Contrato encerrado?                        | não                                                                                       |
-| Item do A01                                | Fase 0 — fundação documental: encontrabilidade contratual endurecida                      |
-| Estado atual                               | não iniciada (base documental + encontrabilidade contratual prontas para abertura de contrato) |
-| Classe da última tarefa                    | governança (encontrabilidade contratual + rastreabilidade de fontes)                      |
-| Última PR relevante                        | PR #13 — Governança: encontrabilidade contratual e rastreabilidade de fontes              |
-| Último commit                              | Governança: CONTRACT_SOURCE_MAP, CODEX_WORKFLOW seção 19, ESTADO HERDADO + fontes        |
-| Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
-| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (encontrabilidade contratual agora explícita e operacional) |
+| Item do A01                                | Fase 0 → Fase 2 — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala |
+| Estado atual                               | contrato aberto (contrato ativo aberto, sem execução funcional)                           |
+| Classe da última tarefa                    | governança (abertura de contrato ativo vinculante do Core Mecânico 2)                     |
+| Última PR relevante                        | PR desta abertura — Governança: contrato ativo vinculante do Core Mecânico 2              |
+| Último commit                              | Governança: contrato ativo do Core Mecânico 2 + CLAUSE_MAP + EXECUTION_RULES              |
+| Pendência remanescente herdada             | Nenhuma — pendência de abertura de contrato (herdada da PR #2) foi resolvida por esta PR  |
+| Próximo passo autorizado                   | Primeira PR contratual de execução do Core Mecânico 2 (alterado — contrato agora aberto)  |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
 | Permissões Cloudflare — infra herdada (PR #7) | Workers Scripts:Edit — obrigatório para deploy via wrangler (aviso preventivo ativo) |
-| Permissões Cloudflare — última tarefa (PR #13) | nenhuma adicional — tarefa de governança documental                                |
+| Permissões Cloudflare — última tarefa      | nenhuma adicional — tarefa de governança documental                                       |
 | Fontes consultadas — última tarefa         | ver seção 17 abaixo                                                                       |
-| Última atualização                         | 2026-04-20T17:08:00Z                                                                      |
+| Última atualização                         | 2026-04-20T17:47:00Z                                                                      |
 
 ---
 
@@ -30,44 +30,52 @@ Core Mecânico 2
 
 ## 2. Contrato ativo
 
-Nenhum contrato ativo — aguardando abertura.
-A frente depende da conclusão da fundação documental (Fase 0) e da organização do contexto vivo do repositório para que o contrato possa ser aberto com segurança.
+`schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` — aberto em 2026-04-20T17:47:00Z.
+
+O contrato ativo é uma camada operacional vinculada ao contrato macro (A00, A01, A02, PDF-fonte).
+Ele não substitui o PDF-fonte. Ele organiza a execução por etapas com âncora contratual explícita.
+
+Documentos complementares do contrato:
+- `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md` — mapa de cláusulas
+- `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md` — regras de execução ancorada
 
 ## 3. Item do A01
 
-- **Fase**: Fase 0 — fundação documental: encontrabilidade contratual endurecida.
-- **Próxima fase**: Abertura do contrato formal do Core Mecânico 2.
+- **Fase**: Fase 0 → Fase 2 — contrato do Core aberto, execução funcional autorizada como próximo passo.
+- **Próxima fase**: Primeira PR contratual de execução do Core Mecânico 2.
 - **Prioridade do backlog**: Prioridade 1 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala.
-- **Gate aplicável**: Gate 1 — sem contrato da frente, não começa implementação.
+- **Gate aplicável**: Gate 1 — sem contrato da frente, não começa implementação. **SATISFEITO** por esta PR.
+- **Gate seguinte**: Gate 2 — sem smoke da frente, não promove para a frente seguinte.
 
 ## 4. Estado atual
 
-**não iniciada** (bootstrap infra + pipeline de deploy + encontrabilidade contratual concluídos)
+**contrato aberto** (contrato ativo aberto, sem execução funcional)
 
-A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio.
+A frente Core Mecânico 2 possui contrato ativo aberto (`schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`).
 O scaffold técnico (wrangler.toml + entrypoint placeholder + pipeline de deploy) está pronto.
-A governança completa está pronta (trio-base, workflow, protocolos de dados e permissões Cloudflare, gate de PR, auto-fix controlado, encontrabilidade contratual e rastreabilidade de fontes).
+A governança completa está pronta. Nenhuma execução funcional foi iniciada.
 
 ## 5. Classe da última tarefa
 
-**governança** — encontrabilidade contratual e rastreabilidade de fontes. Criação do `CONTRACT_SOURCE_MAP.md` (ponte documental operacional). Adição da seção 19 ao CODEX_WORKFLOW (protocolo de descoberta contratual). Expansão do ESTADO HERDADO com bloco "Fontes de verdade consultadas". Adição de seções às schemas (HANDOFF_SCHEMA seção 20, STATUS_SCHEMA seção 17). Atualização do AGENT_CONTRACT com regras 20–23 e referência ao CONTRACT_SOURCE_MAP. Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
+**governança** — abertura de contrato ativo vinculante do Core Mecânico 2. Criação do contrato ativo (`CONTRATO_CORE_MECANICO_2.md`), mapa de cláusulas (`CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`), regras de execução ancorada (`CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md`). Atualização de `_INDEX.md`, status e handoff. Nenhuma implementação funcional aberta. Próximo passo autorizado alterado de "Abrir contrato" para "Primeira PR contratual de execução".
 
 ## 6. Última PR relevante
 
 PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL.
 PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo.
 PR #12 — Organização documental do legado mestre.
-PR #13 — Encontrabilidade contratual e rastreabilidade de fontes (esta PR).
-- Criou `schema/CONTRACT_SOURCE_MAP.md` — ponte documental operacional
-- Adicionou seção 19 ao `schema/CODEX_WORKFLOW.md` — protocolo de descoberta contratual
-- Expandiu ESTADO HERDADO com bloco "Fontes de verdade consultadas"
-- Adicionou seção 20 ao `schema/HANDOFF_SCHEMA.md` — fontes consultadas
-- Adicionou seção 17 ao `schema/STATUS_SCHEMA.md` — fontes consultadas
-- Atualizou `.github/AGENT_CONTRACT.md` com regras 20–23 + referência ao CONTRACT_SOURCE_MAP
+PR #13 — Encontrabilidade contratual e rastreabilidade de fontes.
+PR desta abertura — Governança: contrato ativo vinculante do Core Mecânico 2.
+- Criou `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` — contrato ativo vinculante
+- Criou `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md` — mapa de cláusulas
+- Criou `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md` — regras de execução
+- Atualizou `schema/contracts/_INDEX.md` — contrato ativo registrado
+- Atualizou `schema/status/CORE_MECANICO_2_STATUS.md` — estado refletido
+- Atualizou `schema/handoffs/CORE_MECANICO_2_LATEST.md` — handoff de continuidade
 
 ## 7. Último commit
 
-Governança: encontrabilidade contratual — CONTRACT_SOURCE_MAP, CODEX_WORKFLOW seção 19, ESTADO HERDADO expandido, schemas atualizados, AGENT_CONTRACT com regras de rastreabilidade de fontes.
+Governança: contrato ativo vinculante do Core Mecânico 2 — CONTRATO_CORE_MECANICO_2.md + CLAUSE_MAP + EXECUTION_RULES + _INDEX + status + handoff.
 
 ## 8. Entregas concluídas
 
@@ -96,25 +104,25 @@ Governança: encontrabilidade contratual — CONTRACT_SOURCE_MAP, CODEX_WORKFLOW
 - [x] **Auto-fix controlado do PR Governance Gate** — `.github/workflows/pr-governance-autofix.yml` + `scripts/autofix_pr_governance.js`. Auto-fix determinístico: max 3 tentativas, apenas erros triviais, sem LLM. Para obrigatoriamente em erros estruturais.
 - [x] **Regra de menção obrigatória ao agente/modelo** — `@copilot+modelo` obrigatório em toda instrução operacional. Documentado em AGENT_CONTRACT (regra 26), CODEX_WORKFLOW (seção 18), README_EXECUCAO e README.
 - [x] **Organização documental do legado mestre** — `schema/source/README.md` corrigido, `LEGADO_MESTRE_ENOVA1_ENOVA2.md` reorganizado com honestidade documental, `INDEX_LEGADO_MESTRE.md` transformado em índice operacional real com ordem de leitura + status granular, `CONTRACT_SCHEMA.md` expandido com campos obrigatórios de referências e blocos legados.
-- [x] **Encontrabilidade contratual e rastreabilidade de fontes** — `schema/CONTRACT_SOURCE_MAP.md` criado (ponte documental operacional); CODEX_WORKFLOW seção 19 (protocolo de descoberta contratual); ESTADO HERDADO expandido com bloco de fontes; HANDOFF_SCHEMA seção 20 + STATUS_SCHEMA seção 17; AGENT_CONTRACT regras 20–23 + referência ao mapa de fontes.
+- [x] **Contrato ativo vinculante do Core Mecânico 2** — `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` criado com todas as 16 seções do CONTRACT_SCHEMA + cláusula central de soberania + declaração de subordinação + regra de parada contratual. Mapa de cláusulas (`CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`) e regras de execução ancorada (`CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md`) criados. `_INDEX.md` atualizado. Gate 1 do A01 satisfeito.
 
 ## 9. Pendências
 
-- [ ] Abrir contrato formal do Core Mecânico 2 (próximo passo autorizado — base documental + encontrabilidade contratual prontas)
-- [ ] Definir objetivos/stages do Core Mecânico 2 no contrato
-- [ ] Implementação funcional do worker (após contrato aprovado)
+- [ ] Primeira PR contratual de execução do Core Mecânico 2 (próximo passo autorizado — contrato agora aberto)
+- [ ] Implementação funcional do modelo de objectives/stages (após primeira PR de execução)
+- [ ] Smoke de trilho e next step autorizado (Gate 2 do A01)
 - [ ] Verificar e ajustar escopo do token CLOUDFLARE_API_TOKEN antes do primeiro deploy real (Workers Scripts:Edit obrigatório)
 
 ## 10. Pendência remanescente herdada
 
 Da PR #2: abertura de contrato formal do Core Mecânico 2.
-Esta pendência permanece em aberto — as PRs #3 a #13 não a afetaram.
-A camada de execução contratual está pronta. A base documental do legado mestre está organizada. A encontrabilidade contratual e a rastreabilidade de fontes estão agora explícitas e operacionais. O sistema está pronto para a abertura do primeiro contrato ativo.
+**RESOLVIDA** por esta PR — contrato ativo aberto em `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`.
 
 ## 11. Bloqueios
 
 Nenhum bloqueio ativo.
-Gate 1 do A01 se aplica: sem contrato da frente, não começa implementação.
+Gate 1 do A01 satisfeito — contrato do Core aberto.
+Gate 2 do A01 se aplica ao próximo marco: sem smoke da frente, não promove para a frente seguinte.
 
 **Aviso preventivo de permissão Cloudflare:**
 O token `CLOUDFLARE_API_TOKEN` deve ter permissão `Workers Scripts:Edit` para que o deploy funcione.
@@ -122,17 +130,15 @@ Verificar antes do primeiro deploy real. Ver `docs/BOOTSTRAP_CLOUDFLARE.md` e `s
 
 ## 12. Próximo passo autorizado
 
-**Abrir contrato do Core Mecânico 2**, seguindo o formato definido em `schema/CONTRACT_SCHEMA.md`, com:
-- Escopo alinhado ao A01 (Prioridade 1)
-- Referências obrigatórias: A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, LEGADO_MESTRE_ENOVA1_ENOVA2.md, INDEX_LEGADO_MESTRE.md, CONTRACT_SOURCE_MAP.md
-- Blocos legados obrigatórios: L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17
-- Blocos legados complementares: L01, L02, L18, L19, C*
-- Ordem mínima de leitura: L03 → L04→L06 → L07→L10 → L11→L14 → L15→L16 → L17
-- Dependências satisfeitas (trio-base + workflow + contexto vivo + protocolo de dados + bootstrap Cloudflare + protocolo de permissões + pipeline de deploy + camada contratual + gate de PR + auto-fix + base documental legado mestre + encontrabilidade contratual)
-- Contrato ativo deve ser colocado em `schema/contracts/active/`
-- `schema/contracts/_INDEX.md` deve ser atualizado ao abrir o contrato
+**Primeira PR contratual de execução do Core Mecânico 2**, subordinada ao contrato ativo `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`, com:
+- Classificação: `contratual`
+- Vínculo contratual explícito com este contrato ativo
+- Âncora contratual obrigatória (conforme `CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md`)
+- Recorte específico do mapa de cláusulas (`CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`)
+- Consulta obrigatória ao PDF-fonte para blocos legados não transcritos
+- Sugestão de primeiro recorte: mapa de stages e gates (L03)
 
-**Próximo passo preservado** em relação às PRs anteriores.
+**Próximo passo alterado** em relação à PR anterior: sim — de "Abrir contrato" para "Primeira PR contratual de execução".
 
 ## 13. Legados aplicáveis
 
@@ -144,8 +150,8 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T17:08:00Z
-- **Responsável**: Copilot (PR #13 — encontrabilidade contratual e rastreabilidade de fontes)
+- **Data**: 2026-04-20T17:47:00Z
+- **Responsável**: Copilot (PR desta abertura — contrato ativo vinculante do Core Mecânico 2)
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -158,12 +164,12 @@ Permissões Cloudflare necessárias: nenhuma adicional
 ## 17. Fontes consultadas — última tarefa
 
 ```
-Fontes de verdade consultadas — última tarefa (PR #13):
+Fontes de verdade consultadas — última tarefa (PR desta abertura):
   Índice de contratos lido:    schema/contracts/_INDEX.md
-  Contrato ativo lido:         Nenhum — ausência é condição de parada para execução contratual
+  Contrato ativo lido:         Nenhum na entrada — criado nesta PR: schema/contracts/active/CONTRATO_CORE_MECANICO_2.md
   Status da frente lido:       schema/status/CORE_MECANICO_2_STATUS.md
   Handoff da frente lido:      schema/handoffs/CORE_MECANICO_2_LATEST.md
   Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
-  Legado markdown consultado:  N/A — tarefa de governança pura sem consumo de regras de negócio
-  PDF mestre consultado:       não consultado — tarefa de governança pura
+  Legado markdown consultado:  N/A — tarefa de governança; blocos legados referenciados estruturalmente
+  PDF mestre consultado:       não consultado diretamente — tarefa de abertura contratual (governança); execução futura deve consultar
 ```
