@@ -85,27 +85,40 @@ function fieldPresent(body, label) {
 }
 
 /**
- * Extrai o conteúdo de texto da seção imediatamente após o heading/label.
- * Retorna a string de texto até o próximo heading ou fim do documento.
+ * Extrai o conteúdo de texto da seção identificada por label.
+ * Suporta dois formatos:
+ *   - Inline: "Campo: valor na mesma linha"
+ *   - Bloco:  "## Campo [texto extra opcional]\n<conteúdo>"
+ *
+ * Para o formato bloco, [^\n]* permite texto adicional no heading após o label
+ * (ex: "## Próximo passo autorizado após esta PR").
+ * O conteúdo é capturado até o próximo heading Markdown ou fim do documento.
+ *
+ * Retorna a string de conteúdo limpa (sem comentários HTML) ou "" se vazia/ausente.
  */
 function extractSectionContent(body, label) {
   const escaped = escapeRegex(label);
-  // Captura o conteúdo entre o heading da seção e o próximo heading ou fim do documento:
-  //   (?:^|\n)\s* — início de linha
-  //   (?:#{1,6}\s+<label>|<label>\s*) — heading markdown ou label simples
-  //   \n([...]*?) — conteúdo capturado (grupo 1)
-  //   (?=\n#{1,6}\s|\n[A-Z][^\n]*:\s*\n|$) — lookahead: próximo heading ou fim
-  const headingRe = new RegExp(
-    `(?:^|\\n)\\s*` +
-    `(?:#{1,6}\\s+${escaped}|${escaped}\\s*)` +
-    `\\n([\\s\\S]*?)` +
-    `(?=\\n#{1,6}\\s|\\n[A-Z][^\\n]*:\\s*\\n|$)`,
+
+  // Formato inline: "Campo: valor" — captura o restante da linha após ":"
+  const inlineRe = new RegExp(
+    `(?:^|\\n)\\s*${escaped}\\s*:\\s*([^\\n]+)`,
     "i"
   );
-  const match = body.match(headingRe);
-  if (!match) return "";
-  // Remove HTML comments (<!-- ... -->) e resíduos do conteúdo extraído
-  return stripHtmlComments(match[1]).trim();
+  const inlineMatch = body.match(inlineRe);
+  if (inlineMatch) {
+    const inlineContent = stripHtmlComments(inlineMatch[1]).trim();
+    if (inlineContent.length > 0) return inlineContent;
+  }
+
+  // Formato bloco: "## Campo [texto extra]\n<conteúdo até próximo heading ou fim>"
+  const blockRe = new RegExp(
+    `(?:^|\\n)\\s*#{1,6}\\s+${escaped}[^\\n]*\\n([\\s\\S]*?)` +
+    `(?=\\n#{1,6}\\s|$)`,
+    "i"
+  );
+  const blockMatch = body.match(blockRe);
+  if (!blockMatch) return "";
+  return stripHtmlComments(blockMatch[1]).trim();
 }
 
 /**
@@ -173,13 +186,23 @@ function main() {
   const passes = [];
 
   // ------------------------------------------------------------------
-  // Checagem A–E: campos obrigatórios
+  // Checagem: campos obrigatórios com conteúdo real não vazio
+  // Presença do heading/label não é suficiente: o campo deve ter valor real.
+  // Comentário HTML, espaço em branco e label sem valor são rejeitados.
   // ------------------------------------------------------------------
   for (const field of REQUIRED_FIELDS) {
     if (!fieldPresent(prBody, field.label)) {
       failures.push(`[${field.group}] Campo obrigatório ausente: "${field.label}"`);
     } else {
-      passes.push(`[${field.group}] ✓ "${field.label}"`);
+      const content = extractSectionContent(prBody, field.label);
+      if (isEffectivelyEmpty(content)) {
+        failures.push(
+          `[${field.group}] Campo obrigatório vazio: "${field.label}" — ` +
+          "preencha com valor real (comentário HTML e espaço em branco não são aceitos)"
+        );
+      } else {
+        passes.push(`[${field.group}] ✓ "${field.label}"`);
+      }
     }
   }
 
