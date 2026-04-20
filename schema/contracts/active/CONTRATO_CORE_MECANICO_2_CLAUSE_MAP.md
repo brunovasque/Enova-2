@@ -82,10 +82,10 @@
 
 | # | Fonte | Bloco | Função (conforme INDEX_LEGADO_MESTRE.md) | Efeito operacional no Core | Tipo | PR/tarefa futura |
 |---|-------|-------|------------------------------------------|---------------------------|------|-----------------|
-| L-01 | PDF 1 | L03 | Stages, gates, transições e microregras do funil — referência central de fluxo | Define o mapa de stages e gates que o Core implementa. Bloco mais crítico. | estado estruturado | PR de mapa de stages e gates |
-| L-02 | PDF 1 | L04 | Contrato e regras operacionais do topo do funil | Define regras operacionais do stage de topo. | policy/governança | PR de topo do funil |
-| L-03 | PDF 1 | L05 | Parser e critérios de extração do topo | Define critérios de extração de sinais do topo. Interface Core ↔ Extractor. | estado estruturado | PR de interface de extração do topo |
-| L-04 | PDF 1 | L06 | Critérios de aceite e validação do topo | Define gates de validação e aceite no topo. | gate | PR de gates do topo |
+| L-01 | PDF 1 | L03 | Stages, gates, transições e microregras do funil — referência central de fluxo | Define o mapa de stages e gates que o Core implementa. Bloco mais crítico. | estado estruturado | ✅ EXECUTADO — PR L03 (esqueleto): `src/core/stage-map.ts`, `src/core/engine.ts` |
+| L-02 | PDF 1 | L04 | Contrato e regras operacionais do topo do funil | Define regras operacionais do stage de topo. | policy/governança | ✅ EXECUTADO — PR L04+L05+L06: `src/core/topo-rules.ts` |
+| L-03 | PDF 1 | L05 | Parser e critérios de extração do topo | Define critérios de extração de sinais do topo. Interface Core ↔ Extractor. | estado estruturado | ✅ EXECUTADO — PR L04+L05+L06: `src/core/topo-parser.ts` |
+| L-04 | PDF 1 | L06 | Critérios de aceite e validação do topo | Define gates de validação e aceite no topo. | gate | ✅ EXECUTADO — PR L04+L05+L06: `src/core/topo-gates.ts` |
 | L-05 | PDF 1 | L07 | Regras de estado civil e impacto na composição familiar | Define regras de estado civil para Meio A. | policy/governança | PR de regras de Meio A |
 | L-06 | PDF 1 | L08 | Continuação de regras de composição por estado civil | Complementa L07. | policy/governança | PR de regras de Meio A |
 | L-07 | PDF 1 | L09 | Microregras de composição familiar — elegibilidade e dependentes | Define microregras de composição para Meio A. | policy/governança | PR de microregras de Meio A |
@@ -104,15 +104,15 @@
 
 Baseada na ordem mínima de leitura da frente e na regra de fatias operacionais:
 
-| Ordem | Bloco(s) | Recorte | Pré-requisito |
-|-------|----------|---------|---------------|
-| 1 | L03 | Mapa de stages e gates — estrutura central | Contrato aberto (esta PR) |
-| 2 | L04, L05, L06 | Topo do funil — regras, extração e gates | Mapa de stages (Ordem 1) |
-| 3 | L07, L08, L09, L10 | Meio A — estado civil e composição familiar | Topo funcional (Ordem 2) |
-| 4 | L11, L12, L13, L14 | Meio B — regime, renda, CTPS, gates | Meio A funcional (Ordem 3) |
-| 5 | L15, L16 | Especiais — trilhos P3, multi, variantes | Meio B funcional (Ordem 4) |
-| 6 | L17 | Final — transição final, docs, visita | Especiais funcional (Ordem 5) |
-| 7 | Integração | Smoke test de trilho completo (topo → final) | Todos os stages (Ordens 1–6) |
+| Ordem | Bloco(s) | Recorte | Pré-requisito | Status |
+|-------|----------|---------|---------------|--------|
+| 1 | L03 | Mapa de stages e gates — estrutura central | Contrato aberto (esta PR) | ✅ EXECUTADO |
+| 2 | L04, L05, L06 | Topo do funil — regras, extração e gates | Mapa de stages (Ordem 1) | ✅ EXECUTADO |
+| 3 | L07, L08, L09, L10 | Meio A — estado civil e composição familiar | Topo funcional (Ordem 2) | pendente |
+| 4 | L11, L12, L13, L14 | Meio B — regime, renda, CTPS, gates | Meio A funcional (Ordem 3) | pendente |
+| 5 | L15, L16 | Especiais — trilhos P3, multi, variantes | Meio B funcional (Ordem 4) | pendente |
+| 6 | L17 | Final — transição final, docs, visita | Especiais funcional (Ordem 5) | pendente |
+| 7 | Integração | Smoke test de trilho completo (topo → final) | Todos os stages (Ordens 1–6) | pendente |
 
 > **Nota:** cada PR de execução deve consultar o PDF-fonte para os blocos necessários e
 > declarar explicitamente a consulta, conforme `CONTRACT_SOURCE_MAP.md` seção 6 e

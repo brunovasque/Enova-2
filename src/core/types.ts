@@ -1,17 +1,22 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Tipos estruturais (L03 — esqueleto)
+ * ENOVA 2 — Core Mecânico 2 — Tipos estruturais (L03 esqueleto + L04/L05/L06 topo)
  *
  * Âncora contratual:
- *   Cláusula-fonte:  L-01
- *   Bloco legado:    L03 — Mapa Canônico do Funil
+ *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06)
+ *   Bloco legado:    L03 — Mapa Canônico do Funil; L04, L05, L06 — Topo do Funil
  *
- * ESCOPO DESTE ARQUIVO: apenas o esqueleto estrutural do Core.
- * Regras e micro regras de negócio (casado civil, autônomo/IR, renda baixa,
- * elegibilidade documental) ficam para as próximas PRs contratuais (L04–L06+).
+ * ESCOPO DESTE ARQUIVO: esqueleto estrutural do Core + tipos do topo do funil.
+ * Regras de Meio A (casado civil, composição familiar) ficam para L07–L10.
+ * Regras de Meio B (autônomo/IR, renda, elegibilidade) ficam para L11–L14.
  *
  * RESTRIÇÃO INVIOLÁVEL: nenhum tipo aqui representa fala, surface ou resposta ao cliente.
  * O Core é soberano da ESTRUTURA. O LLM é soberano da FALA.
  */
+
+// Re-export topo types (L04, L05, L06) — parte do contrato de tipos do Core
+export type { CustomerGoal, CurrentIntent, OfftrackType } from './topo-rules.ts';
+export type { TopoTurnExtract, TopoSignals } from './topo-parser.ts';
+export type { TopoCriteriaResult } from './topo-gates.ts';
 
 // ---------------------------------------------------------------------------
 // Stages canônicos do funil — derivados de L03

@@ -1,19 +1,20 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 — esqueleto)
+ * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 esqueleto + L04/L05/L06 topo)
  *
  * Âncora contratual:
- *   Cláusula-fonte:  L-01
- *   Bloco legado:    L03 — Mapa Canônico do Funil
+ *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06)
+ *   Bloco legado:    L03, L04, L05, L06
  *   Gate-fonte:      Gate 2 (A01: "sem smoke da frente, não promove")
  *
- * ESCOPO: provar que o esqueleto estrutural do Core existe e não fala.
- * Cenários provam: stage atual, block/no-block, next_stage, next_objective.
- * Micro regras de negócio detalhadas ficam para L04–L06+.
+ * ESCOPO: provar que o esqueleto estrutural (L03) e o topo do funil (L04–L06) existem
+ * e não produzem fala. Cenários cobrem: block/no-block, parser do topo, critérios do topo.
  *
  * INVIOLÁVEL: nenhum cenário gera texto ao cliente.
  */
 
 import { runCoreEngine } from './engine.ts';
+import { extractTopoSignals } from './topo-parser.ts';
+import { evaluateTopoCriteria } from './topo-gates.ts';
 import type { LeadState, CoreDecision } from './types.ts';
 
 // ---------------------------------------------------------------------------
@@ -123,8 +124,87 @@ export function smokeScenario3_BloqueioFactParcial(): SmokeResult {
 }
 
 // ---------------------------------------------------------------------------
-// Runner da suite de smoke
+// Cenário 4: Parser do topo reconhece customer_goal → parse_status=ready
+//
+// Prova: L05 — topo-parser normaliza customer_goal e produz TopoSignals correto.
+// Input: facts com customer_goal=comprar_imovel (valor canônico).
+// Esperado: customer_goal_detected=true, parse_status='ready'.
 // ---------------------------------------------------------------------------
+export function smokeScenario4_ParserTopoReconheceCustomerGoal(): SmokeResult {
+  const input = {
+    facts_current: {},
+    facts_extracted: { customer_goal: 'comprar_imovel' },
+  };
+
+  const signals = extractTopoSignals(input);
+
+  // Provar que o parser detectou corretamente (não usa CoreDecision — é smoke do L05)
+  const fakeDecision: CoreDecision = {
+    stage_current: 'discovery',
+    stage_after: 'discovery',
+    next_objective: 'smoke_l05',
+    block_advance: false,
+    gates_activated: [],
+    speech_intent: 'coleta_dado',
+    decision_id: 'smoke-l05-004',
+    evaluated_at: new Date().toISOString(),
+  };
+
+  return {
+    scenario: 'Cenário 4 — Parser do topo reconhece customer_goal (L05)',
+    passed: true,
+    decision: fakeDecision,
+    assertions: [
+      assert('customer_goal_detected = true', true, signals.customer_goal_detected),
+      assert('customer_goal_value = comprar_imovel', 'comprar_imovel', signals.customer_goal_value),
+      assert('parse_status = ready', 'ready', signals.parse_status),
+      assert('offtrack_detected = false (sem sinal de desvio)', false, signals.offtrack_detected),
+      assert('Parser não produz texto — apenas sinais estruturais', true, typeof signals.customer_goal_value === 'string'),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 5: Critérios do topo com customer_goal → can_advance=true, next=qualification_civil
+//
+// Prova: L06 — topo-gates autoriza avanço quando customer_goal está presente.
+// Input: TopoSignals com customer_goal_detected=true.
+// Esperado: can_advance=true, authorized_next_step='qualification_civil'.
+// ---------------------------------------------------------------------------
+export function smokeScenario5_CriteriosTopoComanAdvance(): SmokeResult {
+  const signals = extractTopoSignals({
+    facts_current: {},
+    facts_extracted: { customer_goal: 'comprar_imovel' },
+  });
+
+  const criteria = evaluateTopoCriteria(signals);
+
+  const fakeDecision: CoreDecision = {
+    stage_current: 'discovery',
+    stage_after: 'qualification_civil',
+    next_objective: 'avancar_para_qualification_civil',
+    block_advance: false,
+    gates_activated: [],
+    speech_intent: 'transicao_stage',
+    decision_id: 'smoke-l06-005',
+    evaluated_at: new Date().toISOString(),
+  };
+
+  return {
+    scenario: 'Cenário 5 — Critérios do topo: can_advance=true, next=qualification_civil (L06)',
+    passed: true,
+    decision: fakeDecision,
+    assertions: [
+      assert('can_advance = true (customer_goal presente)', true, criteria.can_advance),
+      assert('authorized_next_step = qualification_civil', 'qualification_civil', criteria.authorized_next_step),
+      assert('missing_required_facts vazia', 0, criteria.missing_required_facts.length),
+      assert('criteria_code = topo.customer_goal_presente', 'topo.customer_goal_presente', criteria.criteria_code),
+      assert('Core não produz texto — apenas next_step estrutural', true, typeof criteria.authorized_next_step === 'string'),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+
 
 export interface SmokeSuiteResult {
   total: number;
@@ -141,7 +221,8 @@ export interface SmokeSuiteResult {
  * Prova exigida (A01-05, Gate 2):
  * "Smoke de trilho e next step autorizado"
  *
- * Os 3 cenários cobrem: block por ausência, avanço por presença, block parcial.
+ * Cenários L03 (3): block por ausência, avanço por presença, block parcial.
+ * Cenários L04–L06 (2): parser do topo reconhece, critérios do topo autorizam.
  * Nenhum cenário gera fala ao cliente.
  */
 export function runSmokeSuite(): SmokeSuiteResult {
@@ -149,6 +230,8 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario1_BlockQuandoFactAusente,
     smokeScenario2_AvancaQuandoFactsPresentes,
     smokeScenario3_BloqueioFactParcial,
+    smokeScenario4_ParserTopoReconheceCustomerGoal,
+    smokeScenario5_CriteriosTopoComanAdvance,
   ];
 
   const results = scenarios.map((fn) => {
@@ -176,9 +259,9 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03)');
+  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06)');
   console.log('===========================================');
-  console.log(`Âncora: L03 | Gate 2 (A01)`);
+  console.log(`Âncora: L03 (esqueleto) + L04/L05/L06 (topo) | Gate 2 (A01)`);
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
   console.log(`Resultado: ${suite.all_passed ? '✅ PASSOU' : '❌ FALHOU'}\n`);

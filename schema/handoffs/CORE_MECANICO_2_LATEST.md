@@ -3,21 +3,146 @@
 | Campo                                      | Valor                                                                             |
 |--------------------------------------------|-----------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                   |
-| Data                                       | 2026-04-20T20:30:00Z                                                              |
-| Estado da frente                           | em execução — esqueleto L03 entregue (Caminho A); smoke 3/3 passando             |
-| Classificação da tarefa                    | contratual — recorte L03 simplificado: esqueleto mínimo de stages/gates (Caminho A) |
-| Última PR relevante                        | PR de execução L03 — Caminho A: esqueleto mínimo do Core Mecânico 2              |
+| Data                                       | 2026-04-20T21:02:00Z                                                              |
+| Estado da frente                           | em execução — topo do funil L04+L05+L06 entregue; smoke 5/5 passando             |
+| Classificação da tarefa                    | contratual — recorte L04+L05+L06: topo do funil (regras, parser, critérios/gates) |
+| Última PR relevante                        | PR de execução L04+L05+L06 — topo do funil do Core Mecânico 2                   |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`                            |
-| Recorte executado do contrato              | L03 — esqueleto estrutural: stages, slots de gate, engine mínimo, smoke 3 cenários |
-| Pendência contratual remanescente          | L04–L17 em aberto; regras e micro regras de negócio pendentes                    |
+| Recorte executado do contrato              | L04+L05+L06 — regras do topo, parser/extrator, critérios/gates; smoke 5 cenários |
+| Pendência contratual remanescente          | L07–L17 em aberto; Meio A, Meio B, Especiais e Final pendentes                   |
 | Houve desvio de contrato?                  | não                                                                               |
 | Contrato encerrado nesta PR?               | não                                                                               |
-| Item do A01 atendido                       | Fase 2 — Prioridade 1; Gate 2 satisfeito no recorte L03                          |
-| Próximo passo autorizado                   | Segunda PR contratual: L04 + L05 + L06 — regras de negócio do topo do funil      |
-| Próximo passo foi alterado?                | sim — de "Primeira PR contratual de execução" para "Segunda PR: L04–L06"         |
-| Tarefa fora de contrato?                   | não — primeira PR de execução contratual                                          |
+| Item do A01 atendido                       | Fase 2 — Prioridade 1; Gate 2 satisfeito no recorte L04+L05+L06                  |
+| Próximo passo autorizado                   | Terceira PR contratual: L07 + L08 — Meio A: estado civil e composição familiar   |
+| Próximo passo foi alterado?                | sim — de "Segunda PR: L04–L06" para "Terceira PR: L07–L08 (Meio A parte 1)"      |
+| Tarefa fora de contrato?                   | não — segunda PR de execução contratual                                           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                           |
 | Permissões Cloudflare necessárias          | nenhuma adicional                                                                 |
+
+---
+
+## 1. Contexto curto
+
+O Core Mecânico 2 chega a esta PR com o esqueleto estrutural L03 entregue (stages, gates, engine mínimo, smoke 3/3). Gate 2 do A01 satisfeito no recorte L03.
+
+Esta PR executa o **segundo recorte contratual do Core Mecânico 2**: L04+L05+L06 — topo do funil. Entrega apenas o necessário para o topo funcionar estruturalmente, sem adiantar Meio A/B.
+
+**PDF-fonte consultado diretamente:**
+- PDF 6, pp. 3–4: taxonomia de facts F0 (customer_goal, channel_origin), F7 (current_intent), F9 (offtrack_type)
+- PDF 4, p. 8: E6.1 critérios e evidência mínima do topo
+- PDF 2, pp. 2–3: não-negociáveis de implantação (escopo do topo identificado)
+
+**O que foi entregue (L04+L05+L06 — topo do funil):**
+- `src/core/topo-rules.ts` — L04: política do topo (TOPO_REQUIRED_FACTS, CustomerGoal, CurrentIntent, OfftrackType, TOPO_BLOCKING_CONDITIONS, TOPO_ADVANCE_CRITERIA, TOPO_SIGNAL_POLICY, TOPO_NEXT_STEP)
+- `src/core/topo-parser.ts` — L05: extrator de sinais do topo (TopoTurnExtract, TopoSignals, extractTopoSignals)
+- `src/core/topo-gates.ts` — L06: avaliador de critérios do topo (TopoCriteriaResult, evaluateTopoCriteria, isTopoFactoCriticoAusente)
+- `src/core/types.ts` — re-exports dos tipos de topo (CustomerGoal, CurrentIntent, OfftrackType, TopoTurnExtract, TopoSignals, TopoCriteriaResult)
+- `src/core/smoke.ts` — 2 cenários adicionais (5 total, 5/5 passando)
+
+**O que não foi embutido (vai para L07+):**
+- Regras de Meio A: casado civil, processo conjunto, composição familiar, P3 (L07–L10)
+- Regras de Meio B: autônomo/IR, renda, CTPS, dependentes, RNM, elegibilidade (L11–L14)
+- Regras de Especiais: trilhos P3, multi-proponente (L15–L16)
+- Fase Final: transição, docs, handoff (L17)
+
+Gate 2 do A01 ("sem smoke da frente, não promove") satisfeito no recorte L04+L05+L06 (smoke 5/5).
+
+## 2. Classificação da tarefa
+
+**contratual**
+
+Segundo recorte de execução do contrato ativo do Core Mecânico 2. Recorte: L04+L05+L06 — topo do funil estrutural. Regras de Meio A/B ficam para L07+. Core desacoplado da fala.
+
+## 3. Última PR relevante
+
+**PR de execução L03** — Caminho A: esqueleto mínimo do Core Mecânico 2 (PR anterior).
+
+## 4. O que esta PR fechou (L04+L05+L06)
+
+- Criou `src/core/topo-rules.ts` — L04: política e regras estruturais do topo
+- Criou `src/core/topo-parser.ts` — L05: interface Core ↔ Extractor para o topo
+- Criou `src/core/topo-gates.ts` — L06: critérios e gates de validação do topo
+- Atualizou `src/core/types.ts` — re-exports de tipos de topo no contrato público do Core
+- Atualizou `src/core/smoke.ts` — cenários 4 e 5 do topo (5 total, 5/5 passando)
+- Atualizou `schema/status/CORE_MECANICO_2_STATUS.md` — status vivo atualizado
+- Atualizou `schema/handoffs/CORE_MECANICO_2_LATEST.md` — este handoff
+
+## 5. O que esta PR NÃO fechou
+
+- Meio A (estado civil, composição familiar) — **blocos L07–L10**, próxima PR autorizada
+- Meio B (regime, renda, IR, CTPS, RNM, elegibilidade) — blocos L11–L14
+- Especiais (P3, multi-proponente) — blocos L15–L16
+- Final (docs, handoff, visita) — bloco L17
+
+## 6. Diagnóstico confirmado
+
+- PDF-fonte consultado diretamente (pdfplumber): PDF 6, PDF 4, PDF 2.
+- Blocos L04, L05, L06 identificados estruturalmente no INDEX_LEGADO_MESTRE.md.
+- Conteúdo das regras do topo extraído diretamente do PDF (taxonomia F0/F7/F9, E6.1).
+- L03 entregue como esqueleto — topo agora tem regras, parser e critérios mínimos.
+
+## 7. O que foi feito (esta PR — L04+L05+L06)
+
+**L04 — Regras e política do topo (`topo-rules.ts`)**
+- `TOPO_REQUIRED_FACTS: ['customer_goal']` — F0, PDF 6 p.3
+- `TOPO_OPTIONAL_FACTS: ['channel_origin', 'current_intent']` — F0/F7
+- `CustomerGoal` (comprar_imovel | entender_programa | enviar_docs | visitar_imovel | outro)
+- `CurrentIntent` (entender_programa | seguir_analise | enviar_docs | visita)
+- `OfftrackType` (curiosidade | objecao | desabafo | pergunta_lateral) — F9
+- `TOPO_BLOCKING_CONDITIONS.CUSTOMER_GOAL_AUSENTE` — gate de bloqueio
+- `TOPO_ADVANCE_CRITERIA.CUSTOMER_GOAL_PRESENTE` — critério de avanço
+- `TOPO_SIGNAL_POLICY` — OFFTRACK_DETECTED / ON_TRACK
+- `TOPO_NEXT_STEP` — ADVANCE_TO_QUALIFICATION / REMAIN_IN_DISCOVERY
+
+**L05 — Parser/extrator do topo (`topo-parser.ts`)**
+- `TopoTurnExtract` — input: facts_current + facts_extracted
+- `TopoSignals` — output: customer_goal_detected, customer_goal_value, current_intent_detected, current_intent_value, offtrack_detected, offtrack_type_value, parse_status, keys_checked
+- `extractTopoSignals()` — normaliza e valida os sinais do topo
+- `parse_status`: 'ready' | 'partial' | 'empty'
+
+**L06 — Critérios/gates do topo (`topo-gates.ts`)**
+- `TopoCriteriaResult` — can_advance, authorized_next_step, criteria_code, structural_reason, track_signal, missing_required_facts
+- `evaluateTopoCriteria()` — avalia se o topo pode avançar para qualification_civil
+- `isTopoFactoCriticoAusente()` — verifica ausência do fact crítico do topo
+
+## 8. Âncoras contratuais desta PR
+
+| Cláusula | Bloco | Executado |
+|----------|-------|-----------|
+| L-02 (CLAUSE_MAP) | L04 — Topo do Funil — Contrato | ✅ sim |
+| L-03 (CLAUSE_MAP) | L05 — Topo do Funil — Parser | ✅ sim |
+| L-04 (CLAUSE_MAP) | L06 — Topo do Funil — Critérios | ✅ sim |
+| A00-02, A00-03 | Soberania conversacional — Core não emite fala | ✅ mantido |
+| A01-03 | Gate 2 — smoke obrigatório antes de avançar | ✅ smoke 5/5 |
+
+## 9. Estado entregue
+
+```
+--- VÍNCULO CONTRATUAL (CORE) ---
+Contrato ativo lido:                    schema/contracts/active/CONTRATO_CORE_MECANICO_2.md
+CLAUSE_MAP consultado:                  schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md
+EXECUTION_RULES lido:                   schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md
+Entrada(s) do CLAUSE_MAP executada(s):  L-02 (L04), L-03 (L05), L-04 (L06)
+Bloco(s) legado(s) consultado(s):       L04, L05, L06
+PDF-fonte consultado:                   sim — PDF 6 pp.3-4, PDF 4 p.8 (E6.1), PDF 2 pp.2-3
+
+PDF mestre consultado: sim
+  Seção/bloco consultado: L04, L05, L06
+  Motivo: blocos não transcritos no markdown — consulta direta ao PDF obrigatória
+
+Mudanças em dados persistidos (Supabase): nenhuma
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+
+## 10. Próximo passo autorizado
+
+**Terceira PR contratual**: L07 + L08 — Meio A: estado civil e composição familiar (parte 1).
+
+- Classificação: `contratual`
+- Blocos: L07, L08
+- Consulta obrigatória ao PDF-fonte para cada bloco (ainda não transcritos)
+- Pré-requisito: topo do funil funcional (esta PR) — **SATISFEITO**
+
 
 ---
 
