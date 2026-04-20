@@ -11,6 +11,11 @@
 >
 > **Regra de fidelidade:** resumos mínimos devem ser estritamente fiéis ao texto-fonte.
 > Quando houver dúvida, copiar literalmente o trecho curto da fonte e referenciar página/bloco.
+>
+> **PDF consultado:** o PDF-fonte (`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`) foi lido
+> diretamente para construção e revisão deste mapa. As âncoras de "PDF-fonte" nas tabelas A00-*
+> e A01-* refletem a consulta real ao PDF. As entradas L-* identificam blocos estruturalmente; o
+> conteúdo das regras de negócio desses blocos deve ser extraído diretamente do PDF em cada PR.
 
 ---
 
@@ -31,32 +36,39 @@
 
 ## Cláusulas do A00 aplicáveis ao Core Mecânico 2
 
-| # | Fonte | Seção/Bloco | Texto vinculante (literal ou resumo fiel) | Efeito operacional no Core | Tipo | PR/tarefa futura |
-|---|-------|-------------|-------------------------------------------|---------------------------|------|-----------------|
-| A00-01 | A00 | Seção 4.1 | "O negócio manda. As regras do MCMV, do funil e das microregras legadas são a fonte de verdade de negócio." | O Core implementa regras dos blocos L03–L17, não inventa regras novas. | policy/governança | Todas as PRs de modelagem de stages/gates |
-| A00-02 | A00 | Seção 4.2 | "O mecânico segue soberano em parse, gates, next-step autorizado, critérios de elegibilidade e persistência estrutural. O LLM não decide regra de negócio." | O Core decide regras; o LLM não altera decisão de negócio. | soberania conversacional | PR de definição da interface Core ↔ Speech |
-| A00-03 | A00 | Seção 4.3 | "Uma única surface final por turno. Nenhuma outra camada pode competir pela fala final depois que a resposta for montada." | O Core NÃO emite surface; apenas emite decisão estruturada. | soberania conversacional | PR de desacoplamento Core/Speech |
-| A00-04 | A00 | Seção 4.4 | "O LLM pode ser natural, rico e consultivo, mas nunca livre para pular estágio, inventar coleta ou contradizer a política." | O LLM opera sob contrato do stage atual definido pelo Core. | soberania conversacional | PR de definição de contrato por stage |
-| A00-05 | A00 | Seção 4.5 | "O cliente nunca pode ficar sem continuidade operacional quando existe next step de coleta. Ao mesmo tempo, nenhuma ponte pode coletar o slot do próximo stage por vazamento acidental." | O Core deve garantir next step contínuo sem vazamento de coleta antecipada. | policy/governança | PR de modelo de transição entre stages |
-| A00-06 | A00 | Seção 8.5 | "Policy / Mechanical Core: aplica as regras do MCMV, do funil e da composição familiar; decide o que foi aceito, o que precisa confirmar e qual próximo objetivo operacional autorizado." | Define a função do Core: aplicar regras e decidir next step. | estado estruturado | PR de implementação do modelo de decisão |
-| A00-07 | A00 | Seção 3 | "A ENOVA 2 deve operar com quatro soberanias claramente separadas: (1) Policy/Core decide regra e stage; (2) Extractor transforma fala livre em sinais estruturados; (3) Speech Engine monta a resposta final; (4) Persistence Adapter grava estado [...]" | Core é soberania 1 de 4, separada das demais. | soberania conversacional | PR de arquitetura macro do Core |
-| A00-08 | A00 | Seção 13 | "A ENOVA 2 não será implantada por temas soltos; será implantada por fatias operacionais completas. Cada fatia precisa nascer com: entrada -> extração -> decisão -> fala -> persistência -> telemetria." | Cada entrega do Core deve ser uma fatia operacional completa. | ordem de execução | Todas as PRs de execução |
+> As entradas A00-* referenciam o A00 como documento operacional da ENOVA 2.
+> Para cada cláusula crítica, a âncora direta ao PDF-fonte está indicada na coluna "Âncora PDF-fonte".
+
+| # | Fonte | Seção/Bloco | Texto vinculante (literal) | Âncora PDF-fonte (literal) | Efeito operacional no Core | Tipo | PR/tarefa futura |
+|---|-------|-------------|---------------------------|---------------------------|---------------------------|------|-----------------|
+| A00-01 | A00 | Seção 4.1 | "O negócio manda. As regras do MCMV, do funil e das microregras legadas são a fonte de verdade de negócio." | PDF 1, p. 1 — Tese central: "a governança fica presa em políticas explícitas, memória estruturada, validações mínimas e telemetria forte." | O Core implementa regras dos blocos L03–L17, não inventa regras novas. | policy/governança | Todas as PRs de modelagem de stages/gates |
+| A00-02 | A00 | Seção 4.2 | "O mecânico segue soberano em parse, gates, next-step autorizado, critérios de elegibilidade e persistência estrutural. O LLM não decide regra de negócio." | PDF 1, p. 3 — Sec. 3, Camada 4: "Aplica regras obrigatórias, bloqueios, confirmações, sugestões mandatórias e roteamentos, sem determinar a linguagem da conversa." | O Core decide regras; o LLM não altera decisão de negócio. | soberania conversacional | PR de definição da interface Core ↔ Speech |
+| A00-03 | A00 | Seção 4.3 | "Uma única surface final por turno. Nenhuma outra camada pode competir pela fala final depois que a resposta for montada." | PDF 1, p. 3 — Sec. 3: "O LLM conversa livremente; a decisão, o avanço e a conformidade são controlados por estruturas externas e explícitas." | O Core NÃO emite surface; apenas emite decisão estruturada. | soberania conversacional | PR de desacoplamento Core/Speech |
+| A00-04 | A00 | Seção 4.4 | "O LLM pode ser natural, rico e consultivo, mas nunca livre para pular estágio, inventar coleta ou contradizer a política." | PDF 2, p. 1 — Princípio jurídico-operacional: "o LLM terá liberdade conversacional, mas jamais liberdade decisória irrestrita." | O LLM opera sob contrato do stage atual definido pelo Core. | soberania conversacional | PR de definição de contrato por stage |
+| A00-05 | A00 | Seção 4.5 | "O cliente nunca pode ficar sem continuidade operacional quando existe next step de coleta. Ao mesmo tempo, nenhuma ponte pode coletar o slot do próximo stage por vazamento acidental." | PDF 1, p. 3 — Sec. 4: "Nenhuma regra crítica pode depender apenas do texto do prompt." | O Core deve garantir next step contínuo sem vazamento de coleta antecipada. | policy/governança | PR de modelo de transição entre stages |
+| A00-06 | A00 | Seção 8.5 | "Policy / Mechanical Core: aplica as regras do MCMV, do funil e da composição familiar; decide o que foi aceito, o que precisa confirmar e qual próximo objetivo operacional autorizado." | PDF 1, p. 3 — Sec. 3, Camada 4 (Policy Engine): definição literal acima. Confirmada como âncora direta. | Define a função do Core: aplicar regras e decidir next step. | estado estruturado | PR de implementação do modelo de decisão |
+| A00-07 | A00 | Seção 3 | "A ENOVA 2 deve operar com quatro soberanias claramente separadas: (1) Policy/Core decide regra e stage; (2) Extractor; (3) Speech Engine; (4) Persistence Adapter." | PDF 1, p. 1 — Tese central + Sec. 3 (seis camadas separadas). PDF 2, p. 1 — Objeto do contrato: "LLM conduz a interação, enquanto estado estruturado, políticas explícitas, validações mínimas e telemetria canônica preservam previsibilidade." | Core é soberania 1 de 4, separada das demais. | soberania conversacional | PR de arquitetura macro do Core |
+| A00-08 | A00 | Seção 13 | "A ENOVA 2 não será implantada por temas soltos; será implantada por fatias operacionais completas. Cada fatia precisa nascer com: entrada -> extração -> decisão -> fala -> persistência -> telemetria." | PDF 3, p. 1 — Estratégia operacional: "Fatia por fatia, com isolamento por frente e validação antes de abrir a frente seguinte." | Cada entrega do Core deve ser uma fatia operacional completa. | ordem de execução | Todas as PRs de execução |
 
 ---
 
 ## Cláusulas do A01 aplicáveis ao Core Mecânico 2
 
-| # | Fonte | Seção/Bloco | Texto vinculante (literal ou resumo fiel) | Efeito operacional no Core | Tipo | PR/tarefa futura |
-|---|-------|-------------|-------------------------------------------|---------------------------|------|-----------------|
-| A01-01 | A01 | Seção 5, P1 | "Prioridade 1 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala." | Objetivo central do contrato do Core. | policy/governança | Todas as PRs |
-| A01-02 | A01 | Seção 6, Gate 1 | "Gate 1 — sem contrato da frente, não começa implementação." | Contrato deve existir antes de implementação (satisfeito por esta PR). | gate | PR de abertura de contrato (esta) |
-| A01-03 | A01 | Seção 6, Gate 2 | "Gate 2 — sem smoke da frente, não promove para a frente seguinte." | Core precisa de smoke antes de habilitar Speech Engine. | gate | PR de smoke test do Core |
-| A01-04 | A01 | Seção 6, Gate 3 | "Gate 3 — sem previsibilidade operacional em texto puro, áudio e canal ficam bloqueados." | Core + texto puro devem funcionar antes de áudio/canal. | gate | PR de validação de previsibilidade |
-| A01-05 | A01 | Seção 7, Core | Entregável: "Contrato + modelo de objetivos/stages + decisão previsível". Prova: "Smoke de trilho e next step autorizado". Estado: "Apto a plugar fala". | Os três critérios mínimos de entrega do Core. | prova | PR de modelo + smoke test |
-| A01-06 | A01 | Seção 9 | "Uma frente por vez. Não misturar Core, Speech, Supabase, Áudio e Canal na mesma PR sem necessidade comprovada." | Cada PR do Core faz só Core. | policy/governança | Todas as PRs |
-| A01-07 | A01 | Seção 9 | "Uma fatia operacional por vez." | Cada PR entrega uma fatia verificável e completa. | ordem de execução | Todas as PRs |
-| A01-08 | A01 | Seção 9 | "Diagnóstico antes de patch. Toda PR começa com leitura e prova do problema; sem isso, para." | Nenhuma PR de execução sem leitura prévia. | policy/governança | Todas as PRs |
-| A01-09 | A01 | Seção 4, Fase 2 | "Subir Core + Speech + Supabase mínimo para texto puro no topo e composição simples." | Primeira fatia funcional: topo do funil + composição simples (texto puro). | ordem de execução | PR de primeira fatia |
+> As entradas A01-* referenciam o A01 como documento operacional da ENOVA 2.
+> Para âncora direta ao PDF-fonte, os gates e a sequência de frentes derivam do PDF 2 (Gates G0–G7)
+> e do PDF 3 (cronograma tático mestre T0–T7).
+
+| # | Fonte | Seção/Bloco | Texto vinculante (literal ou resumo fiel) | Âncora PDF-fonte | Efeito operacional no Core | Tipo | PR/tarefa futura |
+|---|-------|-------------|-------------------------------------------|-----------------|---------------------------|------|-----------------|
+| A01-01 | A01 | Seção 5, P1 | "Prioridade 1 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala." | PDF 1, p. 5 — Fase 1: "Contrato cognitivo canônico" + PDF 3, T1 | Objetivo central do contrato do Core. | policy/governança | Todas as PRs |
+| A01-02 | A01 | Seção 6, Gate 1 | "Gate 1 — sem contrato da frente, não começa implementação." | PDF 2, p. 4 — Gate G1: "Prompt canônico + políticas + taxonomia aprovados". Rollback: "Reescrever contrato." | Contrato deve existir antes de implementação (satisfeito por esta PR). | gate | PR de abertura de contrato (esta) |
+| A01-03 | A01 | Seção 6, Gate 2 | "Gate 2 — sem smoke da frente, não promove para a frente seguinte." | PDF 2, p. 4 — Gate G4: "Turnos completos auditáveis e estáveis." | Core precisa de smoke antes de habilitar Speech Engine. | gate | PR de smoke test do Core |
+| A01-04 | A01 | Seção 6, Gate 3 | "Gate 3 — sem previsibilidade operacional em texto puro, áudio e canal ficam bloqueados." | PDF 2, p. 5 — Critério operacional: "a equipe consegue entender por que o agente respondeu, perguntou, bloqueou ou sugeriu algo." | Core + texto puro devem funcionar antes de áudio/canal. | gate | PR de validação de previsibilidade |
+| A01-05 | A01 | Seção 7, Core | Entregável: "Contrato + modelo de objetivos/stages + decisão previsível". Prova: "Smoke de trilho e next step autorizado". Estado: "Apto a plugar fala". | PDF 2, p. 5 — Critérios de aceite executivos (funcional, política, telemetria, regressão, rollback, operacional). | Os três critérios mínimos de entrega do Core. | prova | PR de modelo + smoke test |
+| A01-06 | A01 | Seção 9 | "Uma frente por vez. Não misturar Core, Speech, Supabase, Áudio e Canal na mesma PR sem necessidade comprovada." | PDF 3, p. 1 — Princípios de execução: "Separar sempre arquitetura, estado, políticas, orquestração, canais e migração de fluxo. Misturar tudo na mesma frente aumenta drift e mata governança." | Cada PR do Core faz só Core. | policy/governança | Todas as PRs |
+| A01-07 | A01 | Seção 9 | "Uma fatia operacional por vez." | PDF 3, p. 1 — Estratégia de risco: "Fatia por fatia, com isolamento por frente e validação antes de abrir a frente seguinte." | Cada PR entrega uma fatia verificável e completa. | ordem de execução | Todas as PRs |
+| A01-08 | A01 | Seção 9 | "Diagnóstico antes de patch. Toda PR começa com leitura e prova do problema; sem isso, para." | PDF 2, p. 7 — Contenção: "A ordem obrigatória permanece: observação, diagnóstico, confirmação, correção cirúrgica, revalidação." | Nenhuma PR de execução sem leitura prévia. | policy/governança | Todas as PRs |
+| A01-09 | A01 | Seção 4, Fase 2 | "Subir Core + Speech + Supabase mínimo para texto puro no topo e composição simples." | PDF 3, T5 — Migração do funil core: "Migrar topo + qualificação + renda + elegibilidade." Gate dependência: T4. | Primeira fatia funcional: topo do funil + composição simples (texto puro). | ordem de execução | PR de primeira fatia |
 
 ---
 

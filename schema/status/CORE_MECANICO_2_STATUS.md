@@ -164,12 +164,14 @@ Permissões Cloudflare necessárias: nenhuma adicional
 ## 17. Fontes consultadas — última tarefa
 
 ```
-Fontes de verdade consultadas — última tarefa (PR desta abertura):
+Fontes de verdade consultadas — última tarefa (PR desta correção — revisão com PDF lido):
   Índice de contratos lido:    schema/contracts/_INDEX.md
-  Contrato ativo lido:         Nenhum na entrada — criado nesta PR: schema/contracts/active/CONTRATO_CORE_MECANICO_2.md
-  Status da frente lido:       schema/status/CORE_MECANICO_2_STATUS.md
+  Contrato ativo lido:         schema/contracts/active/CONTRATO_CORE_MECANICO_2.md (criado na PR anterior; revisado nesta)
+  Status da frente lido:       schema/status/CORE_MECANICO_2_STATUS.md (este arquivo)
   Handoff da frente lido:      schema/handoffs/CORE_MECANICO_2_LATEST.md
   Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
   Legado markdown consultado:  N/A — tarefa de governança; blocos legados referenciados estruturalmente
-  PDF mestre consultado:       não consultado diretamente — tarefa de abertura contratual (governança); execução futura deve consultar
+  PDF mestre consultado:       sim — lido diretamente
+    PDF 1 — Plano Canônico Macro:   pp. 1–10 (tese central, sec. 1–8, macrocronograma)
+    PDF 2 — Contrato de Implantação: pp. 1–8 (princípio jurídico, objeto, cláusulas 1–6, não-negociáveis, gates G0–G7, critérios, rollback, encerramento)
 ```

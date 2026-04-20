@@ -3,19 +3,19 @@
 | Campo                                      | Valor                                                                             |
 |--------------------------------------------|-----------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                   |
-| Data                                       | 2026-04-20T17:47:00Z                                                              |
-| Estado da frente                           | contrato aberto (contrato ativo vinculante criado, sem execução funcional)        |
-| Classificação da tarefa                    | governança (abertura de contrato ativo vinculante do Core Mecânico 2)             |
-| Última PR relevante                        | PR desta abertura — Governança: contrato ativo vinculante do Core Mecânico 2      |
+| Data                                       | 2026-04-20T18:05:00Z                                                              |
+| Estado da frente                           | contrato aberto (contrato ativo vinculante criado e revisado com PDF lido)        |
+| Classificação da tarefa                    | governança (correção: PDF consultado diretamente + âncoras reais ao PDF)          |
+| Última PR relevante                        | PR desta abertura/correção — contrato ativo + revisão com PDF lido                |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`                            |
-| Recorte executado do contrato              | N/A — contrato recém-aberto, nenhuma execução contratual ainda                    |
+| Recorte executado do contrato              | N/A — contrato recém-aberto e corrigido, nenhuma execução contratual ainda        |
 | Pendência contratual remanescente          | Contrato inteiro em aberto — nenhum recorte executado                             |
 | Houve desvio de contrato?                  | não                                                                               |
 | Contrato encerrado nesta PR?               | não                                                                               |
-| Item do A01 atendido                       | Fase 0 → Fase 2 — Gate 1 satisfeito, contrato do Core aberto                     |
+| Item do A01 atendido                       | Fase 0 → Fase 2 — Gate 1 satisfeito, contrato do Core aberto e ancorado ao PDF   |
 | Próximo passo autorizado                   | Primeira PR contratual de execução do Core Mecânico 2                             |
-| Próximo passo foi alterado?                | sim — de "Abrir contrato" para "Primeira PR contratual de execução"               |
-| Tarefa fora de contrato?                   | não — tarefa de governança                                                        |
+| Próximo passo foi alterado?                | não — preservado da PR de abertura                                                |
+| Tarefa fora de contrato?                   | não — tarefa de governança (correção)                                             |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                           |
 | Permissões Cloudflare necessárias          | nenhuma adicional                                                                 |
 | Fontes de verdade consultadas              | ver seção 20 abaixo                                                               |
@@ -68,6 +68,7 @@ Abertura de contrato ativo vinculante do Core Mecânico 2. Nenhuma implementaç�
 
 ## 7. O que foi feito (esta PR)
 
+### PR de abertura original (commit 8d421c0):
 - Criado `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` — contrato ativo vinculante com:
   - Todas as 16 seções obrigatórias do CONTRACT_SCHEMA
   - Declaração de subordinação e não-substituição do PDF-fonte
@@ -92,6 +93,18 @@ Abertura de contrato ativo vinculante do Core Mecânico 2. Nenhuma implementaç�
 - Atualizado `schema/contracts/_INDEX.md` — contrato ativo registrado, status "aberto".
 - Atualizado `schema/status/CORE_MECANICO_2_STATUS.md` — reflete contrato aberto, Gate 1 satisfeito, próximo passo alterado.
 - Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` — este arquivo.
+
+### Correção nesta PR (PDF consultado diretamente):
+- **PDF-fonte (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`) lido diretamente** — PDF 1 pp. 1–10 e PDF 2 pp. 1–8.
+- Adicionada seção **"PDF CONSULTADO NESTA ABERTURA"** ao contrato ativo — tabela completa de páginas/seções/uso.
+- **Cláusula central de soberania revisada** — cada sub-cláusula agora tem âncora direta ao PDF (com número de página), não apenas ao A00/A01.
+  - LLM soberano: âncoras ao PDF 1 p.1 (tese central) + PDF 2 p.1 (princípio jurídico + Cláusula 2).
+  - Mecânico sem linguagem: âncora direta ao PDF 1 p.3 (Camada 4 Policy Engine) + "Conversa livre; governança presa".
+  - Governança presa: âncoras ao PDF 2 p.1 (objeto) + PDF 2 p.8 (encerramento) + PDF 1 Sec.5.
+- **CLAUSE_MAP revisado** — entradas A00-* e A01-* ganham coluna "Âncora PDF-fonte" com referência real por página/seção.
+- **Header do CLAUSE_MAP** atualizado — declara explicitamente que PDF foi lido diretamente.
+- **Status** — seção 17 corrigida: "PDF mestre consultado: sim" com páginas e seções explícitas.
+- **Handoff** — seção 20 corrigida: consulta real ao PDF documentada com detalhe por página.
 
 ## 8. O que não foi feito
 
@@ -210,14 +223,29 @@ Esta PR é de governança documental e não exige nova permissão operacional.
 ## 20. Fontes consultadas como fonte de verdade
 
 ```
-Fontes de verdade consultadas (PR desta abertura):
+Fontes de verdade consultadas (PR desta correção — PDF lido diretamente):
   Índice de contratos lido:    schema/contracts/_INDEX.md
-  Contrato ativo lido:         Nenhum na entrada — criado nesta PR: schema/contracts/active/CONTRATO_CORE_MECANICO_2.md
+  Contrato ativo lido:         schema/contracts/active/CONTRATO_CORE_MECANICO_2.md (revisado nesta PR)
   Status da frente lido:       schema/status/CORE_MECANICO_2_STATUS.md
-  Handoff da frente lido:      schema/handoffs/CORE_MECANICO_2_LATEST.md (PR #13)
+  Handoff da frente lido:      schema/handoffs/CORE_MECANICO_2_LATEST.md (este arquivo)
   Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
   Legado markdown consultado:  N/A — tarefa de governança; blocos legados referenciados estruturalmente
-  PDF mestre consultado:       não consultado diretamente — tarefa de abertura contratual (governança)
+  PDF mestre consultado:       sim — lido diretamente nesta correção
+    PDF 1 — Plano Canônico Macro:    pp. 1–10
+      - p. 1: Tese central (âncora da soberania conversacional)
+      - p. 1–2: Sec. 1 — Decisão estratégica (LLM como motor principal)
+      - p. 3: Sec. 3 — Arquitetura-alvo / Camadas 1–6 (Policy Engine sem linguagem)
+      - p. 3: Sec. 4 — Princípios canônicos ("Conversa livre; governança presa")
+      - p. 3–4: Sec. 5 — Modelo de estado (facts, pendências, conflitos, objetivo atual)
+      - p. 4: Sec. 6 — Classes de policy (obrigatória, bloqueio, roteamento, sugestão mandatória, confirmação, compliance de fala)
+    PDF 2 — Contrato de Implantação: pp. 1–8
+      - p. 1: Princípio jurídico-operacional (liberdade conversacional, não decisória)
+      - p. 1: Objeto do contrato (LLM conduz; estado + políticas preservam previsibilidade)
+      - p. 1–2: Cláusulas-mestras 1–6 (preservação de negócio, liberdade com governança, estado, política explícita, cutover por provas, rollback)
+      - p. 2: Não negociáveis (casado civil, autônomo/IR, renda solo, estrangeiro sem RNM)
+      - p. 4–5: Gates G0–G7
+      - p. 5: Critérios de aceite executivos
+      - p. 8: Encerramento executivo ("liberdade conversacional com governança dura")
 ```
 
 ---
