@@ -1,13 +1,13 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L10)
+ * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L14)
  *
  * Âncora contratual:
- *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-08 (L07/L10)
- *   Bloco legado:    L03, L04, L05, L06, L07, L08, L09, L10
+ *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-12 (L07/L14)
+ *   Bloco legado:    L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14
  *   Gate-fonte:      Gate 2 (A01: "sem smoke da frente, não promove")
  *
  * ESCOPO: provar que o esqueleto estrutural (L03), o topo do funil (L04–L06)
- * e o Meio A expandido (L07/L10) existem e não produzem fala.
+ * e os Meios A/B iniciais (L07/L14) existem e não produzem fala.
  *
  * INVIOLÁVEL: nenhum cenário gera texto ao cliente.
  */
@@ -213,6 +213,107 @@ export function smokeScenario6_MeioAIntegrado_P3MudaRoteamento(): SmokeResult {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Cenário 7: Meio B com fact crítico ausente → bloqueia
+// ---------------------------------------------------------------------------
+export function smokeScenario7_MeioB_BloqueioFactCriticoAusente(): SmokeResult {
+  const state = makeState('qualification_renda', {
+    renda_principal: 3200,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 7 — Meio B: fact crítico ausente bloqueia',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_renda', 'qualification_renda', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em qualification_renda', 'qualification_renda', decision.stage_after),
+      assert('next_objective = coletar_regime_trabalho', 'coletar_regime_trabalho', decision.next_objective),
+      assert('gates_activated inclui G_FATO_CRITICO_AUSENTE', true, decision.gates_activated.includes('G_FATO_CRITICO_AUSENTE')),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 8: Meio B com trilho válido → avança para elegibilidade
+// ---------------------------------------------------------------------------
+export function smokeScenario8_MeioB_TrilhoValidoAvanca(): SmokeResult {
+  const state = makeState('qualification_renda', {
+    processo: 'conjunto',
+    regime_trabalho: 'clt',
+    renda_principal: 4200,
+    ctps_36: false,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 8 — Meio B: trilho válido avança para elegibilidade',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_renda', 'qualification_renda', decision.stage_current),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after = qualification_eligibility', 'qualification_eligibility', decision.stage_after),
+      assert('next_objective = avancar_para_qualification_eligibility', 'avancar_para_qualification_eligibility', decision.next_objective),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 9: Meio B com autônomo sem IR confirmado → bloqueia em coleta obrigatória
+// ---------------------------------------------------------------------------
+export function smokeScenario9_MeioB_AutonomoSemIRExigeConfirmacao(): SmokeResult {
+  const state = makeState('qualification_renda', {
+    processo: 'conjunto',
+    regime_trabalho: 'autonomo',
+    renda_principal: 3800,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 9 — Meio B: autônomo exige coleta de IR',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_renda', 'qualification_renda', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em qualification_renda', 'qualification_renda', decision.stage_after),
+      assert('next_objective = coletar_autonomo_tem_ir', 'coletar_autonomo_tem_ir', decision.next_objective),
+      assert('gates_activated inclui G_REGIME_RENDA', true, decision.gates_activated.includes('G_REGIME_RENDA')),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 10: Elegibilidade com estrangeiro sem RNM válido → altera next step estrutural
+// ---------------------------------------------------------------------------
+export function smokeScenario10_MeioB_ElegibilidadeAlteraNextStep(): SmokeResult {
+  const state = makeState('qualification_eligibility', {
+    nacionalidade: 'estrangeiro',
+    rnm_status: 'ausente',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 10 — Meio B: elegibilidade altera o next step estrutural',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_eligibility', 'qualification_eligibility', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em qualification_eligibility', 'qualification_eligibility', decision.stage_after),
+      assert('next_objective = validar_rnm', 'validar_rnm', decision.next_objective),
+      assert('gates_activated inclui G_ELEGIBILIDADE', true, decision.gates_activated.includes('G_ELEGIBILIDADE')),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
 
 export interface SmokeSuiteResult {
   total: number;
@@ -229,8 +330,8 @@ export interface SmokeSuiteResult {
  * Prova exigida (A01-05, Gate 2):
  * "Smoke de trilho e next step autorizado"
  *
- * Cenários L03/L04-L10 integrados (6): topo segue válido e o Meio A passa por
- * ausência crítica, composição válida, dependente aplicável e roteamento P3.
+ * Cenários L03/L04-L14 integrados (10): topo segue válido, o Meio A estável
+ * continua íntegro e o Meio B cobre ausência crítica, IR obrigatório, trilho válido e elegibilidade.
  * Todos os cenários passam pelo `runCoreEngine()`. Nenhum usa decisão fake.
  * Nenhum cenário gera fala ao cliente.
  */
@@ -242,6 +343,10 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario4_MeioAIntegrado_AvancoValido,
     smokeScenario5_MeioAIntegrado_DependentesAlteramNextStep,
     smokeScenario6_MeioAIntegrado_P3MudaRoteamento,
+    smokeScenario7_MeioB_BloqueioFactCriticoAusente,
+    smokeScenario8_MeioB_TrilhoValidoAvanca,
+    smokeScenario9_MeioB_AutonomoSemIRExigeConfirmacao,
+    smokeScenario10_MeioB_ElegibilidadeAlteraNextStep,
   ];
 
   const results = scenarios.map((fn) => {
@@ -269,9 +374,9 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L10)');
+  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L14)');
   console.log('===========================================');
-  console.log(`Âncora: L03 + L04/L05/L06 + L07/L10 | Gate 2 (A01)`);
+  console.log(`Âncora: L03 + L04/L05/L06 + L07/L14 | Gate 2 (A01)`);
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
   console.log(`Resultado: ${suite.all_passed ? '✅ PASSOU' : '❌ FALHOU'}\n`);

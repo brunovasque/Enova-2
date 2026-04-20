@@ -90,10 +90,10 @@
 | L-06 | PDF 1 | L08 | Continuação de regras de composição por estado civil | Complementa L07. | policy/governança | ✅ EXECUTADO — PR L07 + L08: `src/core/meio-a-rules.ts`, `src/core/meio-a-parser.ts`, `src/core/meio-a-gates.ts`, `src/core/engine.ts` |
 | L-07 | PDF 1 | L09 | Microregras de composição familiar — elegibilidade e dependentes | Define microregras de composição para Meio A. | policy/governança | ✅ EXECUTADO — PR L09 + L10: `src/core/meio-a-rules.ts`, `src/core/meio-a-parser.ts`, `src/core/meio-a-gates.ts`, `src/core/engine.ts`, `src/core/smoke.ts` |
 | L-08 | PDF 1 | L10 | Continuação de microregras de composição familiar | Complementa L09. | policy/governança | ✅ EXECUTADO — PR L09 + L10: `src/core/meio-a-rules.ts`, `src/core/meio-a-parser.ts`, `src/core/meio-a-gates.ts`, `src/core/engine.ts`, `src/core/smoke.ts` |
-| L-09 | PDF 1 | L11 | Regras de regime de bens, renda e IR — base para elegibilidade | Define regras de regime e renda para Meio B. | policy/governança | PR de regras de Meio B |
-| L-10 | PDF 1 | L12 | Continuação de regras de regime e renda | Complementa L11. | policy/governança | PR de regras de Meio B |
-| L-11 | PDF 1 | L13 | Regras de CTPS, dependentes e restrições de elegibilidade | Define restrições de Meio B. | bloqueio | PR de restrições de Meio B |
-| L-12 | PDF 1 | L14 | Gates de bloqueio e restrições de elegibilidade do Meio B | Define gates formais de Meio B. | gate | PR de gates de Meio B |
+| L-09 | PDF 1 | L11 | Regras de regime de bens, renda e IR — base para elegibilidade | Define regras de regime e renda para Meio B. | policy/governança | ✅ EXECUTADO — PR L11 + L12 + L13 + L14: `src/core/meio-b-rules.ts`, `src/core/meio-b-parser.ts`, `src/core/meio-b-gates.ts`, `src/core/engine.ts`, `src/core/smoke.ts` |
+| L-10 | PDF 1 | L12 | Continuação de regras de regime e renda | Complementa L11. | policy/governança | ✅ EXECUTADO — PR L11 + L12 + L13 + L14: `src/core/meio-b-rules.ts`, `src/core/meio-b-parser.ts`, `src/core/meio-b-gates.ts`, `src/core/engine.ts`, `src/core/smoke.ts` |
+| L-11 | PDF 1 | L13 | Regras de CTPS, dependentes e restrições de elegibilidade | Define restrições de Meio B. | bloqueio | ✅ EXECUTADO — PR L11 + L12 + L13 + L14: `src/core/meio-b-rules.ts`, `src/core/meio-b-parser.ts`, `src/core/meio-b-gates.ts`, `src/core/engine.ts`, `src/core/smoke.ts` |
+| L-12 | PDF 1 | L14 | Gates de bloqueio e restrições de elegibilidade do Meio B | Define gates formais de Meio B. | gate | ✅ EXECUTADO — PR L11 + L12 + L13 + L14: `src/core/meio-b-rules.ts`, `src/core/meio-b-parser.ts`, `src/core/meio-b-gates.ts`, `src/core/engine.ts`, `src/core/smoke.ts` |
 | L-13 | PDF 1 | L15 | Trilhos especiais e variantes P3 e multi-proponente | Define trilhos especiais do funil. | estado estruturado | PR de trilhos especiais |
 | L-14 | PDF 1 | L16 | Composição familiar especial e variantes de elegibilidade | Complementa L15. | policy/governança | PR de trilhos especiais |
 | L-15 | PDF 1 | L17 | Transição final do funil, documentos, handoff e visita | Define a fase final operacional. | estado estruturado | PR de fase final |
@@ -109,8 +109,8 @@ Baseada na ordem mínima de leitura da frente e na regra de fatias operacionais:
 | 1 | L03 | Mapa de stages e gates — estrutura central | Contrato aberto (esta PR) | ✅ EXECUTADO |
 | 2 | L04, L05, L06 | Topo do funil — regras, extração e gates | Mapa de stages (Ordem 1) | ✅ EXECUTADO |
 | 3 | L07, L08, L09, L10 | Meio A — estado civil e composição familiar | Topo funcional (Ordem 2) | ✅ EXECUTADO |
-| 4 | L11, L12, L13, L14 | Meio B — regime, renda, CTPS, gates | Meio A funcional (Ordem 3) | próximo passo autorizado |
-| 5 | L15, L16 | Especiais — trilhos P3, multi, variantes | Meio B funcional (Ordem 4) | pendente |
+| 4 | L11, L12, L13, L14 | Meio B — regime, renda, CTPS, gates | Meio A funcional (Ordem 3) | ✅ EXECUTADO |
+| 5 | L15, L16 | Especiais — trilhos P3, multi, variantes | Meio B funcional (Ordem 4) | próximo passo autorizado |
 | 6 | L17 | Final — transição final, docs, visita | Especiais funcional (Ordem 5) | pendente |
 | 7 | Integração | Smoke test de trilho completo (topo → final) | Todos os stages (Ordens 1–6) | pendente |
 
