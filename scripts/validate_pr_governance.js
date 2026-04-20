@@ -53,7 +53,7 @@ const INVALID_REQUIRED_FIELD_PATTERNS = [
   /^\s*verificar\s+schema\//i,
   // "Nenhum contrato ativo — verificar ..." — forma longa do placeholder de ausência.
   // A forma curta "Nenhum contrato ativo" (sem "— verificar") é aceita como valor real.
-  /nenhum\s+contrato\s+ativo\s+[—\-]\s*verificar/i,
+  /nenhum\s+contrato\s+ativo\s+[—-]\s*verificar/i,
   /placeholder/i,
   /preencher\s+manualmente/i,
   /pend[êe]ncia\s+de\s+preenchimento/i,

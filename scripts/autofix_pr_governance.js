@@ -143,7 +143,8 @@ function extractSectionContent(body, label) {
 function readFileSafe(filePath) {
   try {
     return fs.readFileSync(filePath, "utf8");
-  } catch (_) {
+  } catch (err) {
+    console.log(`⚠️  AUTO-FIX: Não foi possível ler ${filePath}: ${err.code || err.message}`);
     return "";
   }
 }
@@ -172,7 +173,7 @@ function extractActiveContractFromIndex() {
   const content = readFileSafe(indexPath);
   if (!content) return "";
 
-  const re = /\|\s*\d+\s*\|[^|]+\|\s*`(schema\/contracts\/active\/[^`]+)`\s*\|\s*(aberto|em execução|em revisão)/gi;
+  const re = /\|\s*\d+\s*\|[^|]+\|\s*`(schema\/contracts\/active\/[^`]+)`\s*\|\s*(aberto|em execução|em revisão)/i;
   const match = re.exec(content);
   if (!match) return "";
   return match[1].trim();
