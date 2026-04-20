@@ -10,8 +10,8 @@
 | Contrato encerrado?                        | não                                                                                       |
 | Item do A01                                | Fase 1 — scaffold técnico (pipeline de deploy Cloudflare concluído)                       |
 | Estado atual                               | não iniciada (bootstrap infra + pipeline de deploy concluídos)                            |
-| Classe da última tarefa                    | governança (camada de execução contratual)                                                |
-| Última PR relevante                        | PR #8 — Camada formal de execução contratual                                              |
+| Classe da última tarefa                    | governança (filosofia do gate: live files como fonte real, body como checklist) |
+| Última PR relevante                        | PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL                                     |
 | Último commit                              | Governança: camada de execução contratual + protocolos + workflow 16 etapas               |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta infra)             |
@@ -19,7 +19,7 @@
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
 | Permissões Cloudflare — infra herdada (PR #7) | Workers Scripts:Edit — obrigatório para deploy via wrangler (aviso preventivo ativo) |
 | Permissões Cloudflare — última tarefa (PR #8) | nenhuma adicional — tarefa de governança documental                                  |
-| Última atualização                         | 2026-04-20T03:37:47Z                                                                      |
+| Última atualização                         | 2026-04-20T04:35:00Z                                                                      |
 
 ---
 
@@ -53,20 +53,20 @@ A governança completa está pronta (trio-base, workflow, protocolos de dados e 
 
 ## 6. Última PR relevante
 
-PR #7 — Pipeline de deploy GitHub Actions (deploy.yml — test e prod).
-PR #8 — Camada formal de execução contratual (esta PR).
-- Criou `schema/contracts/_INDEX.md`, `CONTRACT_EXECUTION_PROTOCOL.md`, `CONTRACT_CLOSEOUT_PROTOCOL.md`
-- Criou `schema/contracts/active/` e `schema/contracts/archive/`
-- Atualizou CODEX_WORKFLOW para 16 etapas com vínculo contratual obrigatório
-- Atualizou PR template com campos de contrato, desvio e closeout
-- Atualizou AGENT_CONTRACT com regras anti-desvio e governança contratual
-- Atualizou HANDOFF_SCHEMA e STATUS_SCHEMA com campos contratuais
-- Atualizou README e README_EXECUCAO
-- Atualizou CONTRACT_SCHEMA para coerência com closeout
+PR #8 — Camada formal de execução contratual.
+PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL (esta PR).
+- Criou `.github/workflows/pr-governance-check.yml` — gate de validação determinística
+- Criou `scripts/validate_pr_governance.js` — script de validação (sem LLM, sem dependências externas)
+- Criou `schema/REQUEST_ECONOMY_PROTOCOL.md` — protocolo de economia de request e modelo
+- Atualizou CODEX_WORKFLOW com seção 16 (economia de request) e referência ao novo protocolo
+- Atualizou PULL_REQUEST_TEMPLATE com campo de disciplina de request e modelo
+- Atualizou AGENT_CONTRACT com regras 20-25 de economia de request
+- Atualizou README_EXECUCAO com seção de economia de request
+- Atualizou README com referências ao gate e ao protocolo
 
 ## 7. Último commit
 
-Governança: camada formal de execução contratual — contratos, protocolos, workflow 16 etapas, PR template, agent contract.
+Governança: PR Governance Gate + REQUEST_ECONOMY_PROTOCOL — workflow, script de validação, protocolo de economia de request, atualização de docs canônicos.
 
 ## 8. Entregas concluídas
 
@@ -90,6 +90,8 @@ Governança: camada formal de execução contratual — contratos, protocolos, w
 - [x] Rastreabilidade total de permissões Cloudflare: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template
 - [x] **Pipeline de deploy GitHub Actions** — `.github/workflows/deploy.yml`: disparo manual, test e prod, proteção de branch para prod
 - [x] **Camada formal de execução contratual** — `schema/contracts/`: índice, protocolo de execução, protocolo de closeout, diretórios active/archive. CODEX_WORKFLOW 16 etapas. PR template com vínculo contratual. Agent contract com regras anti-desvio.
+- [x] **PR Governance Gate** — `.github/workflows/pr-governance-check.yml` + `scripts/validate_pr_governance.js`. Validação determinística de PR sem LLM, sem custo extra. Gate valida campos obrigatórios: vínculo contratual, Supabase, Cloudflare, arquivos vivos, próximo passo.
+- [x] **REQUEST_ECONOMY_PROTOCOL** — `schema/REQUEST_ECONOMY_PROTOCOL.md`. Protocolo de economia de request e preferência por modelo barato. Incorporado no CODEX_WORKFLOW (seção 16), AGENT_CONTRACT (regras 20-25), PR template, README e README_EXECUCAO.
 
 ## 9. Pendências
 

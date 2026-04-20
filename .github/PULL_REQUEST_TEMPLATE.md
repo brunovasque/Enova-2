@@ -1,3 +1,10 @@
+<!-- =====================================================================
+     ENOVA 2 — PR TEMPLATE
+     Gate bloqueante (obrigatório no body): "Contrato ativo" + "Próximo passo autorizado"
+     Todos os demais campos são checklist de apoio humano — não bloqueiam o gate.
+     Governança real: arquivos vivos em schema/status/, schema/handoffs/, schema/contracts/
+     ===================================================================== -->
+
 ## Objetivo
 <!-- Qual objetivo desta PR? -->
 
@@ -138,3 +145,10 @@ Permissões Cloudflare necessárias: sim
 
 ## Evidências
 <!-- Links, capturas, logs, diffs, etc. -->
+
+## Disciplina de request e modelo
+<!-- Obrigatório em PRs que envolvam automação, modelo ou custo operacional relevante -->
+<!-- Complexidade da tarefa: baixa | média | alta -->
+<!-- Modelo utilizado: Sonnet | modelo mais caro (justificar se mais caro) -->
+<!-- Automação introduzida: nenhuma | sim — descrição e justificativa de custo -->
+<!-- Ver schema/REQUEST_ECONOMY_PROTOCOL.md -->
