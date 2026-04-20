@@ -156,8 +156,42 @@ Regras mandatórias:
 
 Gate automatizado de PR:
 - `.github/workflows/pr-governance-check.yml` — valida 2 campos mínimos no body + gate de arquivos vivos (sem LLM, custo zero)
+- `.github/workflows/pr-governance-autofix.yml` — auto-fix controlado: max 3 tentativas, apenas erros triviais, sem LLM
 - `scripts/validate_pr_governance.js` — script determinístico de validação
+- `scripts/autofix_pr_governance.js` — script determinístico de auto-fix (sem LLM, sem dependências externas)
 - Filosofia: governança real = arquivos vivos do repo (`schema/status/`, `schema/handoffs/`, `schema/contracts/`); body da PR = apoio humano/checklist
+
+## Regra de menção obrigatória ao agente/modelo
+
+26. **Toda instrução operacional deve mencionar explicitamente o agente no início.**
+
+Padrão obrigatório:
+- `@copilot+claude-sonnet-4.6` — para tarefas de baixa/média complexidade (padrão preferencial)
+- `@copilot+<modelo-explícito>` — para tarefas que exijam modelo diferente (com justificativa)
+
+Regras:
+- Comentário ou tarefa **sem menção explícita ao agente/modelo** = **não executável / não operacional**.
+- Não deve ser tratado como comando confiável nem disparar execução automática.
+- Se a tarefa exigir modelo mais caro, isso deve ser declarado explicitamente junto à menção.
+- Esta regra existe para evitar comentários que parecem tarefa mas não disparam nada de forma confiável.
+- A menção ao agente é a âncora de rastreabilidade de quem executou o quê — nunca omitir.
+
+Exemplos válidos:
+```
+@copilot+claude-sonnet-4.6
+Executar o próximo passo autorizado pelo A01 conforme o contrato ativo.
+```
+```
+@copilot+claude-opus (justificativa: lógica de arquitetura complexa)
+Revisar e redesenhar o contrato de frente para o Core Mecânico 2.
+```
+
+Exemplos inválidos (não operacionais):
+```
+Executar o próximo passo.              ← sem @copilot+modelo = não operacional
+Copilot, fazer X.                      ← sem modelo explícito = não operacional
+@copilot fazer Y.                      ← sem modelo explícito = não operacional
+```
 
 ## Proibições nesta fase fundadora
 - Criar app funcional

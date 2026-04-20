@@ -87,6 +87,37 @@ O gate bloqueia PRs que não declarem os **2 campos mínimos** no body:
 
 O gate também bloqueia quando o body declara arquivos vivos atualizados mas o diff não contém mudanças reais em `schema/status/`, `schema/handoffs/` ou `schema/contracts/`.
 
+## Auto-fix controlado do PR Governance Gate
+
+O repositório inclui camada de auto-fix **restrita e determinística** para erros triviais do gate:
+
+- `.github/workflows/pr-governance-autofix.yml` — dispara quando o gate falha; max **3 tentativas**; para em erros estruturais
+- `scripts/autofix_pr_governance.js` — script determinístico (sem LLM, sem dependências externas)
+
+**Regras do auto-fix:**
+- Atua apenas em: campo ausente do body / campo vazio
+- **Não atua em:** incoerência contratual, live files sem diff, erros estruturais
+- Máximo **3 tentativas** por PR (rastreado no body)
+- Valores inseridos são **placeholders** — o autor deve preencher os reais
+
+Ver `schema/CODEX_WORKFLOW.md` seção 17 e `schema/REQUEST_ECONOMY_PROTOCOL.md`.
+
+## Regra de menção obrigatória ao agente/modelo
+
+Toda instrução operacional (comentário de PR, issue, prompt de tarefa) deve mencionar explicitamente o agente no início:
+
+```
+@copilot+claude-sonnet-4.6
+<instrução aqui>
+```
+
+- Instrução **sem `@copilot+modelo`** = **não operacional / não executável**
+- Padrão preferencial: `@copilot+claude-sonnet-4.6` (Sonnet — custo baixo)
+- Modelo mais caro: declarar explicitamente com justificativa
+- Esta regra garante rastreabilidade de autoria e evita comandos implícitos
+
+Ver `.github/AGENT_CONTRACT.md` regra 26 e `schema/CODEX_WORKFLOW.md` seção 18.
+
 Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para a política de economia de request e modelo.
 
 ## Cloudflare Workers — Bootstrap técnico e pipeline de deploy

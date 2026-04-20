@@ -398,7 +398,90 @@ Princípios obrigatórios:
 
 **Gate automatizado:**
 - `.github/workflows/pr-governance-check.yml` — valida 2 campos mínimos no body + gate de arquivos vivos no diff
-- `scripts/validate_pr_governance.js` — script determinístico (sem LLM, custo zero)
+- `.github/workflows/pr-governance-autofix.yml` — auto-fix controlado (max 3 tentativas, apenas erros triviais, sem LLM)
+- `scripts/validate_pr_governance.js` — script determinístico de validação (sem LLM, custo zero)
+- `scripts/autofix_pr_governance.js` — script determinístico de auto-fix (sem LLM, sem dependências externas)
 - Filosofia: governança real = arquivos vivos do repo; body = apoio humano/checklist
 
 Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para o protocolo completo.
+
+---
+
+## 17. Auto-fix controlado do PR Governance Gate
+
+O repositório inclui uma camada de auto-fix **restrita e determinística** para erros triviais do gate.
+
+### Regras absolutas do auto-fix
+
+- **Apenas erros triviais e mecânicos** são corrigíveis automaticamente.
+- **Máximo 3 tentativas** por PR (rastreado por marcador oculto no body da PR).
+- **Sem LLM. Sem API externa. Sem dependência externa. Sem loop aberto.**
+- **Para obrigatoriamente** ao atingir 3 tentativas ou ao encontrar erro não trivial.
+- Os valores inseridos automaticamente são **placeholders** — o autor deve preencher os reais.
+
+### O que o auto-fix pode corrigir
+
+| Erro trivial                                   | Ação do auto-fix                        |
+|------------------------------------------------|-----------------------------------------|
+| Campo "Contrato ativo" ausente do body         | Adiciona seção com placeholder          |
+| Campo "Próximo passo autorizado" ausente       | Adiciona seção com placeholder          |
+| Campo presente mas vazio / só comentário HTML  | Substitui por placeholder               |
+
+### O que o auto-fix NÃO pode corrigir (para imediatamente)
+
+- Body completamente vazio
+- Incoerência contratual
+- Divergência entre contrato e status/handoff
+- Live files declarados sem diff real
+- Conflito entre arquivos vivos
+- Mudança de escopo
+- Qualquer erro que exija interpretação semântica
+
+### Fluxo de funcionamento
+
+1. PR falha o governance check.
+2. O workflow de auto-fix dispara (`workflow_run` no gate com `failure`).
+3. O script lê o body, detecta falhas triviais, aplica placeholders.
+4. O body da PR é atualizado via API → evento `edited` dispara → gate roda novamente.
+5. Repete até: gate passa | 3 tentativas | erro estrutural.
+6. Após 3 tentativas ou erro estrutural: para, registra motivo, exige revisão manual.
+
+---
+
+## 18. Regra de menção obrigatória ao agente/modelo
+
+Toda instrução operacional — comentário em PR, issue, tarefa ou prompt — deve mencionar explicitamente o agente e o modelo no início.
+
+**Padrão obrigatório:**
+```
+@copilot+claude-sonnet-4.6
+<instrução operacional aqui>
+```
+
+**Regras:**
+- Comentário ou instrução **sem `@copilot+modelo`** = **não executável / não operacional**.
+- Não deve disparar execução nem ser tratado como comando confiável.
+- Se a tarefa exigir modelo mais caro: declarar explicitamente com justificativa.
+- A menção é a âncora de rastreabilidade de autoria e custo operacional.
+
+**Modelos e quando usar:**
+
+| Complexidade               | Menção obrigatória                            | Quando usar                          |
+|----------------------------|-----------------------------------------------|--------------------------------------|
+| Baixa/média (docs, gov)    | `@copilot+claude-sonnet-4.6`                  | Padrão — preferencial                |
+| Alta (arquitetura, lógica) | `@copilot+<modelo-mais-caro> (justificativa)` | Somente com justificativa explícita  |
+
+**Exemplos válidos:**
+```
+@copilot+claude-sonnet-4.6
+Executar próximo passo autorizado pelo A01 conforme contrato ativo.
+```
+
+**Exemplos inválidos (não operacionais, ignorar como comando):**
+```
+Executar o próximo passo.
+Copilot, fazer X.
+@copilot fazer Y.
+```
+
+Ver `.github/AGENT_CONTRACT.md` regra 26 para detalhes.

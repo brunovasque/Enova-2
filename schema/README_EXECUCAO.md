@@ -180,5 +180,23 @@ Princípios:
 - **Preferência por modelo barato.** Sonnet para tarefas baixa/média complexidade. Modelo mais caro somente com justificativa.
 - **Preferir automação determinística.** Onde regex/script resolve, não usar LLM.
 - **Gate automatizado:** `.github/workflows/pr-governance-check.yml` valida PR sem custo de modelo.
+- **Auto-fix controlado:** `.github/workflows/pr-governance-autofix.yml` — max 3 tentativas, apenas erros triviais, sem LLM.
 
 Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para o protocolo completo.
+
+---
+
+## Regra de menção obrigatória ao agente/modelo
+
+Toda instrução operacional (comentário de PR, issue, prompt) deve mencionar explicitamente o agente no início:
+
+```
+@copilot+claude-sonnet-4.6
+<instrução aqui>
+```
+
+- Instrução **sem `@copilot+modelo`** = **não operacional / não executável**.
+- Modelo mais caro: declarar com justificativa explícita.
+- Esta regra evita comentários que parecem tarefas mas não disparam execução confiável.
+
+Ver `.github/AGENT_CONTRACT.md` regra 26 e `schema/CODEX_WORKFLOW.md` seção 18.
