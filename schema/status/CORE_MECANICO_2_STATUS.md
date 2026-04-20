@@ -4,17 +4,17 @@
 |--------------------------------------------|-------------------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                           |
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                               |
-| Item do A01                                | Fase 1 — scaffold técnico (bootstrap Cloudflare Workers concluído)                        |
-| Estado atual                               | não iniciada (bootstrap infra concluído)                                                  |
-| Classe da última tarefa                    | governança                                                                                |
-| Última PR relevante                        | PR #6 — Protocolo obrigatório de permissões Cloudflare (CLOUDFLARE_PERMISSION_PROTOCOL)  |
-| Último commit                              | Governança: protocolo de permissões Cloudflare + endurecimento de workflow                |
+| Item do A01                                | Fase 1 — scaffold técnico (pipeline de deploy Cloudflare concluído)                       |
+| Estado atual                               | não iniciada (bootstrap infra + pipeline de deploy concluídos)                            |
+| Classe da última tarefa                    | fora_de_contrato (infra — pipeline de deploy)                                             |
+| Última PR relevante                        | PR #7 — Pipeline de deploy GitHub Actions (deploy.yml — test e prod)                     |
+| Último commit                              | Infra: pipeline de deploy mínimo Cloudflare Workers (GitHub Actions)                      |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
-| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta governança)        |
+| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta infra)             |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
-| Permissões Cloudflare necessárias          | nenhuma adicional                                                                         |
-| Última atualização                         | 2026-04-20T01:33:47Z                                                                      |
+| Permissões Cloudflare necessárias          | sim — Workers Scripts:Edit (necessário para wrangler deploy — aviso preventivo ativo)     |
+| Última atualização                         | 2026-04-20T01:51:55Z                                                                      |
 
 ---
 
@@ -29,40 +29,36 @@ A frente depende da conclusão da fundação documental (Fase 0) e da organizaç
 
 ## 3. Item do A01
 
-- **Fase**: Fase 0 (fundação documental) — concluída com trio-base + workflow endurecido + classificação de tarefas.
-- **Próxima fase**: Fase 1 — scaffold técnico e shape macro.
+- **Fase**: Fase 1 — scaffold técnico: wrangler.toml + pipeline de deploy concluídos.
+- **Próxima fase**: Abertura do contrato formal do Core Mecânico 2.
 - **Prioridade do backlog**: Prioridade 1 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala.
 - **Gate aplicável**: Gate 1 — sem contrato da frente, não começa implementação.
 
 ## 4. Estado atual
 
-**não iniciada**
+**não iniciada** (bootstrap infra + pipeline de deploy concluídos)
 
-A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica.
-A fundação documental (A00 + A01 + A02 + CODEX_WORKFLOW endurecido + TASK_CLASSIFICATION) está pronta.
-O workflow de continuidade entre PRs foi endurecido com obrigação de ESTADO HERDADO, classificação de tarefa e ESTADO ENTREGUE.
+A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio.
+O scaffold técnico (wrangler.toml + entrypoint placeholder + pipeline de deploy) está pronto.
+A governança completa está pronta (trio-base, workflow, protocolos de dados e permissões Cloudflare).
 
 ## 5. Classe da última tarefa
 
-**governança** — tarefa exclusiva de endurecimento de governança operacional com protocolo obrigatório de permissões Cloudflare. Nenhuma implementação funcional aberta.
+**fora_de_contrato** — pipeline de deploy mínimo de infraestrutura. Sem contrato ativo do Core Mecânico 2, mas alinhado à Fase 1 do A01 (scaffold técnico). Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
 
 ## 6. Última PR relevante
 
-PR #5 — bootstrap técnico mínimo Cloudflare Workers (wrangler.toml).
 PR #6 — Protocolo obrigatório de permissões Cloudflare (governança).
-- Criou `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` com escopo, campos obrigatórios, regras de parada/aviso preventivo/escopo mínimo do token.
-- Endureceu `CODEX_WORKFLOW.md` com bloco de permissões Cloudflare em ESTADO HERDADO e ESTADO ENTREGUE, seção 15 (protocolo Cloudflare), regra de parada para necessidade não declarada.
-- Atualizou `TASK_CLASSIFICATION.md` com obrigação universal de declaração de permissões Cloudflare em todas as classes.
-- Atualizou `PULL_REQUEST_TEMPLATE.md` com campos explícitos de permissões Cloudflare.
-- Atualizou `AGENT_CONTRACT.md` com regras 16–19: declaração obrigatória, proibição de permissão implícita, aviso preventivo, parada imediata.
-- Atualizou `HANDOFF_SCHEMA.md` com seção 19 obrigatória de permissões Cloudflare.
-- Atualizou `STATUS_SCHEMA.md` com seção 16 de permissões Cloudflare e novo campo no cabeçalho.
-- Atualizou `README_EXECUCAO.md` com seção de protocolo de permissões Cloudflare.
-- Atualizou `README.md` com `CLOUDFLARE_PERMISSION_PROTOCOL.md` como documento canônico.
+PR #7 — Pipeline de deploy GitHub Actions (esta PR).
+- Criou `.github/workflows/deploy.yml`: pipeline mínimo com disparo manual, suporte a test e prod, proteção de branch para prod, sem bindings fictícios.
+- Atualizou `docs/BOOTSTRAP_CLOUDFLARE.md`: uso local via terminal/VSCode, permissões Cloudflare declaradas, aviso preventivo.
+- Atualizou `README.md`: referência ao pipeline criado.
+- Atualizou `schema/status/CORE_MECANICO_2_STATUS.md` (este arquivo).
+- Atualizou `schema/handoffs/CORE_MECANICO_2_LATEST.md`.
 
 ## 7. Último commit
 
-Nenhum commit de implementação técnica. Apenas commits documentais e de governança.
+Pipeline de deploy mínimo: `.github/workflows/deploy.yml` (test e prod, proteção de branch, wrangler deploy).
 
 ## 8. Entregas concluídas
 
@@ -81,35 +77,40 @@ Nenhum commit de implementação técnica. Apenas commits documentais e de gover
 - [x] Rastreabilidade total de dados: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template
 - [x] Bootstrap técnico Cloudflare Workers: `wrangler.toml` com ambientes canônicos `nv-enova-2` (prod) e `nv-enova-2-test` (test)
 - [x] Entrypoint placeholder mínimo `src/worker.ts` (sem lógica de produto)
-- [x] `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação curta do bootstrap
+- [x] `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação do bootstrap e uso local via terminal/VSCode
 - [x] CLOUDFLARE_PERMISSION_PROTOCOL — protocolo obrigatório de permissões Cloudflare
 - [x] Rastreabilidade total de permissões Cloudflare: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template
+- [x] **Pipeline de deploy GitHub Actions** — `.github/workflows/deploy.yml`: disparo manual, test e prod, proteção de branch para prod
 
 ## 9. Pendências
 
 - [ ] Abrir contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado)
 - [ ] Definir objetivos/stages do Core Mecânico 2 no contrato
 - [ ] Implementação funcional do worker (após contrato aprovado)
-- [ ] Pipeline de CI/CD para deploy automatizado (após contrato aprovado)
+- [ ] Verificar e ajustar escopo do token CLOUDFLARE_API_TOKEN antes do primeiro deploy real (Workers Scripts:Edit obrigatório)
 
 ## 10. Pendência remanescente herdada
 
 Da PR #2: abertura de contrato formal do Core Mecânico 2.
-Esta pendência permanece em aberto — as PRs #3, #4 e #5 não a afetaram.
+Esta pendência permanece em aberto — as PRs #3 a #7 não a afetaram.
 
 ## 11. Bloqueios
 
 Nenhum bloqueio ativo.
 Gate 1 do A01 se aplica: sem contrato da frente, não começa implementação.
 
+**Aviso preventivo de permissão Cloudflare:**
+O token `CLOUDFLARE_API_TOKEN` deve ter permissão `Workers Scripts:Edit` para que o deploy funcione.
+Verificar antes do primeiro deploy real. Ver `docs/BOOTSTRAP_CLOUDFLARE.md` e `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`.
+
 ## 12. Próximo passo autorizado
 
 **Abrir contrato do Core Mecânico 2**, seguindo o formato definido em `schema/CONTRACT_SCHEMA.md`, com:
 - Escopo alinhado ao A01 (Prioridade 1)
 - Legados aplicáveis conforme A02 e INDEX_LEGADO_MESTRE.md (blocos L03 + L04-L17)
-- Dependências satisfeitas (trio-base + workflow endurecido + contexto vivo + classificação de tarefas)
+- Dependências satisfeitas (trio-base + workflow endurecido + contexto vivo + classificação de tarefas + protocolo de dados + bootstrap Cloudflare + protocolo de permissões Cloudflare + pipeline de deploy)
 
-**Próximo passo preservado** em relação à PR #2.
+**Próximo passo preservado** em relação à PR #6.
 
 ## 13. Legados aplicáveis
 
@@ -121,5 +122,5 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T01:33:47Z
-- **Responsável**: Copilot (PR #6 — protocolo obrigatório de permissões Cloudflare)
+- **Data**: 2026-04-20T01:51:55Z
+- **Responsável**: Copilot (PR #7 — pipeline de deploy GitHub Actions)

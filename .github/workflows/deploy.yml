@@ -1,0 +1,82 @@
+# deploy.yml — Pipeline de deploy — ENOVA 2 — Cloudflare Workers
+#
+# DISPARO: exclusivamente manual (workflow_dispatch)
+#   - escolha do ambiente: test ou prod
+#
+# REGRA DE PRODUÇÃO:
+#   - `main` branch representa produção
+#   - deploy para prod só é permitido a partir da branch main
+#   - qualquer tentativa de deploy prod fora de main será bloqueada e falhará
+#
+# SECRETS NECESSÁRIOS (já existem no repositório):
+#   - CLOUDFLARE_API_TOKEN
+#   - CLOUDFLARE_ACCOUNT_ID
+#
+# PERMISSÕES CLOUDFLARE:
+#   - Recurso afetado: Workers Scripts
+#   - Ação: publicar/atualizar worker via `wrangler deploy`
+#   - Permissão mínima necessária: Workers Scripts:Edit
+#   - Se o token não tiver esta permissão, o deploy falhará
+#   - Ver AVISO PREVENTIVO abaixo e schema/CLOUDFLARE_PERMISSION_PROTOCOL.md
+#
+# AVISO PREVENTIVO DE PERMISSÃO CLOUDFLARE:
+#   Esta pipeline passa a depender de Workers Scripts (wrangler deploy).
+#   Se o token CLOUDFLARE_API_TOKEN não tiver permissão Workers Scripts:Edit,
+#   o deploy falhará. Verificar o escopo do token antes do primeiro deploy.
+#   Onde ajustar: Cloudflare Dashboard > API Tokens > editar token
+#
+# WRANGLER:
+#   - Versão mínima: 3.114.17 (patched — não usar versões < 3.114.17 nem < 4.59.1 na série 4.x)
+#   - Vulnerabilidade conhecida abaixo desta versão: OS Command Injection em `wrangler pages deploy`
+#   - Esta pipeline usa `wrangler deploy` (Workers), não afetado diretamente, mas a versão segura é mantida por precaução
+
+name: Deploy — Cloudflare Workers
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Ambiente de deploy'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - prod
+
+jobs:
+  deploy:
+    name: Deploy ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Proteger prod — branch deve ser main
+        if: github.event.inputs.environment == 'prod' && github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Deploy para prod só é permitido a partir da branch main."
+          echo "::error::Branch atual: ${{ github.ref }}"
+          echo "::error::Mude para main antes de fazer deploy em prod."
+          exit 1
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Wrangler
+        run: npm install -g wrangler@3.114.17
+
+      - name: Deploy test
+        if: github.event.inputs.environment == 'test'
+        run: wrangler deploy --env test
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy prod
+        if: github.event.inputs.environment == 'prod'
+        run: wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
