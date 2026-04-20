@@ -79,7 +79,7 @@ Tarefa não classificada = tarefa não conforme.
 4. Não introduzir drift de objetivo, escopo ou arquitetura.
 5. Não abrir implementação funcional sem autorização do contrato ativo.
 6. Declarar sempre qual contrato está ativo e qual item do A01 está sendo atendido.
-7. Não pular etapas do fluxo de 11 etapas do CODEX_WORKFLOW.
+7. Não pular etapas do fluxo de 16 etapas do CODEX_WORKFLOW.
 8. Declarar explicitamente o contexto herdado da PR anterior antes de executar.
 9. Declarar explicitamente o que foi herdado, o que foi resolvido e o que permanece aberto.
 10. Marcar explicitamente como `fora_de_contrato` quando a tarefa não pertencer ao contrato ativo.
