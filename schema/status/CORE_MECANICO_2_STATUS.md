@@ -5,21 +5,21 @@
 | Frente                                     | Core Mecânico 2 |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | L09 + L10 — Meio A: composição familiar (parte 2) |
-| Pendência contratual                       | L11–L17 em aberto; Meio B, Especiais e Final permanecem pendentes |
+| Última PR executou qual recorte            | L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade |
+| Pendência contratual                       | L15–L17 em aberto; Especiais e Final permanecem pendentes |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala |
-| Estado atual                               | em execução — Meio A ficou estruturalmente mais completo no Core principal, ainda sem fala mecânica |
-| Classe da última tarefa                    | contratual — L09 + L10 do Core Mecânico 2, sem abrir Meio B |
-| Última PR relevante                        | PR de execução L09 + L10 — composição familiar expandida no `engine.ts` |
-| Último commit                              | `e5c335ad62bc7e2b72471385b8a39a13436a0340` — `feat(core): expandir composicao familiar do meio a` |
-| Pendência remanescente herdada             | O Meio A inicial já existia, mas ainda faltavam as microregras adicionais de composição familiar, dependente e P3 |
-| Próximo passo autorizado                   | Quinta PR contratual: L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade |
-| Legados aplicáveis                         | L03, L04, L05, L06, L07, L08, L09, L10 executados; L11–L17 pendentes |
+| Estado atual                               | em execução — Meio B inicial já roda no Core principal, ainda sem fala mecânica |
+| Classe da última tarefa                    | contratual — L11 + L12 + L13 + L14 do Core Mecânico 2, sem abrir Especiais ou Final |
+| Última PR relevante                        | PR de execução L11 + L12 + L13 + L14 — Meio B integrado ao `engine.ts` |
+| Último commit                              | `c587aa15540860dbc525e8f3fa92bcb7066d1c64` — `feat(core): integrar meio b inicial no engine` |
+| Pendência remanescente herdada             | O Meio A já estava fechado até L10, mas ainda faltava entrar em regime, renda, CTPS e elegibilidade mínima |
+| Próximo passo autorizado                   | Sexta PR contratual: L15 + L16 — Especiais: trilhos P3 / multi e variantes |
+| Legados aplicáveis                         | L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14 executados; L15–L17 pendentes |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-20T20:06:02.8627195-03:00 |
+| Última atualização                         | 2026-04-20T20:23:46.0353332-03:00 |
 
 ---
 
@@ -37,15 +37,14 @@ Core Mecânico 2
 
 ## 2b. Última PR executou qual recorte do contrato
 
-L09 + L10 — Meio A: composição familiar (parte 2):
-- expansão do parser do Meio A para `p3_required`, `dependents_applicable` e `dependents_count`
-- expansão dos critérios/gates de composição familiar
-- roteamento estrutural adicional de dependente e P3 no `qualification_civil`
+L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade:
+- parser/extrator mínimo de `regime_trabalho`, `renda_principal`, `autonomo_tem_ir`, `ctps_36`, `nacionalidade` e `rnm_status`
+- critérios/gates mínimos de renda e elegibilidade
+- integração real de `qualification_renda` e `qualification_eligibility` ao `engine.ts`
 - smoke integrado do caminho real do Core
 
 ## 2c. Pendência contratual
 
-- L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade
 - L15 + L16 — Especiais
 - L17 — Final operacional / docs / visita
 
@@ -63,17 +62,17 @@ L09 + L10 — Meio A: composição familiar (parte 2):
 
 **em execução**
 
-O Core Mecânico 2 continua desacoplado da fala e agora já cobre L07–L10 do Meio A:
-- `qualification_civil` continua plugado ao `engine.ts`
-- o parser do Meio A agora lê `p3_required`, `dependents_applicable` e `dependents_count`
-- o Core diferencia composição válida, dependente aplicável e composição que exige P3
+O Core Mecânico 2 continua desacoplado da fala e agora já cobre Meio A e Meio B iniciais:
+- `qualification_renda` e `qualification_eligibility` agora têm trilho próprio no `engine.ts`
+- o parser do Meio B lê regime, renda, IR, CTPS, nacionalidade e RNM
+- o Core diferencia ausência crítica, autônomo sem IR, trilho válido e bloqueio por RNM
 - o Worker permanece apenas como entrada técnica estrutural, sem fala mecânica
 
 ## 5. Classe da última tarefa
 
 **contratual**
 
-Recorte contratual L09 + L10 do Core Mecânico 2, ainda sem abrir Meio B, fala, Supabase, Meta/WhatsApp ou surface final.
+Recorte contratual L11 + L12 + L13 + L14 do Core Mecânico 2, ainda sem abrir Especiais, Final, fala, Supabase, Meta/WhatsApp ou surface final.
 
 ## 6. Última PR relevante
 
@@ -96,16 +95,19 @@ PR de integração mínima do Worker — Core exposto via `/__core__/run`.
 - [x] L08 — composição familiar (parte 1)
 - [x] L09 — composição familiar (parte 1)
 - [x] L10 — composição familiar (parte 2)
+- [x] L11 — regime e renda (parte 1)
+- [x] L12 — regime e renda (parte 2)
+- [x] L13 — CTPS e dependentes
+- [x] L14 — gates e restrições de elegibilidade
 
 ## 9. Pendências
 
-- [ ] L11 + L12 + L13 + L14 — Meio B
 - [ ] L15 + L16 — Especiais
 - [ ] L17 — Final operacional
 
 ## 10. Pendência remanescente herdada
 
-O Meio A inicial já estava integrado ao motor principal, mas ainda faltava aprofundar a composição familiar com dependente aplicável e roteamento P3. Esta pendência foi fechada nesta PR sem abrir o restante do funil.
+O Meio A já estava fechado até L10, mas `qualification_renda` e `qualification_eligibility` ainda dependiam apenas do caminho genérico de L03. Esta pendência foi fechada nesta PR sem abrir Especiais ou Final.
 
 ## 11. Bloqueios
 
@@ -113,18 +115,18 @@ Nenhum bloqueio ativo.
 
 ## 12. Próximo passo autorizado
 
-**Quinta PR contratual: L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade.**
+**Sexta PR contratual: L15 + L16 — Especiais: trilhos P3 / multi e variantes.**
 
-Este próximo passo segue a ordem contratual natural após o fechamento de L09 + L10.
+Este próximo passo segue a ordem contratual natural após o fechamento de L11 + L12 + L13 + L14.
 
 ## 13. Legados aplicáveis
 
-- **Executados**: L03, L04, L05, L06, L07, L08, L09, L10
-- **Pendentes**: L11–L17
+- **Executados**: L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14
+- **Pendentes**: L15–L17
 
 ## 14. Última atualização
 
-2026-04-20T20:06:02.8627195-03:00
+2026-04-20T20:23:46.0353332-03:00
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -145,4 +147,4 @@ Fontes de verdade consultadas — última tarefa:
   Handoff da frente lido:      `schema/handoffs/CORE_MECANICO_2_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos L03–L17 identificados estruturalmente
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — taxonomia F2, F6 e regras mínimas de composição, dependente e P3 consultadas diretamente para L09 + L10
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — taxonomias F1/F3/F4 e regras mínimas de IR, renda, CTPS e RNM consultadas diretamente para L11 + L12 + L13 + L14
