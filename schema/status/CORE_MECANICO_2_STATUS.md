@@ -8,13 +8,13 @@
 | Estado atual                               | não iniciada (bootstrap infra + pipeline de deploy concluídos)                            |
 | Classe da última tarefa                    | fora_de_contrato (infra — pipeline de deploy)                                             |
 | Última PR relevante                        | PR #7 — Pipeline de deploy GitHub Actions (deploy.yml — test e prod)                     |
-| Último commit                              | Infra: pipeline de deploy mínimo Cloudflare Workers (GitHub Actions)                      |
+| Último commit                              | Infra: deploy automático em main + docs PowerShell/Windows/VSCode                        |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta infra)             |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
 | Permissões Cloudflare necessárias          | sim — Workers Scripts:Edit (necessário para wrangler deploy — aviso preventivo ativo)     |
-| Última atualização                         | 2026-04-20T01:51:55Z                                                                      |
+| Última atualização                         | 2026-04-20T02:46:46Z                                                                      |
 
 ---
 
@@ -58,7 +58,7 @@ PR #7 — Pipeline de deploy GitHub Actions (esta PR).
 
 ## 7. Último commit
 
-Pipeline de deploy mínimo: `.github/workflows/deploy.yml` (test e prod, proteção de branch, wrangler deploy).
+Pipeline de deploy: deploy automático em push/merge em `main` (prod) + deploy manual test/prod. Docs locais com PowerShell/Windows/VSCode.
 
 ## 8. Entregas concluídas
 
@@ -122,5 +122,5 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T01:51:55Z
-- **Responsável**: Copilot (PR #7 — pipeline de deploy GitHub Actions)
+- **Data**: 2026-04-20T02:46:46Z
+- **Responsável**: Copilot (PR #7 — deploy automático em main + docs PowerShell/Windows/VSCode)

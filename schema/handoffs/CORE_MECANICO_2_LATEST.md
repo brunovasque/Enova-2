@@ -3,10 +3,10 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T01:51:55Z                                                        |
+| Data                                       | 2026-04-20T02:46:46Z                                                        |
 | Estado da frente                           | não iniciada (bootstrap infra + pipeline de deploy concluídos)               |
 | Classificação da tarefa                    | fora_de_contrato (infra — pipeline de deploy)                                |
-| Última PR relevante                        | PR #7 — Pipeline de deploy GitHub Actions (deploy.yml — test e prod)        |
+| Última PR relevante                        | PR #7 — Deploy automático em main + docs PowerShell/Windows/VSCode           |
 | Item do A01 atendido                       | Fase 1 — scaffold técnico: pipeline de deploy Cloudflare concluído           |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                            |
 | Próximo passo foi alterado?                | não                                                                          |

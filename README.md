@@ -63,10 +63,11 @@ O repositório inclui o bootstrap mínimo e o pipeline de deploy para Cloudflare
 
 - `wrangler.toml` — configura os ambientes canônicos: `nv-enova-2` (produção) e `nv-enova-2-test` (teste)
 - `src/worker.ts` — entrypoint placeholder mínimo (sem lógica de produto)
-- `.github/workflows/deploy.yml` — pipeline de deploy manual (test e prod)
-- `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação técnica do bootstrap e uso local
+- `.github/workflows/deploy.yml` — pipeline de deploy (automático em main + manual test/prod)
+- `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação técnica do bootstrap e uso local (bash, PowerShell, VSCode)
 
-> **`main` branch representa produção.** Deploy para `prod` só é permitido a partir de `main`.
+> **`main` branch representa produção.**
+> Push/merge em `main` → deploy prod automático.
 > Deploy manual via GitHub Actions → aba Actions → **Deploy — Cloudflare Workers** → Run workflow.
 
 ## Regra dos legados

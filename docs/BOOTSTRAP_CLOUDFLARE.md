@@ -30,16 +30,22 @@ Prepara o repositório para deploy na plataforma Cloudflare Workers, com dois am
 
 O pipeline está em `.github/workflows/deploy.yml`.
 
-**Disparo:** exclusivamente manual (`workflow_dispatch`), escolhendo `test` ou `prod`.
+### A. Deploy automático — push/merge em `main`
 
-**Como usar:**
+Qualquer push ou merge direto em `main` dispara automaticamente o deploy para **produção** (`nv-enova-2`).
+Não é necessária nenhuma ação manual — o job `deploy-prod-auto` executa `wrangler deploy`.
+
+### B. Deploy manual — `workflow_dispatch`
+
+Para deploy manual de `test` ou `prod`:
+
 1. Acesse a aba **Actions** no GitHub.
 2. Selecione o workflow **Deploy — Cloudflare Workers**.
 3. Clique em **Run workflow**.
 4. Escolha o ambiente: `test` ou `prod`.
 5. Clique em **Run workflow**.
 
-**Proteção de prod:**
+**Proteção de prod (manual):**
 - Se o ambiente escolhido for `prod` e o workflow for disparado a partir de uma branch diferente de `main`, o job falha imediatamente com mensagem de erro.
 
 **Secrets necessários (já existem no repositório):**
@@ -52,26 +58,26 @@ O pipeline está em `.github/workflows/deploy.yml`.
 
 ### Pré-requisitos
 
-Não é necessário instalar o wrangler globalmente. Use `npx` com a versão pinada:
+Não é necessário instalar o wrangler globalmente. Use `npx` com a versão pinada.
+Certifique-se de ter Node.js instalado (`node -v`).
 
-```bash
-# Opcional: instalar wrangler localmente no projeto
-npm install --save-dev wrangler@3.114.17
-```
+---
 
-### Deploy local para teste
+### bash / zsh (macOS, Linux, WSL)
+
+#### Deploy para teste
 
 ```bash
 CLOUDFLARE_API_TOKEN=<seu-token> CLOUDFLARE_ACCOUNT_ID=<seu-account-id> npx wrangler@3.114.17 deploy --env test
 ```
 
-### Deploy local para produção
+#### Deploy para produção
 
 ```bash
 CLOUDFLARE_API_TOKEN=<seu-token> CLOUDFLARE_ACCOUNT_ID=<seu-account-id> npx wrangler@3.114.17 deploy
 ```
 
-### Usando arquivo `.env` local (não commitar)
+#### Usando arquivo `.env` local (não commitar)
 
 Crie um `.env` local (não versionado):
 
@@ -80,19 +86,75 @@ CLOUDFLARE_API_TOKEN=<seu-token>
 CLOUDFLARE_ACCOUNT_ID=<seu-account-id>
 ```
 
-Carregue as variáveis e use o wrangler:
+Carregue e use:
 
 ```bash
 set -a; source .env; set +a
-wrangler deploy --env test
+npx wrangler@3.114.17 deploy --env test
 ```
 
 > **Atenção:** não use `cat .env | xargs` — pode causar problemas com valores que contenham espaços ou caracteres especiais.
 
-### VSCode — Terminal integrado
+---
 
-No terminal integrado do VSCode, os comandos acima funcionam normalmente.
-Não é necessário nenhum script extra além do wrangler já instalado.
+### PowerShell (Windows, terminal do VSCode em PowerShell)
+
+#### Definir variáveis na sessão atual
+
+```powershell
+$env:CLOUDFLARE_API_TOKEN = "<seu-token>"
+$env:CLOUDFLARE_ACCOUNT_ID = "<seu-account-id>"
+```
+
+> Estas variáveis existem apenas na sessão atual do PowerShell. Ao fechar o terminal, são apagadas.
+
+#### Deploy para teste
+
+```powershell
+npx wrangler@3.114.17 deploy --env test
+```
+
+#### Deploy para produção
+
+```powershell
+npx wrangler@3.114.17 deploy
+```
+
+#### Sequência completa em PowerShell
+
+```powershell
+$env:CLOUDFLARE_API_TOKEN = "<seu-token>"
+$env:CLOUDFLARE_ACCOUNT_ID = "<seu-account-id>"
+npx wrangler@3.114.17 deploy --env test
+```
+
+#### Persistência permanente no Windows (opcional)
+
+Se quiser que as variáveis persistam entre sessões, use `[System.Environment]::SetEnvironmentVariable`:
+
+```powershell
+[System.Environment]::SetEnvironmentVariable("CLOUDFLARE_API_TOKEN", "<seu-token>", "User")
+[System.Environment]::SetEnvironmentVariable("CLOUDFLARE_ACCOUNT_ID", "<seu-account-id>", "User")
+```
+
+> **Atenção:** persistência permanente exige cuidado — o token ficará salvo no perfil do usuário do sistema.
+> Para uso cotidiano no terminal de desenvolvimento, preferir as variáveis de sessão temporária acima.
+
+---
+
+### VSCode — Terminal integrado (PowerShell ou bash)
+
+O terminal integrado do VSCode funciona da mesma forma que qualquer terminal:
+
+- Se o terminal padrão for **PowerShell**, use os comandos PowerShell acima.
+- Se o terminal padrão for **bash/zsh** (Git Bash, WSL, macOS), use os comandos bash acima.
+
+Não é necessário nenhum script extra ou extensão adicional.
+
+**Fluxo típico no VSCode:**
+1. Abra o terminal integrado (`Ctrl+`` ` ou `Terminal > New Terminal`).
+2. Defina as env vars na sessão (PowerShell ou bash).
+3. Execute `npx wrangler@3.114.17 deploy --env test`.
 
 **Atenção:** o uso local está sujeito ao mesmo protocolo de permissões Cloudflare definido em `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`. Não amplie o token sem declaração prévia.
 

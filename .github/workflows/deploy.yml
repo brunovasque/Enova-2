@@ -1,12 +1,14 @@
 # deploy.yml — Pipeline de deploy — ENOVA 2 — Cloudflare Workers
 #
-# DISPARO: exclusivamente manual (workflow_dispatch)
-#   - escolha do ambiente: test ou prod
+# DISPAROS:
+#   A. Automático: push/merge em `main` → deploy prod imediato
+#   B. Manual: workflow_dispatch com input de ambiente (test | prod)
 #
 # REGRA DE PRODUÇÃO:
 #   - `main` branch representa produção
-#   - deploy para prod só é permitido a partir da branch main
-#   - qualquer tentativa de deploy prod fora de main será bloqueada e falhará
+#   - push/merge em main → deploy prod automático
+#   - deploy manual prod só é permitido a partir da branch main
+#   - qualquer tentativa de deploy prod manual fora de main será bloqueada e falhará
 #
 # SECRETS NECESSÁRIOS (já existem no repositório):
 #   - CLOUDFLARE_API_TOKEN
@@ -33,6 +35,9 @@
 name: Deploy — Cloudflare Workers
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       environment:
@@ -45,8 +50,29 @@ on:
           - prod
 
 jobs:
-  deploy:
-    name: Deploy ${{ github.event.inputs.environment }}
+  deploy-prod-auto:
+    name: Deploy prod (push em main)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Deploy prod
+        run: npx wrangler@3.114.17 deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  deploy-manual:
+    name: Deploy ${{ github.event.inputs.environment }} (manual)
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
