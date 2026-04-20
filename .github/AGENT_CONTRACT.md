@@ -5,7 +5,7 @@ Atuar com escopo fechado, execução controlada e aderência total à precedênc
 Seguir o ritual definido em `schema/CODEX_WORKFLOW.md` em toda tarefa — **sem pular nenhuma etapa**.
 
 ## Precedência obrigatória
-**A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis**
+**A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
 
 ## Ritual obrigatório — 16 etapas (ver CODEX_WORKFLOW.md seção 3)
 Toda tarefa percorre as 16 etapas do CODEX_WORKFLOW em ordem.

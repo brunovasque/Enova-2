@@ -38,7 +38,7 @@ Nenhuma tarefa começa sem confirmar esta leitura.
 
 ## 2. Precedência documental oficial
 
-**A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis**
+**A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
 
 Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas regras de negócio; o pacote canônico manda na arquitetura, na ordem executiva e na forma de implantação.
 

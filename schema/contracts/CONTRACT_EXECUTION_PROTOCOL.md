@@ -164,7 +164,7 @@ Toda PR de execução contratual deve atualizar, ao final:
 
 Este protocolo complementa o `CODEX_WORKFLOW.md`.
 
-Toda PR de execução deve, adicionalmente às 11 etapas do CODEX_WORKFLOW:
+Toda PR de execução deve, adicionalmente às 16 etapas do CODEX_WORKFLOW:
 
 1. Ler `schema/contracts/_INDEX.md` para identificar o contrato ativo
 2. Ler o contrato ativo da frente
