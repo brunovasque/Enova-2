@@ -91,15 +91,27 @@ function extractSectionContent(body, label) {
   );
   const match = body.match(headingRe);
   if (!match) return "";
-  // Remove HTML comments (<!-- ... -->) do conteúdo extraído
-  return match[1].replace(/<!--[\s\S]*?-->/g, "").trim();
+  // Remove HTML comments (<!-- ... -->) e resíduos do conteúdo extraído
+  return stripHtmlComments(match[1]).trim();
+}
+
+/**
+ * Remove comentários HTML (<!-- ... -->) e quaisquer fragmentos residuais de forma completa.
+ */
+function stripHtmlComments(text) {
+  // Primeira passagem: remove blocos fechados <!-- ... -->
+  let result = text.replace(/<!--[\s\S]*?-->/g, "");
+  // Segunda passagem: remove fragmentos residuais de abertura ou fechamento
+  result = result.replace(/<!--[\s\S]*/g, "");
+  result = result.replace(/[\s\S]*?-->/g, "");
+  return result;
 }
 
 /**
  * Verifica se uma string de conteúdo está "em branco" ou contém apenas comentários HTML.
  */
 function isEffectivelyEmpty(content) {
-  const cleaned = content.replace(/<!--[\s\S]*?-->/g, "").trim();
+  const cleaned = stripHtmlComments(content).trim();
   return cleaned.length === 0;
 }
 
