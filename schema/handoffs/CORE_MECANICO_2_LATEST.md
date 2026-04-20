@@ -3,15 +3,169 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T01:00:00Z                                                        |
+| Data                                       | 2026-04-20T01:33:47Z                                                        |
 | Estado da frente                           | não iniciada (bootstrap infra concluído)                                     |
-| Classificação da tarefa                    | fora_de_contrato                                                             |
-| Última PR relevante                        | PR #5 — bootstrap técnico mínimo Cloudflare Workers (wrangler.toml)         |
-| Item do A01 atendido                       | Fase 1 — scaffold técnico (bootstrap Cloudflare Workers)                     |
+| Classificação da tarefa                    | governança                                                                   |
+| Última PR relevante                        | PR #6 — Protocolo obrigatório de permissões Cloudflare                      |
+| Item do A01 atendido                       | Governança — endurecimento de workflow e rastreabilidade de permissões Cloudflare |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                            |
 | Próximo passo foi alterado?                | não                                                                          |
-| Tarefa fora de contrato?                   | sim — justificativa: scaffold técnico alinhado à Fase 1 do A01, executado antes do contrato do Core para preparar a infra |
+| Tarefa fora de contrato?                   | não — tarefa de governança, não contratual                                   |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                      |
+| Permissões Cloudflare necessárias          | nenhuma adicional                                                            |
+
+---
+
+## 1. Contexto curto
+
+O repositório fundador da ENOVA 2 está com governança endurecida em duas camadas: protocolo de dados persistidos do Supabase (PR #4) e bootstrap técnico mínimo de Cloudflare Workers (PR #5). Esta PR #6 adiciona a terceira camada de governança: protocolo obrigatório de permissões Cloudflare, garantindo que qualquer futura PR que passe a usar ou alterar recursos Cloudflare (Workers, KV, R2, D1, Queues, Service Bindings, Routes, Secrets, Vars, Observability) seja obrigada a declarar explicitamente se as permissões atuais bastam ou não.
+
+A tarefa foi classificada como `governança` porque cria novo protocolo de governança operacional sem abrir implementação funcional. O próximo passo autorizado não foi alterado.
+
+A frente Core Mecânico 2 permanece sem contrato aberto nem execução técnica de negócio. O próximo passo autorizado continua sendo a abertura formal do contrato.
+
+## 2. Classificação da tarefa
+
+**governança**
+
+Não há contrato ativo do Core Mecânico 2. Esta tarefa cria novo protocolo de governança de permissões Cloudflare — nenhuma implementação funcional aberta, nenhum recurso real criado, nenhum token alterado. O próximo passo autorizado não foi alterado.
+
+## 3. Última PR relevante
+
+**PR #5** — bootstrap técnico mínimo Cloudflare Workers (wrangler.toml).
+
+## 4. O que a PR #5 fechou
+
+- Bootstrap técnico mínimo de Cloudflare Workers: `wrangler.toml` com ambientes canônicos.
+- Preparação do repo para deploy futuro sem abrir implementação funcional.
+- Documentação técnica do bootstrap (`docs/BOOTSTRAP_CLOUDFLARE.md`).
+- Entrypoint placeholder mínimo (`src/worker.ts`) — honesto e explicitamente documentado.
+
+## 5. O que a PR #5 NÃO fechou
+
+- Protocolo de permissões Cloudflare (entregue nesta PR #6).
+- Contrato formal do Core Mecânico 2 (deliberadamente fora de escopo, preservado).
+
+## 6. Diagnóstico confirmado
+
+- O repo tinha governança de Supabase (DATA_CHANGE_PROTOCOL) mas não tinha governança equivalente para permissões Cloudflare.
+- A presença do `wrangler.toml` e do entrypoint placeholder tornava visível a necessidade: qualquer futura PR que adicione bindings, secrets, KV, R2, D1 ou outros recursos Cloudflare poderia ter a necessidade de permissão implícita.
+- O risco de falha silenciosa em deploy por token insuficiente é real e previsível — deve ser documentado preventivamente.
+- A criação do CLOUDFLARE_PERMISSION_PROTOCOL cobre essa lacuna no mesmo nível de clareza que o DATA_CHANGE_PROTOCOL cobre dados do Supabase.
+
+## 7. O que foi feito (PR #6)
+
+- Criado `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`: finalidade, precedência, escopo (Workers, KV, R2, D1, Queues, Service Bindings, Routes, Secrets, Vars, Observability), campos obrigatórios de declaração, regra de parada, regra de escopo mínimo do token, regra de não ampliar sem necessidade real, regra de aviso preventivo, exemplos, integração com CODEX_WORKFLOW.
+- Atualizado `schema/CODEX_WORKFLOW.md`: ordem de leitura (item 11 = CLOUDFLARE_PERMISSION_PROTOCOL), bloco ESTADO HERDADO com campo `Permissões Cloudflare necessárias`, bloco ESTADO ENTREGUE com campo `Permissões Cloudflare necessárias`, regra de parada para necessidade não declarada, seção 11 (schemas) com novo protocolo, seção 15 (protocolo Cloudflare).
+- Atualizado `.github/PULL_REQUEST_TEMPLATE.md`: seção explícita de permissões Cloudflare com campos (recurso, ação, permissões suficientes, permissões adicionais, motivo, impacto, onde ajustar).
+- Atualizado `.github/AGENT_CONTRACT.md`: ESTADO HERDADO com campo Cloudflare, regras 16–19 (declaração obrigatória, proibição de permissão implícita, aviso preventivo, parada imediata), seção de schemas com novo protocolo, seção de protocolo Cloudflare.
+- Atualizado `schema/HANDOFF_SCHEMA.md`: seção 19 obrigatória de permissões Cloudflare, campo no cabeçalho mínimo.
+- Atualizado `schema/STATUS_SCHEMA.md`: seção 16 de permissões Cloudflare, campo no cabeçalho mínimo.
+- Atualizado `schema/README_EXECUCAO.md`: seção de protocolo de permissões Cloudflare com escopo e aviso preventivo.
+- Atualizado `README.md`: `CLOUDFLARE_PERMISSION_PROTOCOL.md` como documento canônico e schema de governança.
+- Atualizado `schema/TASK_CLASSIFICATION.md`: obrigação universal de declaração de permissões Cloudflare em todas as classes.
+- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`: PR #6, classe governança, entregas atualizadas, campo Cloudflare.
+- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` (este arquivo).
+
+## 8. O que não foi feito
+
+- **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Próximo passo preservado.
+- **Implementação funcional** — nenhuma. Nenhum código de negócio.
+- **Criação de token real** — nenhuma. Protocolo é de governança, não de execução.
+- **Criação de secrets reais** — nenhuma.
+- **Bindings reais (KV, R2, D1, Queues)** — nenhum.
+- **Pipeline de deploy** — não aberto.
+- **Alteração de token existente** — nenhuma.
+
+## 9. O que esta PR fechou
+
+- Protocolo obrigatório de permissões Cloudflare (`CLOUDFLARE_PERMISSION_PROTOCOL.md`).
+- Rastreabilidade total de permissões: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template.
+- Alinhamento da governança Cloudflare ao mesmo nível de clareza da governança Supabase.
+
+## 10. O que continua pendente após esta PR
+
+- Abertura de contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
+- Transcrição integral do conteúdo dos legados (PDF mestre).
+- Implementação funcional do worker (após contrato aprovado).
+- Pipeline de CI/CD para deploy automatizado (após contrato aprovado).
+
+## 11. Esta tarefa foi fora de contrato?
+
+**não** — classificada como `governança`.
+
+Não há contrato ativo do Core Mecânico 2, mas tarefas de governança não precisam de contrato para serem executadas. Esta tarefa não altera o próximo passo autorizado.
+
+Impacto no próximo passo autorizado: **não alterou** — próximo passo continua sendo abertura do contrato do Core Mecânico 2.
+
+## 12. Arquivos relevantes
+
+- `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` *(criado)*
+- `schema/CODEX_WORKFLOW.md` *(atualizado — ordem de leitura, ESTADO HERDADO/ENTREGUE, regra de parada, seções 11 e 15)*
+- `.github/PULL_REQUEST_TEMPLATE.md` *(atualizado — seção de permissões Cloudflare)*
+- `.github/AGENT_CONTRACT.md` *(atualizado — ESTADO HERDADO, regras 16–19, seções de schemas e protocolo)*
+- `schema/HANDOFF_SCHEMA.md` *(atualizado — seção 19 e cabeçalho)*
+- `schema/STATUS_SCHEMA.md` *(atualizado — seção 16 e cabeçalho)*
+- `schema/README_EXECUCAO.md` *(atualizado — seção de protocolo Cloudflare)*
+- `README.md` *(atualizado — documento canônico e schema de governança)*
+- `schema/TASK_CLASSIFICATION.md` *(atualizado — obrigação universal de declaração Cloudflare)*
+- `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
+- `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
+
+## 13. Item do A01 atendido
+
+- **Governança** — endurecimento de workflow: protocolo obrigatório de permissões Cloudflare, equivalente ao DATA_CHANGE_PROTOCOL para Supabase.
+- **Fase 0** — fundação documental: governança de permissões Cloudflare completa.
+
+## 14. Estado atual da frente
+
+**não iniciada** (bootstrap infra concluído, governança de permissões Cloudflare completa)
+
+A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. O repo agora tem a infra de Cloudflare pronta e a governança de permissões Cloudflare estabelecida.
+
+## 15. Próximo passo autorizado
+
+**Abrir contrato do Core Mecânico 2**, seguindo:
+- Formato: `schema/CONTRACT_SCHEMA.md`
+- Escopo: Prioridade 1 do A01 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala
+- Legados: blocos L03 + famílias L04-L17 do legado mestre unificado conforme A02 e INDEX_LEGADO_MESTRE.md
+- Gate: Gate 1 será satisfeito com a aprovação do contrato
+- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões Cloudflare ✅
+
+**Próximo passo preservado** — igual ao definido na PR #5.
+
+## 16. Riscos
+
+- **Entrypoint placeholder** — `src/worker.ts` é um placeholder sem lógica. Se alguém fizer deploy antes da implementação real, o worker responderá com uma mensagem de bootstrap. Isso é intencional e documentado.
+- **Conteúdo dos legados** — O legado mestre unificado contém placeholders por bloco. O PDF mestre deve ser incorporado antes da abertura do contrato do Core.
+- **Permissões do token Cloudflare** — O token atual não foi verificado para todos os recursos que serão necessários após o contrato. Qualquer PR que adicione bindings ou recursos Cloudflare deve seguir o `CLOUDFLARE_PERMISSION_PROTOCOL.md` e declarar se as permissões atuais bastam.
+
+## 17. Provas
+
+- PR #6 criada com escopo exclusivamente de governança de permissões Cloudflare.
+- Nenhum arquivo funcional criado ou alterado.
+- Nenhum token, secret ou recurso Cloudflare real criado.
+- `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` criado com estrutura equivalente ao `DATA_CHANGE_PROTOCOL.md`.
+- Todos os artefatos de governança atualizados para exigir declaração obrigatória de permissões Cloudflare.
+- Status e handoff do Core Mecânico 2 atualizados refletindo PR #6.
+- Mudanças em dados persistidos (Supabase): **nenhuma**.
+- Permissões Cloudflare necessárias: **nenhuma adicional** (esta PR é de governança documental).
+
+## 18. Mudanças em dados persistidos (Supabase)
+
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+
+Esta PR é de governança documental. Nenhuma tabela, coluna, índice, constraint, relacionamento ou migration do Supabase foi criado, alterado ou removido.
+
+## 19. Permissões Cloudflare necessárias
+
+```
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+
+Esta PR é de governança documental. Nenhum recurso Cloudflare real (Workers Script, KV, R2, D1, Queues, Routes, Secrets, Vars, Bindings) foi criado, alterado ou configurado. O protocolo criado não requer permissão adicional para existir — apenas para ser aplicado em PRs futuras.
 
 ---
 

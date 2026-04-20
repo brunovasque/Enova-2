@@ -123,6 +123,30 @@ Mudanças em dados persistidos (Supabase): sim
 
 Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos, campos obrigatórios e regra de parada.
 
+### 19. Permissões Cloudflare necessárias
+
+Declaração obrigatória — inclusive quando não houver necessidade nova:
+
+```
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+
+ou, se houver necessidade nova:
+
+```
+Permissões Cloudflare necessárias: sim
+  Recurso Cloudflare afetado:          <recurso>
+  Permissão necessária:                <permissão>
+  Permissões atuais suficientes?        <sim | não | incerto>
+  O que ficou pendente:                <o que ainda precisa ser feito para satisfazer a permissão>
+  Onde ajustar:                         <token Cloudflare | GitHub Secrets | wrangler.toml | Cloudflare Dashboard | outro>
+  Risco se não ajustar:                <impacto de não ampliar as permissões>
+```
+
+Se a frente ficou bloqueada por permissão Cloudflare insuficiente, refletir isso no campo `Estado da frente` (seção 14) e no `Próximo passo autorizado` (seção 15).
+
+Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios e regra de parada.
+
 ---
 
 ## Regras de uso
@@ -154,4 +178,5 @@ Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos, campos obrigatórios
 | Próximo passo foi alterado?                | <sim | não>                                                   |
 | Tarefa fora de contrato?                   | <sim | não>                                                   |
 | Mudanças em dados persistidos (Supabase)   | <nenhuma | sim — ver seção 18>                               |
+| Permissões Cloudflare necessárias          | <nenhuma adicional | sim — ver seção 19>                      |
 ```

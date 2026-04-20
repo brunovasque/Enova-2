@@ -39,6 +39,8 @@ Esta tarefa está dentro ou fora do contrato ativo: <dentro | fora — justifica
 Objetivo desta tarefa: <objetivo>
 Escopo: <incluído>
 Fora de escopo: <não incluído>
+Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
+Permissões Cloudflare necessárias: <nenhuma adicional | sim — se sim, ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2>
 ```
 
 Tarefa sem esta declaração não deve ser iniciada.
@@ -71,6 +73,10 @@ Tarefa não classificada = tarefa não conforme.
 13. **Declarar obrigatoriamente** em todo ESTADO HERDADO e ESTADO ENTREGUE se houve ou não mudança em dados persistidos do Supabase — inclusive quando a resposta for `nenhuma`.
 14. **Nenhuma mudança** em tabela, coluna, índice, constraint ou relacionamento do Supabase pode ser executada sem declaração prévia completa e rastreabilidade total conforme `schema/DATA_CHANGE_PROTOCOL.md`.
 15. **Parar imediatamente** se uma tarefa mexer em dados persistidos do Supabase sem declarar tabela, tipo de mudança, colunas afetadas, motivo, impacto e rollback.
+16. **Declarar obrigatoriamente** em todo ESTADO HERDADO e ESTADO ENTREGUE se há ou não necessidade nova de permissão Cloudflare — inclusive quando a resposta for `nenhuma adicional`.
+17. **Nenhuma tarefa** que passe a depender de novo recurso Cloudflare pode seguir com a necessidade de permissão implícita — declarar recurso, ação, permissões suficientes e impacto antes de prosseguir.
+18. **Avisar preventivamente** ao usuário quando a PR passar a exigir novas permissões Cloudflare — nunca deixar esse risco implícito ou silencioso.
+19. **Parar imediatamente** se uma tarefa introduzir dependência de recurso Cloudflare sem declaração completa dos campos obrigatórios conforme `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`.
 
 ## Atualização viva obrigatória ao final de qualquer tarefa
 Independente de ser tarefa contratual ou fora de contrato:
@@ -95,6 +101,7 @@ Esta regra garante que o repositório seja a única fonte de verdade — não a 
 - `schema/HANDOFF_SCHEMA.md` — formato de handoff persistido
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs
 - `schema/DATA_CHANGE_PROTOCOL.md` — protocolo obrigatório de mudanças em dados persistidos do Supabase
+- `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — protocolo obrigatório de permissões Cloudflare
 
 ## Protocolo de dados persistidos (Supabase)
 Nenhuma mudança em schema, tabela, coluna, índice, constraint ou relacionamento do Supabase pode acontecer sem:
@@ -105,6 +112,17 @@ Nenhuma mudança em schema, tabela, coluna, índice, constraint ou relacionament
 Mesmo quando não houver mudança de dados, declarar: `Mudanças em dados persistidos (Supabase): nenhuma`
 
 Ver `schema/DATA_CHANGE_PROTOCOL.md` para o protocolo completo.
+
+## Protocolo de permissões Cloudflare
+Nenhuma tarefa que passe a depender de novo recurso Cloudflare pode seguir com a necessidade de permissão implícita.
+
+Toda tarefa deve declarar explicitamente no ESTADO HERDADO e ESTADO ENTREGUE se há ou não necessidade nova de permissão Cloudflare:
+- Mesmo quando não houver necessidade nova, declarar: `Permissões Cloudflare necessárias: nenhuma adicional`
+- Se houver necessidade nova: preencher todos os campos obrigatórios (recurso, ação, permissões suficientes, permissões adicionais, motivo, impacto, onde ajustar)
+- Falha futura de deploy, binding ou recurso pode ser causada por permissão insuficiente do token — o agente deve avisar preventivamente, nunca deixar esse risco implícito
+- Parar imediatamente se uma tarefa introduzir dependência de recurso Cloudflare sem declaração completa
+
+Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para o protocolo completo.
 
 ## Proibições nesta fase fundadora
 - Criar app funcional
