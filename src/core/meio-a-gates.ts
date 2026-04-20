@@ -16,6 +16,7 @@ import {
 export interface MeioACriteriaResult {
   can_advance: boolean;
   authorized_next_step: string;
+  next_objective: string;
   criteria_code: string;
   structural_reason: string;
   track_signal: string;
@@ -38,6 +39,7 @@ export function evaluateMeioACriteria(signals: MeioASignals): MeioACriteriaResul
     return {
       can_advance: false,
       authorized_next_step: MEIO_A_NEXT_STEP.REMAIN_IN_QUALIFICATION_CIVIL,
+      next_objective: `coletar_${missingRequiredFacts[0] ?? 'facto_critico'}`,
       criteria_code: MEIO_A_BLOCKING_CONDITIONS.FACTO_CRITICO_AUSENTE,
       structural_reason:
         `Facts críticos ausentes no Meio A: [${missingRequiredFacts.join(', ')}].`,
@@ -51,6 +53,7 @@ export function evaluateMeioACriteria(signals: MeioASignals): MeioACriteriaResul
     return {
       can_advance: false,
       authorized_next_step: MEIO_A_NEXT_STEP.REMAIN_IN_QUALIFICATION_CIVIL,
+      next_objective: 'corrigir_processo_para_conjunto',
       criteria_code: MEIO_A_BLOCKING_CONDITIONS.PROCESSO_INVALIDO_PARA_ESTADO_CIVIL,
       structural_reason:
         `estado_civil='casado_civil' exige processo='conjunto'; ` +
@@ -65,6 +68,7 @@ export function evaluateMeioACriteria(signals: MeioASignals): MeioACriteriaResul
     return {
       can_advance: false,
       authorized_next_step: MEIO_A_NEXT_STEP.REMAIN_IN_QUALIFICATION_CIVIL,
+      next_objective: 'coletar_composition_actor',
       criteria_code: MEIO_A_BLOCKING_CONDITIONS.COMPOSICAO_SEM_ATOR,
       structural_reason:
         `processo='composicao_familiar' exige composition_actor válido no Meio A.`,
@@ -74,14 +78,41 @@ export function evaluateMeioACriteria(signals: MeioASignals): MeioACriteriaResul
     };
   }
 
+  if (signals.p3_required_value === true) {
+    return {
+      can_advance: false,
+      authorized_next_step: MEIO_A_NEXT_STEP.REMAIN_IN_QUALIFICATION_CIVIL,
+      next_objective: 'avaliar_p3',
+      criteria_code: MEIO_A_BLOCKING_CONDITIONS.P3_REQUER_ROTEAMENTO,
+      structural_reason:
+        `composição atual exige terceiro participante (p3_required=true) antes de seguir para renda.`,
+      track_signal: MEIO_A_SIGNAL_POLICY.COMPOSICAO_COMPLEXA_P3,
+      missing_required_facts: [],
+      activated_gates: ['G_COMPOSICAO_FAMILIAR'],
+    };
+  }
+
+  if (signals.dependents_required && !signals.dependents_count_detected) {
+    return {
+      can_advance: false,
+      authorized_next_step: MEIO_A_NEXT_STEP.REMAIN_IN_QUALIFICATION_CIVIL,
+      next_objective: 'coletar_dependents_count',
+      criteria_code: MEIO_A_BLOCKING_CONDITIONS.DEPENDENTE_SEM_QUANTIDADE,
+      structural_reason:
+        `dependents_applicable=true exige dependents_count antes de concluir a composição do Meio A.`,
+      track_signal: MEIO_A_SIGNAL_POLICY.DEPENDENTE_APLICAVEL,
+      missing_required_facts: ['dependents_count'],
+      activated_gates: ['G_COMPOSICAO_FAMILIAR'],
+    };
+  }
+
   return {
     can_advance: true,
     authorized_next_step: MEIO_A_NEXT_STEP.ADVANCE_TO_RENDA,
+    next_objective: `avancar_para_${MEIO_A_NEXT_STEP.ADVANCE_TO_RENDA}`,
     criteria_code: MEIO_A_ADVANCE_CRITERIA.TRILHO_VALIDO_ESTRUTURAL,
     structural_reason: buildAdvanceReason(signals),
-    track_signal: signals.composition_actor_detected
-      ? MEIO_A_SIGNAL_POLICY.COMPOSICAO_RELEVANTE_DETECTADA
-      : MEIO_A_SIGNAL_POLICY.TRILHO_VALIDO_SEM_COMPOSICAO,
+    track_signal: buildTrackSignal(signals),
     missing_required_facts: [],
     activated_gates: [],
   };
@@ -97,4 +128,16 @@ function buildAdvanceReason(signals: MeioASignals): string {
   }
 
   return `${base} Nenhuma composição adicional crítica pendente neste recorte.`;
+}
+
+function buildTrackSignal(signals: MeioASignals): string {
+  if (signals.dependents_required) {
+    return MEIO_A_SIGNAL_POLICY.DEPENDENTE_APLICAVEL;
+  }
+
+  if (signals.composition_actor_detected) {
+    return MEIO_A_SIGNAL_POLICY.COMPOSICAO_RELEVANTE_DETECTADA;
+  }
+
+  return MEIO_A_SIGNAL_POLICY.TRILHO_VALIDO_SEM_COMPOSICAO;
 }
