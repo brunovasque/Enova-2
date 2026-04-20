@@ -11,14 +11,14 @@
 | Item do A01                                | Fase 0 — fundação documental: organização do legado mestre                                |
 | Estado atual                               | não iniciada (base documental organizada — pronta para abertura de contrato)              |
 | Classe da última tarefa                    | governança (organização documental — legado mestre + schema de contrato)                  |
-| Última PR relevante                        | PR #11 — Organização documental do legado mestre para primeira PR de contrato do Core     |
+| Última PR relevante                        | PR #12 — Organização documental do legado mestre para primeira PR de contrato do Core     |
 | Último commit                              | Governança: legado mestre organizado, INDEX operacional, CONTRACT_SCHEMA atualizado       |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (base documental agora corretamente organizada)        |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
 | Permissões Cloudflare — infra herdada (PR #7) | Workers Scripts:Edit — obrigatório para deploy via wrangler (aviso preventivo ativo) |
-| Permissões Cloudflare — última tarefa (PR #11) | nenhuma adicional — tarefa de governança documental                                 |
+| Permissões Cloudflare — última tarefa (PR #12) | nenhuma adicional — tarefa de governança documental                                 |
 | Última atualização                         | 2026-04-20T14:03:00Z                                                                      |
 
 ---
@@ -55,7 +55,7 @@ A governança completa está pronta (trio-base, workflow, protocolos de dados e 
 
 PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL.
 PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo.
-PR #11 — Organização documental do legado mestre (esta PR).
+PR #12 — Organização documental do legado mestre (esta PR).
 - Corrigiu `schema/source/README.md` — reflete que PDF já existe no repo
 - Reorganizou `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — honesto sobre estado real
 - Transformou `schema/legacy/INDEX_LEGADO_MESTRE.md` em índice operacional real
@@ -140,4 +140,4 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 ## 14. Última atualização
 
 - **Data**: 2026-04-20T14:03:00Z
-- **Responsável**: Copilot (PR #11 — organização documental do legado mestre)
+- **Responsável**: Copilot (PR #12 — organização documental do legado mestre)

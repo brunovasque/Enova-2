@@ -6,7 +6,7 @@
 | Data                                       | 2026-04-20T14:03:00Z                                                        |
 | Estado da frente                           | não iniciada (base documental organizada — pronta para abertura de contrato)|
 | Classificação da tarefa                    | governança (organização documental — legado mestre + schema de contrato)    |
-| Última PR relevante                        | PR #11 — Organização documental do legado mestre para contrato do Core      |
+| Última PR relevante                        | PR #12 — Organização documental do legado mestre para contrato do Core      |
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                  |
 | Recorte executado do contrato              | N/A — nenhum contrato ativo                                                  |
 | Pendência contratual remanescente          | N/A — aguardando abertura do contrato                                        |
@@ -23,9 +23,9 @@
 
 ## 1. Contexto curto
 
-O repositório da ENOVA 2 chegou à PR #10 com governança completa (gate de PR + auto-fix controlado + regra de menção obrigatória ao agente/modelo). Esta PR #11 corrige a organização documental do legado mestre, que estava desalinhada: o PDF real já existia no repo mas o source README ainda dizia "PENDENTE DE UPLOAD", o legado mestre markdown estava em estado genérico/enganoso, e o INDEX não tinha estrutura operacional real.
+O repositório da ENOVA 2 chegou à PR #10 com governança completa (gate de PR + auto-fix controlado + regra de menção obrigatória ao agente/modelo). Esta PR #12 corrige a organização documental do legado mestre, que estava desalinhada: o PDF real já existia no repo mas o source README ainda dizia "PENDENTE DE UPLOAD", o legado mestre markdown estava em estado genérico/enganoso, e o INDEX não tinha estrutura operacional real.
 
-A PR #11 entrega: `schema/source/README.md` corrigido para refletir que o PDF existe; `LEGADO_MESTRE_ENOVA1_ENOVA2.md` reorganizado com honestidade documental (identificado estruturalmente, não transcrito); `INDEX_LEGADO_MESTRE.md` transformado em índice operacional real com colunas de ordem de leitura, status granular e observações; `CONTRACT_SCHEMA.md` expandido com três novos campos obrigatórios (seções 14, 15, 16).
+A PR #12 entrega: `schema/source/README.md` corrigido para refletir que o PDF existe; `LEGADO_MESTRE_ENOVA1_ENOVA2.md` reorganizado com honestidade documental (identificado estruturalmente, não transcrito); `INDEX_LEGADO_MESTRE.md` transformado em índice operacional real com colunas de ordem de leitura, status granular e observações; `CONTRACT_SCHEMA.md` expandido com três novos campos obrigatórios (seções 14, 15, 16).
 
 Nenhuma implementação funcional foi aberta. O próximo passo autorizado não foi alterado.
 
@@ -49,7 +49,7 @@ Não há contrato ativo do Core Mecânico 2. Esta tarefa organiza corretamente a
 
 ## 5. O que a PR #10 NÃO fechou
 
-- Organização correta da base documental do legado mestre (entregue nesta PR #11).
+- Organização correta da base documental do legado mestre (entregue nesta PR #12).
 - Contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
 
 ## 6. Diagnóstico confirmado
@@ -59,7 +59,7 @@ Não há contrato ativo do Core Mecânico 2. Esta tarefa organiza corretamente a
 - `schema/legacy/INDEX_LEGADO_MESTRE.md` não tinha coluna de ordem de leitura, status granular nem observações operacionais reais.
 - `schema/CONTRACT_SCHEMA.md` não exigia campos de referências obrigatórias, blocos legados aplicáveis nem ordem mínima de leitura da frente.
 
-## 7. O que foi feito (PR #11)
+## 7. O que foi feito (PR #12)
 
 - Corrigido `schema/source/README.md`: reflete que PDF existe, é fonte bruta canônica, alimenta legado operacional e contratos futuros.
 - Reorganizado `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`: estado honesto — blocos L01–L19 "identificados estruturalmente, não transcritos"; blocos C01–C09 "estrutura reservada, não confirmados". Instrução para referenciar PDF diretamente quando bloco não transcrito.
@@ -153,7 +153,7 @@ A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técn
 
 ## 17. Provas
 
-- PR #11 criada com escopo exclusivo de organização documental.
+- PR #12 criada com escopo exclusivo de organização documental.
 - `schema/source/README.md` corrigido — "PENDENTE DE UPLOAD" removido, PDF declarado como presente.
 - `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — todos os 28 blocos atualizados com honestidade documental.
 - `schema/legacy/INDEX_LEGADO_MESTRE.md` — colunas de ordem de leitura, status granular e observações adicionadas.
