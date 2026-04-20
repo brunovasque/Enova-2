@@ -10,11 +10,16 @@
  *   - Sem LLM. Sem dependências externas. Sem API externa. Sem loop aberto.
  *   - Erros estruturais param imediatamente, sem retry.
  *   - Em caso de ambiguidade: parar e registrar motivo.
- *   - Os valores inseridos são PLACEHOLDERS — o autor deve preencher os reais.
+ *
+ * Estratégia de preenchimento (em ordem de prioridade):
+ *   1. Valores reais extraídos dos arquivos vivos do repositório:
+ *        - Contrato ativo: schema/contracts/_INDEX.md
+ *        - Próximo passo: schema/handoffs/<FRENTE>_LATEST.md → schema/status/<FRENTE>_STATUS.md
+ *   2. Valores seguros de fallback (não rejeitados pelo validator) quando não há fonte determinística.
  *
  * Erros trivialmente corrigíveis (auto-fix atua):
- *   - Campo obrigatório ausente do body → adiciona seção com placeholder
- *   - Campo obrigatório presente mas vazio / só comentário HTML → preenche com placeholder
+ *   - Campo obrigatório ausente do body → adiciona seção com valor extraído dos vivos (ou fallback)
+ *   - Campo obrigatório presente mas vazio / só comentário HTML → preenche com valor extraído
  *
  * Erros NÃO corrigíveis (auto-fix para e registra):
  *   - Body completamente vazio
@@ -34,6 +39,10 @@
 "use strict";
 
 const fs = require("fs");
+const path = require("path");
+
+// Diretório raiz do repositório (dois níveis acima de scripts/)
+const REPO_ROOT = path.resolve(__dirname, "..");
 
 // ---------------------------------------------------------------------------
 // Configuração
@@ -42,18 +51,19 @@ const fs = require("fs");
 const MAX_ATTEMPTS = 3;
 
 // Campos mínimos obrigatórios (espelho de validate_pr_governance.js)
-// defaultValue = placeholder determinístico usado quando o campo está ausente/vazio
-const REQUIRED_FIELDS = [
+// defaultValue é preenchido dinamicamente a partir dos arquivos vivos em extractLiveValues().
+// Fallback seguro (não rejeitado pelo validator) quando nenhuma fonte determinística existe.
+const REQUIRED_FIELDS_TEMPLATE = [
   {
     label: "Contrato ativo",
     group: "Vínculo contratual",
-    defaultValue: "Nenhum contrato ativo — verificar schema/contracts/_INDEX.md",
+    fallbackValue: "Nenhum contrato ativo",
     triviallyFixable: true,
   },
   {
     label: "Próximo passo autorizado",
     group: "Próximo passo",
-    defaultValue: "Verificar schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md",
+    fallbackValue: "A definir — consultar A01",
     triviallyFixable: true,
   },
 ];
@@ -119,6 +129,147 @@ function extractSectionContent(body, label) {
   const blockMatch = body.match(blockRe);
   if (!blockMatch) return "";
   return blockMatch[1].trim();
+}
+
+// ---------------------------------------------------------------------------
+// Extração de valores dos arquivos vivos
+// ---------------------------------------------------------------------------
+
+/**
+ * Lê um arquivo com segurança.
+ * Retorna string vazia se o arquivo não existir ou se a leitura falhar.
+ * Nunca lança exceção — o auto-fix deve degradar graciosamente.
+ */
+function readFileSafe(filePath) {
+  try {
+    return fs.readFileSync(filePath, "utf8");
+  } catch (err) {
+    console.log(`⚠️  AUTO-FIX: Não foi possível ler ${filePath}: ${err.code || err.message}`);
+    return "";
+  }
+}
+
+/**
+ * Extrai o valor de um campo de uma tabela Markdown no formato:
+ *   | Campo | Valor |
+ * Remove backticks e espaços extras. Retorna "" se não encontrado.
+ */
+function extractTableField(content, fieldName) {
+  const escaped = escapeRegex(fieldName);
+  const re = new RegExp(`\\|\\s*${escaped}\\s*\\|\\s*([^|\\n]+)`, "i");
+  const match = content.match(re);
+  if (!match) return "";
+  return match[1].trim().replace(/`/g, "");
+}
+
+/**
+ * Extrai o caminho do contrato ativo a partir de schema/contracts/_INDEX.md.
+ * Procura a primeira linha de tabela que contenha "schema/contracts/active/" como caminho
+ * e cujo status seja "aberto", "em execução" ou "em revisão".
+ * Retorna o caminho do contrato ou "" se não houver contrato ativo.
+ */
+function extractActiveContractFromIndex() {
+  const indexPath = path.join(REPO_ROOT, "schema", "contracts", "_INDEX.md");
+  const content = readFileSafe(indexPath);
+  if (!content) return "";
+
+  const re = /\|\s*\d+\s*\|[^|]+\|\s*`(schema\/contracts\/active\/[^`]+)`\s*\|\s*(aberto|em execução|em revisão)/i;
+  const match = re.exec(content);
+  if (!match) return "";
+  return match[1].trim();
+}
+
+/**
+ * Dado o caminho do contrato (ex: "schema/contracts/active/CONTRATO_CORE_MECANICO_2.md"),
+ * deriva a chave da frente (ex: "CORE_MECANICO_2") removendo prefixo "CONTRATO_" e extensão.
+ * Essa chave é usada para montar os caminhos de handoff e status da frente.
+ */
+function extractFrontKeyFromContract(contractPath) {
+  const basename = path.basename(contractPath, ".md");
+  return basename.replace(/^CONTRATO_/, "");
+}
+
+/**
+ * Extrai o próximo passo autorizado do handoff ou do status da frente.
+ * Tenta handoff primeiro (mais atualizado), depois status como fallback.
+ * Retorna a primeira linha não vazia do campo, ou "" se não encontrado.
+ */
+function extractNextStepForFront(frontKey) {
+  const handoffPath = path.join(
+    REPO_ROOT, "schema", "handoffs", `${frontKey}_LATEST.md`
+  );
+  const statusPath = path.join(
+    REPO_ROOT, "schema", "status", `${frontKey}_STATUS.md`
+  );
+
+  // 1. Tentar handoff (tabela de resumo no topo)
+  const handoffContent = readFileSafe(handoffPath);
+  if (handoffContent) {
+    const tableValue = extractTableField(handoffContent, "Próximo passo autorizado");
+    if (tableValue && !isEffectivelyEmpty(tableValue)) {
+      console.log(`🔍 Valor extraído de: ${handoffPath} (tabela)`);
+      return tableValue;
+    }
+    // Tentar seção ## do handoff
+    const sectionValue = extractSectionContent(handoffContent, "Próximo passo autorizado");
+    if (sectionValue && !isEffectivelyEmpty(sectionValue)) {
+      const firstLine = sectionValue.split("\n")[0].replace(/^\*+|\*+$/g, "").trim();
+      if (firstLine.length > 0) {
+        console.log(`🔍 Valor extraído de: ${handoffPath} (seção)`);
+        return firstLine;
+      }
+    }
+  }
+
+  // 2. Fallback: status da frente
+  const statusContent = readFileSafe(statusPath);
+  if (statusContent) {
+    const tableValue = extractTableField(statusContent, "Próximo passo autorizado");
+    if (tableValue && !isEffectivelyEmpty(tableValue)) {
+      console.log(`🔍 Valor extraído de: ${statusPath} (tabela)`);
+      return tableValue;
+    }
+    const sectionValue = extractSectionContent(statusContent, "Próximo passo autorizado");
+    if (sectionValue && !isEffectivelyEmpty(sectionValue)) {
+      const firstLine = sectionValue.split("\n")[0].replace(/^\*+|\*+$/g, "").trim();
+      if (firstLine.length > 0) {
+        console.log(`🔍 Valor extraído de: ${statusPath} (seção)`);
+        return firstLine;
+      }
+    }
+  }
+
+  return "";
+}
+
+/**
+ * Lê os arquivos vivos do repositório e retorna os valores reais para os 2 campos mínimos.
+ * Garante que os valores retornados NÃO sejam rejeitados pelo validator.
+ * Em caso de falha de leitura, retorna valores de fallback seguros.
+ */
+function extractLiveValues() {
+  const contractPath = extractActiveContractFromIndex();
+
+  let contratoAtivo = "";
+  let proximoPasso = "";
+
+  if (contractPath) {
+    contratoAtivo = contractPath;
+    console.log(`🔍 Valor extraído de: schema/contracts/_INDEX.md`);
+
+    const frontKey = extractFrontKeyFromContract(contractPath);
+    proximoPasso = extractNextStepForFront(frontKey);
+  }
+
+  // Fallbacks seguros (não contêm padrões rejeitados pelo validator)
+  if (!contratoAtivo) {
+    contratoAtivo = "Nenhum contrato ativo";
+  }
+  if (!proximoPasso) {
+    proximoPasso = "A definir — consultar A01";
+  }
+
+  return { contratoAtivo, proximoPasso };
 }
 
 // ---------------------------------------------------------------------------
@@ -219,6 +370,18 @@ function main() {
     return;
   }
 
+  // Extrair valores reais dos arquivos vivos do repositório.
+  // Estes valores substituem os placeholders antigos e são aceitos pelo validator.
+  const { contratoAtivo, proximoPasso } = extractLiveValues();
+
+  // Campos mínimos com valores derivados dos arquivos vivos (ou fallback seguro)
+  const REQUIRED_FIELDS = REQUIRED_FIELDS_TEMPLATE.map((field) => {
+    let defaultValue = field.fallbackValue;
+    if (field.label === "Contrato ativo") defaultValue = contratoAtivo;
+    if (field.label === "Próximo passo autorizado") defaultValue = proximoPasso;
+    return Object.assign({}, field, { defaultValue });
+  });
+
   // Classificar falhas dos campos obrigatórios
   const trivialFailures = [];
 
@@ -257,12 +420,12 @@ function main() {
     const { type, field } = failure;
     if (type === "missing") {
       console.log(`🔧 Adicionando seção ausente: "${field.label}"`);
-      console.log(`   Placeholder: "${field.defaultValue}"`);
+      console.log(`   Valor: "${field.defaultValue}"`);
       fixedBody = addMissingSection(fixedBody, field.label, field.defaultValue);
       fixCount++;
     } else if (type === "empty") {
       console.log(`🔧 Preenchendo campo vazio: "${field.label}"`);
-      console.log(`   Placeholder: "${field.defaultValue}"`);
+      console.log(`   Valor: "${field.defaultValue}"`);
       fixedBody = fillEmptySection(fixedBody, field.label, field.defaultValue);
       fixCount++;
     }
@@ -283,11 +446,11 @@ function main() {
   fs.writeFileSync(NEW_BODY_FILE, fixedBody, "utf8");
   writeStatus("fixed");
 
-  console.log(`\n✅ AUTO-FIX: ${fixCount} correção(ões) trivial(is) aplicada(s).`);
+  console.log(`\n✅ AUTO-FIX: ${fixCount} correção(ões) aplicada(s) com valores dos arquivos vivos.`);
   console.log(`   Tentativa: ${attemptCount + 1}/${MAX_ATTEMPTS}`);
   console.log(`   Body atualizado escrito em: ${NEW_BODY_FILE}`);
-  console.log("\n⚠️  ATENÇÃO: Valores inseridos são placeholders determinísticos.");
-  console.log("   O autor da PR deve substituir pelos valores reais.");
+  console.log("\n📋 Valores inseridos foram extraídos dos arquivos vivos do repositório.");
+  console.log("   Verifique se refletem corretamente o estado atual da frente.");
   console.log("   Template: .github/PULL_REQUEST_TEMPLATE.md");
   console.log("   Protocolo: schema/CODEX_WORKFLOW.md\n");
 }

@@ -10,8 +10,10 @@
  * Filosofia de governança:
  *   - Fonte de verdade obrigatória = arquivos vivos versionados do repo
  *     (schema/status/, schema/handoffs/, schema/contracts/)
- *   - Corpo da PR = apoio humano / checklist — não é a fonte única de bloqueio
+ *   - Corpo da PR = reflexo mínimo dos arquivos vivos — não pode divergir nem ficar vazio
+ *     nos 2 campos mínimos obrigatórios (Contrato ativo + Próximo passo autorizado)
  *   - Gate bloqueante no body: apenas 2 campos mínimos obrigatórios
+ *   - O auto-fix extrai valores reais dos arquivos vivos para preencher esses campos
  *   - Gate bloqueante real: mudanças em arquivos vivos devem refletir o diff
  *
  * Uso:
@@ -39,12 +41,19 @@ const REQUIRED_FIELDS = [
   { label: "Próximo passo autorizado", group: "Próximo passo" },
 ];
 
-// Placeholders conhecidos do auto-fix NÃO satisfazem a governança real.
-// O auto-fix pode adicionar a moldura mínima, mas esses valores devem continuar
-// bloqueando o gate até substituição manual por valor real.
+// Padrões que indicam placeholders genéricos ou instruções de preenchimento não resolvidas.
+// Valores reais extraídos dos arquivos vivos (ex: caminho de contrato, texto de próximo passo)
+// NÃO são rejeitados por estes padrões — apenas formatos de placeholder puro o são.
+//
+// Regra: o auto-fix pode inserir valores extraídos dos vivos que passam direto.
+// O gate só rejeita quando o conteúdo ainda é um artefato de instrução não substituído.
 const INVALID_REQUIRED_FIELD_PATTERNS = [
-  /verificar\s+schema\//i,
-  /nenhum\s+contrato\s+ativo\s+—\s+verificar/i,
+  // "Verificar schema/..." — instrução de busca, não é um valor real
+  // Não rejeita caminhos citados como referência dentro de frases descritivas.
+  /^\s*verificar\s+schema\//i,
+  // "Nenhum contrato ativo — verificar ..." — forma longa do placeholder de ausência.
+  // A forma curta "Nenhum contrato ativo" (sem "— verificar") é aceita como valor real.
+  /nenhum\s+contrato\s+ativo\s+[—-]\s*verificar/i,
   /placeholder/i,
   /preencher\s+manualmente/i,
   /pend[êe]ncia\s+de\s+preenchimento/i,

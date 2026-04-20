@@ -96,6 +96,7 @@ Tarefa não classificada = tarefa não conforme.
 21. **Declarar obrigatoriamente** em todo ESTADO HERDADO e ESTADO ENTREGUE o bloco "Fontes de verdade consultadas" — com os caminhos exatos de todos os artefatos lidos como fonte de verdade. Ver `schema/CONTRACT_SOURCE_MAP.md` e `schema/CODEX_WORKFLOW.md` seção 19.
 22. **Nunca declarar "lido" um arquivo que não foi efetivamente consultado.** A declaração de fontes é rastreabilidade real, não formalidade.
 23. **Quando bloco legado necessário não estiver transcrito no markdown:** referenciar diretamente o PDF mestre em `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` e declarar explicitamente qual seção foi consultada.
+24. **O body da PR deve ser reflexo mínimo dos arquivos vivos.** Os campos `Contrato ativo` e `Próximo passo autorizado` devem ser transcritos dos arquivos vivos (`schema/contracts/_INDEX.md`, `schema/handoffs/<FRENTE>_LATEST.md`, `schema/status/<FRENTE>_STATUS.md`) — não inventados ou deixados com placeholder genérico. Placeholder genérico não é sincronização. Nenhuma PR é considerada entregue enquanto esses campos não estiverem sincronizados com os arquivos vivos ou tiverem justificativa real ("Nenhum contrato ativo").
 
 ## Atualização viva obrigatória ao final de qualquer tarefa
 Independente de ser tarefa contratual ou fora de contrato:
@@ -104,6 +105,7 @@ Independente de ser tarefa contratual ou fora de contrato:
 3. Confirmar o item do A01 atendido.
 4. Declarar o próximo passo autorizado (preservado ou alterado).
 5. Se a tarefa foi `fora_de_contrato`: registrar justificativa e impacto no próximo passo autorizado.
+6. **Ao abrir a PR, verificar que o body já declara `Contrato ativo` e `Próximo passo autorizado` com valores reais transcritos dos arquivos vivos** — não placeholders genéricos. O auto-fix extrai esses valores automaticamente quando os campos estão ausentes ou vazios, mas o agente deve garantir que os arquivos vivos já estejam atualizados antes de abrir a PR.
 
 ## Regra de continuidade entre PRs
 Toda PR deve descrever:
