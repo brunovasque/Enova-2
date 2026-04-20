@@ -1,103 +1,145 @@
 # HANDOFF — Core Mecânico 2 — ENOVA 2
 
-| Campo                     | Valor                                                        |
-|---------------------------|--------------------------------------------------------------|
-| Frente                    | Core Mecânico 2                                              |
-| Data                      | 2026-04-19T22:44:00Z                                        |
-| Estado da frente          | não iniciada                                                 |
-| Item do A01 atendido      | Fase 0 — fundação documental concluída                       |
-| Próximo passo autorizado  | Abrir contrato do Core Mecânico 2                            |
+| Campo                          | Valor                                                                        |
+|--------------------------------|------------------------------------------------------------------------------|
+| Frente                         | Core Mecânico 2                                                              |
+| Data                           | 2026-04-20T00:07:00Z                                                        |
+| Estado da frente               | não iniciada                                                                 |
+| Classificação da tarefa        | governança                                                                   |
+| Última PR relevante            | PR #3 — endurecimento do workflow de continuidade e rastreabilidade          |
+| Item do A01 atendido           | Fase 0 — fundação documental endurecida                                      |
+| Próximo passo autorizado       | Abrir contrato do Core Mecânico 2                                            |
+| Próximo passo foi alterado?    | não                                                                          |
+| Tarefa fora de contrato?       | não (governança é classe válida sem contrato de frente técnica)              |
 
 ---
 
 ## 1. Contexto curto
 
-O repositório fundador da ENOVA 2 está pronto. O trio-base canônico (A00 + A01 + A02) define a visão, a ordem executiva e a amarração com os legados. O CODEX_WORKFLOW estabelece o protocolo obrigatório de execução. A camada de contexto vivo (schemas de contrato, status e handoff, estrutura de status vivos e handoffs, legado mestre unificado) foi criada nesta PR.
+O repositório fundador da ENOVA 2 está pronto e com workflow de governança endurecido. O trio-base canônico (A00 + A01 + A02) define a visão, a ordem executiva e a amarração com os legados. O CODEX_WORKFLOW agora exige 11 etapas obrigatórias, incluindo declaração explícita de ESTADO HERDADO (antes da execução) e ESTADO ENTREGUE (ao final). A classificação de tarefa é agora canônica e obrigatória em toda PR.
 
-A frente Core Mecânico 2 é a primeira frente oficial do projeto, conforme definido no A01. Ela ainda não possui contrato aberto nem execução técnica. O repositório está pronto para a abertura formal do contrato. Os legados estão unificados em arquivo mestre único, pronto para receber o PDF e transcrição.
+A frente Core Mecânico 2 permanece sem contrato aberto nem execução técnica. A fundação documental (incluindo o novo TASK_CLASSIFICATION.md com 6 classes canônicas) está pronta. O repositório está preparado para a abertura formal do contrato como próximo passo autorizado.
 
-## 2. Diagnóstico confirmado
+PR #3 herda o contexto da PR #2 e não altera o próximo passo autorizado (abertura de contrato do Core Mecânico 2).
 
-- A00, A01 e A02 lidos e confirmados como coerentes.
-- CODEX_WORKFLOW confirma o ritual obrigatório de execução.
-- Precedência documental confirmada: A00 > A01 > A02 > contrato da frente > legados.
-- A01 confirma: Fase 0 = fundação documental; Prioridade 1 = modelar o Core Mecânico 2.
-- Gate 1 do A01 confirmado: sem contrato da frente, não começa implementação.
-- A02 confirma legados aplicáveis ao Core: blocos L03 + L04-L17 do legado mestre unificado.
+## 2. Classificação da tarefa
 
-## 3. O que foi feito
+**governança**
 
-- Trio-base canônico criado e coerente (A00 + A01 + A02).
-- CODEX_WORKFLOW criado com protocolo obrigatório.
-- README_EXECUCAO criado com ordem de leitura.
-- AGENT_CONTRACT criado com mandato e regras.
-- PULL_REQUEST_TEMPLATE criado com formato padrão.
-- CONTRACT_SCHEMA criado — formato obrigatório de contrato novo.
-- STATUS_SCHEMA criado — formato obrigatório de status vivo.
-- HANDOFF_SCHEMA criado — formato obrigatório de handoff persistido.
-- Estrutura de status vivos (`schema/status/`) com índice e estado inicial do Core Mecânico 2.
-- Estrutura de handoffs (`schema/handoffs/`) com índice e handoff inicial do Core Mecânico 2.
-- Estrutura de legados (`schema/legacy/`) com README, legado mestre unificado e índice operacional.
-- Estrutura de fonte bruta (`schema/source/`) pronta para receber o PDF mestre.
-- Atualização do CODEX_WORKFLOW para obrigar leitura de status, handoff e legados.
-- Atualização do README, README_EXECUCAO e AGENT_CONTRACT para coerência.
+Esta PR cria e atualiza regras operacionais, schemas, templates, workflow e documentação de governança. Nenhuma implementação funcional foi aberta. Nenhum código de Core, Speech, Supabase, Áudio ou Meta foi tocado.
 
-## 4. O que não foi feito
+## 3. Última PR relevante
 
-- **Contrato do Core Mecânico 2** — deliberadamente não aberto nesta PR. Esta PR é exclusivamente de governança, memória operacional e organização dos legados.
-- **Implementação técnica** — nenhuma. Nenhum código funcional, worker, app, integração ou backend.
-- **Scaffold técnico** — pertence à Fase 1, após contrato aprovado.
-- **Conteúdo integral dos legados** — legado mestre unificado criado com placeholders por bloco. O PDF mestre deve ser incorporado e transcrito bloco a bloco. A estrutura está pronta para receber o conteúdo.
+**PR #2** — Criação da camada de contexto vivo e incorporação dos 19 legados (documental, sem implementação funcional).
 
-## 5. Arquivos relevantes
+## 4. O que a PR #2 fechou
 
-- `schema/CONTRACT_SCHEMA.md`
-- `schema/STATUS_SCHEMA.md`
-- `schema/HANDOFF_SCHEMA.md`
-- `schema/status/_INDEX.md`
-- `schema/status/CORE_MECANICO_2_STATUS.md`
-- `schema/handoffs/_INDEX.md`
-- `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
-- `schema/legacy/README.md`
-- `schema/legacy/INDEX_19_LEGADOS.md`
-- `schema/legacy/INDEX_LEGADO_MESTRE.md`
-- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-- `schema/source/README.md`
-- `schema/CODEX_WORKFLOW.md` *(atualizado)*
+- Trio-base canônico: A00 + A01 + A02
+- CODEX_WORKFLOW com protocolo obrigatório de execução
+- README_EXECUCAO com ordem de leitura
+- AGENT_CONTRACT com mandato e regras
+- PULL_REQUEST_TEMPLATE com formato padrão
+- CONTRACT_SCHEMA, STATUS_SCHEMA, HANDOFF_SCHEMA
+- Estrutura de status vivos, handoffs e legados
+- Legado mestre unificado com placeholders por bloco
+
+## 5. O que a PR #2 NÃO fechou
+
+- Contrato formal do Core Mecânico 2 (deliberadamente excluído — escopo era fundação documental)
+- Workflow endurecido com ESTADO HERDADO, classificação de tarefa e ESTADO ENTREGUE (pendente para esta PR)
+- TASK_CLASSIFICATION.md (ainda não existia)
+- Campo de classificação nos schemas, templates e AGENT_CONTRACT
+
+## 6. Diagnóstico confirmado
+
+- CODEX_WORKFLOW anterior não exigia declaração explícita de estado herdado, classificação de tarefa nem estado entregue.
+- HANDOFF_SCHEMA não tinha campos de PR anterior, o que fechou/não fechou, classificação.
+- STATUS_SCHEMA não tinha campo de classe da última tarefa nem pendência remanescente herdada.
+- PULL_REQUEST_TEMPLATE não exigia estado herdado nem o que a PR fecha/não fecha.
+- AGENT_CONTRACT não obrigava declaração do contexto herdado nem marcação de tarefa fora de contrato.
+- Ausência de TASK_CLASSIFICATION.md tornava a classificação implícita e não canônica.
+
+## 7. O que foi feito (PR #3)
+
+- Criado `schema/TASK_CLASSIFICATION.md` com 6 classes canônicas: contratual, governança, fora_de_contrato, correcao_incidental, hotfix, diagnostico. Para cada classe: quando usar, o que pode/não pode fazer, arquivos obrigatórios, se pode alterar próximo passo.
+- Endurecido `schema/CODEX_WORKFLOW.md`: fluxo de 11 etapas, bloco ESTADO HERDADO obrigatório, bloco ESTADO ENTREGUE obrigatório, regra de continuidade entre PRs, regra especial para fora_de_contrato, tabela de classificação, referência ao TASK_CLASSIFICATION.md.
+- Atualizado `schema/HANDOFF_SCHEMA.md`: adicionados campos de classificação, última PR, o que a PR anterior fechou/não fechou, o que esta PR fechou, o que continua pendente, se foi fora de contrato.
+- Atualizado `schema/STATUS_SCHEMA.md`: adicionados campos de classe da última tarefa, pendência remanescente herdada, rastreabilidade da última PR com descrição.
+- Atualizado `.github/PULL_REQUEST_TEMPLATE.md`: adicionados campos de classificação, última PR relevante, estado herdado (o que fechou/não fechou, justificativa), o que esta PR fecha/não fecha, arquivos vivos atualizados.
+- Atualizado `.github/AGENT_CONTRACT.md`: adicionadas regras de não pular etapas, declarar contexto herdado, classificar tarefas, marcar fora_de_contrato, regra de continuidade entre PRs.
+- Atualizado `schema/README_EXECUCAO.md`: apontamento para CODEX_WORKFLOW endurecido e TASK_CLASSIFICATION.md, regras de estado herdado/entregue, regra de continuidade.
+- Atualizado `README.md`: adicionado TASK_CLASSIFICATION.md como documento canônico e schema de governança, descrição do protocolo de execução atualizada.
+- Atualizado este handoff e o status do Core Mecânico 2 para refletir a PR #3.
+
+## 8. O que não foi feito
+
+- **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Esta PR é exclusivamente de governança.
+- **Implementação técnica** — nenhuma. Nenhum código funcional.
+- **Conteúdo integral dos legados** — placeholders permanecem. PDF mestre deve ser incorporado.
+
+## 9. O que esta PR fechou
+
+- Workflow de continuidade endurecido com ESTADO HERDADO e ESTADO ENTREGUE obrigatórios.
+- Classificação canônica de tarefas (TASK_CLASSIFICATION.md criado).
+- Rastreabilidade explícita entre PRs em todos os schemas e templates.
+- Regra de tarefa fora de contrato formalizada.
+- Todos os arquivos de governança atualizados para coerência com o novo workflow.
+
+## 10. O que continua pendente após esta PR
+
+- Abertura de contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
+- Transcrição integral do conteúdo dos legados (PDF mestre).
+- Scaffold técnico do repositório (Fase 1 do A01, após contrato aprovado).
+
+## 11. Esta tarefa foi fora de contrato?
+
+**não** — governança é classe válida sem necessidade de contrato de frente técnica. Esta PR executa uma necessidade operacional de governança alinhada com a Fase 0 do A01.
+
+## 12. Arquivos relevantes
+
+- `schema/TASK_CLASSIFICATION.md` *(criado)*
+- `schema/CODEX_WORKFLOW.md` *(endurecido)*
+- `schema/HANDOFF_SCHEMA.md` *(atualizado)*
+- `schema/STATUS_SCHEMA.md` *(atualizado)*
+- `.github/PULL_REQUEST_TEMPLATE.md` *(atualizado)*
+- `.github/AGENT_CONTRACT.md` *(atualizado)*
 - `schema/README_EXECUCAO.md` *(atualizado)*
 - `README.md` *(atualizado)*
-- `.github/AGENT_CONTRACT.md` *(atualizado)*
+- `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
+- `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
 
-## 6. Item do A01 atendido
+## 13. Item do A01 atendido
 
-- **Fase 0** — Fundação documental: A00 + A01 + A02 + contratos-base mínimos aprovados.
-- **Status da Fase 0**: concluída — trio-base coerente, ordem oficial validada, contexto vivo estabelecido, legados organizados.
+- **Fase 0** — Fundação documental: workflow endurecido, classificação de tarefas canonizada, rastreabilidade entre PRs formalizada.
+- **Status da Fase 0**: concluída com workflow de governança operacional completo e endurecido.
 
-## 7. Estado atual da frente
+## 14. Estado atual da frente
 
 **não iniciada**
 
-A frente Core Mecânico 2 está pronta para abertura de contrato. Toda a fundação documental, memória operacional e organização de legados estão em vigor.
+A frente Core Mecânico 2 está pronta para abertura de contrato. A governança operacional está completa e endurecida.
 
-## 8. Próximo passo autorizado
+## 15. Próximo passo autorizado
 
 **Abrir contrato do Core Mecânico 2**, seguindo:
 - Formato: `schema/CONTRACT_SCHEMA.md`
 - Escopo: Prioridade 1 do A01 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala
 - Legados: blocos L03 + famílias L04-L17 do legado mestre unificado conforme A02 e INDEX_LEGADO_MESTRE.md
 - Gate: Gate 1 será satisfeito com a aprovação do contrato
-- Dependências: trio-base ✅, workflow ✅, contexto vivo ✅, legados organizados ✅
+- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅
 
-## 9. Riscos
+**Próximo passo preservado** — igual ao definido na PR #2.
+
+## 16. Riscos
 
 - **Conteúdo dos legados** — O legado mestre unificado contém placeholders por bloco. O PDF mestre deve ser incorporado e transcrito. Risco: se o conteúdo não for transcrito antes da abertura do contrato do Core, o agente pode não ter acesso completo às regras de negócio.
-- **Mitigação** — O INDEX_LEGADO_MESTRE.md indica claramente quais blocos consultar por frente. O PDF mestre pode ser enviado como complemento nas abas de execução até a transcrição completa.
+- **Mitigação** — O INDEX_LEGADO_MESTRE.md indica claramente quais blocos consultar por frente. O PDF mestre pode ser enviado como complemento.
 
-## 10. Provas
+## 17. Provas
 
-- PR #2 criada com escopo exclusivamente documental.
+- PR #3 criada com escopo exclusivamente de governança operacional.
 - Nenhum arquivo de código funcional, integração, worker ou app criado.
-- Estrutura de pastas `schema/status/`, `schema/handoffs/`, `schema/legacy/`, `schema/source/` criada e populada.
-- Schemas de contrato, status e handoff definidos com campos obrigatórios.
-- CODEX_WORKFLOW atualizado com ordem de leitura expandida e regra de atualização pós-tarefa.
-- Legado mestre unificado com índice operacional e placeholders por bloco (L01-L19 + C01-C09).
+- TASK_CLASSIFICATION.md criado com 6 classes canônicas e definições completas.
+- CODEX_WORKFLOW.md endurecido com 11 etapas, ESTADO HERDADO, ESTADO ENTREGUE.
+- Todos os schemas, templates e AGENT_CONTRACT atualizados para coerência.
+- Status e handoff do Core Mecânico 2 atualizados refletindo PR #3.
