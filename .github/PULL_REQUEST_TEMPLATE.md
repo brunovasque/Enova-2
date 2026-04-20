@@ -28,6 +28,26 @@
 ## Fora de escopo
 <!-- O que NÃO está incluído nesta PR? -->
 
+## Mudanças em dados persistidos (Supabase)
+<!-- OBRIGATÓRIO em toda PR — inclusive quando não houver mudança -->
+<!-- Se não houver mudança: "Mudanças em dados persistidos (Supabase): nenhuma" -->
+<!-- Se houver mudança, preencher o bloco abaixo para CADA tabela afetada: -->
+<!--
+Mudanças em dados persistidos (Supabase): sim
+
+  Tabela afetada:
+  Tipo de mudança:          (create_table | alter_table | add_column | alter_column | drop_column | drop_table | add_index | drop_index | add_constraint | drop_constraint | alter_relationship | backfill | migration)
+  Coluna(s) afetada(s):
+  Motivo da mudança:
+  Impacto esperado:
+  Compatibilidade retroativa: (sim | não | parcial)
+  Necessidade de migração:
+  Necessidade de backfill:
+  Risco:                     (baixo | médio | alto)
+  Rollback:
+-->
+<!-- Ver schema/DATA_CHANGE_PROTOCOL.md para referência completa -->
+
 ## O que esta PR fecha
 <!-- Lista objetiva do que foi concluído e fechado nesta PR -->
 
@@ -53,6 +73,7 @@
 
 ## Plano de rollback
 <!-- Como reverter com segurança em caso de problema? -->
+<!-- Se houve mudança em dados persistidos (Supabase), o plano de rollback de dados deve estar incluído aqui -->
 
 ## Riscos
 <!-- Riscos conhecidos e mitigação -->

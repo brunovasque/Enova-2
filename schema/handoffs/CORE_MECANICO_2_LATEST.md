@@ -1,89 +1,94 @@
 # HANDOFF — Core Mecânico 2 — ENOVA 2
 
-| Campo                          | Valor                                                                        |
-|--------------------------------|------------------------------------------------------------------------------|
-| Frente                         | Core Mecânico 2                                                              |
-| Data                           | 2026-04-20T00:07:00Z                                                        |
-| Estado da frente               | não iniciada                                                                 |
-| Classificação da tarefa        | governança                                                                   |
-| Última PR relevante            | PR #3 — endurecimento do workflow de continuidade e rastreabilidade          |
-| Item do A01 atendido           | Fase 0 — fundação documental endurecida                                      |
-| Próximo passo autorizado       | Abrir contrato do Core Mecânico 2                                            |
-| Próximo passo foi alterado?    | não                                                                          |
-| Tarefa fora de contrato?       | não (governança é classe válida sem contrato de frente técnica)              |
+| Campo                                      | Valor                                                                        |
+|--------------------------------------------|------------------------------------------------------------------------------|
+| Frente                                     | Core Mecânico 2                                                              |
+| Data                                       | 2026-04-20T00:26:00Z                                                        |
+| Estado da frente                           | não iniciada                                                                 |
+| Classificação da tarefa                    | governança                                                                   |
+| Última PR relevante                        | PR #4 — protocolo obrigatório de dados persistidos (Supabase)                |
+| Item do A01 atendido                       | Fase 0 — governança de dados persistidos endurecida                          |
+| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                            |
+| Próximo passo foi alterado?                | não                                                                          |
+| Tarefa fora de contrato?                   | não (governança é classe válida sem contrato de frente técnica)              |
+| Mudanças em dados persistidos (Supabase)   | nenhuma                                                                      |
 
 ---
 
 ## 1. Contexto curto
 
-O repositório fundador da ENOVA 2 está pronto e com workflow de governança endurecido. O trio-base canônico (A00 + A01 + A02) define a visão, a ordem executiva e a amarração com os legados. O CODEX_WORKFLOW agora exige 11 etapas obrigatórias, incluindo declaração explícita de ESTADO HERDADO (antes da execução) e ESTADO ENTREGUE (ao final). A classificação de tarefa é agora canônica e obrigatória em toda PR.
+O repositório fundador da ENOVA 2 está pronto com governança de dados persistidos endurecida. O trio-base canônico (A00 + A01 + A02) define a visão, a ordem executiva e a amarração com os legados. O CODEX_WORKFLOW exige 11 etapas obrigatórias com declaração explícita de ESTADO HERDADO e ESTADO ENTREGUE. A classificação de tarefa é canônica e obrigatória. Agora, toda tarefa ou PR deve declarar explicitamente se houve ou não mudança em dados persistidos do Supabase — inclusive quando a resposta for "nenhuma".
 
-A frente Core Mecânico 2 permanece sem contrato aberto nem execução técnica. A fundação documental (incluindo o novo TASK_CLASSIFICATION.md com 6 classes canônicas) está pronta. O repositório está preparado para a abertura formal do contrato como próximo passo autorizado.
+O `DATA_CHANGE_PROTOCOL.md` foi criado como protocolo operacional exclusivo para mudanças de schema e persistência do Supabase/Postgres da ENOVA 2. Todos os artefatos de governança (CODEX_WORKFLOW, AGENT_CONTRACT, PR Template, Handoff Schema, Status Schema, README_EXECUCAO, README) foram atualizados para exigir esta declaração.
 
-PR #3 herda o contexto da PR #2 e não altera o próximo passo autorizado (abertura de contrato do Core Mecânico 2).
+A frente Core Mecânico 2 permanece sem contrato aberto nem execução técnica. O próximo passo autorizado é a abertura formal do contrato.
 
 ## 2. Classificação da tarefa
 
 **governança**
 
-Esta PR cria e atualiza regras operacionais, schemas, templates, workflow e documentação de governança. Nenhuma implementação funcional foi aberta. Nenhum código de Core, Speech, Supabase, Áudio ou Meta foi tocado.
+Esta PR cria e atualiza regras operacionais, protocolo de dados, schemas, templates, workflow e documentação de governança. Nenhuma implementação funcional foi aberta. Nenhum código de Core, Speech, Supabase real, Áudio ou Meta foi tocado. Nenhuma tabela, coluna ou schema SQL real foi criado ou alterado.
 
 ## 3. Última PR relevante
 
-**PR #2** — Criação da camada de contexto vivo e incorporação dos 19 legados (documental, sem implementação funcional).
+**PR #3** — Endurecimento do workflow de continuidade e rastreabilidade entre PRs.
 
-## 4. O que a PR #2 fechou
+## 4. O que a PR #3 fechou
 
-- Trio-base canônico: A00 + A01 + A02
-- CODEX_WORKFLOW com protocolo obrigatório de execução
-- README_EXECUCAO com ordem de leitura
-- AGENT_CONTRACT com mandato e regras
-- PULL_REQUEST_TEMPLATE com formato padrão
-- CONTRACT_SCHEMA, STATUS_SCHEMA, HANDOFF_SCHEMA
-- Estrutura de status vivos, handoffs e legados
-- Legado mestre unificado com placeholders por bloco
+- TASK_CLASSIFICATION.md com 6 classes canônicas criado
+- CODEX_WORKFLOW com fluxo de 11 etapas, ESTADO HERDADO obrigatório, ESTADO ENTREGUE obrigatório
+- HANDOFF_SCHEMA com campos de classificação, PR anterior, o que fechou/não fechou
+- STATUS_SCHEMA com campo de classe da última tarefa e pendência remanescente herdada
+- PULL_REQUEST_TEMPLATE com campos de classificação, última PR relevante, estado herdado
+- AGENT_CONTRACT com regras de não pular etapas, declarar contexto herdado, classificar tarefas
+- README_EXECUCAO atualizado com workflow endurecido
+- README atualizado com TASK_CLASSIFICATION como documento canônico
 
-## 5. O que a PR #2 NÃO fechou
+## 5. O que a PR #3 NÃO fechou
 
-- Contrato formal do Core Mecânico 2 (deliberadamente excluído — escopo era fundação documental)
-- Workflow endurecido com ESTADO HERDADO, classificação de tarefa e ESTADO ENTREGUE (pendente para esta PR)
-- TASK_CLASSIFICATION.md (ainda não existia)
-- Campo de classificação nos schemas, templates e AGENT_CONTRACT
+- Protocolo de dados persistidos (pendente para esta PR — PR #4)
+- Declaração obrigatória de dados persistidos nos templates e schemas
+- DATA_CHANGE_PROTOCOL.md (ainda não existia)
+- Contrato formal do Core Mecânico 2 (deliberadamente excluído)
 
 ## 6. Diagnóstico confirmado
 
-- CODEX_WORKFLOW anterior não exigia declaração explícita de estado herdado, classificação de tarefa nem estado entregue.
-- HANDOFF_SCHEMA não tinha campos de PR anterior, o que fechou/não fechou, classificação.
-- STATUS_SCHEMA não tinha campo de classe da última tarefa nem pendência remanescente herdada.
-- PULL_REQUEST_TEMPLATE não exigia estado herdado nem o que a PR fecha/não fecha.
-- AGENT_CONTRACT não obrigava declaração do contexto herdado nem marcação de tarefa fora de contrato.
-- Ausência de TASK_CLASSIFICATION.md tornava a classificação implícita e não canônica.
+- CODEX_WORKFLOW anterior não exigia declaração de dados persistidos em nenhum bloco obrigatório.
+- HANDOFF_SCHEMA, STATUS_SCHEMA, PULL_REQUEST_TEMPLATE e AGENT_CONTRACT não tinham campo de dados persistidos.
+- Não havia protocolo que obrigasse declaração de tabelas, colunas, índices, constraints ou relacionamentos do Supabase.
+- Não havia tipos canônicos de mudança de dados definidos.
+- Não havia regra de parada explícita para mudança de dados sem declaração.
+- Qualquer mudança futura em schema do Supabase poderia acontecer sem rastreabilidade ou rollback documentado.
 
-## 7. O que foi feito (PR #3)
+## 7. O que foi feito (PR #4)
 
-- Criado `schema/TASK_CLASSIFICATION.md` com 6 classes canônicas: contratual, governança, fora_de_contrato, correcao_incidental, hotfix, diagnostico. Para cada classe: quando usar, o que pode/não pode fazer, arquivos obrigatórios, se pode alterar próximo passo.
-- Endurecido `schema/CODEX_WORKFLOW.md`: fluxo de 11 etapas, bloco ESTADO HERDADO obrigatório, bloco ESTADO ENTREGUE obrigatório, regra de continuidade entre PRs, regra especial para fora_de_contrato, tabela de classificação, referência ao TASK_CLASSIFICATION.md.
-- Atualizado `schema/HANDOFF_SCHEMA.md`: adicionados campos de classificação, última PR, o que a PR anterior fechou/não fechou, o que esta PR fechou, o que continua pendente, se foi fora de contrato.
-- Atualizado `schema/STATUS_SCHEMA.md`: adicionados campos de classe da última tarefa, pendência remanescente herdada, rastreabilidade da última PR com descrição.
-- Atualizado `.github/PULL_REQUEST_TEMPLATE.md`: adicionados campos de classificação, última PR relevante, estado herdado (o que fechou/não fechou, justificativa), o que esta PR fecha/não fecha, arquivos vivos atualizados.
-- Atualizado `.github/AGENT_CONTRACT.md`: adicionadas regras de não pular etapas, declarar contexto herdado, classificar tarefas, marcar fora_de_contrato, regra de continuidade entre PRs.
-- Atualizado `schema/README_EXECUCAO.md`: apontamento para CODEX_WORKFLOW endurecido e TASK_CLASSIFICATION.md, regras de estado herdado/entregue, regra de continuidade.
-- Atualizado `README.md`: adicionado TASK_CLASSIFICATION.md como documento canônico e schema de governança, descrição do protocolo de execução atualizada.
-- Atualizado este handoff e o status do Core Mecânico 2 para refletir a PR #3.
+- Criado `schema/DATA_CHANGE_PROTOCOL.md`: finalidade, precedência, 13 tipos canônicos de mudança, campos obrigatórios (nenhuma / sim), regra de parada, o que atualizar quando houver mudança, o que é proibido, exemplos de declaração, regra de rollback, regra de compatibilidade, regra de mudança fora de contrato. Escopo: exclusivamente Supabase/Postgres da ENOVA 2.
+- Endurecido `schema/CODEX_WORKFLOW.md`: bloco ESTADO HERDADO agora inclui campo obrigatório `Mudanças em dados persistidos (Supabase)`; bloco ESTADO ENTREGUE idem; seção 13 (Regra de parada) inclui parada por dados não declarados; nova seção 14 (Protocolo de dados persistidos); referência ao DATA_CHANGE_PROTOCOL na seção 11 (Schemas).
+- Atualizado `schema/TASK_CLASSIFICATION.md`: nova seção "Obrigação universal de declaração de dados persistidos" ao final — obrigatória em todas as 6 classes de tarefa.
+- Atualizado `.github/PULL_REQUEST_TEMPLATE.md`: nova seção "Mudanças em dados persistidos (Supabase)" com campos explícitos (tabela, tipo, colunas, motivo, impacto, compatibilidade, migração, backfill, risco, rollback). Plano de rollback atualizado para incluir rollback de dados.
+- Atualizado `.github/AGENT_CONTRACT.md`: regras 13–15 adicionadas (declaração obrigatória, bloqueio total sem rastreabilidade, parada imediata). Nova seção "Protocolo de dados persistidos (Supabase)". `DATA_CHANGE_PROTOCOL.md` listado nos schemas de governança.
+- Atualizado `schema/HANDOFF_SCHEMA.md`: nova seção 18 obrigatória de dados persistidos; campo `Mudanças em dados persistidos (Supabase)` no exemplo de cabeçalho mínimo.
+- Atualizado `schema/STATUS_SCHEMA.md`: nova seção 15 de dados persistidos com orientação; campo no exemplo de cabeçalho mínimo.
+- Atualizado `schema/README_EXECUCAO.md`: nova seção "Protocolo de dados persistidos (Supabase) — obrigatório em toda tarefa".
+- Atualizado `README.md`: `DATA_CHANGE_PROTOCOL.md` listado como documento canônico e schema de governança. Protocolo de execução menciona obrigação de declaração de dados.
+- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`: PR #4, campo de dados persistidos, nova entrega listada.
+- Atualizado este handoff.
 
 ## 8. O que não foi feito
 
 - **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Esta PR é exclusivamente de governança.
 - **Implementação técnica** — nenhuma. Nenhum código funcional.
+- **Schema SQL real** — nenhuma tabela, coluna ou migration real foi criada. O protocolo é de governança documental, não de implementação.
 - **Conteúdo integral dos legados** — placeholders permanecem. PDF mestre deve ser incorporado.
 
 ## 9. O que esta PR fechou
 
-- Workflow de continuidade endurecido com ESTADO HERDADO e ESTADO ENTREGUE obrigatórios.
-- Classificação canônica de tarefas (TASK_CLASSIFICATION.md criado).
-- Rastreabilidade explícita entre PRs em todos os schemas e templates.
-- Regra de tarefa fora de contrato formalizada.
-- Todos os arquivos de governança atualizados para coerência com o novo workflow.
+- Protocolo obrigatório de dados persistidos do Supabase (DATA_CHANGE_PROTOCOL.md criado).
+- Declaração obrigatória de dados persistidos em todos os artefatos de governança (CODEX_WORKFLOW, AGENT_CONTRACT, PR Template, Handoff Schema, Status Schema).
+- Tipos canônicos de mudança de dados definidos (13 tipos).
+- Regra de parada para mudança de dados não declarada formalizada.
+- Regras de rollback, compatibilidade retroativa e mudança fora de contrato documentadas.
+- Rastreabilidade total de dados amarrada ao CODEX_WORKFLOW.
 
 ## 10. O que continua pendente após esta PR
 
@@ -97,21 +102,22 @@ Esta PR cria e atualiza regras operacionais, schemas, templates, workflow e docu
 
 ## 12. Arquivos relevantes
 
-- `schema/TASK_CLASSIFICATION.md` *(criado)*
-- `schema/CODEX_WORKFLOW.md` *(endurecido)*
-- `schema/HANDOFF_SCHEMA.md` *(atualizado)*
-- `schema/STATUS_SCHEMA.md` *(atualizado)*
-- `.github/PULL_REQUEST_TEMPLATE.md` *(atualizado)*
-- `.github/AGENT_CONTRACT.md` *(atualizado)*
-- `schema/README_EXECUCAO.md` *(atualizado)*
-- `README.md` *(atualizado)*
+- `schema/DATA_CHANGE_PROTOCOL.md` *(criado)*
+- `schema/CODEX_WORKFLOW.md` *(endurecido — seções 4, 5, 11, 13, 14)*
+- `schema/TASK_CLASSIFICATION.md` *(atualizado — obrigação universal de dados)*
+- `.github/PULL_REQUEST_TEMPLATE.md` *(atualizado — campos de dados persistidos)*
+- `.github/AGENT_CONTRACT.md` *(atualizado — regras 13–15, protocolo de dados)*
+- `schema/HANDOFF_SCHEMA.md` *(atualizado — seção 18, cabeçalho)*
+- `schema/STATUS_SCHEMA.md` *(atualizado — seção 15, cabeçalho)*
+- `schema/README_EXECUCAO.md` *(atualizado — seção de protocolo de dados)*
+- `README.md` *(atualizado — DATA_CHANGE_PROTOCOL como canônico)*
 - `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
 
 ## 13. Item do A01 atendido
 
-- **Fase 0** — Fundação documental: workflow endurecido, classificação de tarefas canonizada, rastreabilidade entre PRs formalizada.
-- **Status da Fase 0**: concluída com workflow de governança operacional completo e endurecido.
+- **Fase 0** — Fundação documental: governança de dados persistidos do Supabase endurecida. Rastreabilidade total de mudanças de schema obrigatória a partir desta PR.
+- **Status da Fase 0**: concluída com protocolo de dados persistidos.
 
 ## 14. Estado atual da frente
 
@@ -126,9 +132,9 @@ A frente Core Mecânico 2 está pronta para abertura de contrato. A governança 
 - Escopo: Prioridade 1 do A01 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala
 - Legados: blocos L03 + famílias L04-L17 do legado mestre unificado conforme A02 e INDEX_LEGADO_MESTRE.md
 - Gate: Gate 1 será satisfeito com a aprovação do contrato
-- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅
+- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅, protocolo de dados ✅
 
-**Próximo passo preservado** — igual ao definido na PR #2.
+**Próximo passo preservado** — igual ao definido na PR #3.
 
 ## 16. Riscos
 
@@ -137,9 +143,18 @@ A frente Core Mecânico 2 está pronta para abertura de contrato. A governança 
 
 ## 17. Provas
 
-- PR #3 criada com escopo exclusivamente de governança operacional.
-- Nenhum arquivo de código funcional, integração, worker ou app criado.
-- TASK_CLASSIFICATION.md criado com 6 classes canônicas e definições completas.
-- CODEX_WORKFLOW.md endurecido com 11 etapas, ESTADO HERDADO, ESTADO ENTREGUE.
-- Todos os schemas, templates e AGENT_CONTRACT atualizados para coerência.
-- Status e handoff do Core Mecânico 2 atualizados refletindo PR #3.
+- PR #4 criada com escopo exclusivamente de governança operacional de dados persistidos.
+- Nenhum arquivo de código funcional, integração, worker, app, schema SQL real ou migration criado.
+- DATA_CHANGE_PROTOCOL.md criado com 13 tipos canônicos, campos obrigatórios, regras de parada/rollback/compatibilidade.
+- CODEX_WORKFLOW.md endurecido com bloco de dados em ESTADO HERDADO e ESTADO ENTREGUE, seção 14.
+- Todos os artefatos de governança atualizados para exigir declaração obrigatória de dados persistidos.
+- Status e handoff do Core Mecânico 2 atualizados refletindo PR #4.
+- Mudanças em dados persistidos (Supabase): **nenhuma** — esta PR é exclusivamente documental/governança.
+
+## 18. Mudanças em dados persistidos (Supabase)
+
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+
+Esta PR é de governança documental pura. Nenhuma tabela, coluna, índice, constraint, relacionamento ou migration do Supabase foi criado, alterado ou removido.
