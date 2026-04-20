@@ -20,7 +20,7 @@ Este índice está subordinado ao A00, A01, A02 e ao `CONTRACT_EXECUTION_PROTOCO
 
 | # | Frente | Contrato ativo | Status do contrato | Data de abertura | PR que abriu | Última PR que executou | Contrato anterior arquivado | Próximo contrato esperado |
 |---|--------|----------------|-------------------|-----------------|-------------|----------------------|---------------------------|--------------------------|
-| 1 | Core Mecânico 2 | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` | aberto | 2026-04-20 | PR desta abertura | — | — | — |
+| 1 | Core Mecânico 2 | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` | em execução | 2026-04-20 | PR de abertura | PR de execução L03 | — | — |
 | 2 | Speech Engine e Surface Única | *(nenhum — aguardando abertura)* | aguardando abertura | — | — | — | — | Contrato do Speech Engine |
 | 3 | Contexto, Extração e Memória Viva | *(nenhum — aguardando abertura)* | aguardando abertura | — | — | — | — | — |
 | 4 | Supabase Adapter e Persistência | *(nenhum — aguardando abertura)* | aguardando abertura | — | — | — | — | — |
