@@ -39,41 +39,56 @@ Um dos seguintes valores canônicos:
 - `bloqueada` — execução parada por dependência, ambiguidade ou gate não satisfeito.
 - `concluída` — entrega aceita e provas apresentadas.
 
-### 5. Última PR
+### 5. Classe da última tarefa
 
-Número ou referência da última PR associada a esta frente.
+Classificação canônica da última tarefa que atualizou este status:
+`contratual` | `governança` | `fora_de_contrato` | `correcao_incidental` | `hotfix` | `diagnostico`
+
+Se a última tarefa foi `fora_de_contrato`, indicar se alterou o próximo passo autorizado.
+Ver definições completas em `schema/TASK_CLASSIFICATION.md`.
+
+### 6. Última PR relevante
+
+Número ou referência da última PR que afetou esta frente, com breve descrição do que ela entregou.
 Se nenhuma PR foi aberta, declarar: `Nenhuma PR aberta`.
 
-### 6. Último commit
+### 7. Último commit
 
 Hash ou referência do último commit associado a esta frente.
 Se nenhum commit foi feito, declarar: `Nenhum commit relevante`.
 
-### 7. Entregas concluídas
+### 8. Entregas concluídas
 
 Lista de entregas já aceitas e fechadas para esta frente.
 Cada entrega deve referenciar a PR e/ou o contrato correspondente.
 
-### 8. Pendências
+### 9. Pendências
 
 Lista de itens pendentes para esta frente. Cada pendência deve indicar o que falta e qual é o bloqueio (se houver).
+Distinguir entre: pendência de contrato, pendência de governança e pendência de legado.
 
-### 9. Bloqueios
+### 10. Pendência remanescente herdada
+
+O que ficou aberto da última PR e que esta frente carrega como contexto herdado.
+Deve ser atualizado cada vez que uma nova tarefa for concluída.
+
+### 11. Bloqueios
 
 Condições que impedem o avanço da frente.
 Referência a gates do A01, dependências de outras frentes ou ambiguidades não resolvidas.
 
-### 10. Próximo passo autorizado
+### 12. Próximo passo autorizado
 
 Qual é o passo imediato autorizado para esta frente, conforme o A01 e o contrato ativo.
 Deve ser específico o suficiente para que o próximo agente ou humano saiba exatamente o que fazer.
+Indicar explicitamente se este passo foi **preservado** ou **alterado** em relação à última atualização.
 
-### 11. Legados aplicáveis
+### 13. Legados aplicáveis
 
 Lista dos documentos legados (L01–L19) que são fonte de verdade de negócio para esta frente.
 Deve seguir a amarração definida no A02.
 
-### 12. Última atualização
+### 14. Última atualização
 
 Data e hora (ISO 8601) da última atualização deste status.
 Indicar também o agente ou humano responsável pela atualização.
@@ -82,11 +97,12 @@ Indicar também o agente ou humano responsável pela atualização.
 
 ## Regras de uso
 
-1. **Atualização obrigatória ao final de cada tarefa** — Se o estado da frente mudou, o status vivo deve ser atualizado antes de encerrar a tarefa.
+1. **Atualização obrigatória ao final de qualquer tarefa** — Independente de ser contratual ou fora de contrato, o status vivo deve ser atualizado antes de encerrar a tarefa.
 2. **Coerência com o contrato** — O status vivo deve refletir o estado real, não o planejado. Se houver divergência, o status prevalece como registro de fato.
 3. **Não substituir pelo handoff** — O status vivo e o handoff são complementares. O status registra o estado; o handoff registra o contexto para continuidade.
 4. **Arquivo por frente** — Cada frente tem seu próprio arquivo de status em `schema/status/`.
 5. **Nomenclatura** — O nome do arquivo segue o padrão: `<NOME_DA_FRENTE>_STATUS.md`.
+6. **Rastreabilidade** — O campo "Classe da última tarefa" e "Pendência remanescente herdada" são obrigatórios para garantir continuidade entre PRs sem depender de conversa.
 
 ---
 
@@ -95,15 +111,17 @@ Indicar também o agente ou humano responsável pela atualização.
 ```markdown
 # STATUS VIVO — <Nome da Frente> — ENOVA 2
 
-| Campo                     | Valor                                      |
-|---------------------------|---------------------------------------------|
-| Frente                    | <nome>                                      |
-| Contrato ativo            | <referência ou "Nenhum">                    |
-| Item do A01               | <fase/prioridade/item>                      |
-| Estado atual              | <não iniciada / contrato aberto / em execução / bloqueada / concluída> |
-| Última PR                 | <referência ou "Nenhuma">                   |
-| Último commit             | <hash ou "Nenhum">                          |
-| Próximo passo autorizado  | <descrição>                                 |
-| Legados aplicáveis        | <L0x, L0y, ...>                             |
-| Última atualização        | <data ISO 8601>                             |
+| Campo                          | Valor                                                                                    |
+|--------------------------------|------------------------------------------------------------------------------------------|
+| Frente                         | <nome>                                                                                   |
+| Contrato ativo                 | <referência ou "Nenhum">                                                                 |
+| Item do A01                    | <fase/prioridade/item>                                                                   |
+| Estado atual                   | <não iniciada / contrato aberto / em execução / bloqueada / concluída>                   |
+| Classe da última tarefa        | <contratual / governança / fora_de_contrato / correcao_incidental / hotfix / diagnostico>|
+| Última PR relevante            | <referência e descrição ou "Nenhuma">                                                    |
+| Último commit                  | <hash ou "Nenhum">                                                                       |
+| Pendência remanescente herdada | <descrição ou "Nenhuma">                                                                 |
+| Próximo passo autorizado       | <descrição> (preservado / alterado)                                                      |
+| Legados aplicáveis             | <L0x, L0y, ...>                                                                          |
+| Última atualização             | <data ISO 8601>                                                                          |
 ```

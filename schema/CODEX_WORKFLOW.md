@@ -1,8 +1,14 @@
 # CODEX_WORKFLOW — Protocolo Obrigatório de Execução da ENOVA 2
 
+> **Este documento é a lei operacional única entre PRs.**
+> Nenhuma tarefa começa ou termina sem cumprir integralmente este protocolo.
+> Qualquer PR futura deve poder ser retomada exclusivamente pelo repositório, sem depender de conversa ou memória de sessão.
+
+---
+
 ## 1. Ordem oficial de leitura antes de qualquer tarefa
 
-Toda execução começa com leitura nesta sequência:
+Toda execução começa com leitura nesta sequência — **obrigatória, sem exceção**:
 
 1. `schema/A00_PLANO_CANONICO_MACRO.md`
 2. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
@@ -15,41 +21,110 @@ Toda execução começa com leitura nesta sequência:
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
+---
+
 ## 2. Precedência documental oficial
 
 **A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis**
 
 Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas regras de negócio; o pacote canônico manda na arquitetura, na ordem executiva e na forma de implantação.
 
-## 3. Declaração obrigatória de abertura de tarefa
+---
 
-Antes de executar qualquer tarefa, o agente deve declarar explicitamente:
+## 3. Fluxo obrigatório de execução — 11 etapas
+
+Toda tarefa deve percorrer as 11 etapas abaixo, **em ordem, sem pular nenhuma**:
 
 ```
+Etapa 1 — Leitura canônica obrigatória (seção 1 deste documento)
+Etapa 2 — Leitura do status vivo da frente
+Etapa 3 — Leitura do último handoff da frente
+Etapa 4 — Leitura do contrato ativo (se existir)
+Etapa 5 — Leitura dos blocos aplicáveis do legado mestre
+Etapa 6 — Declaração do ESTADO HERDADO (bloco obrigatório — ver seção 4)
+Etapa 7 — Classificação da tarefa (ver schema/TASK_CLASSIFICATION.md)
+Etapa 8 — Execução (dentro do escopo declarado)
+Etapa 9 — Declaração do ESTADO ENTREGUE (bloco obrigatório — ver seção 5)
+Etapa 10 — Atualização viva obrigatória do repositório (ver seção 6)
+Etapa 11 — Resposta final padronizada (ver seção 7)
+```
+
+**Tarefa sem as etapas 6, 7, 9 e 10 é não conforme e não deve ser aceita.**
+
+---
+
+## 4. Bloco obrigatório: ESTADO HERDADO
+
+Antes de executar (Etapa 6), o agente deve declarar explicitamente o estado herdado da frente:
+
+```
+--- ESTADO HERDADO ---
 WORKFLOW_ACK: ok
-Contrato ativo: <nome do contrato ou fase do A01>
+Classificação da tarefa: <contratual | governança | fora_de_contrato | correcao_incidental | hotfix | diagnostico>
+Última PR relevante: <número e título da última PR que afetou esta frente>
+Contrato ativo: <nome do contrato ou "Nenhum contrato ativo">
 Item do A01: <fase/prioridade/item exato>
-Objetivo: <objetivo desta tarefa>
+Estado atual da frente: <não iniciada | contrato aberto | em execução | bloqueada | concluída>
+O que a última PR fechou: <lista objetiva>
+O que a última PR NÃO fechou: <lista objetiva>
+Por que esta tarefa existe: <justificativa operacional>
+Esta tarefa está dentro ou fora do contrato ativo: <dentro | fora — com justificativa se fora>
+Objetivo desta tarefa: <objetivo claro e verificável>
 Escopo: <o que está incluído>
 Fora de escopo: <o que NÃO está incluído>
 ```
 
-Tarefa sem essa declaração não deve ser iniciada.
+Este bloco é a âncora de rastreabilidade entre PRs. Sem ele, a tarefa não começa.
 
-## 4. Regras de execução
+---
 
-- **Uma frente por vez.** Não misturar Core, Speech, Supabase, Áudio e Canal na mesma PR sem necessidade comprovada.
-- **Sem drift.** O escopo não pode crescer durante a execução sem atualização explícita do contrato.
-- **Sem implementação fora do contrato ativo.** Nenhuma linha de código funcional, integração real ou arquitetura técnica entra sem autorização do contrato da frente.
-- **Sem mistura de frentes sem necessidade comprovada e documentada.**
-- **Diagnóstico antes de patch.** Toda mudança começa com leitura e prova do problema.
-- **Prova antes de promoção.** Toda entrega precisa de smoke, evidência e plano de rollback.
+## 5. Bloco obrigatório: ESTADO ENTREGUE
 
-## 5. Formato obrigatório de resposta final
+Ao final da execução (Etapa 9), o agente deve declarar explicitamente o estado entregue:
+
+```
+--- ESTADO ENTREGUE ---
+O que foi feito nesta PR: <lista objetiva e verificável>
+O que foi fechado nesta PR: <lista dos itens que foram concluídos>
+O que continua pendente: <lista do que não coube ou não foi feito>
+O que ainda não foi fechado do contrato ativo: <itens do contrato ainda em aberto>
+O próximo passo autorizado foi alterado? <sim | não — se sim, descrever a mudança>
+Esta tarefa foi fora de contrato? <sim | não — se sim, justificar>
+Arquivos vivos atualizados: <lista de arquivos de status/handoff/contrato efetivamente atualizados>
+```
+
+---
+
+## 6. Atualização viva obrigatória ao final de qualquer tarefa
+
+Ao final de **qualquer tarefa**, independente de ser contratual ou fora de contrato:
+
+1. **Status vivo da frente** (`schema/status/<FRENTE>_STATUS.md`) — atualizar estado atual, última PR, último commit, classe da última tarefa, entregas, pendências, bloqueios e próximo passo autorizado.
+2. **Handoff da frente** (`schema/handoffs/<FRENTE>_LATEST.md`) — atualizar com contexto completo: o que foi feito, o que não foi feito, classificação da tarefa, o que a PR anterior fechou/não fechou, o que esta PR fechou/não fechou, riscos e provas.
+3. **Contrato da frente** — se houve mudança de estado contratual (aberto → em execução → concluído), atualizar o contrato.
+4. **A01/A02/README_EXECUCAO** — se a governança mudou, atualizar o documento correspondente.
+5. **Índices** (`schema/status/_INDEX.md` e `schema/handoffs/_INDEX.md`) — atualizar se houve mudança de estado ou novo handoff.
+
+**Regra especial para tarefa fora de contrato:**
+Se a tarefa é classificada como `fora_de_contrato`:
+- Marcar explicitamente nos arquivos de status e handoff.
+- Declarar a justificativa.
+- Declarar se alterou ou não o próximo passo autorizado da frente principal.
+
+Regras complementares:
+- Não deixar documentos desatualizados em relação ao estado executado.
+- A documentação deve sempre representar o estado real, não o estado planejado.
+- Atualizar o documento correspondente (contrato da frente, A01 ou handoff) para refletir a nova realidade.
+
+---
+
+## 7. Formato obrigatório de resposta final
 
 Toda tarefa encerrada deve incluir a resposta final completa neste formato:
 
 ```
+WORKFLOW_ACK: ok
+
 Summary
 -------
 <resumo objetivo do que foi feito>
@@ -57,6 +132,15 @@ Summary
 Diagnóstico confirmado
 ----------------------
 <o que foi analisado e confirmado antes da execução>
+
+Classificação da tarefa
+-----------------------
+<contratual | governança | fora_de_contrato | correcao_incidental | hotfix | diagnostico>
+<justificativa, se fora_de_contrato ou hotfix>
+
+Estado herdado
+--------------
+<última PR relevante, o que ela fechou, o que ela não fechou>
 
 Alterações realizadas
 ---------------------
@@ -69,6 +153,10 @@ Item do A01 atendido
 Estado atual da frente
 ----------------------
 <em que fase/estado a frente se encontra após esta entrega>
+
+Estado entregue
+---------------
+<o que foi fechado, o que continua pendente, se o próximo passo foi alterado>
 
 Próximo passo autorizado
 ------------------------
@@ -91,32 +179,66 @@ Provas
 <links, diffs, logs, capturas ou qualquer evidência verificável>
 ```
 
-## 6. Regra de atualização documental pós-tarefa
+---
 
-Ao final de cada tarefa, se o estado da frente mudou, atualizar obrigatoriamente:
+## 8. Regras de execução
 
-1. **Status vivo da frente** (`schema/status/<FRENTE>_STATUS.md`) — atualizar estado atual, última PR, último commit, entregas, pendências, bloqueios e próximo passo autorizado.
-2. **Handoff da frente** (`schema/handoffs/<FRENTE>_LATEST.md`) — atualizar ou criar novo handoff com contexto, diagnóstico, o que foi feito, o que não foi feito, riscos e provas.
-3. **Item do A01** — confirmar qual item do A01 foi atendido (total ou parcialmente).
-4. **Próximo passo autorizado** — declarar explicitamente o próximo passo, coerente com A01 e contrato ativo.
-5. **Índices** (`schema/status/_INDEX.md` e `schema/handoffs/_INDEX.md`) — atualizar se houve mudança de estado ou novo handoff.
+- **Uma frente por vez.** Não misturar Core, Speech, Supabase, Áudio e Canal na mesma PR sem necessidade comprovada.
+- **Sem drift.** O escopo não pode crescer durante a execução sem atualização explícita do contrato.
+- **Sem implementação fora do contrato ativo.** Nenhuma linha de código funcional, integração real ou arquitetura técnica entra sem autorização do contrato da frente.
+- **Sem mistura de frentes sem necessidade comprovada e documentada.**
+- **Diagnóstico antes de patch.** Toda mudança começa com leitura e prova do problema.
+- **Prova antes de promoção.** Toda entrega precisa de smoke, evidência e plano de rollback.
+- **Sem pular etapas.** O fluxo de 11 etapas é obrigatório. Pular etapas é não conformidade.
+- **Sem contexto implícito.** Estado herdado e estado entregue devem ser declarados explicitamente — nunca implícitos.
 
-Regras complementares:
-- Não deixar documentos desatualizados em relação ao estado executado.
-- A documentação deve sempre representar o estado real, não o estado planejado.
-- Atualizar o documento correspondente (contrato da frente, A01 ou handoff) para refletir a nova realidade.
+---
 
-## 7. Schemas obrigatórios de governança
+## 9. Regra de continuidade entre PRs
+
+Toda PR deve descrever explicitamente:
+
+- **De qual PR ela continua** — número e título.
+- **O que herdou** — o que estava pendente, aberto ou incompleto na PR anterior que esta PR recebe como contexto.
+- **O que resolveu do herdado** — o que foi fechado do que estava pendente.
+- **O que permanece aberto** — o que não coube ou não foi fechado nesta PR.
+
+Esta regra existe para prevenir drift e perda de contexto entre sessões e entre agentes.
+O repositório deve ser a única fonte de verdade sobre o estado da frente — não a conversa.
+
+---
+
+## 10. Classificação de tarefa — referência rápida
+
+Toda tarefa deve ser classificada em uma das seguintes classes (definição completa em `schema/TASK_CLASSIFICATION.md`):
+
+| Classe               | Uso resumido                                                      |
+|----------------------|-------------------------------------------------------------------|
+| `contratual`         | Dentro do contrato ativo da frente                                |
+| `governança`         | Cria/atualiza regras, schemas, workflow, documentação operacional |
+| `fora_de_contrato`   | Necessária mas fora do contrato ativo — declarar justificativa    |
+| `correcao_incidental`| Correção cirúrgica acoplada ao trabalho em andamento              |
+| `hotfix`             | Correção urgente e crítica                                        |
+| `diagnostico`        | Somente leitura, análise e diagnóstico — nenhuma entrega técnica  |
+
+**Tarefa não classificada = tarefa não conforme.**
+
+---
+
+## 11. Schemas obrigatórios de governança
 
 Os seguintes schemas definem o formato obrigatório de artefatos de governança:
 
 - `schema/CONTRACT_SCHEMA.md` — formato obrigatório de qualquer contrato novo de frente.
 - `schema/STATUS_SCHEMA.md` — formato obrigatório de status vivo por frente.
 - `schema/HANDOFF_SCHEMA.md` — formato obrigatório de handoff persistido por frente.
+- `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs.
 
 Nenhum contrato, status ou handoff deve ser criado fora destes formatos.
 
-## 8. Estrutura de contexto vivo
+---
+
+## 12. Estrutura de contexto vivo
 
 O repositório mantém contexto vivo em:
 
@@ -125,7 +247,9 @@ O repositório mantém contexto vivo em:
 - `schema/legacy/` — legado mestre unificado (índice em `INDEX_LEGADO_MESTRE.md`, conteúdo em `LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
 - `schema/source/` — PDF mestre original (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`)
 
-## 9. Regra de parada
+---
+
+## 13. Regra de parada
 
 Se qualquer das condições abaixo for identificada, parar e reportar em vez de improvisar:
 
@@ -133,5 +257,7 @@ Se qualquer das condições abaixo for identificada, parar e reportar em vez de 
 - Conflito documental entre camadas da precedência
 - Ausência de contrato ativo explícito para a frente
 - Escopo que ultrapassa o contrato ativo sem autorização
+- Estado herdado não declarado ou inconsistente com o repositório
+- Classificação de tarefa ausente ou incompatível com o escopo
 
 **Regra de parada não é falha — é conformidade.**
