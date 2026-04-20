@@ -68,12 +68,18 @@ const LIVE_FILES_FIELD = "Arquivos vivos atualizados";
 // ---------------------------------------------------------------------------
 
 /**
+ * Escapa caracteres especiais de regex em uma string literal.
+ */
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
  * Verifica se um campo (heading ou label de linha) está presente no corpo da PR.
  * Aceita tanto "## Campo" quanto "Campo:" em qualquer linha.
  */
 function fieldPresent(body, label) {
-  // Escapa caracteres especiais de regex no label
-  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escaped = escapeRegex(label);
   // Aceita markdown heading (## label) ou label seguido de : ou nada no fim da linha
   const pattern = new RegExp(
     `(?:^|\\n)\\s*(?:#{1,6}\\s+${escaped}|${escaped}\\s*:)`,
@@ -87,7 +93,7 @@ function fieldPresent(body, label) {
  * Retorna a string de texto até o próximo heading ou fim do documento.
  */
 function extractSectionContent(body, label) {
-  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escaped = escapeRegex(label);
   // Captura o conteúdo entre o heading da seção e o próximo heading ou fim do documento:
   //   (?:^|\n)\s* — início de linha
   //   (?:#{1,6}\s+<label>|<label>\s*) — heading markdown ou label simples
@@ -111,7 +117,8 @@ function extractSectionContent(body, label) {
  * Trata tanto --> quanto --!> como fim de comentário (HTML5).
  */
 function stripHtmlComments(text) {
-  // Remove blocos fechados (padrão --> e variante HTML5 --!>)
+  // Remove blocos fechados: padrão --> e variante --!> usada por alguns editores Markdown
+  // (conforme WHATWG HTML spec, --!> é reconhecido como fechamento de comentário)
   let result = text
     .replace(/<!--[\s\S]*?--!>/g, "")
     .replace(/<!--[\s\S]*?-->/g, "");
