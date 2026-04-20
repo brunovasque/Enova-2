@@ -6,7 +6,11 @@
 
 ---
 
-## 1. Ordem oficial de leitura antes de qualquer tarefa
+## 1. Lista de documentos de leitura obrigatória
+
+> **Esta seção define os documentos a ler — não as etapas de execução.**
+> A lista de leitura (abaixo) e o fluxo de execução (seção 3 — 16 etapas) são duas coisas distintas.
+> `16 etapas` ≠ `21 documentos de leitura`. Não confundir.
 
 Toda execução começa com leitura nesta sequência — **obrigatória, sem exceção**:
 
@@ -45,6 +49,10 @@ Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas 
 ---
 
 ## 3. Fluxo obrigatório de execução — 16 etapas
+
+> **Esta seção define o fluxo de execução — não a lista de documentos a ler.**
+> As 16 etapas abaixo são ações sequenciais do agente. A Etapa 1 ("Leitura canônica") executa a lista de documentos da seção 1 (21 itens), mas as 16 etapas e os 21 itens de leitura são categorias distintas.
+> `16 etapas de execução` ≠ `21 documentos de leitura`.
 
 Toda tarefa deve percorrer as 16 etapas abaixo, **em ordem, sem pular nenhuma**:
 

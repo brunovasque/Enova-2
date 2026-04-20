@@ -17,8 +17,9 @@
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta infra)             |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
-| Permissões Cloudflare necessárias          | sim — Workers Scripts:Edit (necessário para wrangler deploy — aviso preventivo ativo)     |
-| Última atualização                         | 2026-04-20T03:17:26Z                                                                      |
+| Permissões Cloudflare — infra herdada (PR #7) | Workers Scripts:Edit — obrigatório para deploy via wrangler (aviso preventivo ativo) |
+| Permissões Cloudflare — última tarefa (PR #8) | nenhuma adicional — tarefa de governança documental                                  |
+| Última atualização                         | 2026-04-20T03:37:47Z                                                                      |
 
 ---
 
@@ -133,5 +134,5 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T03:17:26Z
-- **Responsável**: Copilot (PR #8 — Camada formal de execução contratual)
+- **Data**: 2026-04-20T03:37:47Z
+- **Responsável**: Copilot (PR #8 — correções de consistência documental)

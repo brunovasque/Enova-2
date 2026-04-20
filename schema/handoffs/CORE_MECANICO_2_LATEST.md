@@ -23,9 +23,9 @@
 
 ## 1. Contexto curto
 
-O repositório da ENOVA 2 estava com toda a governança pronta (trio-base, workflow 11 etapas, protocolos de dados e permissões Cloudflare) e com o bootstrap técnico de Cloudflare Workers concluído (wrangler.toml + entrypoint placeholder + pipeline de deploy). Esta PR #8 cria a camada formal de execução contratual, amarrando o plano macro às PRs micro.
+O repositório da ENOVA 2 estava com toda a governança pronta (trio-base, CODEX_WORKFLOW com fluxo de execução de 11 etapas, protocolos de dados e permissões Cloudflare) e com o bootstrap técnico de Cloudflare Workers concluído (wrangler.toml + entrypoint placeholder + pipeline de deploy). Esta PR #8 cria a camada formal de execução contratual, amarrando o plano macro às PRs micro.
 
-A camada contratual inclui: índice de contratos ativos por frente (`_INDEX.md`), protocolo de execução contratual por PR (`CONTRACT_EXECUTION_PROTOCOL.md`), protocolo obrigatório de encerramento de contrato (`CONTRACT_CLOSEOUT_PROTOCOL.md`), diretórios `active/` e `archive/` para contratos. O CODEX_WORKFLOW foi atualizado de 11 para 16 etapas, incluindo leitura de contratos, vínculo contratual, checagem de desvio e closeout. PR template, AGENT_CONTRACT, HANDOFF_SCHEMA, STATUS_SCHEMA e CONTRACT_SCHEMA foram atualizados para refletir a governança contratual.
+A camada contratual inclui: índice de contratos ativos por frente (`_INDEX.md`), protocolo de execução contratual por PR (`CONTRACT_EXECUTION_PROTOCOL.md`), protocolo obrigatório de encerramento de contrato (`CONTRACT_CLOSEOUT_PROTOCOL.md`), diretórios `active/` e `archive/` para contratos. O CODEX_WORKFLOW teve seu **fluxo de execução expandido de 11 para 16 etapas** (seção 3 do CODEX_WORKFLOW), incorporando leitura de contratos, vínculo contratual, checagem de desvio e closeout — sem alterar a lista de leitura obrigatória da seção 1. PR template, AGENT_CONTRACT, HANDOFF_SCHEMA, STATUS_SCHEMA e CONTRACT_SCHEMA foram atualizados para refletir a governança contratual.
 
 Nenhuma implementação funcional foi aberta. O próximo passo autorizado não foi alterado.
 
