@@ -10,7 +10,7 @@
 
 Este protocolo garante rastreabilidade total e visibilidade preventiva de qualquer necessidade nova de permissão Cloudflare na ENOVA 2.
 
-Ele existe para evitar que falhas silenciosas de deploy, binding ou acesso ocorram por permissão insuficiente do token Cloudflare — risco que, se não declarado, se tornaria implícito e invisível até o momento do falha real em produção.
+Ele existe para evitar que falhas silenciosas de deploy, binding ou acesso ocorram por permissão insuficiente do token Cloudflare — risco que, se não declarado, se tornaria implícito e invisível até o momento da falha real em produção.
 
 O protocolo não cobre implementação funcional nem criação real de recursos. Cobre exclusivamente **declaração de necessidade de permissão** e **rastreabilidade preventiva** do que está sendo adicionado, configurado ou dependido.
 

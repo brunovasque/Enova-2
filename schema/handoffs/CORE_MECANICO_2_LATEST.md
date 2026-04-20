@@ -138,7 +138,7 @@ A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técn
 
 - **Entrypoint placeholder** — `src/worker.ts` é um placeholder sem lógica. Se alguém fizer deploy antes da implementação real, o worker responderá com uma mensagem de bootstrap. Isso é intencional e documentado.
 - **Conteúdo dos legados** — O legado mestre unificado contém placeholders por bloco. O PDF mestre deve ser incorporado antes da abertura do contrato do Core.
-- **Permissões do token Cloudflare** — O token atual não foi verificado para todos os recursos que serão necessários após o contrato. Qualquer PR que adicione bindings ou recursos Cloudflare deve seguir o `CLOUDFLARE_PERMISSION_PROTOCOL.md` e declarar se as permissões atuais bastam.
+- **Permissões do token Cloudflare** — O token atual não foi verificado para todos os recursos que serão necessários após o contrato. Isso é esperado e intencional nesta PR de governança documental: a verificação e eventual ampliação do token só ocorrerão quando uma PR futura declarar necessidade concreta de recurso Cloudflare, seguindo o `CLOUDFLARE_PERMISSION_PROTOCOL.md`. Não há ação imediata necessária — é um risco futuro documentado preventivamente.
 
 ## 17. Provas
 
