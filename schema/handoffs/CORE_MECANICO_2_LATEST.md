@@ -171,7 +171,7 @@ Próximo passo **atualizado** pela sequência natural do contrato após o fecham
 
 - `npm run smoke` → 5/5 passando pelo `runCoreEngine()`
 - `npm run smoke:all` → Core + Worker passando
-- commit técnico: `cc1e98acb1f7d3f216ac92d510d4e8620ba98b22` — `feat(core): integrar meio a inicial no engine`
+- commit técnico: `cc1e98aae76fc6ca7c3c224ce134eed89dc44948` — `feat(core): integrar meio a inicial no engine`
 - cenário real de bloqueio do Meio A:
   - `qualification_civil` com `{"estado_civil":"solteiro"}` -> `block_advance=true`, `next_objective="coletar_processo"`
 - cenário real de avanço do Meio A:

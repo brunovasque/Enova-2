@@ -12,7 +12,7 @@
 | Estado atual                               | em execução — Meio A inicial já roda no Core principal, sem fala mecânica e sem abrir novas frentes |
 | Classe da última tarefa                    | contratual — L07 + L08 do Core Mecânico 2, mantendo Worker sem fala |
 | Última PR relevante                        | PR de execução L07 + L08 — Meio A integrado ao `engine.ts` |
-| Último commit                              | `cc1e98acb1f7d3f216ac92d510d4e8620ba98b22` — `feat(core): integrar meio a inicial no engine` |
+| Último commit                              | `cc1e98aae76fc6ca7c3c224ce134eed89dc44948` — `feat(core): integrar meio a inicial no engine` |
 | Pendência remanescente herdada             | O Core já estava vivo no Worker; faltava entrar no primeiro recorte de Meio A com estado civil e composição familiar mínima |
 | Próximo passo autorizado                   | Quarta PR contratual: L09 + L10 — Meio A: composição familiar (parte 2) |
 | Legados aplicáveis                         | L03, L04, L05, L06, L07, L08 executados; L09–L17 pendentes |
