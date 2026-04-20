@@ -18,6 +18,13 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 6. Último handoff da frente ativa (`schema/handoffs/<FRENTE>_LATEST.md`)
 7. `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
 8. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
+9. `schema/TASK_CLASSIFICATION.md`
+10. `schema/DATA_CHANGE_PROTOCOL.md`
+11. `schema/CONTRACT_SCHEMA.md`
+12. `schema/STATUS_SCHEMA.md`
+13. `schema/HANDOFF_SCHEMA.md`
+14. `schema/status/CORE_MECANICO_2_STATUS.md`
+15. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
