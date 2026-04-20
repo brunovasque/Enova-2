@@ -60,6 +60,9 @@ const LIVE_FILES_EXEMPT_PATTERNS = [
   /não\s+aplicável/i,
 ];
 
+// Campo de estado vivo — referenciado no gate de arquivos (deve coincidir com REQUIRED_FIELDS)
+const LIVE_FILES_FIELD = "Arquivos vivos atualizados";
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -85,8 +88,16 @@ function fieldPresent(body, label) {
  */
 function extractSectionContent(body, label) {
   const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Captura o conteúdo entre o heading da seção e o próximo heading ou fim do documento:
+  //   (?:^|\n)\s* — início de linha
+  //   (?:#{1,6}\s+<label>|<label>\s*) — heading markdown ou label simples
+  //   \n([...]*?) — conteúdo capturado (grupo 1)
+  //   (?=\n#{1,6}\s|\n[A-Z][^\n]*:\s*\n|$) — lookahead: próximo heading ou fim
   const headingRe = new RegExp(
-    `(?:^|\\n)\\s*(?:#{1,6}\\s+${escaped}|${escaped}\\s*)\\n([\\s\\S]*?)(?=\\n#{1,6}\\s|\\n[A-Z][^\\n]*:\\s*\\n|$)`,
+    `(?:^|\\n)\\s*` +
+    `(?:#{1,6}\\s+${escaped}|${escaped}\\s*)` +
+    `\\n([\\s\\S]*?)` +
+    `(?=\\n#{1,6}\\s|\\n[A-Z][^\\n]*:\\s*\\n|$)`,
     "i"
   );
   const match = body.match(headingRe);
@@ -97,13 +108,16 @@ function extractSectionContent(body, label) {
 
 /**
  * Remove comentários HTML (<!-- ... -->) e quaisquer fragmentos residuais de forma completa.
+ * Trata tanto --> quanto --!> como fim de comentário (HTML5).
  */
 function stripHtmlComments(text) {
-  // Primeira passagem: remove blocos fechados <!-- ... -->
-  let result = text.replace(/<!--[\s\S]*?-->/g, "");
-  // Segunda passagem: remove fragmentos residuais de abertura ou fechamento
-  result = result.replace(/<!--[\s\S]*/g, "");
-  result = result.replace(/[\s\S]*?-->/g, "");
+  // Remove blocos fechados (padrão --> e variante HTML5 --!>)
+  let result = text
+    .replace(/<!--[\s\S]*?--!>/g, "")
+    .replace(/<!--[\s\S]*?-->/g, "");
+  // Remove qualquer fragmento residual de abertura usando split/join
+  // (abordagem recomendada para satisfazer sanitização completa de múltiplos caracteres)
+  result = result.split("<!--").join("");
   return result;
 }
 
@@ -171,19 +185,19 @@ function main() {
   // Se "Arquivos vivos atualizados" está presente e não é isento,
   // verificar se há mudança real em schema/status/, schema/handoffs/ ou schema/contracts/
   // ------------------------------------------------------------------
-  const liveSection = extractSectionContent(prBody, "Arquivos vivos atualizados");
+  const liveSection = extractSectionContent(prBody, LIVE_FILES_FIELD);
 
-  if (fieldPresent(prBody, "Arquivos vivos atualizados")) {
+  if (fieldPresent(prBody, LIVE_FILES_FIELD)) {
     if (isEffectivelyEmpty(liveSection)) {
       warnings.push(
-        "[D. Estado vivo] Seção 'Arquivos vivos atualizados' está em branco. " +
+        `[D. Estado vivo] Seção '${LIVE_FILES_FIELD}' está em branco. ` +
         "Declare os arquivos atualizados ou justifique que nenhuma atualização foi necessária."
       );
     } else if (!liveFilesExempt(liveSection)) {
       // Seção tem conteúdo e não é isenta: verificar se arquivos vivos foram realmente alterados
       if (changedFiles.length > 0 && !hasLiveFileChange(changedFiles)) {
         failures.push(
-          "[D. Estado vivo] 'Arquivos vivos atualizados' declara arquivos mas nenhuma " +
+          `[D. Estado vivo] '${LIVE_FILES_FIELD}' declara arquivos mas nenhuma ` +
           "mudança foi detectada em schema/status/, schema/handoffs/ ou schema/contracts/. " +
           "Atualize os arquivos vivos ou justifique no corpo da PR que nenhuma atualização foi necessária " +
           "(ex: 'nenhuma atualização viva necessária')."
