@@ -74,11 +74,11 @@ function escapeRegex(str) {
 }
 
 function stripHtmlComments(text) {
-  let result = text
-    .replace(/<!--[\s\S]*?--!>/g, "")
-    .replace(/<!--[\s\S]*?-->/g, "");
-  result = result.split("<!--").join("");
-  return result;
+  // Remove HTML comments: both standard --> and non-standard --!> closings.
+  // Then eliminate any remaining unclosed opener fragments.
+  return text
+    .replace(/<!--[\s\S]*?--!?>/g, "")
+    .replace(/<!--[\s\S]*/g, "");
 }
 
 function isEffectivelyEmpty(content) {

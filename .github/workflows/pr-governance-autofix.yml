@@ -41,9 +41,12 @@ jobs:
 
       - name: Extrair número da PR associada
         id: pr-info
+        env:
+          # Expandir expressão via env (não via shell) para prevenir code injection
+          PULL_REQUESTS_JSON: ${{ toJson(github.event.workflow_run.pull_requests) }}
         run: |
-          # Extrair PR number do evento workflow_run via expressão jq
-          PR_NUMBER=$(echo '${{ toJson(github.event.workflow_run.pull_requests) }}' | \
+          # Extrair PR number do evento workflow_run
+          PR_NUMBER=$(echo "$PULL_REQUESTS_JSON" | \
             node -e "
               const data = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8'));
               console.log((data && data[0] && data[0].number) ? data[0].number : '');
