@@ -3,19 +3,19 @@
 | Campo                                      | Valor                                                                             |
 |--------------------------------------------|-----------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                   |
-| Data                                       | 2026-04-20T18:05:00Z                                                              |
-| Estado da frente                           | contrato aberto (contrato ativo vinculante criado e revisado com PDF lido)        |
-| Classificação da tarefa                    | governança (correção: PDF consultado diretamente + âncoras reais ao PDF)          |
-| Última PR relevante                        | PR desta abertura/correção — contrato ativo + revisão com PDF lido                |
+| Data                                       | 2026-04-20T19:30:00Z                                                              |
+| Estado da frente                           | em execução — primeiro recorte contratual (L03) entregue; smoke 5/5 passando     |
+| Classificação da tarefa                    | contratual — primeiro recorte do Core Mecânico 2: mapa de stages e gates (L03)   |
+| Última PR relevante                        | PR de execução L03 — Core Mecânico 2: mapa de stages e gates                     |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`                            |
-| Recorte executado do contrato              | N/A — contrato recém-aberto e corrigido, nenhuma execução contratual ainda        |
-| Pendência contratual remanescente          | Contrato inteiro em aberto — nenhum recorte executado                             |
+| Recorte executado do contrato              | L03 — Mapa Canônico do Funil: stages, gates, motor de decisão, smoke suite        |
+| Pendência contratual remanescente          | L04–L17 em aberto; trilho completo pendente                                       |
 | Houve desvio de contrato?                  | não                                                                               |
 | Contrato encerrado nesta PR?               | não                                                                               |
-| Item do A01 atendido                       | Fase 0 → Fase 2 — Gate 1 satisfeito, contrato do Core aberto e ancorado ao PDF   |
-| Próximo passo autorizado                   | Primeira PR contratual de execução do Core Mecânico 2                             |
-| Próximo passo foi alterado?                | não — preservado da PR de abertura                                                |
-| Tarefa fora de contrato?                   | não — tarefa de governança (correção)                                             |
+| Item do A01 atendido                       | Fase 2 — Prioridade 1; Gate 2 satisfeito no recorte L03                          |
+| Próximo passo autorizado                   | Segunda PR contratual: L04 + L05 + L06 — topo do funil (regras, parser e gates)  |
+| Próximo passo foi alterado?                | sim — de "Primeira PR contratual de execução" para "Segunda PR: L04–L06"         |
+| Tarefa fora de contrato?                   | não — primeira PR de execução contratual                                          |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                           |
 | Permissões Cloudflare necessárias          | nenhuma adicional                                                                 |
 | Fontes de verdade consultadas              | ver seção 20 abaixo                                                               |
@@ -24,129 +24,127 @@
 
 ## 1. Contexto curto
 
-O repositório da ENOVA 2 chegou à PR #13 com toda a governança documental pronta: trio-base, CODEX_WORKFLOW com 16+ etapas, camada contratual (INDEX, EXECUTION, CLOSEOUT), schemas, protocolos, bootstrap Cloudflare, pipeline de deploy, gate de PR, auto-fix, base documental do legado mestre organizada, encontrabilidade contratual e rastreabilidade de fontes operacionais.
+O repositório da ENOVA 2 chegou à PR de abertura do contrato com toda a governança documental pronta e o contrato ativo do Core Mecânico 2 aberto. Gate 1 do A01 ("sem contrato da frente, não começa implementação") satisfeito.
 
-Esta PR abre formalmente o contrato ativo do Core Mecânico 2. O contrato é uma camada operacional **vinculada** ao contrato macro (A00, A01, A02, PDF-fonte) — ele NÃO substitui, NÃO resume livremente e NÃO reinterpreta o contrato macro. O contrato trava a cláusula central de soberania conversacional (LLM soberano da fala, mecânico apenas valida estrutura/gates/facts mínimos), cria mapa de cláusulas para execução futura por etapas com âncora ao PDF-fonte, e trava regras de parada por falta de âncora contratual.
+Esta PR executa o **primeiro recorte contratual do Core Mecânico 2**: L03 — Mapa Canônico do Funil. Entrega o mapa estrutural de stages e gates, o motor de decisão estrutural e a smoke suite determinística com 5 cenários passando.
 
-O Gate 1 do A01 ("sem contrato da frente, não começa implementação") fica satisfeito. O próximo passo autorizado passa a ser a primeira PR contratual de execução do Core.
+**O que foi entregue:**
+- `src/core/types.ts` — tipos estruturais (StageId, LeadState, CoreDecision, GateResult)
+- `src/core/stage-map.ts` — STAGE_MAP canônico com 8 stages + gates R1–R6 derivados de L03
+- `src/core/engine.ts` — motor de decisão estrutural (entrada → decisão; sem fala)
+- `src/core/smoke.ts` — smoke suite: 5/5 cenários passando (bloqueio RNM, casado civil, autônomo/IR, renda baixa, trilho completo)
+
+Gate 2 do A01 ("sem smoke da frente, não promove") satisfeito no recorte L03.
 
 ## 2. Classificação da tarefa
 
-**governança**
+**contratual**
 
-Abertura de contrato ativo vinculante do Core Mecânico 2. Nenhuma implementação funcional. Nenhum código de negócio. Criação de contrato, mapa de cláusulas e regras de execução ancorada. Atualização de _INDEX, status e handoff.
+Primeiro recorte de execução do contrato ativo do Core Mecânico 2. Implementação do mapa de stages e gates derivado de L03 com motor de decisão estrutural. Nenhuma fala, surface ou resposta ao cliente gerada pelo Core. Smoke suite executada e passando.
 
 ## 3. Última PR relevante
 
-**PR #13** — Governança: encontrabilidade contratual e rastreabilidade de fontes.
+**PR de abertura** — Governança: contrato ativo vinculante do Core Mecânico 2.
 
-## 4. O que a PR #13 fechou
+## 4. O que a PR de abertura fechou
 
-- Criou `schema/CONTRACT_SOURCE_MAP.md` — ponte documental operacional.
-- Adicionou seção 19 ao `schema/CODEX_WORKFLOW.md` — protocolo de descoberta contratual.
-- Expandiu ESTADO HERDADO com bloco "Fontes de verdade consultadas".
-- Adicionou seção 20 ao `schema/HANDOFF_SCHEMA.md`.
-- Adicionou seção 17 ao `schema/STATUS_SCHEMA.md`.
-- Atualizou `.github/AGENT_CONTRACT.md` com regras 20–23.
+- Criou `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` — contrato ativo vinculante.
+- Criou `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md` — mapa de cláusulas.
+- Criou `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md` — regras de execução.
+- Atualizou `schema/contracts/_INDEX.md` — contrato ativo registrado.
+- Gate 1 do A01 satisfeito.
 
-## 5. O que a PR #13 NÃO fechou
+## 5. O que a PR de abertura NÃO fechou
 
-- Contrato formal do Core Mecânico 2 (fechado por esta PR).
-- Transcrição do conteúdo dos legados L01–L19 (deliberadamente fora de escopo).
+- Execução do primeiro recorte contratual (L03) — **fechado por esta PR**.
+- L04–L17: blocos pendentes (a executar em PRs subsequentes).
 - Confirmação dos blocos C01–C09 (pendente — depende de leitura direta do PDF).
 
 ## 6. Diagnóstico confirmado
 
-- `schema/contracts/_INDEX.md` mostrava Core Mecânico 2 com status "aguardando abertura" — confirmado.
-- `schema/status/CORE_MECANICO_2_STATUS.md` indicava próximo passo "Abrir contrato do Core Mecânico 2" — confirmado.
-- `schema/handoffs/CORE_MECANICO_2_LATEST.md` indicava o mesmo próximo passo — confirmado.
-- Todas as dependências para abertura do contrato estavam satisfeitas (trio-base, workflow, camada contratual, encontrabilidade, etc.).
-- Gate 1 do A01 exigia contrato aberto antes de implementação — confirmado.
-- A00, A01 e A02 foram lidos integralmente para ancorar o contrato ativo.
-- CONTRACT_SCHEMA, CONTRACT_EXECUTION_PROTOCOL, CONTRACT_CLOSEOUT_PROTOCOL foram lidos para formato e regras.
-- CONTRACT_SOURCE_MAP, INDEX_LEGADO_MESTRE e source/README foram lidos para rastreabilidade de fontes.
+- PDF-fonte consultado diretamente (pdfplumber): PDF 6, PDF 7, PDF 8, PDF Complementar Core Mecânico.
+- `src/` continha apenas `worker.ts` (placeholder). `src/core/` ainda não existia — scaffold criado do zero.
+- Nenhum bloco L03 transcrito no markdown — conteúdo lido diretamente do PDF.
+- Estágio inicial do repo: sem qualquer implementação funcional do Core.
 
 ## 7. O que foi feito (esta PR)
 
-### PR de abertura original (commit 8d421c0):
-- Criado `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` — contrato ativo vinculante com:
-  - Todas as 16 seções obrigatórias do CONTRACT_SCHEMA
-  - Declaração de subordinação e não-substituição do PDF-fonte
-  - Precedência documental oficial com PDF-fonte como árbitro
-  - Cláusula central de soberania conversacional travada (com âncoras ao A00)
-  - Regra de parada contratual
-  - Registro formal de abertura
-- Criado `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md` — mapa de cláusulas com:
-  - Cláusulas do A00 aplicáveis (8 entradas)
-  - Cláusulas do A01 aplicáveis (9 entradas)
-  - Cláusulas dos blocos legados L03–L17 (15 entradas)
-  - Ordem sugerida de execução das PRs
-  - Todas as entradas com referência explícita à fonte
-- Criado `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md` — regras de execução com:
-  - Regra de âncora contratual obrigatória (com bloco declarativo)
-  - Regra de consulta obrigatória ao PDF-fonte
-  - Regra de parada por dúvida interpretativa
-  - Regra de parada por expansão de escopo
-  - Regra de fidelidade ao texto-fonte
-  - Checklist obrigatório de toda PR de execução
-  - Resumo de condições de parada (9 condições)
-- Atualizado `schema/contracts/_INDEX.md` — contrato ativo registrado, status "aberto".
-- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md` — reflete contrato aberto, Gate 1 satisfeito, próximo passo alterado.
-- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` — este arquivo.
-
-### Correção nesta PR (PDF consultado diretamente):
-- **PDF-fonte (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`) lido diretamente** — PDF 1 pp. 1–10 e PDF 2 pp. 1–8.
-- Adicionada seção **"PDF CONSULTADO NESTA ABERTURA"** ao contrato ativo — tabela completa de páginas/seções/uso.
-- **Cláusula central de soberania revisada** — cada sub-cláusula agora tem âncora direta ao PDF (com número de página), não apenas ao A00/A01.
-  - LLM soberano: âncoras ao PDF 1 p.1 (tese central) + PDF 2 p.1 (princípio jurídico + Cláusula 2).
-  - Mecânico sem linguagem: âncora direta ao PDF 1 p.3 (Camada 4 Policy Engine) + "Conversa livre; governança presa".
-  - Governança presa: âncoras ao PDF 2 p.1 (objeto) + PDF 2 p.8 (encerramento) + PDF 1 Sec.5.
-- **CLAUSE_MAP revisado** — entradas A00-* e A01-* ganham coluna "Âncora PDF-fonte" com referência real por página/seção.
-- **Header do CLAUSE_MAP** atualizado — declara explicitamente que PDF foi lido diretamente.
-- **Status** — seção 17 corrigida: "PDF mestre consultado: sim" com páginas e seções explícitas.
-- **Handoff** — seção 20 corrigida: consulta real ao PDF documentada com detalhe por página.
+- Criado `src/core/types.ts`:
+  - `StageId` (8 stages canônicos derivados de L03)
+  - `LeadState` (estado estruturado mínimo — PDF 8, seção 3.1)
+  - `GateId` (R1–R6 — PDF 8, seção 4)
+  - `GateResult`, `CoreDecision`, `PersistOp`, `SpeechIntent`, `StageDefinition`
+- Criado `src/core/stage-map.ts`:
+  - `STAGE_MAP` — 8 stages com facts obrigatórios, transições e gates aplicáveis
+  - `GATE_DEFINITIONS` — metadados de todos os gates (severidade, block_advance)
+  - Avaliadores: `evaluateGateCasadoConjunto`, `evaluateGateAutonomoIR`, `evaluateGateRendaSoloBaixa`, `evaluateGateEstrangeiroRNM`, `evaluateGateFatoCriticoAusente`, `evaluateApplicableGates`
+  - `CANONICAL_STAGE_ORDER` — sequência canônica do funil
+- Criado `src/core/engine.ts`:
+  - `runCoreEngine(input)` — ciclo de decisão estrutural (9 etapas)
+  - Sem fala; `speech_intent` é sinal estrutural ao Speech Engine
+  - Funções: `mergeFactsFromTurn`, `classifySlots`, `computeNextStep`, `deriveSpeechIntent`, `buildPersistOps`
+- Criado `src/core/smoke.ts`:
+  - 5 cenários determinísticos com assertions explícitas
+  - Cenário 1: Discovery sem facts → G_FATO_CRITICO_AUSENTE → block_advance=true
+  - Cenário 2: Casado civil + processo=solo → G_CASADO_CONJUNTO → forçar processo=conjunto
+  - Cenário 3: Estrangeiro sem RNM → G_ESTRANGEIRO_RNM (critical) → bloqueio total
+  - Cenário 4: Autônomo sem IR → G_AUTONOMO_IR → block_advance=true, pending=[autonomo_tem_ir]
+  - Cenário 5: Discovery com customer_goal → sem bloqueio → transição para qualification_civil
+  - **Resultado: 5/5 passando**
+- Criado `package.json` com script `npm run smoke`
+- Criado `.gitignore` (node_modules, dist, .wrangler)
+- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`
+- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md`
 
 ## 8. O que não foi feito
 
-- **Transcrição do conteúdo dos legados** — deliberadamente fora de escopo. O PDF existe; a transcrição bloco a bloco é tarefa separada.
-- **Implementação funcional** — nenhuma. Nenhum código de negócio.
-- **Execução de recorte do contrato** — nenhuma. O contrato foi aberto, não executado.
-- **Abertura de escopo funcional** — nenhuma. Esta PR é exclusivamente de governança.
+- **Speech Engine** — não criado (soberania do LLM preservada)
+- **Response builder** — não criado (Core não escreve fala)
+- **Surface final** — não criada
+- **Extractor / Parser** — não criado (frente separada)
+- **Persistência Supabase** — não implementada (persist_ops declaradas, não executadas)
+- **Canal Meta/WhatsApp** — não aberto
+- **L04+ junto** — não misturado
+- **Regra inventada fora da âncora contratual** — nenhuma
 
 ## 9. O que esta PR fechou
 
-- Contrato ativo do Core Mecânico 2 aberto em `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`.
-- Mapa de cláusulas criado em `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`.
-- Regras de execução ancorada criadas em `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md`.
-- `schema/contracts/_INDEX.md` atualizado — Core Mecânico 2 com contrato ativo.
-- Gate 1 do A01 satisfeito.
-- Pendência remanescente herdada da PR #2 (abertura de contrato) — **resolvida**.
+- Mapa estrutural de stages/gates do Core derivado de L03.
+- Motor de decisão estrutural (entrada → CoreDecision; sem fala).
+- Smoke suite: 5/5 passando. Gate 2 do A01 satisfeito no recorte L03.
+- Status e handoff atualizados.
 
 ## 10. O que continua pendente após esta PR
 
-- Primeira PR contratual de execução do Core Mecânico 2 (próximo passo autorizado).
-- Transcrição do conteúdo dos blocos L01–L19 do PDF para o markdown (tarefa separada).
-- Confirmação de títulos, funções e frentes dos blocos C01–C09 via leitura direta do PDF.
-- Implementação funcional do modelo de objectives/stages (depende de execução contratual).
+- L04: Topo do Funil — Contrato
+- L05: Topo do Funil — Parser
+- L06: Topo do Funil — Critérios
+- L07–L10: Meio A — Composição Familiar
+- L11–L14: Meio B — Regime e Renda
+- L15–L16: Especiais
+- L17: Final Operacional
+- Trilho completo fim-a-fim
+- Integração com Extractor (frente separada)
+- Persistência Supabase (frente separada)
 - Smoke de trilho e next step autorizado (Gate 2 do A01).
 - Verificação do escopo do token `CLOUDFLARE_API_TOKEN` antes do primeiro deploy real.
 
 ## 11. Esta tarefa foi fora de contrato?
 
-**não** — classificada como `governança`.
+**não** — classificada como `contratual`.
 
-Não havia contrato ativo do Core Mecânico 2 no momento de entrada. Esta tarefa abre o contrato. Governança documental pura, alinhada à Fase 0 → Fase 2 do A01.
+Primeira PR de execução do contrato ativo do Core Mecânico 2. Recorte L03 executado com âncora explícita.
 
-Impacto no próximo passo autorizado: **alterou** — de "Abrir contrato do Core Mecânico 2" para "Primeira PR contratual de execução do Core Mecânico 2".
+Impacto no próximo passo autorizado: **alterou** — de "Primeira PR contratual de execução" para "Segunda PR contratual: L04–L06".
 
 ### 11a. Contrato ativo
-`schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` — aberto nesta PR.
+`schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` — em execução.
 
 ### 11b. Recorte executado do contrato
-N/A — contrato recém-aberto, nenhuma execução contratual.
+L03 — Mapa Canônico do Funil: stages, gates, motor de decisão, smoke suite.
 
 ### 11c. Pendência contratual remanescente
-Contrato inteiro em aberto — nenhum recorte executado.
+L04–L17 em aberto. Trilho completo pendente.
 
 ### 11d. Houve desvio de contrato?
 não
@@ -156,53 +154,52 @@ não
 
 ## 12. Arquivos relevantes
 
-- `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` *(criado — contrato ativo vinculante)*
-- `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md` *(criado — mapa de cláusulas)*
-- `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md` *(criado — regras de execução ancorada)*
-- `schema/contracts/_INDEX.md` *(atualizado — contrato ativo registrado)*
-- `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado — contrato aberto, Gate 1 satisfeito)*
+- `src/core/types.ts` *(criado — tipos estruturais do Core)*
+- `src/core/stage-map.ts` *(criado — mapa canônico de stages e gates derivado de L03)*
+- `src/core/engine.ts` *(criado — motor de decisão estrutural)*
+- `src/core/smoke.ts` *(criado — smoke suite: 5/5 passando)*
+- `package.json` *(criado — script npm run smoke)*
+- `.gitignore` *(criado)*
+- `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
 
 ## 13. Item do A01 atendido
 
-- **Fase 0 → Fase 2** — o contrato do Core Mecânico 2 foi aberto. Gate 1 do A01 ("sem contrato da frente, não começa implementação") está satisfeito. A frente está autorizada a iniciar execução contratual.
-- **Prioridade 1** — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala.
+- **Fase 2** — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala.
+- **Gate 2 do A01** ("sem smoke da frente, não promove") — satisfeito no recorte L03 (smoke 5/5 passando).
 
 ## 14. Estado atual da frente
 
-**contrato aberto** (contrato ativo aberto, sem execução funcional)
+**em execução** — primeiro recorte contratual (L03) entregue; smoke 5/5 passando.
 
-A frente Core Mecânico 2 possui contrato ativo vinculante aberto. Nenhuma execução funcional foi iniciada. O scaffold técnico está pronto. A governança está completa. O próximo marco é a primeira PR contratual de execução, subordinada ao contrato ativo.
+O Core Mecânico 2 tem mapa de stages/gates funcional, motor de decisão estrutural e smoke suite determinística. O Core está totalmente desacoplado da fala. Nenhuma fala, surface ou resposta ao cliente é gerada pelo Core.
 
 ## 15. Próximo passo autorizado
 
-**Primeira PR contratual de execução do Core Mecânico 2**, subordinada ao contrato ativo, com:
-- Classificação: `contratual`
-- Vínculo contratual com `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`
-- Âncora contratual obrigatória conforme `CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md`
-- Recorte do `CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`
-- Consulta obrigatória ao PDF-fonte para blocos legados não transcritos
-- Sugestão de primeiro recorte: mapa de stages e gates (L03)
+**Segunda PR contratual de execução do Core Mecânico 2**: L04 + L05 + L06 — topo do funil.
 
-**Próximo passo alterado** — sim: de "Abrir contrato" para "Primeira PR contratual de execução".
+- Classificação: `contratual`
+- Cláusula-fonte: L-02 (mapa de cláusulas)
+- Blocos: L04 (Topo — Contrato), L05 (Topo — Parser), L06 (Topo — Critérios)
+- Consulta obrigatória ao PDF-fonte para esses blocos
+
+**Próximo passo alterado** — sim: de "Primeira PR contratual" para "Segunda PR: L04–L06".
 
 ## 16. Riscos
 
-- **Conteúdo dos legados não transcrito** — todos os blocos L03–L17 estão "Identificado estruturalmente — não transcrito". A execução contratual depende de consulta direta ao PDF-fonte para cada bloco necessário.
-- **Blocos C não confirmados** — títulos e funções dos blocos C01–C09 pendentes de confirmação via PDF.
+- **Conteúdo dos legados não transcrito** — L04–L17 estão "não transcritos". Consultar PDF para cada bloco.
+- **Blocos C não confirmados** — pendentes de confirmação via PDF.
 - **Permissão do token Cloudflare** — verificar antes do primeiro deploy real.
-- **Risco de drift contratual** — mitigado por: regras de execução ancorada, mapa de cláusulas, checklist obrigatório e regras de parada.
 
 ## 17. Provas
 
-- Contrato ativo criado: `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`
-- Mapa de cláusulas criado: `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`
-- Regras de execução criadas: `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md`
-- `_INDEX.md` atualizado: Core Mecânico 2 com status "aberto"
-- Status atualizado: estado "contrato aberto", Gate 1 satisfeito
-- Handoff atualizado: este arquivo
-- Nenhuma implementação funcional aberta
-- Nenhum código de negócio criado
+- `src/core/types.ts` criado — tipos estruturais sem fala
+- `src/core/stage-map.ts` criado — 8 stages + 6 gates derivados de L03
+- `src/core/engine.ts` criado — motor de decisão estrutural
+- `src/core/smoke.ts` criado — smoke suite 5/5 passando
+- Smoke output: `Total: 5 | Passou: 5 | Falhou: 0 | Resultado: ✅ PASSOU`
+- Status atualizado: estado "em execução", Gate 2 satisfeito no recorte L03
+- Handoff atualizado: próximo passo alterado para Segunda PR: L04–L06
 
 ## 18. Mudanças em dados persistidos (Supabase)
 
@@ -210,7 +207,7 @@ A frente Core Mecânico 2 possui contrato ativo vinculante aberto. Nenhuma execu
 Mudanças em dados persistidos (Supabase): nenhuma
 ```
 
-Esta PR é de governança documental. Nenhuma tabela, coluna, índice, constraint, relacionamento ou migration do Supabase foi criado, alterado ou removido.
+Esta PR implementa scaffold estrutural do Core (tipos, mapa, engine, smoke). Nenhuma tabela, coluna, índice ou migration do Supabase foi criado, alterado ou removido.
 
 ## 19. Permissões Cloudflare necessárias
 
@@ -218,52 +215,44 @@ Esta PR é de governança documental. Nenhuma tabela, coluna, índice, constrain
 Permissões Cloudflare necessárias: nenhuma adicional
 ```
 
-Esta PR é de governança documental e não exige nova permissão operacional.
+Esta PR não realiza deploy nem usa recursos Cloudflare.
 
 ## 20. Fontes consultadas como fonte de verdade
 
 ```
-Fontes de verdade consultadas (PR desta correção — PDF lido diretamente):
+Fontes de verdade consultadas (PR de execução L03):
   Índice de contratos lido:    schema/contracts/_INDEX.md
-  Contrato ativo lido:         schema/contracts/active/CONTRATO_CORE_MECANICO_2.md (revisado nesta PR)
+  Contrato ativo lido:         schema/contracts/active/CONTRATO_CORE_MECANICO_2.md
+  Clause map lido:             schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md
+  Execution rules lido:        schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md
   Status da frente lido:       schema/status/CORE_MECANICO_2_STATUS.md
   Handoff da frente lido:      schema/handoffs/CORE_MECANICO_2_LATEST.md (este arquivo)
   Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
-  Legado markdown consultado:  N/A — tarefa de governança; blocos legados referenciados estruturalmente
-  PDF mestre consultado:       sim — lido diretamente nesta correção
-    PDF 1 — Plano Canônico Macro:    pp. 1–10
-      - p. 1: Tese central (âncora da soberania conversacional)
-      - p. 1–2: Sec. 1 — Decisão estratégica (LLM como motor principal)
-      - p. 3: Sec. 3 — Arquitetura-alvo / Camadas 1–6 (Policy Engine sem linguagem)
-      - p. 3: Sec. 4 — Princípios canônicos ("Conversa livre; governança presa")
-      - p. 3–4: Sec. 5 — Modelo de estado (facts, pendências, conflitos, objetivo atual)
-      - p. 4: Sec. 6 — Classes de policy (obrigatória, bloqueio, roteamento, sugestão mandatória, confirmação, compliance de fala)
-    PDF 2 — Contrato de Implantação: pp. 1–8
-      - p. 1: Princípio jurídico-operacional (liberdade conversacional, não decisória)
-      - p. 1: Objeto do contrato (LLM conduz; estado + políticas preservam previsibilidade)
-      - p. 1–2: Cláusulas-mestras 1–6 (preservação de negócio, liberdade com governança, estado, política explícita, cutover por provas, rollback)
-      - p. 2: Não negociáveis (casado civil, autônomo/IR, renda solo, estrangeiro sem RNM)
-      - p. 4–5: Gates G0–G7
-      - p. 5: Critérios de aceite executivos
-      - p. 8: Encerramento executivo ("liberdade conversacional com governança dura")
-    PDF 3 — Plano Tático de Execução: pp. 1–8
-      - p. 1: Regra executiva central (sequência obrigatória de frentes)
-      - p. 1: Sec. 1 Estratégia operacional — Modo de trabalho, Estratégia de risco, Princípios de execução
-        ("Separar sempre arquitetura, estado, políticas, orquestração, canais e migração de fluxo.")
-        ("Fatia por fatia, com isolamento por frente e validação antes de abrir a frente seguinte.")
-      - p. 2–3: Sec. 2 Cronograma tático mestre (tabela T0–T7 com objetivos e dependências)
-        (T5: "Migrar topo + qualificação + renda + elegibilidade"; dependência T4)
-      - p. 4: T1 — Constituição do agente e contrato cognitivo canônico
-        ("Transformar o conhecimento da Enova em um contrato operacional claro para o LLM")
-      - p. 7: T5 — Migração do funil prioritário
-        ("Quebrar a migração em fatias: topo e abertura; identificação base; composição/estado civil; renda e regime; elegibilidade e sinais de inviabilidade; envio_docs.")
+  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — L03 (estrutura reservada; conteúdo no PDF)
+  PDF mestre consultado:       sim — lido diretamente (pdfplumber)
+    PDF 6 — Taxonomia, modelo de dados e política de estado/memória:
+      - pp. 2–3: Entidades canônicas (Lead, Session, Turn, Fact)
+      - pp. 4–6: Taxonomia de facts F0–F8 (identidade, civil, renda, restrição, docs)
+      - pp. 7–8: Fases macro recomendadas (discovery, qualification, docs_prep, docs_collection, broker_handoff)
+      - p. 8: Estado estruturado v2 (current_objective, must_ask_now, blocked_by, recommended_next_actions)
+    PDF 7 — Ordem executiva e contrato rígido:
+      - p. 3: Tabela de regras de negócio (Solo renda baixa, Autônomo, Casado civil, Estrangeiro, Dependente)
+      - p. 3: Expressão operacional e ação obrigatória de cada regra
+    PDF 8 — Policy Engine plugável no Worker:
+      - p. 1: Missão do Core Mecânico
+      - p. 2: Contrato de entrada (state_snapshot) e saída mínima (confirmed_slots, stage_after, next_objective, etc.)
+      - p. 3: Regras mínimas obrigatórias R1–R6 (ID, condição, ação, tipo)
+      - pp. 4–5: Código real do policy engine (função principal, detector de contradição, orquestração)
+      - p. 6: Persistência mínima Supabase; regras de implantação
+    PDF Complementar — Core Mecânico (pp. 118–119):
+      - p. 118: Missão, o que pode/não pode fazer, modelo de entrada (state_snapshot, turn_extract, policy_context)
+      - p. 119: Saída mínima do Core (confirmed_slots, rejected_slots, pending_slots, stage_after, next_objective, required_confirmation, persist_ops, speech_intent)
+      - p. 119: Política de decisão (múltiplos sinais, stage futuro como pré-slot, regra mais restritiva)
 ```
 
 ---
 
-*(Handoff histórico PR #13 e anteriores preservados abaixo para rastreabilidade)*
-
-O repositório chegou à PR #13 com a organização documental do legado mestre concluída. A PR #13 entregou encontrabilidade contratual e rastreabilidade de fontes: CONTRACT_SOURCE_MAP.md, CODEX_WORKFLOW seção 19, ESTADO HERDADO expandido, schemas atualizados, AGENT_CONTRACT com regras de rastreabilidade.
+*(Handoff histórico preservado abaixo para rastreabilidade)*
 
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
