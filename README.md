@@ -13,6 +13,7 @@ Estabelecer governança, ordem executiva, contratos de trabalho, memória operac
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs
 - `schema/DATA_CHANGE_PROTOCOL.md` — **protocolo obrigatório de mudanças em dados persistidos do Supabase**
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — **protocolo obrigatório de permissões Cloudflare**
+- `schema/REQUEST_ECONOMY_PROTOCOL.md` — **protocolo obrigatório de economia de request e modelo**
 - `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo obrigatório de execução contratual por PR**
 - `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo obrigatório de encerramento formal de contrato**
 - `schema/A00_PLANO_CANONICO_MACRO.md`
@@ -28,6 +29,7 @@ Estabelecer governança, ordem executiva, contratos de trabalho, memória operac
 - `schema/TASK_CLASSIFICATION.md` — 6 classes canônicas de tarefas
 - `schema/DATA_CHANGE_PROTOCOL.md` — rastreabilidade total de mudanças em dados do Supabase
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — rastreabilidade total de permissões Cloudflare
+- `schema/REQUEST_ECONOMY_PROTOCOL.md` — disciplina de request, modelo e automação
 - `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — execução contratual por PR (vínculo, anti-desvio, revisão)
 - `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — encerramento formal de contrato (checklist, evidências, archive)
 
@@ -69,6 +71,22 @@ Ver `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` para o protocolo completo 
 
 **Contrato só encerra via protocolo formal — encerramento implícito é proibido.**
 Ver `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` para o protocolo completo de encerramento.
+
+## PR Governance Gate (automação de validação)
+
+O repositório inclui gate automatizado de validação de PR:
+
+- `.github/workflows/pr-governance-check.yml` — executa em toda PR (sem LLM, sem custo extra)
+- `scripts/validate_pr_governance.js` — script determinístico que valida campos obrigatórios
+
+O gate bloqueia PRs que não declarem os campos mínimos de governança documental:
+- vínculo contratual (contrato ativo, objetivo, recorte, o que fecha/não fecha, desvio, encerramento)
+- Supabase (mudanças em dados persistidos)
+- Cloudflare (permissões necessárias)
+- estado vivo (arquivos vivos atualizados)
+- próximo passo autorizado
+
+Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para a política de economia de request e modelo.
 
 ## Cloudflare Workers — Bootstrap técnico e pipeline de deploy
 

@@ -1,0 +1,33 @@
+name: PR Governance Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+  contents: read
+
+jobs:
+  governance-check:
+    name: Validação de Governança Documental
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Obter arquivos alterados na PR
+        id: changed-files
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" 2>/dev/null || true)
+          echo "CHANGED_FILES<<EOF" >> "$GITHUB_ENV"
+          echo "$CHANGED" >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+
+      - name: Validar campos obrigatórios de governança
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: node scripts/validate_pr_governance.js

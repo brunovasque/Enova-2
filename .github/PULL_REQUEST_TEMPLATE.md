@@ -138,3 +138,10 @@ Permissões Cloudflare necessárias: sim
 
 ## Evidências
 <!-- Links, capturas, logs, diffs, etc. -->
+
+## Disciplina de request e modelo
+<!-- Obrigatório em PRs que envolvam automação, modelo ou custo operacional relevante -->
+<!-- Complexidade da tarefa: baixa | média | alta -->
+<!-- Modelo utilizado: Sonnet | modelo mais caro (justificar se mais caro) -->
+<!-- Automação introduzida: nenhuma | sim — descrição e justificativa de custo -->
+<!-- Ver schema/REQUEST_ECONOMY_PROTOCOL.md -->

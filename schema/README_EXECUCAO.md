@@ -167,3 +167,18 @@ Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para o protocolo completo:
 - Regra de aviso preventivo
 - O que é proibido
 - Exemplos
+
+---
+
+## Protocolo de economia de request — obrigatório em toda tarefa
+
+Toda tarefa, PR e automação deve seguir `schema/REQUEST_ECONOMY_PROTOCOL.md`.
+
+Princípios:
+- **Escopo fechado antes de executar.** Nenhuma investigação livre sem objetivo declarado.
+- **Resolver o máximo dentro do escopo comprovado.** Evitar múltiplas PRs desnecessárias.
+- **Preferência por modelo barato.** Sonnet para tarefas baixa/média complexidade. Modelo mais caro somente com justificativa.
+- **Preferir automação determinística.** Onde regex/script resolve, não usar LLM.
+- **Gate automatizado:** `.github/workflows/pr-governance-check.yml` valida PR sem custo de modelo.
+
+Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para o protocolo completo.

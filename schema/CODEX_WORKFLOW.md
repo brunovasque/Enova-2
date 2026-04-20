@@ -283,6 +283,7 @@ Os seguintes schemas definem o formato obrigatório de artefatos de governança:
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs.
 - `schema/DATA_CHANGE_PROTOCOL.md` — protocolo obrigatório de mudanças em dados persistidos do Supabase.
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — protocolo obrigatório de permissões Cloudflare.
+- `schema/REQUEST_ECONOMY_PROTOCOL.md` — protocolo obrigatório de economia de request e modelo.
 - `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — protocolo obrigatório de execução contratual por PR.
 - `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — protocolo obrigatório de encerramento formal de contrato.
 - `schema/contracts/_INDEX.md` — índice canônico de contratos ativos por frente.
@@ -372,3 +373,31 @@ Permissões Cloudflare necessárias: sim
 ```
 
 Ausência desta declaração = tarefa não conforme.
+
+---
+
+## 16. Protocolo de economia de request
+
+Toda tarefa, PR e automação deve seguir o protocolo de economia de request definido em `schema/REQUEST_ECONOMY_PROTOCOL.md`.
+
+Princípios obrigatórios:
+- **Escopo fechado antes de abrir qualquer tarefa.** Nenhuma investigação livre sem objetivo declarado.
+- **Resolver o máximo dentro do escopo comprovado.** Evitar múltiplas PRs para o que cabe em uma.
+- **Preferência por modelo barato.** Usar Sonnet ou equivalente para tarefas de baixa/média complexidade. Escalar apenas com justificativa documentada.
+- **Preferir automação determinística sobre LLM.** Onde regex ou script simples resolve, não usar modelo.
+- **Evitar automação cara e prematura.** Toda nova automação declara seu custo esperado e justifica sua existência.
+- **Prompts fechados e objetivos.** Quanto mais fechado o prompt, menor o consumo de request e menor o risco de drift.
+
+**Regra de modelo:**
+
+| Complexidade              | Modelo preferido       | Quando escalar                      |
+|---------------------------|------------------------|-------------------------------------|
+| Baixa (docs, governança)  | Sonnet ou equivalente  | Não escalar                         |
+| Média (scripts, refactor) | Sonnet ou equivalente  | Só com justificativa documentada    |
+| Alta (arquitetura, lógica)| Modelo mais caro       | Somente com justificativa explícita |
+
+**Gate automatizado:**
+- `.github/workflows/pr-governance-check.yml` — valida campos obrigatórios no corpo de toda PR
+- `scripts/validate_pr_governance.js` — script determinístico (sem LLM, custo zero)
+
+Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para o protocolo completo.

@@ -3,10 +3,10 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T03:17:26Z                                                        |
-| Estado da frente                           | não iniciada (governança contratual concluída)                               |
-| Classificação da tarefa                    | governança (camada de execução contratual)                                   |
-| Última PR relevante                        | PR #8 — Camada formal de execução contratual                                 |
+| Data                                       | 2026-04-20T04:00:00Z                                                        |
+| Estado da frente                           | não iniciada (governance gate + economia de request concluídos)              |
+| Classificação da tarefa                    | governança (PR governance gate + REQUEST_ECONOMY_PROTOCOL)                   |
+| Última PR relevante                        | PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL                        |
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                  |
 | Recorte executado do contrato              | N/A — nenhum contrato ativo                                                  |
 | Pendência contratual remanescente          | N/A — aguardando abertura do contrato                                        |
@@ -23,9 +23,9 @@
 
 ## 1. Contexto curto
 
-O repositório da ENOVA 2 estava com toda a governança pronta (trio-base, CODEX_WORKFLOW com fluxo de execução de 11 etapas, protocolos de dados e permissões Cloudflare) e com o bootstrap técnico de Cloudflare Workers concluído (wrangler.toml + entrypoint placeholder + pipeline de deploy). Esta PR #8 cria a camada formal de execução contratual, amarrando o plano macro às PRs micro.
+O repositório da ENOVA 2 chegou à PR #9 com governança documental e contratual completa (trio-base, CODEX_WORKFLOW 16 etapas, protocolos de dados, permissões Cloudflare, camada contratual). Esta PR #9 cria o gate automatizado de validação de PR e o protocolo de economia de request.
 
-A camada contratual inclui: índice de contratos ativos por frente (`_INDEX.md`), protocolo de execução contratual por PR (`CONTRACT_EXECUTION_PROTOCOL.md`), protocolo obrigatório de encerramento de contrato (`CONTRACT_CLOSEOUT_PROTOCOL.md`), diretórios `active/` e `archive/` para contratos. O CODEX_WORKFLOW teve seu **fluxo de execução expandido de 11 para 16 etapas** (seção 3 do CODEX_WORKFLOW), incorporando leitura de contratos, vínculo contratual, checagem de desvio e closeout — sem alterar a lista de leitura obrigatória da seção 1. PR template, AGENT_CONTRACT, HANDOFF_SCHEMA, STATUS_SCHEMA e CONTRACT_SCHEMA foram atualizados para refletir a governança contratual.
+A PR #9 entrega: workflow determinístico de validação de PR (`.github/workflows/pr-governance-check.yml`), script de validação sem LLM (`scripts/validate_pr_governance.js`), e protocolo formal de economia de request (`schema/REQUEST_ECONOMY_PROTOCOL.md`). O CODEX_WORKFLOW recebe a seção 16 (economia de request). O AGENT_CONTRACT recebe regras 20-25 (economia de request). PR template, README e README_EXECUCAO recebem referências ao protocolo.
 
 Nenhuma implementação funcional foi aberta. O próximo passo autorizado não foi alterado.
 
@@ -33,58 +33,13 @@ Nenhuma implementação funcional foi aberta. O próximo passo autorizado não f
 
 **governança**
 
-Não há contrato ativo do Core Mecânico 2. Esta tarefa cria a camada formal de execução contratual — protocolo de execução, protocolo de closeout, índice de contratos, atualização do workflow e dos schemas. Nenhuma implementação funcional aberta. O próximo passo autorizado não foi alterado.
+Não há contrato ativo do Core Mecânico 2. Esta tarefa cria gate automatizado de validação + protocolo de economia de request. Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
 
 ## 3. Última PR relevante
 
-**PR #7** — Pipeline de deploy GitHub Actions (deploy.yml — test e prod).
+**PR #8** — Camada formal de execução contratual.
 
-## 4. O que a PR #7 fechou
-
-- Pipeline de deploy mínimo e limpo para Cloudflare Workers (test e prod).
-- Proteção de branch para produção.
-- Documentação de uso local.
-- Scaffold técnico completo da Fase 1 do A01.
-
-## 5. O que a PR #7 NÃO fechou
-
-- Contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
-- Camada de execução contratual formal (entregue nesta PR #8).
-
-## 6. Diagnóstico confirmado
-
-- O repo tinha governança completa (workflow, protocolos, schemas) mas não tinha camada formal de execução contratual.
-- Não existia índice de contratos ativos por frente.
-- Não existia protocolo de execução contratual por PR (vínculo, anti-desvio, revisão).
-- Não existia protocolo formal de encerramento de contrato (closeout).
-- O workflow tinha 11 etapas e não incluía leitura de contratos, vínculo contratual nem checagem de desvio.
-- O PR template não pedia vínculo contratual, desvio de contrato nem closeout.
-- O AGENT_CONTRACT não tinha regras anti-desvio nem governança contratual explícita.
-
-## 7. O que foi feito (PR #8)
-
-- Criado `schema/contracts/_INDEX.md`: índice canônico de contratos ativos por frente, com status canônicos, regras e estrutura de diretórios.
-- Criado `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md`: relação macro → contrato → PR, regra de 1 contrato ativo por frente, declaração obrigatória de vínculo contratual, regra anti-desvio, protocolo de revisão contratual, regra de atualização obrigatória, integração com CODEX_WORKFLOW.
-- Criado `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`: condições de encerramento, checklist obrigatório, evidências mínimas, atualização de _INDEX.md, movimentação para archive, autorização do próximo contrato, proibição de encerramento implícito.
-- Criado `schema/contracts/active/.gitkeep` e `schema/contracts/archive/.gitkeep`.
-- Atualizado `schema/CODEX_WORKFLOW.md`: fluxo de 11 → 16 etapas, leitura obrigatória de contratos, vínculo contratual, checagem de desvio, closeout. ESTADO HERDADO e ESTADO ENTREGUE com campos contratuais. Regras de execução com anti-desvio e closeout. Schemas e contexto vivo atualizados. Regra de parada com desvio e encerramento implícito.
-- Atualizado `.github/PULL_REQUEST_TEMPLATE.md`: campos de objetivo imutável do contrato, recorte executado, o que fecha/não fecha do contrato, desvio de contrato, encerramento com checklist de closeout.
-- Atualizado `.github/AGENT_CONTRACT.md`: 16 etapas, leitura de contratos, ESTADO HERDADO com campos contratuais, regras anti-desvio e governança contratual.
-- Atualizado `schema/HANDOFF_SCHEMA.md`: campos de contrato ativo, recorte executado, pendência contratual, desvio, encerramento.
-- Atualizado `schema/STATUS_SCHEMA.md`: campos de estado do contrato, recorte da última PR, pendência contratual, encerramento.
-- Atualizado `schema/README_EXECUCAO.md`: ordem de leitura com contratos, 16 etapas, governança contratual, precedência atualizada.
-- Atualizado `README.md`: documentos canônicos, schemas, contexto vivo e protocolo de execução com referências contratuais.
-- Atualizado `schema/CONTRACT_SCHEMA.md`: regras de closeout, anti-desvio, diretórios active/archive.
-- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`.
-- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` (este arquivo).
-
-## 8. O que não foi feito
-
-- **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Próximo passo preservado.
-- **Implementação funcional** — nenhuma. Nenhum código de negócio.
-- **Criação de contrato ativo** — a pasta `active/` está vazia propositalmente. O primeiro contrato ativo será aberto na próxima PR.
-
-## 9. O que esta PR fechou
+## 4. O que a PR #8 fechou
 
 - Índice canônico de contratos ativos por frente (`schema/contracts/_INDEX.md`).
 - Protocolo de execução contratual por PR (`CONTRACT_EXECUTION_PROTOCOL.md`).
@@ -92,8 +47,47 @@ Não há contrato ativo do Core Mecânico 2. Esta tarefa cria a camada formal de
 - Workflow atualizado para 16 etapas com vínculo contratual obrigatório.
 - PR template com campos de contrato, desvio e closeout.
 - Agent contract com regras anti-desvio e governança contratual.
-- Schemas (HANDOFF, STATUS, CONTRACT) com campos contratuais.
-- README e README_EXECUCAO atualizados.
+
+## 5. O que a PR #8 NÃO fechou
+
+- Gate automatizado de validação de PR (entregue nesta PR #9).
+- Protocolo de economia de request (entregue nesta PR #9).
+- Contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
+
+## 6. Diagnóstico confirmado
+
+- Não existia gate automatizado de validação de PR (sem LLM, sem custo extra).
+- Não existia protocolo formal de economia de request e preferência por modelo barato.
+- As regras de custo/request não estavam documentadas nem operacionalizadas.
+- O CODEX_WORKFLOW não mencionava preferência por modelo barato nem proibição de automação cara.
+
+## 7. O que foi feito (PR #9)
+
+- Criado `.github/workflows/pr-governance-check.yml`: gate de validação determinística de PR. Executa em toda PR. Sem LLM. Sem dependências externas. Custo: zero além do GitHub Actions.
+- Criado `scripts/validate_pr_governance.js`: script Node.js de validação. Sem framework. Sem dependências externas. Valida presença de campos obrigatórios (vínculo contratual, Supabase, Cloudflare, arquivos vivos, próximo passo) + gate de arquivos vivos.
+- Criado `schema/REQUEST_ECONOMY_PROTOCOL.md`: princípio de escopo fechado, preferência por modelo barato, proibição de automação cara, prompts fechados, gate determinístico.
+- Atualizado `schema/CODEX_WORKFLOW.md`: seção 16 (economia de request), referência ao REQUEST_ECONOMY_PROTOCOL, tabela de modelo por complexidade.
+- Atualizado `.github/PULL_REQUEST_TEMPLATE.md`: campo "Disciplina de request e modelo".
+- Atualizado `.github/AGENT_CONTRACT.md`: regras 20-25 de economia de request, gate automatizado.
+- Atualizado `schema/README_EXECUCAO.md`: seção de economia de request.
+- Atualizado `README.md`: referência ao REQUEST_ECONOMY_PROTOCOL, seção "PR Governance Gate".
+- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`.
+- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` (este arquivo).
+
+## 8. O que não foi feito
+
+- **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Próximo passo preservado.
+- **Implementação funcional** — nenhuma. Nenhum código de negócio.
+
+## 9. O que esta PR fechou
+
+- Gate automatizado de validação de PR (`.github/workflows/pr-governance-check.yml`).
+- Script de validação determinística sem LLM (`scripts/validate_pr_governance.js`).
+- Protocolo de economia de request (`schema/REQUEST_ECONOMY_PROTOCOL.md`).
+- CODEX_WORKFLOW seção 16 (economia de request, preferência por modelo barato).
+- AGENT_CONTRACT regras 20-25 (economia de request, prompts fechados, gate determinístico).
+- PR template: campo "Disciplina de request e modelo".
+- README e README_EXECUCAO: referências ao REQUEST_ECONOMY_PROTOCOL e ao gate.
 
 ## 10. O que continua pendente após esta PR
 
@@ -106,7 +100,7 @@ Não há contrato ativo do Core Mecânico 2. Esta tarefa cria a camada formal de
 
 **não** — classificada como `governança`.
 
-Não há contrato ativo do Core Mecânico 2. Esta tarefa cria infraestrutura de governança contratual. Não é fora de contrato — é governança documental pura, alinhada à Fase 0 do A01 (fundação documental).
+Não há contrato ativo do Core Mecânico 2. Esta tarefa cria gate automatizado e protocolo de economia de request. Governança documental pura, alinhada à Fase 0 do A01.
 
 Impacto no próximo passo autorizado: **não alterou** — próximo passo continua sendo abertura do contrato do Core Mecânico 2.
 
@@ -127,31 +121,26 @@ não
 
 ## 12. Arquivos relevantes
 
-- `schema/contracts/_INDEX.md` *(criado — índice de contratos)*
-- `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` *(criado — protocolo de execução)*
-- `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` *(criado — protocolo de closeout)*
-- `schema/contracts/active/.gitkeep` *(criado — diretório para contratos ativos)*
-- `schema/contracts/archive/.gitkeep` *(criado — diretório para contratos arquivados)*
-- `schema/CODEX_WORKFLOW.md` *(atualizado — 16 etapas + vínculo contratual)*
-- `.github/PULL_REQUEST_TEMPLATE.md` *(atualizado — campos de contrato + desvio + closeout)*
-- `.github/AGENT_CONTRACT.md` *(atualizado — governança contratual)*
-- `schema/HANDOFF_SCHEMA.md` *(atualizado — campos contratuais)*
-- `schema/STATUS_SCHEMA.md` *(atualizado — campos contratuais)*
-- `schema/CONTRACT_SCHEMA.md` *(atualizado — coerência com closeout)*
-- `schema/README_EXECUCAO.md` *(atualizado — referências contratuais)*
-- `README.md` *(atualizado — referências contratuais)*
+- `.github/workflows/pr-governance-check.yml` *(criado — gate de validação de PR)*
+- `scripts/validate_pr_governance.js` *(criado — script determinístico de validação)*
+- `schema/REQUEST_ECONOMY_PROTOCOL.md` *(criado — protocolo de economia de request)*
+- `schema/CODEX_WORKFLOW.md` *(atualizado — seção 16 + referência ao protocolo)*
+- `.github/PULL_REQUEST_TEMPLATE.md` *(atualizado — campo de disciplina de request)*
+- `.github/AGENT_CONTRACT.md` *(atualizado — regras 20-25 de economia de request)*
+- `schema/README_EXECUCAO.md` *(atualizado — seção de economia de request)*
+- `README.md` *(atualizado — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL)*
 - `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
 
 ## 13. Item do A01 atendido
 
-- **Fase 0** — fundação documental: governança contratual formalizada. O repo está preparado para operar por contrato ativo, sem drift.
+- **Fase 0** — fundação documental: gate de validação + economia de request formalizados. O repo está preparado para bloquear drift contratual e documental de forma automática e barata.
 
 ## 14. Estado atual da frente
 
-**não iniciada** (governança contratual concluída)
+**não iniciada** (governance gate + economia de request concluídos)
 
-A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. Toda a governança está pronta: trio-base, workflow 16 etapas, protocolos (dados, permissões, execução contratual, closeout), schemas, bootstrap Cloudflare, pipeline de deploy.
+A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. Toda a governança está pronta: trio-base, workflow 16 etapas, protocolos (dados, permissões, execução contratual, closeout, economia de request), schemas, bootstrap Cloudflare, pipeline de deploy, gate de PR.
 
 ## 15. Próximo passo autorizado
 

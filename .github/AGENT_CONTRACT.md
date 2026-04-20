@@ -142,6 +142,22 @@ Toda tarefa deve declarar explicitamente no ESTADO HERDADO e ESTADO ENTREGUE se 
 
 Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para o protocolo completo.
 
+## Protocolo de economia de request
+
+Todo agente deve seguir rigorosamente `schema/REQUEST_ECONOMY_PROTOCOL.md`.
+
+Regras mandatórias:
+20. **Escopo fechado antes de abrir qualquer tarefa.** Nenhuma investigação livre sem objetivo declarado.
+21. **Resolver o máximo dentro do escopo comprovado.** Evitar múltiplas PRs para o que cabe em uma dentro do mesmo escopo.
+22. **Preferência por modelo barato.** Sonnet para tarefas de baixa/média complexidade. Modelo mais caro somente com justificativa explícita documentada.
+23. **Preferir automação determinística sobre LLM.** Onde regex ou script simples resolve, não usar modelo.
+24. **Proibido criar automação cara, recursiva ou dependente de LLM** onde check determinístico resolve.
+25. **Prompts devem vir fechados, objetivos e com escopo declarado.** Evitar prompts abertos de investigação.
+
+Gate automatizado de PR:
+- `.github/workflows/pr-governance-check.yml` — valida campos obrigatórios (sem LLM, custo zero)
+- `scripts/validate_pr_governance.js` — script determinístico de validação
+
 ## Proibições nesta fase fundadora
 - Criar app funcional
 - Criar backend funcional
