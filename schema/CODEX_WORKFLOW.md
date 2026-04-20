@@ -10,7 +10,7 @@
 
 > **Esta seção define os documentos a ler — não as etapas de execução.**
 > A lista de leitura (abaixo) e o fluxo de execução (seção 3 — 16 etapas) são duas coisas distintas.
-> `16 etapas` ≠ `21 documentos de leitura`. Não confundir.
+> `16 etapas` ≠ `26 documentos de leitura`. Não confundir.
 
 Toda execução começa com leitura nesta sequência — **obrigatória, sem exceção**:
 
@@ -18,27 +18,28 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 2. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
 3. `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
 4. `schema/contracts/_INDEX.md` — **índice canônico de contratos ativos por frente**
-5. Contrato ativo da frente (em `schema/contracts/active/`) — seguindo formato de `schema/CONTRACT_SCHEMA.md`
+5. Contrato ativo da frente (em `schema/contracts/active/`) — seguindo formato de `schema/CONTRACT_SCHEMA.md` — **se ausente: condição de parada (ver seção 19)**
 6. `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo de execução contratual**
 7. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo de encerramento de contrato**
 8. Status vivo da frente ativa (`schema/status/<FRENTE>_STATUS.md`)
 9. Último handoff da frente ativa (`schema/handoffs/<FRENTE>_LATEST.md`)
 10. `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
-11. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
-12. `schema/TASK_CLASSIFICATION.md`
-13. `schema/DATA_CHANGE_PROTOCOL.md`
-14. `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
-15. `schema/CONTRACT_SCHEMA.md`
-16. `schema/STATUS_SCHEMA.md`
-17. `schema/HANDOFF_SCHEMA.md`
-18. `schema/status/CORE_MECANICO_2_STATUS.md`
-19. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
-20. `docs/BOOTSTRAP_CLOUDFLARE.md`
-21. `wrangler.toml`
-22. `.github/workflows/pr-governance-check.yml`
-23. `.github/PULL_REQUEST_TEMPLATE.md`
-24. `.github/AGENT_CONTRACT.md`
-25. `scripts/validate_pr_governance.js`
+11. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa (se transcrito; caso contrário, ver PDF em `schema/source/`)
+12. `schema/CONTRACT_SOURCE_MAP.md` — **mapa de fontes e ponte documental operacional**
+13. `schema/TASK_CLASSIFICATION.md`
+14. `schema/DATA_CHANGE_PROTOCOL.md`
+15. `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
+16. `schema/CONTRACT_SCHEMA.md`
+17. `schema/STATUS_SCHEMA.md`
+18. `schema/HANDOFF_SCHEMA.md`
+19. `schema/status/CORE_MECANICO_2_STATUS.md`
+20. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
+21. `docs/BOOTSTRAP_CLOUDFLARE.md`
+22. `wrangler.toml`
+23. `.github/workflows/pr-governance-check.yml`
+24. `.github/PULL_REQUEST_TEMPLATE.md`
+25. `.github/AGENT_CONTRACT.md`
+26. `scripts/validate_pr_governance.js`
   
 
 Nenhuma tarefa começa sem confirmar esta leitura.
@@ -56,8 +57,8 @@ Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas 
 ## 3. Fluxo obrigatório de execução — 16 etapas
 
 > **Esta seção define o fluxo de execução — não a lista de documentos a ler.**
-> As 16 etapas abaixo são ações sequenciais do agente. A Etapa 1 ("Leitura canônica") executa a lista de documentos da seção 1 (21 itens), mas as 16 etapas e os 21 itens de leitura são categorias distintas.
-> `16 etapas de execução` ≠ `21 documentos de leitura`.
+> As 16 etapas abaixo são ações sequenciais do agente. A Etapa 1 ("Leitura canônica") executa a lista de documentos da seção 1 (26 itens), mas as 16 etapas e os 26 itens de leitura são categorias distintas.
+> `16 etapas de execução` ≠ `26 documentos de leitura`.
 
 Toda tarefa deve percorrer as 16 etapas abaixo, **em ordem, sem pular nenhuma**:
 
@@ -108,6 +109,14 @@ Fora de escopo: <o que NÃO está incluído>
 Houve desvio de contrato?: <não | sim — se sim, ver CONTRACT_EXECUTION_PROTOCOL seção 6>
 Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
 Permissões Cloudflare necessárias: <nenhuma adicional | sim — se sim, ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2>
+Fontes de verdade consultadas:
+  Índice de contratos lido:    schema/contracts/_INDEX.md
+  Contrato ativo lido:         schema/contracts/active/<NOME>.md | Nenhum — ausência é condição de parada para execução contratual
+  Status da frente lido:       schema/status/<FRENTE>_STATUS.md
+  Handoff da frente lido:      schema/handoffs/<FRENTE>_LATEST.md
+  Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
+  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
+  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — blocos transcritos disponíveis
 ```
 
 Este bloco é a âncora de rastreabilidade entre PRs. Sem ele, a tarefa não começa.
@@ -307,6 +316,8 @@ O repositório mantém contexto vivo em:
 - `schema/legacy/` — legado mestre unificado (índice em `INDEX_LEGADO_MESTRE.md`, conteúdo em `LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
 - `schema/source/` — PDF mestre original (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`)
 
+**Ponte documental operacional:** ver `schema/CONTRACT_SOURCE_MAP.md` para o mapa explícito de relação entre esses artefatos, a precedência entre eles, quando consultar o PDF mestre e como declarar as fontes lidas.
+
 ---
 
 ## 13. Regra de parada
@@ -315,7 +326,7 @@ Se qualquer das condições abaixo for identificada, parar e reportar em vez de 
 
 - Ambiguidade estrutural não resolvida pelo A00, A01 ou A02
 - Conflito documental entre camadas da precedência
-- Ausência de contrato ativo explícito para a frente
+- **Ausência de contrato ativo explícito para a frente** — ausência de contrato NÃO autoriza improvisação contratual; é condição de parada para execução contratual (ver `schema/CONTRACT_SOURCE_MAP.md` seção 4)
 - Escopo que ultrapassa o contrato ativo sem autorização
 - Estado herdado não declarado ou inconsistente com o repositório
 - Classificação de tarefa ausente ou incompatível com o escopo
@@ -490,3 +501,69 @@ Copilot, fazer X.
 ```
 
 Ver `.github/AGENT_CONTRACT.md` regra 26 para detalhes.
+
+---
+
+## 19. Protocolo de descoberta contratual e rastreabilidade de fontes
+
+> **Este protocolo define como o agente localiza os artefatos contratuais e como deve declarar as fontes consultadas.**
+> Toda execução deve percorrer este protocolo antes da Etapa 8 (ESTADO HERDADO).
+> Ver `schema/CONTRACT_SOURCE_MAP.md` para o mapa completo de fontes e a ponte documental operacional.
+
+### 19.1 Caminho de descoberta contratual (obrigatório)
+
+Percorrer em ordem:
+
+```
+1. schema/contracts/_INDEX.md          ← índice canônico de contratos ativos por frente
+2. schema/contracts/active/<NOME>.md   ← contrato ativo da frente (se existir)
+3. schema/status/<FRENTE>_STATUS.md    ← status vivo da frente
+4. schema/handoffs/<FRENTE>_LATEST.md  ← handoff mais recente da frente
+5. schema/legacy/INDEX_LEGADO_MESTRE.md ← índice de blocos legados aplicáveis
+6. schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md ← blocos transcritos (se disponíveis)
+7. schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf ← PDF mestre (quando bloco não transcrito)
+```
+
+### 19.2 Regra de ausência de contrato ativo
+
+> **Ausência de contrato ativo NÃO é licença para improvisar. É condição de parada para execução contratual.**
+
+Se `schema/contracts/_INDEX.md` indicar "*(nenhum — aguardando abertura)*":
+- Parar a execução contratual.
+- Declarar no ESTADO HERDADO: `Contrato ativo lido: Nenhum — ausência é condição de parada para execução contratual`.
+- Não presumir escopo, objetivo ou critérios.
+- Prosseguir apenas com tarefas de `governança`, `diagnostico` ou `correcao_incidental` que não abram execução contratual de negócio.
+
+### 19.3 Quando consultar o PDF mestre
+
+O agente **DEVE** consultar `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` quando:
+- O bloco legado necessário tiver status `Identificado estruturalmente — não transcrito`.
+- Houver divergência entre o markdown e as regras de negócio esperadas (o PDF é árbitro final).
+- A tarefa requer definição de blocos legados para um novo contrato.
+
+O agente **NÃO PRECISA** consultar o PDF quando:
+- O bloco está com status `Transcrito` ou `Revisado e validado` no markdown.
+- A tarefa é de governança pura sem consumo de regras de negócio do legado.
+
+### 19.4 Declaração obrigatória de fontes consultadas
+
+Em todo ESTADO HERDADO e ESTADO ENTREGUE, adicionar o bloco:
+
+```
+Fontes de verdade consultadas:
+  Índice de contratos lido:    schema/contracts/_INDEX.md
+  Contrato ativo lido:         schema/contracts/active/<NOME>.md | Nenhum — ausência declarada
+  Status da frente lido:       schema/status/<FRENTE>_STATUS.md
+  Handoff da frente lido:      schema/handoffs/<FRENTE>_LATEST.md
+  Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
+  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
+  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — blocos transcritos disponíveis
+```
+
+**Regras:**
+- `Contrato ativo lido` é obrigatório — mesmo quando "Nenhum".
+- `PDF mestre consultado` é obrigatório quando qualquer bloco legado necessário não estiver transcrito.
+- Caminhos explícitos à raiz do repositório.
+- Nunca declarar "lido" um arquivo que não foi consultado.
+
+**Tarefa sem este bloco de declaração de fontes = tarefa não conforme.**

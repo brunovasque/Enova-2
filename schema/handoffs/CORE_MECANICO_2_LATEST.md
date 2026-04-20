@@ -1,83 +1,95 @@
 # HANDOFF — Core Mecânico 2 — ENOVA 2
 
-| Campo                                      | Valor                                                                        |
-|--------------------------------------------|------------------------------------------------------------------------------|
-| Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T14:03:00Z                                                        |
-| Estado da frente                           | não iniciada (base documental organizada — pronta para abertura de contrato)|
-| Classificação da tarefa                    | governança (organização documental — legado mestre + schema de contrato)    |
-| Última PR relevante                        | PR #12 — Organização documental do legado mestre para contrato do Core      |
-| Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                  |
-| Recorte executado do contrato              | N/A — nenhum contrato ativo                                                  |
-| Pendência contratual remanescente          | N/A — aguardando abertura do contrato                                        |
-| Houve desvio de contrato?                  | não                                                                          |
-| Contrato encerrado nesta PR?               | não                                                                          |
-| Item do A01 atendido                       | Fase 0 — fundação documental: legado mestre organizado corretamente         |
-| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                            |
-| Próximo passo foi alterado?                | não                                                                          |
-| Tarefa fora de contrato?                   | não — tarefa de governança                                                   |
-| Mudanças em dados persistidos (Supabase)   | nenhuma                                                                      |
-| Permissões Cloudflare necessárias          | nenhuma adicional                                                            |
+| Campo                                      | Valor                                                                             |
+|--------------------------------------------|-----------------------------------------------------------------------------------|
+| Frente                                     | Core Mecânico 2                                                                   |
+| Data                                       | 2026-04-20T17:08:00Z                                                              |
+| Estado da frente                           | não iniciada (base documental + encontrabilidade contratual prontas)              |
+| Classificação da tarefa                    | governança (encontrabilidade contratual + rastreabilidade de fontes)              |
+| Última PR relevante                        | PR #13 — Governança: encontrabilidade contratual e rastreabilidade de fontes      |
+| Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                       |
+| Recorte executado do contrato              | N/A — nenhum contrato ativo                                                       |
+| Pendência contratual remanescente          | N/A — aguardando abertura do contrato                                             |
+| Houve desvio de contrato?                  | não                                                                               |
+| Contrato encerrado nesta PR?               | não                                                                               |
+| Item do A01 atendido                       | Fase 0 — fundação documental: encontrabilidade contratual endurecida              |
+| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                                 |
+| Próximo passo foi alterado?                | não                                                                               |
+| Tarefa fora de contrato?                   | não — tarefa de governança                                                        |
+| Mudanças em dados persistidos (Supabase)   | nenhuma                                                                           |
+| Permissões Cloudflare necessárias          | nenhuma adicional                                                                 |
+| Fontes de verdade consultadas              | ver seção 20 abaixo                                                               |
 
 ---
 
 ## 1. Contexto curto
 
-O repositório da ENOVA 2 chegou à PR #10 com governança completa (gate de PR + auto-fix controlado + regra de menção obrigatória ao agente/modelo). Esta PR #12 corrige a organização documental do legado mestre, que estava desalinhada: o PDF real já existia no repo mas o source README ainda dizia "PENDENTE DE UPLOAD", o legado mestre markdown estava em estado genérico/enganoso, e o INDEX não tinha estrutura operacional real.
+O repositório da ENOVA 2 chegou à PR #12 com a organização documental do legado mestre concluída (PDF confirmado, markdown reorganizado com honestidade documental, INDEX_LEGADO_MESTRE operacional). Esta PR #13 endurece a encontrabilidade contratual: cria o `CONTRACT_SOURCE_MAP.md` (ponte documental operacional entre contrato ativo, legado markdown, PDF mestre, status e handoff), adiciona a seção 19 ao CODEX_WORKFLOW (protocolo de descoberta contratual passo a passo), e expande os schemas de governança com declaração obrigatória de fontes consultadas.
 
-A PR #12 entrega: `schema/source/README.md` corrigido para refletir que o PDF existe; `LEGADO_MESTRE_ENOVA1_ENOVA2.md` reorganizado com honestidade documental (identificado estruturalmente, não transcrito); `INDEX_LEGADO_MESTRE.md` transformado em índice operacional real com colunas de ordem de leitura, status granular e observações; `CONTRACT_SCHEMA.md` expandido com três novos campos obrigatórios (seções 14, 15, 16).
+A PR #13 entrega: `schema/CONTRACT_SOURCE_MAP.md` criado; `schema/CODEX_WORKFLOW.md` com seção 19 e ESTADO HERDADO expandido; `schema/HANDOFF_SCHEMA.md` seção 20; `schema/STATUS_SCHEMA.md` seção 17; `.github/AGENT_CONTRACT.md` com regras 20–23 e referência ao mapa de fontes.
 
-Nenhuma implementação funcional foi aberta. O próximo passo autorizado não foi alterado.
+Nenhuma implementação funcional foi aberta. Nenhum contrato ativo foi criado. O próximo passo autorizado não foi alterado.
 
 ## 2. Classificação da tarefa
 
 **governança**
 
-Não há contrato ativo do Core Mecânico 2. Esta tarefa organiza corretamente a base documental do legado mestre (source README, legado markdown, índice operacional e schema de contrato). Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
+Não há contrato ativo do Core Mecânico 2. Esta tarefa endurece a encontrabilidade contratual e cria rastreabilidade de fontes. Nenhuma implementação funcional aberta. Nenhum contrato criado. Próximo passo autorizado não alterado.
 
 ## 3. Última PR relevante
 
-**PR #10** — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo.
+**PR #12** — Organização documental do legado mestre para contrato do Core.
 
-## 4. O que a PR #10 fechou
+## 4. O que a PR #12 fechou
 
-- Auto-fix controlado do PR Governance Gate (`.github/workflows/pr-governance-autofix.yml`).
-- Script determinístico de auto-fix (`scripts/autofix_pr_governance.js`).
-- Regra de menção obrigatória ao agente/modelo (`@copilot+modelo`).
-- CODEX_WORKFLOW seções 17 e 18.
-- AGENT_CONTRACT regra 26.
+- Corrigiu `schema/source/README.md` — reflete que PDF existe e é fonte bruta canônica.
+- Reorganizou `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — honestidade documental real.
+- Transformou `schema/legacy/INDEX_LEGADO_MESTRE.md` em índice operacional real com ordem de leitura e status granular.
+- Atualizou `schema/CONTRACT_SCHEMA.md` com seções 14–16 (referências obrigatórias, blocos legados, ordem mínima de leitura).
 
-## 5. O que a PR #10 NÃO fechou
+## 5. O que a PR #12 NÃO fechou
 
-- Organização correta da base documental do legado mestre (entregue nesta PR #12).
+- Caminho de descoberta contratual explícito no workflow (entregue nesta PR #13).
+- Ponte documental operacional entre contrato, legado, PDF, status e handoff (entregue nesta PR #13).
+- Declaração obrigatória de fontes lidas nos artefatos de governança (entregue nesta PR #13).
 - Contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
 
 ## 6. Diagnóstico confirmado
 
-- `schema/source/README.md` ainda dizia "PENDENTE DE UPLOAD" mesmo com o PDF presente.
-- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` estava em estado genérico/enganoso: todos os 28 blocos com placeholder idêntico sem distinguir estrutura identificada de conteúdo não transcrito.
-- `schema/legacy/INDEX_LEGADO_MESTRE.md` não tinha coluna de ordem de leitura, status granular nem observações operacionais reais.
-- `schema/CONTRACT_SCHEMA.md` não exigia campos de referências obrigatórias, blocos legados aplicáveis nem ordem mínima de leitura da frente.
+- `schema/CODEX_WORKFLOW.md` tinha a estrutura de contexto vivo (seção 12) mas sem protocolo de descoberta passo a passo nem declaração obrigatória de quais fontes foram consultadas.
+- ESTADO HERDADO não exigia campos de rastreabilidade de fontes — apenas "Contrato ativo".
+- Nenhuma ponte documental operacional existia entre: contrato ativo ↔ legado markdown ↔ PDF mestre ↔ status ↔ handoff.
+- A regra "ausência de contrato ativo não autoriza improvisação" existia implicitamente na regra de parada mas não estava explícita.
+- `HANDOFF_SCHEMA.md` e `STATUS_SCHEMA.md` não tinham seção de "Fontes consultadas".
 
-## 7. O que foi feito (PR #12)
+## 7. O que foi feito (PR #13)
 
-- Corrigido `schema/source/README.md`: reflete que PDF existe, é fonte bruta canônica, alimenta legado operacional e contratos futuros.
-- Reorganizado `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`: estado honesto — blocos L01–L19 "identificados estruturalmente, não transcritos"; blocos C01–C09 "estrutura reservada, não confirmados". Instrução para referenciar PDF diretamente quando bloco não transcrito.
-- Transformado `schema/legacy/INDEX_LEGADO_MESTRE.md` em índice operacional real: adicionadas colunas de ordem de leitura na frente, status granular (4 níveis), observações por bloco; tabela de amarração expandida com coluna de ordem mínima de leitura por frente; regra de consulta atualizada para declarar blocos no contrato.
-- Atualizado `schema/CONTRACT_SCHEMA.md`: seção 14 (Referências obrigatórias), seção 15 (Blocos legados aplicáveis — obrigatórios e complementares), seção 16 (Ordem mínima de leitura da frente); exemplo de cabeçalho mínimo expandido com os novos campos obrigatórios.
+- Criado `schema/CONTRACT_SOURCE_MAP.md`: mapa completo de fontes de verdade, fluxo de descoberta contratual passo a passo, regra de ausência de contrato, quando consultar o PDF mestre, como declarar fontes lidas, diagrama de relação entre artefatos.
+- Adicionada seção 19 ao `schema/CODEX_WORKFLOW.md`: protocolo de descoberta contratual e rastreabilidade de fontes — caminho explícito, regra de ausência, quando usar PDF, declaração obrigatória.
+- Expandido ESTADO HERDADO no `schema/CODEX_WORKFLOW.md` com bloco "Fontes de verdade consultadas" (7 campos obrigatórios).
+- Atualizada lista de leitura obrigatória (seção 1) com CONTRACT_SOURCE_MAP como item 12 e nota sobre ausência de contrato.
+- Endurecida seção 13 (Regra de parada) — ausência de contrato agora explicitamente "condição de parada, não licença para improvisar".
+- Adicionada seção 20 ao `schema/HANDOFF_SCHEMA.md`: "Fontes consultadas como fonte de verdade".
+- Adicionada seção 17 ao `schema/STATUS_SCHEMA.md`: "Fontes consultadas — última tarefa".
+- Atualizado `.github/AGENT_CONTRACT.md`: regras 20–23 (ausência de contrato, declaração de fontes, nunca declarar lido sem ter lido, usar PDF quando bloco não transcrito); CONTRACT_SOURCE_MAP adicionado à lista de leitura e schemas de governança; ESTADO HERDADO expandido com bloco de fontes.
 
 ## 8. O que não foi feito
 
 - **Transcrição do conteúdo dos legados** — deliberadamente fora de escopo. O PDF existe; a transcrição bloco a bloco é uma tarefa separada.
 - **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Próximo passo preservado.
 - **Implementação funcional** — nenhuma. Nenhum código de negócio.
+- **Abertura de escopo funcional** — nenhuma. Esta PR é exclusivamente de governança.
 
 ## 9. O que esta PR fechou
 
-- `schema/source/README.md` corrigido — reflete existência real do PDF.
-- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` reorganizado com honestidade documental.
-- `schema/legacy/INDEX_LEGADO_MESTRE.md` transformado em índice operacional real.
-- `schema/CONTRACT_SCHEMA.md` expandido com seções 14–16 e cabeçalho mínimo atualizado.
+- `schema/CONTRACT_SOURCE_MAP.md` criado — ponte documental operacional.
+- `schema/CODEX_WORKFLOW.md` seção 19 adicionada — protocolo de descoberta contratual explícito.
+- `schema/CODEX_WORKFLOW.md` ESTADO HERDADO expandido — bloco de fontes de verdade consultadas.
+- `schema/CODEX_WORKFLOW.md` seção 1 atualizada — CONTRACT_SOURCE_MAP + nota de ausência.
+- `schema/CODEX_WORKFLOW.md` seção 13 endurecida — ausência = condição de parada explícita.
+- `schema/HANDOFF_SCHEMA.md` seção 20 adicionada — fontes consultadas.
+- `schema/STATUS_SCHEMA.md` seção 17 adicionada — fontes consultadas.
+- `.github/AGENT_CONTRACT.md` atualizado — regras 20–23 + lista de leitura + schemas + ESTADO HERDADO.
 
 ## 10. O que continua pendente após esta PR
 
@@ -91,7 +103,7 @@ Não há contrato ativo do Core Mecânico 2. Esta tarefa organiza corretamente a
 
 **não** — classificada como `governança`.
 
-Não há contrato ativo do Core Mecânico 2. Esta tarefa organiza corretamente a base documental do legado mestre. Governança documental pura, alinhada à Fase 0 do A01.
+Não há contrato ativo do Core Mecânico 2. Esta tarefa endurece a encontrabilidade contratual. Governança documental pura, alinhada à Fase 0 do A01.
 
 Impacto no próximo passo autorizado: **não alterou** — próximo passo continua sendo abertura do contrato do Core Mecânico 2.
 
@@ -112,36 +124,37 @@ não
 
 ## 12. Arquivos relevantes
 
-- `schema/source/README.md` *(corrigido — reflete existência real do PDF)*
-- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` *(reorganizado — honestidade documental)*
-- `schema/legacy/INDEX_LEGADO_MESTRE.md` *(transformado em índice operacional real)*
-- `schema/CONTRACT_SCHEMA.md` *(expandido — seções 14-16 + cabeçalho mínimo atualizado)*
-- `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
+- `schema/CONTRACT_SOURCE_MAP.md` *(criado — ponte documental operacional)*
+- `schema/CODEX_WORKFLOW.md` *(seção 19 + ESTADO HERDADO expandido + seção 1 atualizada + seção 13 endurecida)*
+- `schema/HANDOFF_SCHEMA.md` *(seção 20 adicionada — fontes consultadas)*
+- `schema/STATUS_SCHEMA.md` *(seção 17 adicionada — fontes consultadas)*
+- `.github/AGENT_CONTRACT.md` *(regras 20–23 + lista de leitura + schemas + ESTADO HERDADO)*
+- `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado — reflete PR #13)*
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
 
 ## 13. Item do A01 atendido
 
-- **Fase 0** — fundação documental: legado mestre organizado corretamente para abertura do primeiro contrato ativo do Core Mecânico 2.
+- **Fase 0** — fundação documental: encontrabilidade contratual endurecida. O sistema agora está explicitamente operacional para que qualquer agente localize contrato ativo, legado, PDF mestre, status e handoff e declare o que leu.
 
 ## 14. Estado atual da frente
 
-**não iniciada** (base documental organizada — pronta para abertura de contrato)
+**não iniciada** (base documental + encontrabilidade contratual prontas — aguardando abertura de contrato)
 
-A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. Toda a governança está pronta: trio-base, workflow 16+ etapas, protocolos (dados, permissões, execução contratual, closeout, economia de request), schemas, bootstrap Cloudflare, pipeline de deploy, gate de PR, auto-fix controlado, regra de menção ao agente. **A base documental do legado mestre agora está corretamente organizada para abertura do contrato.**
+A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. Toda a governança está pronta: trio-base, workflow 16+ etapas, protocolos (dados, permissões, execução contratual, closeout, economia de request), schemas, bootstrap Cloudflare, pipeline de deploy, gate de PR, auto-fix controlado, regra de menção ao agente, base documental do legado mestre organizada, **encontrabilidade contratual e rastreabilidade de fontes explícitas e operacionais**.
 
 ## 15. Próximo passo autorizado
 
 **Abrir contrato do Core Mecânico 2**, seguindo:
 - Formato: `schema/CONTRACT_SCHEMA.md` (seções 1–16 obrigatórias)
 - Escopo: Prioridade 1 do A01 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala
-- Referências obrigatórias (seção 14): A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, LEGADO_MESTRE_ENOVA1_ENOVA2.md, INDEX_LEGADO_MESTRE.md
+- Referências obrigatórias (seção 14): A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, CONTRACT_SOURCE_MAP.md, LEGADO_MESTRE_ENOVA1_ENOVA2.md, INDEX_LEGADO_MESTRE.md
 - Blocos legados obrigatórios (seção 15): L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17
 - Blocos legados complementares (seção 15): L01, L02, L18, L19, C*
 - Ordem mínima de leitura (seção 16): L03 → L04→L06 → L07→L10 → L11→L14 → L15→L16 → L17
 - Gate: Gate 1 será satisfeito com a aprovação do contrato
 - Contrato ativo: colocar em `schema/contracts/active/`
 - Atualizar `schema/contracts/_INDEX.md` ao abrir
-- Dependências: trio-base ✅, workflow ✅, contexto vivo ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões ✅, pipeline de deploy ✅, camada contratual ✅, gate de PR ✅, auto-fix controlado ✅, base documental legado mestre ✅
+- Dependências: trio-base ✅, workflow ✅, contexto vivo ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões ✅, pipeline de deploy ✅, camada contratual ✅, gate de PR ✅, auto-fix controlado ✅, base documental legado mestre ✅, encontrabilidade contratual ✅
 
 **Próximo passo preservado** — não alterado por esta PR.
 
@@ -153,11 +166,13 @@ A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técn
 
 ## 17. Provas
 
-- PR #12 criada com escopo exclusivo de organização documental.
-- `schema/source/README.md` corrigido — "PENDENTE DE UPLOAD" removido, PDF declarado como presente.
-- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — todos os 28 blocos atualizados com honestidade documental.
-- `schema/legacy/INDEX_LEGADO_MESTRE.md` — colunas de ordem de leitura, status granular e observações adicionadas.
-- `schema/CONTRACT_SCHEMA.md` — seções 14, 15, 16 e cabeçalho mínimo expandido adicionados.
+- PR #13 criada com escopo exclusivo de encontrabilidade contratual e rastreabilidade de fontes.
+- `schema/CONTRACT_SOURCE_MAP.md` criado — ponte documental operacional com mapa de fontes, fluxo de descoberta e regras de declaração.
+- `schema/CODEX_WORKFLOW.md` seção 19 adicionada — protocolo de descoberta contratual passo a passo.
+- ESTADO HERDADO expandido com 7 campos de rastreabilidade de fontes.
+- `schema/HANDOFF_SCHEMA.md` seção 20 adicionada.
+- `schema/STATUS_SCHEMA.md` seção 17 adicionada.
+- `.github/AGENT_CONTRACT.md` regras 20–23 adicionadas.
 - Nenhuma implementação funcional aberta.
 - Nenhum contrato ativo criado.
 - Status e handoff atualizados.
@@ -178,9 +193,22 @@ Permissões Cloudflare necessárias: nenhuma adicional
 
 Esta PR é de governança documental e não exige nova permissão operacional além das já documentadas.
 
+## 20. Fontes consultadas como fonte de verdade
+
+```
+Fontes de verdade consultadas (PR #13):
+  Índice de contratos lido:    schema/contracts/_INDEX.md
+  Contrato ativo lido:         Nenhum — ausência é condição de parada para execução contratual
+  Status da frente lido:       schema/status/CORE_MECANICO_2_STATUS.md
+  Handoff da frente lido:      schema/handoffs/CORE_MECANICO_2_LATEST.md (anterior, PR #12)
+  Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
+  Legado markdown consultado:  N/A — tarefa de governança pura sem consumo de regras de negócio
+  PDF mestre consultado:       não consultado — tarefa de governança pura
+```
+
 ---
 
-*(Handoff histórico PR #9 preservado abaixo para rastreabilidade)*
+*(Handoff histórico PR #12 e anteriores preservados acima para rastreabilidade)*
 
 O repositório chegou à PR #9 com gate de PR automatizado e REQUEST_ECONOMY_PROTOCOL. A PR #9 entregou: workflow determinístico de validação de PR, script de validação sem LLM, e protocolo formal de economia de request. O CODEX_WORKFLOW recebeu a seção 16 (economia de request). O AGENT_CONTRACT recebeu regras 20-25 (economia de request). PR template, README e README_EXECUCAO foram atualizados.
 

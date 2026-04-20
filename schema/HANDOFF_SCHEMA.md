@@ -179,6 +179,27 @@ Se a frente ficou bloqueada por permissão Cloudflare insuficiente, refletir iss
 
 Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios e regra de parada.
 
+### 20. Fontes consultadas como fonte de verdade
+
+Declaração obrigatória — inclusive quando a tarefa for de governança sem consumo de legado:
+
+```
+Fontes de verdade consultadas:
+  Índice de contratos lido:    schema/contracts/_INDEX.md
+  Contrato ativo lido:         schema/contracts/active/<NOME>.md | Nenhum — ausência é condição de parada para execução contratual
+  Status da frente lido:       schema/status/<FRENTE>_STATUS.md
+  Handoff da frente lido:      schema/handoffs/<FRENTE>_LATEST.md
+  Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
+  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
+  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — blocos transcritos disponíveis
+```
+
+**Regras:**
+- O campo `Contrato ativo lido` é obrigatório — mesmo quando "Nenhum".
+- O campo `PDF mestre consultado` é obrigatório quando qualquer bloco legado necessário não estiver transcrito no markdown.
+- Nunca declarar "lido" um arquivo que não foi efetivamente consultado.
+- Ver `schema/CONTRACT_SOURCE_MAP.md` para o mapa completo de fontes e a precedência entre elas.
+
 ---
 
 ## Regras de uso
@@ -216,4 +237,5 @@ Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios
 | Tarefa fora de contrato?                   | <sim | não>                                                   |
 | Mudanças em dados persistidos (Supabase)   | <nenhuma | sim — ver seção 18>                               |
 | Permissões Cloudflare necessárias          | <nenhuma adicional | sim — ver seção 19>                      |
+| Fontes de verdade consultadas              | <ver seção 20>                                               |
 ```
