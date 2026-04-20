@@ -13,8 +13,6 @@
  */
 
 import { runCoreEngine } from './engine.ts';
-import { extractTopoSignals } from './topo-parser.ts';
-import { evaluateTopoCriteria } from './topo-gates.ts';
 import type { LeadState, CoreDecision } from './types.ts';
 
 // ---------------------------------------------------------------------------
@@ -124,86 +122,61 @@ export function smokeScenario3_BloqueioFactParcial(): SmokeResult {
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 4: Parser do topo reconhece customer_goal → parse_status=ready
+// Cenário 4: Discovery com customer_goal canônico alternativo → fluxo integrado avança
 //
-// Prova: L05 — topo-parser normaliza customer_goal e produz TopoSignals correto.
-// Input: facts com customer_goal=comprar_imovel (valor canônico).
-// Esperado: customer_goal_detected=true, parse_status='ready'.
+// Prova: o caminho do topo no Core (runTopoDecision via L05+L06) funciona com qualquer
+// valor canônico de customer_goal, não apenas 'comprar_imovel'.
+// Input: customer_goal='entender_programa' (valor F0 canônico distinto do cenário 2).
+// Esperado: block_advance=false, stage_after=qualification_civil, via topo integrado.
 // ---------------------------------------------------------------------------
-export function smokeScenario4_ParserTopoReconheceCustomerGoal(): SmokeResult {
-  const input = {
-    facts_current: {},
-    facts_extracted: { customer_goal: 'comprar_imovel' },
-  };
-
-  const signals = extractTopoSignals(input);
-
-  // Provar que o parser detectou corretamente (não usa CoreDecision — é smoke do L05)
-  const fakeDecision: CoreDecision = {
-    stage_current: 'discovery',
-    stage_after: 'discovery',
-    next_objective: 'smoke_l05',
-    block_advance: false,
-    gates_activated: [],
-    speech_intent: 'coleta_dado',
-    decision_id: 'smoke-l05-004',
-    evaluated_at: new Date().toISOString(),
-  };
+export function smokeScenario4_TopoIntegrado_CustomerGoalCanonicoAlternativo(): SmokeResult {
+  const state = makeState('discovery', { customer_goal: 'entender_programa' });
+  const decision = runCoreEngine(state); // fluxo integrado via topo (L05+L06 no engine)
 
   return {
-    scenario: 'Cenário 4 — Parser do topo reconhece customer_goal (L05)',
+    scenario: 'Cenário 4 — Topo integrado: customer_goal canônico alternativo avança (L05+L06 via engine)',
     passed: true,
-    decision: fakeDecision,
+    decision,
     assertions: [
-      assert('customer_goal_detected = true', true, signals.customer_goal_detected),
-      assert('customer_goal_value = comprar_imovel', 'comprar_imovel', signals.customer_goal_value),
-      assert('parse_status = ready', 'ready', signals.parse_status),
-      assert('offtrack_detected = false (sem sinal de desvio)', false, signals.offtrack_detected),
-      assert('Parser não produz texto — apenas sinais estruturais', true, typeof signals.customer_goal_value === 'string'),
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = false (topo via engine: L06 can_advance=true)', false, decision.block_advance),
+      assert('stage_after = qualification_civil (topo integrado no engine)', 'qualification_civil', decision.stage_after),
+      assert('next_objective = avancar_para_qualification_civil', 'avancar_para_qualification_civil', decision.next_objective),
+      assert('speech_intent = transicao_stage (sinal estrutural — não é fala)', 'transicao_stage', decision.speech_intent),
+      assert('gates_activated vazio (topo avança — L06 não bloqueou)', 0, decision.gates_activated.length),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 5: Critérios do topo com customer_goal → can_advance=true, next=qualification_civil
+// Cenário 5: Discovery com customer_goal + offtrack_type → topo integrado avança mesmo com desvio
 //
-// Prova: L06 — topo-gates autoriza avanço quando customer_goal está presente.
-// Input: TopoSignals com customer_goal_detected=true.
-// Esperado: can_advance=true, authorized_next_step='qualification_civil'.
+// Prova: o caminho do topo no Core (L05+L06) detecta offtrack_type mas NÃO bloqueia avanço
+// quando customer_goal está presente. Conforme L04 TOPO_SIGNAL_POLICY: sinal de desvio
+// não substitui gate do customer_goal.
+// Input: customer_goal='comprar_imovel' + offtrack_type='curiosidade'.
+// Esperado: block_advance=false (desvio não bloqueia), stage_after=qualification_civil.
 // ---------------------------------------------------------------------------
-export function smokeScenario5_CriteriosTopoComanAdvance(): SmokeResult {
-  const signals = extractTopoSignals({
-    facts_current: {},
-    facts_extracted: { customer_goal: 'comprar_imovel' },
+export function smokeScenario5_TopoIntegrado_OfftrackNaoBloqueiaComGoalPresente(): SmokeResult {
+  const state = makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+    offtrack_type: 'curiosidade', // sinal de desvio presente — não deve bloquear L06
   });
-
-  const criteria = evaluateTopoCriteria(signals);
-
-  const fakeDecision: CoreDecision = {
-    stage_current: 'discovery',
-    stage_after: 'qualification_civil',
-    next_objective: 'avancar_para_qualification_civil',
-    block_advance: false,
-    gates_activated: [],
-    speech_intent: 'transicao_stage',
-    decision_id: 'smoke-l06-005',
-    evaluated_at: new Date().toISOString(),
-  };
+  const decision = runCoreEngine(state); // fluxo integrado via topo (L05+L06 no engine)
 
   return {
-    scenario: 'Cenário 5 — Critérios do topo: can_advance=true, next=qualification_civil (L06)',
+    scenario: 'Cenário 5 — Topo integrado: offtrack_type não bloqueia quando customer_goal presente (L04 TOPO_SIGNAL_POLICY via engine)',
     passed: true,
-    decision: fakeDecision,
+    decision,
     assertions: [
-      assert('can_advance = true (customer_goal presente)', true, criteria.can_advance),
-      assert('authorized_next_step = qualification_civil', 'qualification_civil', criteria.authorized_next_step),
-      assert('missing_required_facts vazia', 0, criteria.missing_required_facts.length),
-      assert('criteria_code = topo.customer_goal_presente', 'topo.customer_goal_presente', criteria.criteria_code),
-      assert('Core não produz texto — apenas next_step estrutural', true, typeof criteria.authorized_next_step === 'string'),
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = false (offtrack não bloqueia — L06 usa customer_goal como gate)', false, decision.block_advance),
+      assert('stage_after = qualification_civil (topo avança mesmo com desvio detectado)', 'qualification_civil', decision.stage_after),
+      assert('speech_intent = transicao_stage (sinal estrutural — não é fala)', 'transicao_stage', decision.speech_intent),
+      assert('Core não produz texto — apenas estrutura de decisão', true, typeof decision.speech_intent === 'string'),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
 }
-
 
 
 export interface SmokeSuiteResult {
@@ -222,7 +195,9 @@ export interface SmokeSuiteResult {
  * "Smoke de trilho e next step autorizado"
  *
  * Cenários L03 (3): block por ausência, avanço por presença, block parcial.
- * Cenários L04–L06 (2): parser do topo reconhece, critérios do topo autorizam.
+ * Cenários L04–L06 integrados (2): fluxo real via engine — customer_goal canônico
+ *   alternativo avança; offtrack_type não bloqueia com customer_goal presente.
+ * Todos os cenários passam pelo `runCoreEngine()`. Nenhum usa decisão fake.
  * Nenhum cenário gera fala ao cliente.
  */
 export function runSmokeSuite(): SmokeSuiteResult {
@@ -230,8 +205,8 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario1_BlockQuandoFactAusente,
     smokeScenario2_AvancaQuandoFactsPresentes,
     smokeScenario3_BloqueioFactParcial,
-    smokeScenario4_ParserTopoReconheceCustomerGoal,
-    smokeScenario5_CriteriosTopoComanAdvance,
+    smokeScenario4_TopoIntegrado_CustomerGoalCanonicoAlternativo,
+    smokeScenario5_TopoIntegrado_OfftrackNaoBloqueiaComGoalPresente,
   ];
 
   const results = scenarios.map((fn) => {

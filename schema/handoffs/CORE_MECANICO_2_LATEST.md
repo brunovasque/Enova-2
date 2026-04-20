@@ -4,9 +4,9 @@
 |--------------------------------------------|-----------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                   |
 | Data                                       | 2026-04-20T21:02:00Z                                                              |
-| Estado da frente                           | em execução — topo do funil L04+L05+L06 entregue; smoke 5/5 passando             |
-| Classificação da tarefa                    | contratual — recorte L04+L05+L06: topo do funil (regras, parser, critérios/gates) |
-| Última PR relevante                        | PR de execução L04+L05+L06 — topo do funil do Core Mecânico 2                   |
+| Estado da frente                           | em execução — topo L04+L05+L06 integrado ao Core principal; smoke 5/5 via runCoreEngine() |
+| Classificação da tarefa                    | contratual — recorte L04+L05+L06: topo integrado ao engine (runTopoDecision no caminho central) |
+| Última PR relevante                        | PR de execução L04+L05+L06 — topo integrado ao Core Mecânico 2                           |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`                            |
 | Recorte executado do contrato              | L04+L05+L06 — regras do topo, parser/extrator, critérios/gates; smoke 5 cenários |
 | Pendência contratual remanescente          | L07–L17 em aberto; Meio A, Meio B, Especiais e Final pendentes                   |
@@ -25,19 +25,20 @@
 
 O Core Mecânico 2 chega a esta PR com o esqueleto estrutural L03 entregue (stages, gates, engine mínimo, smoke 3/3). Gate 2 do A01 satisfeito no recorte L03.
 
-Esta PR executa o **segundo recorte contratual do Core Mecânico 2**: L04+L05+L06 — topo do funil. Entrega apenas o necessário para o topo funcionar estruturalmente, sem adiantar Meio A/B.
+Esta PR executa o **segundo recorte contratual do Core Mecânico 2**: L04+L05+L06 — topo do funil integrado ao Core principal. O topo não é apenas modularizado — está efetivamente plugado no caminho central de decisão do `engine.ts` via `runTopoDecision()`.
 
 **PDF-fonte consultado diretamente:**
 - PDF 6, pp. 3–4: taxonomia de facts F0 (customer_goal, channel_origin), F7 (current_intent), F9 (offtrack_type)
 - PDF 4, p. 8: E6.1 critérios e evidência mínima do topo
 - PDF 2, pp. 2–3: não-negociáveis de implantação (escopo do topo identificado)
 
-**O que foi entregue (L04+L05+L06 — topo do funil):**
+**O que foi entregue (L04+L05+L06 — topo integrado):**
+- `src/core/engine.ts` — `runTopoDecision()`: integra L05 (extractTopoSignals) + L06 (evaluateTopoCriteria) no caminho central para o stage `discovery`; engine roteia `discovery` → `runTopoDecision()` antes de qualquer outro path
 - `src/core/topo-rules.ts` — L04: política do topo (TOPO_REQUIRED_FACTS, CustomerGoal, CurrentIntent, OfftrackType, TOPO_BLOCKING_CONDITIONS, TOPO_ADVANCE_CRITERIA, TOPO_SIGNAL_POLICY, TOPO_NEXT_STEP)
 - `src/core/topo-parser.ts` — L05: extrator de sinais do topo (TopoTurnExtract, TopoSignals, extractTopoSignals)
 - `src/core/topo-gates.ts` — L06: avaliador de critérios do topo (TopoCriteriaResult, evaluateTopoCriteria, isTopoFactoCriticoAusente)
 - `src/core/types.ts` — re-exports dos tipos de topo (CustomerGoal, CurrentIntent, OfftrackType, TopoTurnExtract, TopoSignals, TopoCriteriaResult)
-- `src/core/smoke.ts` — 2 cenários adicionais (5 total, 5/5 passando)
+- `src/core/smoke.ts` — cenários 4 e 5 via `runCoreEngine()` sem decisão fake (5 total, 5/5 passando)
 
 **O que não foi embutido (vai para L07+):**
 - Regras de Meio A: casado civil, processo conjunto, composição familiar, P3 (L07–L10)
@@ -45,13 +46,13 @@ Esta PR executa o **segundo recorte contratual do Core Mecânico 2**: L04+L05+L0
 - Regras de Especiais: trilhos P3, multi-proponente (L15–L16)
 - Fase Final: transição, docs, handoff (L17)
 
-Gate 2 do A01 ("sem smoke da frente, não promove") satisfeito no recorte L04+L05+L06 (smoke 5/5).
+Gate 2 do A01 ("sem smoke da frente, não promove") satisfeito (smoke 5/5 via runCoreEngine()).
 
 ## 2. Classificação da tarefa
 
 **contratual**
 
-Segundo recorte de execução do contrato ativo do Core Mecânico 2. Recorte: L04+L05+L06 — topo do funil estrutural. Regras de Meio A/B ficam para L07+. Core desacoplado da fala.
+Segundo recorte de execução do contrato ativo do Core Mecânico 2. Recorte: L04+L05+L06 — topo integrado ao engine principal. Regras de Meio A/B ficam para L07+. Core desacoplado da fala.
 
 ## 3. Última PR relevante
 
@@ -59,11 +60,12 @@ Segundo recorte de execução do contrato ativo do Core Mecânico 2. Recorte: L0
 
 ## 4. O que esta PR fechou (L04+L05+L06)
 
+- Integrou `src/core/engine.ts` — `runTopoDecision()`: discovery → extractTopoSignals (L05) → evaluateTopoCriteria (L06) → CoreDecision; engine roteia `discovery` explicitamente pelo caminho do topo
 - Criou `src/core/topo-rules.ts` — L04: política e regras estruturais do topo
 - Criou `src/core/topo-parser.ts` — L05: interface Core ↔ Extractor para o topo
 - Criou `src/core/topo-gates.ts` — L06: critérios e gates de validação do topo
 - Atualizou `src/core/types.ts` — re-exports de tipos de topo no contrato público do Core
-- Atualizou `src/core/smoke.ts` — cenários 4 e 5 do topo (5 total, 5/5 passando)
+- Atualizou `src/core/smoke.ts` — cenários 4 e 5 via `runCoreEngine()` (sem decisão fake); 5/5 passando
 - Atualizou `schema/status/CORE_MECANICO_2_STATUS.md` — status vivo atualizado
 - Atualizou `schema/handoffs/CORE_MECANICO_2_LATEST.md` — este handoff
 
@@ -79,9 +81,15 @@ Segundo recorte de execução do contrato ativo do Core Mecânico 2. Recorte: L0
 - PDF-fonte consultado diretamente (pdfplumber): PDF 6, PDF 4, PDF 2.
 - Blocos L04, L05, L06 identificados estruturalmente no INDEX_LEGADO_MESTRE.md.
 - Conteúdo das regras do topo extraído diretamente do PDF (taxonomia F0/F7/F9, E6.1).
-- L03 entregue como esqueleto — topo agora tem regras, parser e critérios mínimos.
+- L03 entregue como esqueleto — topo agora tem regras, parser e critérios mínimos **integrados ao engine central**.
 
 ## 7. O que foi feito (esta PR — L04+L05+L06)
+
+**Integração ao `engine.ts` — `runTopoDecision()` (central)**
+- `runCoreEngine()` roteia `discovery` para `runTopoDecision()` antes do caminho genérico L03
+- `runTopoDecision()` chama `extractTopoSignals(state.facts)` (L05) → `evaluateTopoCriteria(signals)` (L06)
+- `CoreDecision` é derivada diretamente de `TopoCriteriaResult`: `can_advance` → `block_advance`, `authorized_next_step` → `stage_after`
+- Todos os 5 cenários do smoke passam pelo `runCoreEngine()` real — nenhum usa decisão fake
 
 **L04 — Regras e política do topo (`topo-rules.ts`)**
 - `TOPO_REQUIRED_FACTS: ['customer_goal']` — F0, PDF 6 p.3

@@ -9,10 +9,10 @@
 | Pendência contratual                       | L07–L17 em aberto; Meio A (composição), Meio B (renda/elegibilidade) e demais pendentes  |
 | Contrato encerrado?                        | não                                                                                       |
 | Item do A01                                | Fase 2 — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala |
-| Estado atual                               | em execução — topo do funil entregue (L04/L05/L06); smoke 5/5 passando                   |
-| Classe da última tarefa                    | contratual — recorte L04+L05+L06: topo do funil (regras, parser, critérios/gates)        |
-| Última PR relevante                        | PR de execução L04+L05+L06 — topo do funil do Core Mecânico 2                           |
-| Último commit                              | feat(core): L04+L05+L06 topo do funil — regras, parser, critérios e smoke 5/5           |
+| Estado atual                               | em execução — topo do funil integrado ao Core principal (L04/L05/L06); smoke 5/5 via runCoreEngine() |
+| Classe da última tarefa                    | contratual — recorte L04+L05+L06: topo integrado ao engine (regras, parser, critérios/gates)         |
+| Última PR relevante                        | PR de execução L04+L05+L06 — topo do funil integrado ao Core Mecânico 2                             |
+| Último commit                              | fix(core): integrar L04/L05/L06 ao engine.ts — runTopoDecision() no caminho central                  |
 | Pendência remanescente herdada             | Nenhuma — segundo recorte contratual entregue (topo do funil)                            |
 | Próximo passo autorizado                   | Terceira PR contratual: L07 + L08 — Meio A: estado civil e composição familiar           |
 | Legados aplicáveis                         | L03 (executado), L04 (executado), L05 (executado), L06 (executado); L07–L17 (pendentes) |
@@ -37,14 +37,15 @@ Core Mecânico 2
 
 ## 4. Estado atual
 
-**em execução** — topo do funil L04+L05+L06 entregue
+**em execução** — topo do funil L04+L05+L06 integrado ao Core principal
 
-A PR de execução L04+L05+L06 entregou o topo do funil estrutural:
+A PR de execução L04+L05+L06 entregou o topo integrado ao caminho central do Core:
+- `src/core/engine.ts` — `runTopoDecision()` integra L05+L06 no caminho central: discovery → extractTopoSignals → evaluateTopoCriteria → CoreDecision
 - `src/core/topo-rules.ts` — L04: política e regras do topo (TOPO_REQUIRED_FACTS, TOPO_BLOCKING_CONDITIONS, TOPO_ADVANCE_CRITERIA, CustomerGoal, CurrentIntent, OfftrackType)
 - `src/core/topo-parser.ts` — L05: parser/extrator mínimo do topo (extractTopoSignals, TopoTurnExtract, TopoSignals)
 - `src/core/topo-gates.ts` — L06: critérios/gates do topo (evaluateTopoCriteria, TopoCriteriaResult)
 - `src/core/types.ts` — re-exports dos tipos de topo para o contrato público do Core
-- `src/core/smoke.ts` — 2 cenários adicionais (cenário 4: parser L05, cenário 5: critérios L06)
+- `src/core/smoke.ts` — cenários 4 e 5 via runCoreEngine() (sem decisão fake); 5/5 passando
 
 O que não foi embutido (vai para L07+):
 - Regras de Meio A: casado civil, composição familiar, estado civil, P3 (L07–L10)
@@ -52,21 +53,22 @@ O que não foi embutido (vai para L07+):
 
 ## 5. Classe da última tarefa
 
-**contratual** — recorte L04+L05+L06 (topo do funil).
-Escopo: regras, parser e critérios/gates mínimos do topo. Regras de negócio de Meio A/B ficam para L07+.
+**contratual** — recorte L04+L05+L06 (topo integrado ao engine).
+Escopo: L04 (regras), L05 (parser), L06 (critérios/gates) integrados ao `engine.ts`. Regras de Meio A/B ficam para L07+.
 
 ## 6. Última PR relevante
 
-- PR de execução L04+L05+L06 — topo do funil (esta PR):
+- PR de execução L04+L05+L06 — topo do funil integrado ao Core:
+  - `src/core/engine.ts` — `runTopoDecision()` integra L05 (extractTopoSignals) + L06 (evaluateTopoCriteria) no caminho central para discovery
   - `src/core/topo-rules.ts` — L04: política do topo (TOPO_REQUIRED_FACTS, CustomerGoal, CurrentIntent, OfftrackType, TOPO_BLOCKING_CONDITIONS, TOPO_ADVANCE_CRITERIA, TOPO_SIGNAL_POLICY, TOPO_NEXT_STEP)
   - `src/core/topo-parser.ts` — L05: extrator de sinais do topo (TopoTurnExtract, TopoSignals, extractTopoSignals)
   - `src/core/topo-gates.ts` — L06: avaliador de critérios do topo (TopoCriteriaResult, evaluateTopoCriteria, isTopoFactoCriticoAusente)
   - `src/core/types.ts` — re-exports de tipos de topo
-  - `src/core/smoke.ts` — 2 cenários adicionais (5 total, 5/5 passando)
+  - `src/core/smoke.ts` — cenários 4 e 5 via runCoreEngine() (5 total, 5/5 passando)
 
 ## 7. Último commit
 
-feat(core): L04+L05+L06 topo do funil — regras, parser, critérios e smoke 5/5
+fix(core): integrar L04/L05/L06 ao engine.ts — runTopoDecision() no caminho central
 
 ## 8. Entregas concluídas
 
