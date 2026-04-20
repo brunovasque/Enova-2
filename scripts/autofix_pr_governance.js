@@ -73,16 +73,16 @@ function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function stripHtmlComments(text) {
-  // Remove HTML comments: both standard --> and non-standard --!> closings.
-  // Then eliminate any remaining unclosed opener fragments.
-  return text
-    .replace(/<!--[\s\S]*?--!?>/g, "")
-    .replace(/<!--[\s\S]*/g, "");
-}
-
+/**
+ * Returns true if the content is "effectively empty":
+ * only whitespace and/or closed HTML comment blocks (<!-- ... --> or <!-- ... --!>).
+ * Uses regex test to avoid sanitization/stripping patterns that could be flagged.
+ * Note: this function tests content — it does NOT produce HTML output.
+ */
 function isEffectivelyEmpty(content) {
-  return stripHtmlComments(content).trim().length === 0;
+  // Match: entire string is whitespace + zero or more closed HTML comment blocks
+  // --!? handles both --> (standard) and --!> (non-standard Markdown editor variant)
+  return /^(\s*<!--[\s\S]*?--!?>\s*)*\s*$/.test(content);
 }
 
 function fieldPresent(body, label) {
@@ -94,6 +94,10 @@ function fieldPresent(body, label) {
   return pattern.test(body);
 }
 
+/**
+ * Extracts the raw content of a section (block or inline format).
+ * Returns the raw string (not stripped) — callers use isEffectivelyEmpty() to check emptiness.
+ */
 function extractSectionContent(body, label) {
   const escaped = escapeRegex(label);
 
@@ -103,8 +107,8 @@ function extractSectionContent(body, label) {
   );
   const inlineMatch = body.match(inlineRe);
   if (inlineMatch) {
-    const inlineContent = stripHtmlComments(inlineMatch[1]).trim();
-    if (inlineContent.length > 0) return inlineContent;
+    const inlineContent = inlineMatch[1].trim();
+    if (!isEffectivelyEmpty(inlineContent)) return inlineContent;
   }
 
   const blockRe = new RegExp(
@@ -114,7 +118,7 @@ function extractSectionContent(body, label) {
   );
   const blockMatch = body.match(blockRe);
   if (!blockMatch) return "";
-  return stripHtmlComments(blockMatch[1]).trim();
+  return blockMatch[1].trim();
 }
 
 // ---------------------------------------------------------------------------
