@@ -79,6 +79,26 @@ Indicação explícita de qual fase, prioridade e item do A01 este contrato exec
 Indicação explícita de quais documentos legados (L01–L19) são fonte de verdade de negócio para este contrato.
 Deve seguir a amarração definida no A02 (seções 4 e 5).
 
+### 14. Referências obrigatórias do contrato
+
+Lista dos documentos, schemas e protocolos que este contrato referencia como fonte de verdade.
+Inclui: A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, blocos do legado mestre e qualquer outro documento canônico necessário para a execução deste contrato.
+Formato: caminho relativo do arquivo ou identificador canônico.
+
+### 15. Blocos legados aplicáveis
+
+Lista explícita dos blocos do legado mestre (L01–L19 e C01–C09) que são fonte de verdade de negócio para este contrato.
+Deve declarar:
+- quais blocos são **obrigatórios** (devem ser lidos antes de qualquer execução);
+- quais blocos são **complementares** (devem ser consultados conforme contexto específico da execução).
+Consultar `schema/legacy/INDEX_LEGADO_MESTRE.md` para identificar os blocos corretos por frente.
+
+### 16. Ordem mínima de leitura da frente
+
+Sequência mínima e obrigatória de leitura dos blocos do legado mestre para esta frente, antes da execução do contrato.
+Deve seguir a coluna "Ordem de leitura na frente" do `INDEX_LEGADO_MESTRE.md`.
+Exemplo para Core Mecânico 2: L03 → L04→L06 (topo) → L07→L10 (Meio A) → L11→L14 (Meio B) → L15→L16 (Especiais) → L17 (Final).
+
 ---
 
 ## Regras de uso
@@ -100,13 +120,17 @@ Deve seguir a amarração definida no A02 (seções 4 e 5).
 ```markdown
 # CONTRATO — <Nome da Frente> — ENOVA 2
 
-| Campo                     | Valor                                      |
-|---------------------------|---------------------------------------------|
-| Frente                    | <nome>                                      |
-| Fase do A01               | <fase>                                      |
-| Prioridade do A01         | <prioridade>                                |
-| Dependências              | <lista>                                     |
-| Legados aplicáveis        | <L0x, L0y, ...>                             |
-| Status                    | Aberto / Em execução / Concluído / Bloqueado|
-| Última atualização        | <data ISO 8601>                             |
+| Campo                             | Valor                                        |
+|-----------------------------------|----------------------------------------------|
+| Frente                            | <nome>                                       |
+| Fase do A01                       | <fase>                                       |
+| Prioridade do A01                 | <prioridade>                                 |
+| Dependências                      | <lista>                                      |
+| Legados aplicáveis                | <L0x, L0y, ...>                              |
+| Referências obrigatórias          | <A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md, schema/legacy/INDEX_LEGADO_MESTRE.md, ...> |
+| Blocos legados obrigatórios       | <L0x, L0y, ...>                              |
+| Blocos legados complementares     | <L0x, L0y, C*, ...>                          |
+| Ordem mínima de leitura da frente | <L0x → L0y → L0z, ...>                       |
+| Status                            | Aberto / Em execução / Concluído / Bloqueado |
+| Última atualização                | <data ISO 8601>                              |
 ```

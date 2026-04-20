@@ -8,18 +8,18 @@
 | Última PR executou qual recorte            | N/A — nenhum contrato ativo                                                               |
 | Pendência contratual                       | N/A — aguardando abertura do contrato                                                     |
 | Contrato encerrado?                        | não                                                                                       |
-| Item do A01                                | Fase 1 — scaffold técnico (pipeline de deploy Cloudflare concluído)                       |
-| Estado atual                               | não iniciada (bootstrap infra + pipeline de deploy concluídos)                            |
-| Classe da última tarefa                    | governança (auto-fix controlado + regra de menção obrigatória ao agente/modelo)           |
-| Última PR relevante                        | PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo               |
-| Último commit                              | Governança: auto-fix controlado (max 3 tentativas, sem LLM) + regra de menção ao agente  |
+| Item do A01                                | Fase 0 — fundação documental: organização do legado mestre                                |
+| Estado atual                               | não iniciada (base documental organizada — pronta para abertura de contrato)              |
+| Classe da última tarefa                    | governança (organização documental — legado mestre + schema de contrato)                  |
+| Última PR relevante                        | PR #11 — Organização documental do legado mestre para primeira PR de contrato do Core     |
+| Último commit                              | Governança: legado mestre organizado, INDEX operacional, CONTRACT_SCHEMA atualizado       |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
-| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta infra)             |
+| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (base documental agora corretamente organizada)        |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
 | Permissões Cloudflare — infra herdada (PR #7) | Workers Scripts:Edit — obrigatório para deploy via wrangler (aviso preventivo ativo) |
-| Permissões Cloudflare — última tarefa (PR #10) | nenhuma adicional — tarefa de governança documental                                 |
-| Última atualização                         | 2026-04-20T12:35:00Z                                                                      |
+| Permissões Cloudflare — última tarefa (PR #11) | nenhuma adicional — tarefa de governança documental                                 |
+| Última atualização                         | 2026-04-20T14:03:00Z                                                                      |
 
 ---
 
@@ -49,22 +49,21 @@ A governança completa está pronta (trio-base, workflow, protocolos de dados e 
 
 ## 5. Classe da última tarefa
 
-**governança** — auto-fix controlado do PR Governance Gate. Criação de `.github/workflows/pr-governance-autofix.yml` e `scripts/autofix_pr_governance.js`. Adição da regra de menção obrigatória ao agente/modelo (`@copilot+modelo`) em AGENT_CONTRACT (regra 26), CODEX_WORKFLOW (seção 18), README_EXECUCAO e README. Atualização do CODEX_WORKFLOW (seção 17 — auto-fix protocol). Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
+**governança** — organização documental do legado mestre. Criação do índice operacional real, correção do README de fonte bruta, reorganização honesta do legado mestre markdown, e atualização do CONTRACT_SCHEMA com três novos campos obrigatórios (Referências obrigatórias, Blocos legados aplicáveis, Ordem mínima de leitura da frente). Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
 
 ## 6. Última PR relevante
 
 PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL.
-PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo (esta PR).
-- Criou `.github/workflows/pr-governance-autofix.yml` — auto-fix controlado (max 3 tentativas, apenas erros triviais, sem LLM)
-- Criou `scripts/autofix_pr_governance.js` — script determinístico de auto-fix
-- Atualizou AGENT_CONTRACT com regra 26 (menção obrigatória ao agente/modelo)
-- Atualizou CODEX_WORKFLOW com seção 17 (auto-fix protocol) e seção 18 (regra de menção)
-- Atualizou README_EXECUCAO com auto-fix e regra de menção
-- Atualizou README com seções de auto-fix e regra de menção
+PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo.
+PR #11 — Organização documental do legado mestre (esta PR).
+- Corrigiu `schema/source/README.md` — reflete que PDF já existe no repo
+- Reorganizou `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — honesto sobre estado real
+- Transformou `schema/legacy/INDEX_LEGADO_MESTRE.md` em índice operacional real
+- Atualizou `schema/CONTRACT_SCHEMA.md` com seções 14-16 e cabeçalho expandido
 
 ## 7. Último commit
 
-Governança: auto-fix controlado do PR Governance Gate (max 3 tentativas, sem LLM) + regra @copilot+modelo obrigatória em toda instrução operacional.
+Governança: organização documental do legado mestre — source README, legado mestre markdown, índice operacional real e CONTRACT_SCHEMA com campos obrigatórios de referências e ordem de leitura.
 
 ## 8. Entregas concluídas
 
@@ -92,10 +91,11 @@ Governança: auto-fix controlado do PR Governance Gate (max 3 tentativas, sem LL
 - [x] **REQUEST_ECONOMY_PROTOCOL** — `schema/REQUEST_ECONOMY_PROTOCOL.md`. Protocolo de economia de request e preferência por modelo barato. Incorporado no CODEX_WORKFLOW (seção 16), AGENT_CONTRACT (regras 20-25), PR template, README e README_EXECUCAO.
 - [x] **Auto-fix controlado do PR Governance Gate** — `.github/workflows/pr-governance-autofix.yml` + `scripts/autofix_pr_governance.js`. Auto-fix determinístico: max 3 tentativas, apenas erros triviais, sem LLM. Para obrigatoriamente em erros estruturais.
 - [x] **Regra de menção obrigatória ao agente/modelo** — `@copilot+modelo` obrigatório em toda instrução operacional. Documentado em AGENT_CONTRACT (regra 26), CODEX_WORKFLOW (seção 18), README_EXECUCAO e README.
+- [x] **Organização documental do legado mestre** — `schema/source/README.md` corrigido, `LEGADO_MESTRE_ENOVA1_ENOVA2.md` reorganizado com honestidade documental, `INDEX_LEGADO_MESTRE.md` transformado em índice operacional real com ordem de leitura + status granular, `CONTRACT_SCHEMA.md` expandido com campos obrigatórios de referências e blocos legados.
 
 ## 9. Pendências
 
-- [ ] Abrir contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado)
+- [ ] Abrir contrato formal do Core Mecânico 2 (próximo passo autorizado — base documental agora corretamente organizada)
 - [ ] Definir objetivos/stages do Core Mecânico 2 no contrato
 - [ ] Implementação funcional do worker (após contrato aprovado)
 - [ ] Verificar e ajustar escopo do token CLOUDFLARE_API_TOKEN antes do primeiro deploy real (Workers Scripts:Edit obrigatório)
@@ -103,8 +103,8 @@ Governança: auto-fix controlado do PR Governance Gate (max 3 tentativas, sem LL
 ## 10. Pendência remanescente herdada
 
 Da PR #2: abertura de contrato formal do Core Mecânico 2.
-Esta pendência permanece em aberto — as PRs #3 a #10 não a afetaram.
-A camada de execução contratual está pronta para receber o primeiro contrato ativo.
+Esta pendência permanece em aberto — as PRs #3 a #11 não a afetaram.
+A camada de execução contratual está pronta. A base documental do legado mestre agora está corretamente organizada para receber o primeiro contrato ativo.
 
 ## 11. Bloqueios
 
@@ -119,12 +119,15 @@ Verificar antes do primeiro deploy real. Ver `docs/BOOTSTRAP_CLOUDFLARE.md` e `s
 
 **Abrir contrato do Core Mecânico 2**, seguindo o formato definido em `schema/CONTRACT_SCHEMA.md`, com:
 - Escopo alinhado ao A01 (Prioridade 1)
-- Legados aplicáveis conforme A02 e INDEX_LEGADO_MESTRE.md (blocos L03 + L04-L17)
-- Dependências satisfeitas (trio-base + workflow endurecido + contexto vivo + classificação de tarefas + protocolo de dados + bootstrap Cloudflare + protocolo de permissões Cloudflare + pipeline de deploy + camada de execução contratual + gate de PR + auto-fix controlado)
+- Referências obrigatórias: A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, LEGADO_MESTRE_ENOVA1_ENOVA2.md, INDEX_LEGADO_MESTRE.md
+- Blocos legados obrigatórios: L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17
+- Blocos legados complementares: L01, L02, L18, L19, C*
+- Ordem mínima de leitura: L03 → L04→L06 → L07→L10 → L11→L14 → L15→L16 → L17
+- Dependências satisfeitas (trio-base + workflow + contexto vivo + protocolo de dados + bootstrap Cloudflare + protocolo de permissões + pipeline de deploy + camada contratual + gate de PR + auto-fix + base documental legado mestre organizada)
 - Contrato ativo deve ser colocado em `schema/contracts/active/`
 - `schema/contracts/_INDEX.md` deve ser atualizado ao abrir o contrato
 
-**Próximo passo preservado** em relação à PR #7.
+**Próximo passo preservado** em relação às PRs anteriores.
 
 ## 13. Legados aplicáveis
 
@@ -136,6 +139,5 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T12:35:00Z
-- **Responsável**: Copilot (PR #10 — auto-fix controlado + regra @copilot+modelo)
-
+- **Data**: 2026-04-20T14:03:00Z
+- **Responsável**: Copilot (PR #11 — organização documental do legado mestre)
