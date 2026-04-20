@@ -2,7 +2,7 @@
 
 ## O que este bootstrap faz
 
-Prepara o repositório para deploy na plataforma Cloudflare Workers, com dois ambientes canônicos, entrypoint placeholder mínimo e pipeline de deploy via GitHub Actions.
+Prepara o repositório para deploy na plataforma Cloudflare Workers, com dois ambientes canônicos, entrypoint técnico mínimo e pipeline de deploy via GitHub Actions.
 
 **Nenhuma lógica de negócio, binding, secret, integração real ou arquitetura técnica foi aberta nesta etapa.**
 
@@ -180,11 +180,21 @@ Permissões Cloudflare necessárias: sim
 
 ---
 
-## Entrypoint placeholder
+## Entrypoint atual do Worker
 
-O arquivo `src/worker.ts` existe unicamente para satisfazer o campo `main` do `wrangler.toml`.
-Ele não contém lógica de produto, bindings, ou arquitetura prematura.
-Será substituído pela implementação funcional em PR dedicada, após abertura do contrato da frente ativa.
+O arquivo `src/worker.ts` deixou de ser placeholder puro.
+Ele agora expõe:
+
+- `GET /` — rota técnica simples de saúde/descoberta
+- `POST /__core__/run` — rota mínima de teste para executar o Core Mecânico com input estrutural controlado
+
+Esta integração continua restrita:
+- sem fala mecânica
+- sem surface final do produto
+- sem bindings Cloudflare extras
+- sem Supabase, canal ou WhatsApp
+
+A saída da rota do Core é exclusivamente estrutural e serve como entrada técnica viva para validar o Core real dentro do Worker.
 
 ---
 
@@ -204,7 +214,7 @@ Todos esses elementos serão adicionados em PRs contratuais específicas, confor
 ## Referências
 
 - `wrangler.toml` — configuração do worker
-- `src/worker.ts` — entrypoint placeholder
+- `src/worker.ts` — entrypoint técnico mínimo com rota estrutural do Core
 - `.github/workflows/deploy.yml` — pipeline de deploy
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — protocolo de permissões Cloudflare
 - `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md` — Fase 1, scaffold técnico
