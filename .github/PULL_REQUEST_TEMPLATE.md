@@ -1,3 +1,10 @@
+<!-- =====================================================================
+     ENOVA 2 — PR TEMPLATE
+     Gate bloqueante (obrigatório no body): "Contrato ativo" + "Próximo passo autorizado"
+     Todos os demais campos são checklist de apoio humano — não bloqueiam o gate.
+     Governança real: arquivos vivos em schema/status/, schema/handoffs/, schema/contracts/
+     ===================================================================== -->
+
 ## Objetivo
 <!-- Qual objetivo desta PR? -->
 

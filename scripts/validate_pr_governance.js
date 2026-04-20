@@ -7,6 +7,13 @@
  * Sem LLM. Sem dependências externas. Sem chamadas de API.
  * Apenas regex e verificação de presença de campos obrigatórios.
  *
+ * Filosofia de governança:
+ *   - Fonte de verdade obrigatória = arquivos vivos versionados do repo
+ *     (schema/status/, schema/handoffs/, schema/contracts/)
+ *   - Corpo da PR = apoio humano / checklist — não é a fonte única de bloqueio
+ *   - Gate bloqueante no body: apenas 2 campos mínimos obrigatórios
+ *   - Gate bloqueante real: mudanças em arquivos vivos devem refletir o diff
+ *
  * Uso:
  *   node scripts/validate_pr_governance.js
  *
@@ -15,34 +22,21 @@
  *   CHANGED_FILES    — lista de arquivos alterados separados por newline (opcional)
  *
  * Exit code 0 = aprovado
- * Exit code 1 = reprovado (campos obrigatórios ausentes ou gate de arquivos falhou)
+ * Exit code 1 = reprovado (campos mínimos ausentes ou gate de arquivos vivos falhou)
  */
 
 "use strict";
 
 // ---------------------------------------------------------------------------
-// Campos obrigatórios que devem aparecer no corpo da PR
+// Campos mínimos obrigatórios no corpo da PR (gate bloqueante)
+// Todos os outros campos do template são checklist de apoio humano — não bloqueiam o gate.
 // Checados como headings Markdown (## Campo) ou como label de linha (Campo:)
 // ---------------------------------------------------------------------------
 const REQUIRED_FIELDS = [
-  // A. Vínculo contratual
-  { label: "Contrato ativo",                      group: "A. Vínculo contratual" },
-  { label: "Objetivo imutável do contrato",        group: "A. Vínculo contratual" },
-  { label: "Recorte executado nesta PR",           group: "A. Vínculo contratual" },
-  { label: "O que esta PR fecha do contrato",      group: "A. Vínculo contratual" },
-  { label: "O que esta PR NÃO fecha do contrato",  group: "A. Vínculo contratual" },
-  { label: "Houve desvio de contrato?",            group: "A. Vínculo contratual" },
-  { label: "Contrato encerrado nesta PR?",         group: "A. Vínculo contratual" },
-  // B. Supabase
-  { label: "Mudanças em dados persistidos (Supabase)", group: "B. Supabase" },
-  // C. Cloudflare
-  { label: "Permissões Cloudflare necessárias",    group: "C. Cloudflare" },
-  // D. Estado vivo
-  { label: "Arquivos vivos atualizados",           group: "D. Estado vivo" },
-  // E. Próximo passo
-  { label: "Próximo passo autorizado",             group: "E. Próximo passo" },
-  // F. Economia de request
-  { label: "Disciplina de request e modelo",       group: "F. Economia de request" },
+  // Vínculo contratual mínimo
+  { label: "Contrato ativo",           group: "Vínculo contratual" },
+  // Próximo passo
+  { label: "Próximo passo autorizado", group: "Próximo passo" },
 ];
 
 // Prefixos de caminho considerados "arquivos vivos" no repositório
@@ -241,8 +235,9 @@ function main() {
     console.log("──────────────────────────────────────────────");
     console.log("RESULTADO: REPROVADO");
     console.log("──────────────────────────────────────────────");
-    console.log("Corrija os campos ausentes/inválidos e atualize o corpo da PR.");
-    console.log("Template obrigatório: .github/PULL_REQUEST_TEMPLATE.md");
+    console.log("Corrija os campos mínimos ausentes/inválidos e atualize o corpo da PR.");
+    console.log("Governança obrigatória real: arquivos vivos em schema/status/, schema/handoffs/, schema/contracts/");
+    console.log("Template de referência: .github/PULL_REQUEST_TEMPLATE.md");
     console.log("Protocolo: schema/CODEX_WORKFLOW.md");
     console.log("──────────────────────────────────────────────\n");
     process.exit(1);
@@ -251,7 +246,7 @@ function main() {
   console.log("──────────────────────────────────────────────");
   console.log("RESULTADO: APROVADO");
   console.log("──────────────────────────────────────────────");
-  console.log("Todos os campos obrigatórios de governança estão presentes.\n");
+  console.log("Campos mínimos de governança presentes. Fonte de verdade: arquivos vivos do repo.\n");
   process.exit(0);
 }
 

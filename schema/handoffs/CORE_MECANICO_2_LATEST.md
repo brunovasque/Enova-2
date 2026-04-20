@@ -3,9 +3,9 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T04:20:00Z                                                        |
-| Estado da frente                           | não iniciada (governance gate + economia de request + correções concluídos)  |
-| Classificação da tarefa                    | governança (correcao_incidental — 2 fixes no gate da PR #9)                  |
+| Data                                       | 2026-04-20T04:35:00Z                                                        |
+| Estado da frente                           | não iniciada (gate refatorado: live files como fonte real, body como checklist) |
+| Classificação da tarefa                    | governança (refactor: filosofia gate — body mínimo + live files obrigatórios)  |
 | Última PR relevante                        | PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL                        |
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                  |
 | Recorte executado do contrato              | N/A — nenhum contrato ativo                                                  |

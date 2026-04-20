@@ -77,14 +77,15 @@ Ver `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` para o protocolo completo d
 O repositório inclui gate automatizado de validação de PR:
 
 - `.github/workflows/pr-governance-check.yml` — executa em toda PR (sem LLM, sem custo extra)
-- `scripts/validate_pr_governance.js` — script determinístico que valida campos obrigatórios
+- `scripts/validate_pr_governance.js` — script determinístico de validação
 
-O gate bloqueia PRs que não declarem os campos mínimos de governança documental:
-- vínculo contratual (contrato ativo, objetivo, recorte, o que fecha/não fecha, desvio, encerramento)
-- Supabase (mudanças em dados persistidos)
-- Cloudflare (permissões necessárias)
-- estado vivo (arquivos vivos atualizados)
-- próximo passo autorizado
+**Filosofia:** a governança real está nos arquivos vivos versionados do repo (`schema/status/`, `schema/handoffs/`, `schema/contracts/`). O corpo da PR é apoio humano/checklist.
+
+O gate bloqueia PRs que não declarem os **2 campos mínimos** no body:
+- `Contrato ativo` — qual contrato da frente está ativo
+- `Próximo passo autorizado` — próximo passo explicitamente autorizado
+
+O gate também bloqueia quando o body declara arquivos vivos atualizados mas o diff não contém mudanças reais em `schema/status/`, `schema/handoffs/` ou `schema/contracts/`.
 
 Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para a política de economia de request e modelo.
 

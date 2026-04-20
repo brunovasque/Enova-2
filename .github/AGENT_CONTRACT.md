@@ -155,8 +155,9 @@ Regras mandatórias:
 25. **Prompts devem vir fechados, objetivos e com escopo declarado.** Evitar prompts abertos de investigação.
 
 Gate automatizado de PR:
-- `.github/workflows/pr-governance-check.yml` — valida campos obrigatórios (sem LLM, custo zero)
+- `.github/workflows/pr-governance-check.yml` — valida 2 campos mínimos no body + gate de arquivos vivos (sem LLM, custo zero)
 - `scripts/validate_pr_governance.js` — script determinístico de validação
+- Filosofia: governança real = arquivos vivos do repo (`schema/status/`, `schema/handoffs/`, `schema/contracts/`); body da PR = apoio humano/checklist
 
 ## Proibições nesta fase fundadora
 - Criar app funcional

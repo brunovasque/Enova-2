@@ -397,7 +397,8 @@ Princípios obrigatórios:
 | Alta (arquitetura, lógica)| Modelo mais caro       | Somente com justificativa explícita |
 
 **Gate automatizado:**
-- `.github/workflows/pr-governance-check.yml` — valida campos obrigatórios no corpo de toda PR
+- `.github/workflows/pr-governance-check.yml` — valida 2 campos mínimos no body + gate de arquivos vivos no diff
 - `scripts/validate_pr_governance.js` — script determinístico (sem LLM, custo zero)
+- Filosofia: governança real = arquivos vivos do repo; body = apoio humano/checklist
 
 Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para o protocolo completo.

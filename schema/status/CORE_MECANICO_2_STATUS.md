@@ -10,7 +10,7 @@
 | Contrato encerrado?                        | não                                                                                       |
 | Item do A01                                | Fase 1 — scaffold técnico (pipeline de deploy Cloudflare concluído)                       |
 | Estado atual                               | não iniciada (bootstrap infra + pipeline de deploy concluídos)                            |
-| Classe da última tarefa                    | governança (correção: CHANGED_FILES explícito + campo Disciplina obrigatório)             |
+| Classe da última tarefa                    | governança (filosofia do gate: live files como fonte real, body como checklist) |
 | Última PR relevante                        | PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL                                     |
 | Último commit                              | Governança: camada de execução contratual + protocolos + workflow 16 etapas               |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
@@ -19,7 +19,7 @@
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
 | Permissões Cloudflare — infra herdada (PR #7) | Workers Scripts:Edit — obrigatório para deploy via wrangler (aviso preventivo ativo) |
 | Permissões Cloudflare — última tarefa (PR #8) | nenhuma adicional — tarefa de governança documental                                  |
-| Última atualização                         | 2026-04-20T04:20:00Z                                                                      |
+| Última atualização                         | 2026-04-20T04:35:00Z                                                                      |
 
 ---
 
