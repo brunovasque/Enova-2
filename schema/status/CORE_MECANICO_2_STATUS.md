@@ -4,16 +4,16 @@
 |--------------------------------------------|-------------------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                           |
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                               |
-| Item do A01                                | Fase 0 concluída / Fase 1 — Prioridade 1 aguardando                                      |
-| Estado atual                               | não iniciada                                                                              |
-| Classe da última tarefa                    | governança                                                                                |
-| Última PR relevante                        | PR #4 — endurecimento de governança com protocolo obrigatório de dados persistidos (Supabase) |
-| Último commit                              | Nenhum commit de implementação técnica                                                    |
+| Item do A01                                | Fase 1 — scaffold técnico (bootstrap Cloudflare Workers concluído)                        |
+| Estado atual                               | não iniciada (bootstrap infra concluído)                                                  |
+| Classe da última tarefa                    | fora_de_contrato                                                                          |
+| Última PR relevante                        | PR #5 — bootstrap técnico mínimo Cloudflare Workers (wrangler.toml)                      |
+| Último commit                              | Bootstrap wrangler.toml com ambientes canônicos nv-enova-2 e nv-enova-2-test             |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
-| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado)                                           |
+| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por este bootstrap)         |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
-| Última atualização                         | 2026-04-20T00:26:00Z                                                                      |
+| Última atualização                         | 2026-04-20T01:00:00Z                                                                      |
 
 ---
 
@@ -77,17 +77,21 @@ Nenhum commit de implementação técnica. Apenas commits documentais e de gover
 - [x] Incorporação dos legados em legado mestre unificado
 - [x] DATA_CHANGE_PROTOCOL — protocolo obrigatório de mudanças em dados persistidos do Supabase
 - [x] Rastreabilidade total de dados: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template
+- [x] Bootstrap técnico Cloudflare Workers: `wrangler.toml` com ambientes canônicos `nv-enova-2` (prod) e `nv-enova-2-test` (test)
+- [x] Entrypoint placeholder mínimo `src/worker.ts` (sem lógica de produto)
+- [x] `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação curta do bootstrap
 
 ## 9. Pendências
 
-- [ ] Abrir contrato formal do Core Mecânico 2 (próximo passo autorizado)
+- [ ] Abrir contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado)
 - [ ] Definir objetivos/stages do Core Mecânico 2 no contrato
-- [ ] Scaffold técnico do repositório (Fase 1 do A01)
+- [ ] Implementação funcional do worker (após contrato aprovado)
+- [ ] Pipeline de CI/CD para deploy automatizado (após contrato aprovado)
 
 ## 10. Pendência remanescente herdada
 
 Da PR #2: abertura de contrato formal do Core Mecânico 2.
-Esta pendência permanece em aberto — a PR #3 não a afetou.
+Esta pendência permanece em aberto — as PRs #3, #4 e #5 não a afetaram.
 
 ## 11. Bloqueios
 
@@ -113,5 +117,5 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T00:26:00Z
-- **Responsável**: Copilot (PR #4 — protocolo de dados persistidos)
+- **Data**: 2026-04-20T01:00:00Z
+- **Responsável**: Copilot (PR #5 — bootstrap técnico Cloudflare Workers)

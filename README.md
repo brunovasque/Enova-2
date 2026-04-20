@@ -52,6 +52,17 @@ Toda PR deve declarar: de qual PR continua, o que herdou, o que resolveu e o que
 **Toda tarefa deve declarar explicitamente se houve ou não mudança em dados persistidos do Supabase.**
 Ver `schema/DATA_CHANGE_PROTOCOL.md` para o protocolo completo de rastreabilidade.
 
+## Cloudflare Workers — Bootstrap técnico
+
+O repositório inclui o bootstrap mínimo para deploy na plataforma Cloudflare Workers:
+
+- `wrangler.toml` — configura os ambientes canônicos: `nv-enova-2` (produção) e `nv-enova-2-test` (teste)
+- `src/worker.ts` — entrypoint placeholder mínimo (sem lógica de produto)
+- `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação técnica do bootstrap
+
+> **`main` branch representa produção.** Ambiente `test` existe para validação controlada antes de promoção.
+> Pipeline de deploy será criado em PR dedicada.
+
 ## Regra dos legados
 Os **19 legados** e **9 complementares** são fonte de verdade de negócio herdada, consolidados em um **legado mestre único**.
 Estão incorporados em `schema/legacy/` com índice operacional e estrutura pronta para transcrição do PDF mestre.
