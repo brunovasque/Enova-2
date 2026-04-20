@@ -1,13 +1,13 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 esqueleto + L04/L05/L06 topo)
+ * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L08)
  *
  * Âncora contratual:
- *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06)
- *   Bloco legado:    L03, L04, L05, L06
+ *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-06 (L07/L08)
+ *   Bloco legado:    L03, L04, L05, L06, L07, L08
  *   Gate-fonte:      Gate 2 (A01: "sem smoke da frente, não promove")
  *
- * ESCOPO: provar que o esqueleto estrutural (L03) e o topo do funil (L04–L06) existem
- * e não produzem fala. Cenários cobrem: block/no-block, parser do topo, critérios do topo.
+ * ESCOPO: provar que o esqueleto estrutural (L03), o topo do funil (L04–L06)
+ * e o Meio A inicial (L07/L08) existem e não produzem fala.
  *
  * INVIOLÁVEL: nenhum cenário gera texto ao cliente.
  */
@@ -95,7 +95,7 @@ export function smokeScenario2_AvancaQuandoFactsPresentes(): SmokeResult {
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 3: Meio do funil com facts parciais → deve bloquear no fact faltando
+// Cenário 3: Meio A com fact crítico ausente → deve bloquear no fact faltando
 //
 // Prova: em qualification_civil, sem 'processo', bloqueia e aponta o fact ausente.
 // Estado civil presente, processo ausente → next_objective aponta para coleta de processo.
@@ -108,7 +108,7 @@ export function smokeScenario3_BloqueioFactParcial(): SmokeResult {
   const decision = runCoreEngine(state);
 
   return {
-    scenario: 'Cenário 3 — Facts parciais: bloqueia no fact faltando',
+    scenario: 'Cenário 3 — Meio A: fact crítico ausente bloqueia',
     passed: true,
     decision,
     assertions: [
@@ -121,57 +121,55 @@ export function smokeScenario3_BloqueioFactParcial(): SmokeResult {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Cenário 4: Discovery com customer_goal canônico alternativo → fluxo integrado avança
+// Cenário 4: Meio A com trilho válido mínimo → avança para renda
 //
-// Prova: o caminho do topo no Core (runTopoDecision via L05+L06) funciona com qualquer
-// valor canônico de customer_goal, não apenas 'comprar_imovel'.
-// Input: customer_goal='entender_programa' (valor F0 canônico distinto do cenário 2).
-// Esperado: block_advance=false, stage_after=qualification_civil, via topo integrado.
+// Prova: o caminho real de qualification_civil no engine aceita trilho estrutural
+// válido sem fala mecânica.
 // ---------------------------------------------------------------------------
-export function smokeScenario4_TopoIntegrado_CustomerGoalCanonicoAlternativo(): SmokeResult {
-  const state = makeState('discovery', { customer_goal: 'entender_programa' });
+export function smokeScenario4_MeioAIntegrado_AvancoValido(): SmokeResult {
+  const state = makeState('qualification_civil', {
+    estado_civil: 'uniao_estavel',
+    processo: 'conjunto',
+  });
   const decision = runCoreEngine(state); // fluxo integrado via topo (L05+L06 no engine)
 
   return {
-    scenario: 'Cenário 4 — Topo integrado: customer_goal canônico alternativo avança (L05+L06 via engine)',
+    scenario: 'Cenário 4 — Meio A integrado: trilho válido avança',
     passed: true,
     decision,
     assertions: [
-      assert('stage_current = discovery', 'discovery', decision.stage_current),
-      assert('block_advance = false (topo via engine: L06 can_advance=true)', false, decision.block_advance),
-      assert('stage_after = qualification_civil (topo integrado no engine)', 'qualification_civil', decision.stage_after),
-      assert('next_objective = avancar_para_qualification_civil', 'avancar_para_qualification_civil', decision.next_objective),
+      assert('stage_current = qualification_civil', 'qualification_civil', decision.stage_current),
+      assert('block_advance = false (Meio A via engine)', false, decision.block_advance),
+      assert('stage_after = qualification_renda', 'qualification_renda', decision.stage_after),
+      assert('next_objective = avancar_para_qualification_renda', 'avancar_para_qualification_renda', decision.next_objective),
       assert('speech_intent = transicao_stage (sinal estrutural — não é fala)', 'transicao_stage', decision.speech_intent),
-      assert('gates_activated vazio (topo avança — L06 não bloqueou)', 0, decision.gates_activated.length),
+      assert('gates_activated vazio (Meio A avançou)', 0, decision.gates_activated.length),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 5: Discovery com customer_goal + offtrack_type → topo integrado avança mesmo com desvio
+// Cenário 5: Meio A com composição mínima relevante → avança
 //
-// Prova: o caminho do topo no Core (L05+L06) detecta offtrack_type mas NÃO bloqueia avanço
-// quando customer_goal está presente. Conforme L04 TOPO_SIGNAL_POLICY: sinal de desvio
-// não substitui gate do customer_goal.
-// Input: customer_goal='comprar_imovel' + offtrack_type='curiosidade'.
-// Esperado: block_advance=false (desvio não bloqueia), stage_after=qualification_civil.
+// Prova: composição familiar mínima relevante fica estruturalmente conectada ao
+// caminho real do Core sem abrir outras micro regras.
 // ---------------------------------------------------------------------------
-export function smokeScenario5_TopoIntegrado_OfftrackNaoBloqueiaComGoalPresente(): SmokeResult {
-  const state = makeState('discovery', {
-    customer_goal: 'comprar_imovel',
-    offtrack_type: 'curiosidade', // sinal de desvio presente — não deve bloquear L06
+export function smokeScenario5_MeioAIntegrado_ComposicaoRelevante(): SmokeResult {
+  const state = makeState('qualification_civil', {
+    estado_civil: 'solteiro',
+    processo: 'composicao_familiar',
+    composition_actor: 'mae',
   });
-  const decision = runCoreEngine(state); // fluxo integrado via topo (L05+L06 no engine)
+  const decision = runCoreEngine(state); // fluxo integrado via Meio A (L07/L08 no engine)
 
   return {
-    scenario: 'Cenário 5 — Topo integrado: offtrack_type não bloqueia quando customer_goal presente (L04 TOPO_SIGNAL_POLICY via engine)',
+    scenario: 'Cenário 5 — Meio A integrado: composição mínima relevante avança',
     passed: true,
     decision,
     assertions: [
-      assert('stage_current = discovery', 'discovery', decision.stage_current),
-      assert('block_advance = false (offtrack não bloqueia — L06 usa customer_goal como gate)', false, decision.block_advance),
-      assert('stage_after = qualification_civil (topo avança mesmo com desvio detectado)', 'qualification_civil', decision.stage_after),
+      assert('stage_current = qualification_civil', 'qualification_civil', decision.stage_current),
+      assert('block_advance = false (composition_actor válido libera avanço)', false, decision.block_advance),
+      assert('stage_after = qualification_renda', 'qualification_renda', decision.stage_after),
       assert('speech_intent = transicao_stage (sinal estrutural — não é fala)', 'transicao_stage', decision.speech_intent),
       assert('Core não produz texto — apenas estrutura de decisão', true, typeof decision.speech_intent === 'string'),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
@@ -194,9 +192,8 @@ export interface SmokeSuiteResult {
  * Prova exigida (A01-05, Gate 2):
  * "Smoke de trilho e next step autorizado"
  *
- * Cenários L03 (3): block por ausência, avanço por presença, block parcial.
- * Cenários L04–L06 integrados (2): fluxo real via engine — customer_goal canônico
- *   alternativo avança; offtrack_type não bloqueia com customer_goal presente.
+ * Cenários L03/L04-L08 integrados (5): topo segue válido e o Meio A passa por
+ * ausência crítica, avanço mínimo e composição mínima relevante.
  * Todos os cenários passam pelo `runCoreEngine()`. Nenhum usa decisão fake.
  * Nenhum cenário gera fala ao cliente.
  */
@@ -205,8 +202,8 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario1_BlockQuandoFactAusente,
     smokeScenario2_AvancaQuandoFactsPresentes,
     smokeScenario3_BloqueioFactParcial,
-    smokeScenario4_TopoIntegrado_CustomerGoalCanonicoAlternativo,
-    smokeScenario5_TopoIntegrado_OfftrackNaoBloqueiaComGoalPresente,
+    smokeScenario4_MeioAIntegrado_AvancoValido,
+    smokeScenario5_MeioAIntegrado_ComposicaoRelevante,
   ];
 
   const results = scenarios.map((fn) => {
@@ -234,9 +231,9 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06)');
+  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L08)');
   console.log('===========================================');
-  console.log(`Âncora: L03 (esqueleto) + L04/L05/L06 (topo) | Gate 2 (A01)`);
+  console.log(`Âncora: L03 + L04/L05/L06 + L07/L08 | Gate 2 (A01)`);
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
   console.log(`Resultado: ${suite.all_passed ? '✅ PASSOU' : '❌ FALHOU'}\n`);
