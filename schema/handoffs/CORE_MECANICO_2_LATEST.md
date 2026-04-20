@@ -3,20 +3,175 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T01:33:47Z                                                        |
-| Estado da frente                           | não iniciada (bootstrap infra concluído)                                     |
-| Classificação da tarefa                    | governança                                                                   |
-| Última PR relevante                        | PR #6 — Protocolo obrigatório de permissões Cloudflare                      |
-| Item do A01 atendido                       | Governança — endurecimento de workflow e rastreabilidade de permissões Cloudflare |
+| Data                                       | 2026-04-20T02:46:46Z                                                        |
+| Estado da frente                           | não iniciada (bootstrap infra + pipeline de deploy concluídos)               |
+| Classificação da tarefa                    | fora_de_contrato (infra — pipeline de deploy)                                |
+| Última PR relevante                        | PR #7 — Deploy automático em main + docs PowerShell/Windows/VSCode           |
+| Item do A01 atendido                       | Fase 1 — scaffold técnico: pipeline de deploy Cloudflare concluído           |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                            |
 | Próximo passo foi alterado?                | não                                                                          |
-| Tarefa fora de contrato?                   | não — tarefa de governança, não contratual                                   |
+| Tarefa fora de contrato?                   | sim — infra de pipeline alinhada à Fase 1 do A01, sem implementação funcional |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                      |
-| Permissões Cloudflare necessárias          | nenhuma adicional                                                            |
+| Permissões Cloudflare necessárias          | sim — Workers Scripts:Edit (necessário para wrangler deploy — aviso preventivo ativo) |
 
 ---
 
 ## 1. Contexto curto
+
+O repositório da ENOVA 2 estava com toda a governança pronta (trio-base, workflow, protocolo de dados, protocolo de permissões Cloudflare) e com o bootstrap técnico de Cloudflare Workers concluído (wrangler.toml + entrypoint placeholder). Esta PR #7 cria o pipeline de deploy via GitHub Actions — o entregável final do scaffold técnico da Fase 1 do A01.
+
+O pipeline é mínimo e limpo: disparo exclusivamente manual (`workflow_dispatch`), suporte a dois ambientes (`test` e `prod`), proteção explícita de branch para deploy em produção, uso dos secrets já existentes no repositório.
+
+Nenhuma implementação funcional foi aberta. O próximo passo autorizado não foi alterado.
+
+## 2. Classificação da tarefa
+
+**fora_de_contrato**
+
+Não há contrato ativo do Core Mecânico 2. O pipeline de deploy é necessidade operacional da Fase 1 do A01 (scaffold técnico), executado antes do contrato do Core para preparar a infra de CI/CD sem abrir implementação funcional. O próximo passo autorizado não foi alterado.
+
+## 3. Última PR relevante
+
+**PR #6** — Protocolo obrigatório de permissões Cloudflare (governança).
+
+## 4. O que a PR #6 fechou
+
+- Protocolo obrigatório de permissões Cloudflare (`CLOUDFLARE_PERMISSION_PROTOCOL.md`).
+- Rastreabilidade total de permissões: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template.
+- Alinhamento da governança Cloudflare ao mesmo nível de clareza da governança Supabase.
+
+## 5. O que a PR #6 NÃO fechou
+
+- Pipeline de deploy GitHub Actions (entregue nesta PR #7).
+- Contrato formal do Core Mecânico 2 (deliberadamente fora de escopo, preservado).
+
+## 6. Diagnóstico confirmado
+
+- O repo tinha wrangler.toml + entrypoint placeholder, mas sem pipeline de deploy automatizado.
+- A Fase 1 do A01 prevê scaffold técnico completo, incluindo CI/CD.
+- O pipeline mínimo era a peça faltante para completar o scaffold técnico.
+- Os secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` já existiam no repositório.
+- Nenhum binding, secret de aplicação, KV, R2, D1, queue ou var precisou ser criado.
+
+## 7. O que foi feito (PR #7)
+
+- Criado `.github/workflows/deploy.yml`: disparo manual (`workflow_dispatch`) com input de ambiente (`test` | `prod`), proteção de branch para prod (falha se não for `main`), checkout, setup-node@v4, instalação de `wrangler@3.114.17` (versão patched — sem vulnerabilidade CVE), deploy com `wrangler deploy --env test` (test) ou `wrangler deploy` (prod), usando `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID`.
+- Atualizado `docs/BOOTSTRAP_CLOUDFLARE.md`: pipeline de deploy documentado, uso local via terminal/VSCode com exports de env vars, permissões Cloudflare declaradas, aviso preventivo explícito.
+- Atualizado `README.md`: referência ao pipeline criado e à documentação de uso local.
+- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`.
+- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` (este arquivo).
+
+## 8. O que não foi feito
+
+- **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Próximo passo preservado.
+- **Implementação funcional** — nenhuma. Nenhum código de negócio.
+- **Bindings, secrets de aplicação, KV, R2, D1, queues, vars** — nenhum fictício adicionado.
+- **Routes customizadas** — nenhuma.
+- **Deploy automático em push** — não criado. Disparo exclusivamente manual.
+- **Matrix de ambientes** — não criada. Um job simples com condicionais.
+- **Secrets novos** — nenhum criado. Apenas os dois já existentes são usados.
+
+## 9. O que esta PR fechou
+
+- Pipeline de deploy mínimo e limpo para Cloudflare Workers (test e prod).
+- Proteção de branch para produção (`main` = prod, explícito e enforçado no workflow).
+- Documentação de uso local via terminal e VSCode.
+- Declaração explícita de permissões Cloudflare necessárias (Workers Scripts:Edit).
+- Scaffold técnico completo da Fase 1 do A01.
+
+## 10. O que continua pendente após esta PR
+
+- Abertura de contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
+- Transcrição integral do conteúdo dos legados (PDF mestre).
+- Implementação funcional do worker (após contrato aprovado).
+- Verificação do escopo do token `CLOUDFLARE_API_TOKEN` antes do primeiro deploy real.
+
+## 11. Esta tarefa foi fora de contrato?
+
+**sim** — classificada como `fora_de_contrato`.
+
+Justificativa: não há contrato ativo do Core Mecânico 2. O pipeline de deploy é necessidade operacional alinhada à Fase 1 do A01, controlada e sem drift. Não abre implementação funcional, não mexe em bindings reais, não cria lógica de negócio.
+
+Impacto no próximo passo autorizado: **não alterou** — próximo passo continua sendo abertura do contrato do Core Mecânico 2.
+
+## 12. Arquivos relevantes
+
+- `.github/workflows/deploy.yml` *(criado — pipeline de deploy)*
+- `docs/BOOTSTRAP_CLOUDFLARE.md` *(atualizado — pipeline + uso local + permissões Cloudflare)*
+- `README.md` *(atualizado — referência ao pipeline)*
+- `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
+- `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
+
+## 13. Item do A01 atendido
+
+- **Fase 1** — scaffold técnico: pipeline de deploy completo. O repo está preparado para deploy manual com proteção de branch e ambientes canônicos corretos.
+
+## 14. Estado atual da frente
+
+**não iniciada** (bootstrap infra + pipeline de deploy concluídos)
+
+A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. O scaffold técnico completo está pronto: wrangler.toml + entrypoint placeholder + pipeline de deploy.
+
+## 15. Próximo passo autorizado
+
+**Abrir contrato do Core Mecânico 2**, seguindo:
+- Formato: `schema/CONTRACT_SCHEMA.md`
+- Escopo: Prioridade 1 do A01 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala
+- Legados: blocos L03 + famílias L04-L17 do legado mestre unificado conforme A02 e INDEX_LEGADO_MESTRE.md
+- Gate: Gate 1 será satisfeito com a aprovação do contrato
+- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões Cloudflare ✅, pipeline de deploy ✅
+
+**Próximo passo preservado** — igual ao definido na PR #6.
+
+## 16. Riscos
+
+- **Permissão do token Cloudflare** — O token `CLOUDFLARE_API_TOKEN` deve ter permissão `Workers Scripts:Edit` para que o deploy funcione. Verificar antes do primeiro deploy real. Onde ajustar: Cloudflare Dashboard > API Tokens > editar token.
+- **Entrypoint placeholder** — `src/worker.ts` é um placeholder sem lógica. Se alguém fizer deploy antes da implementação real, o worker responderá com uma mensagem de bootstrap. Isso é intencional e documentado.
+- **Conteúdo dos legados** — O legado mestre unificado contém placeholders por bloco. O PDF mestre deve ser incorporado antes da abertura do contrato do Core.
+
+## 17. Provas
+
+- PR #7 criada com escopo exclusivo de pipeline de deploy de infraestrutura.
+- `.github/workflows/deploy.yml` criado com proteção de branch, disparo manual, test e prod.
+- `wrangler@3.114.17` pinado — versão patched, sem vulnerabilidade CVE em `wrangler pages deploy`.
+- Apenas os dois secrets já existentes no repositório são usados (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
+- `docs/BOOTSTRAP_CLOUDFLARE.md` atualizado com uso local e declaração de permissões.
+- Status e handoff do Core Mecânico 2 atualizados refletindo PR #7.
+- Mudanças em dados persistidos (Supabase): **nenhuma**.
+- Permissões Cloudflare necessárias: **sim — Workers Scripts:Edit** (declarado e documentado com aviso preventivo).
+
+## 18. Mudanças em dados persistidos (Supabase)
+
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+
+Esta PR é de infraestrutura de deploy. Nenhuma tabela, coluna, índice, constraint, relacionamento ou migration do Supabase foi criado, alterado ou removido.
+
+## 19. Permissões Cloudflare necessárias
+
+```
+Permissões Cloudflare necessárias: sim
+
+  Recurso Cloudflare afetado:          Workers Scripts
+  Ação pretendida:                      Publicar/atualizar worker via wrangler deploy (prod e test)
+  Permissões atuais suficientes?        incerto — depende do escopo do token CLOUDFLARE_API_TOKEN configurado no repositório
+  Permissões adicionais necessárias:    Workers Scripts:Edit (mínimo necessário para wrangler deploy)
+  Motivo:                               Pipeline de deploy cria/atualiza o worker nv-enova-2 (prod) e nv-enova-2-test (test)
+  Impacto se não tiver permissão:       wrangler deploy falha; worker não é atualizado; deploy retorna erro de autenticação
+  Pode prosseguir sem ampliar?          não — sem esta permissão, o deploy não ocorre
+  Onde ajustar:                         Cloudflare Dashboard > API Tokens > editar token CLOUDFLARE_API_TOKEN
+```
+
+> **AVISO PREVENTIVO DE PERMISSÃO CLOUDFLARE:**
+> Esta PR cria dependência de Workers Scripts (wrangler deploy). Se o token `CLOUDFLARE_API_TOKEN`
+> não tiver permissão `Workers Scripts:Edit`, o deploy falhará no pipeline e localmente.
+> Verificar o escopo do token antes do primeiro deploy real.
+> Onde ajustar: Cloudflare Dashboard > API Tokens > editar token.
+
+---
+
+*(Handoff histórico PR #6 preservado abaixo para rastreabilidade)*
 
 O repositório fundador da ENOVA 2 está com governança endurecida em duas camadas: protocolo de dados persistidos do Supabase (PR #4) e bootstrap técnico mínimo de Cloudflare Workers (PR #5). Esta PR #6 adiciona a terceira camada de governança: protocolo obrigatório de permissões Cloudflare, garantindo que qualquer futura PR que passe a usar ou alterar recursos Cloudflare (Workers, KV, R2, D1, Queues, Service Bindings, Routes, Secrets, Vars, Observability) seja obrigada a declarar explicitamente se as permissões atuais bastam ou não.
 

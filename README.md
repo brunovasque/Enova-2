@@ -57,16 +57,18 @@ Ver `schema/DATA_CHANGE_PROTOCOL.md` para o protocolo completo de rastreabilidad
 **Toda tarefa que passe a usar, alterar ou depender de qualquer recurso Cloudflare deve declarar explicitamente se as permissões atuais bastam ou não.**
 Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para o protocolo completo de rastreabilidade de permissões.
 
-## Cloudflare Workers — Bootstrap técnico
+## Cloudflare Workers — Bootstrap técnico e pipeline de deploy
 
-O repositório inclui o bootstrap mínimo para deploy na plataforma Cloudflare Workers:
+O repositório inclui o bootstrap mínimo e o pipeline de deploy para Cloudflare Workers:
 
 - `wrangler.toml` — configura os ambientes canônicos: `nv-enova-2` (produção) e `nv-enova-2-test` (teste)
 - `src/worker.ts` — entrypoint placeholder mínimo (sem lógica de produto)
-- `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação técnica do bootstrap
+- `.github/workflows/deploy.yml` — pipeline de deploy (automático em main + manual test/prod)
+- `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação técnica do bootstrap e uso local (bash, PowerShell, VSCode)
 
-> **`main` branch representa produção.** Ambiente `test` existe para validação controlada antes de promoção.
-> Pipeline de deploy será criado em PR dedicada.
+> **`main` branch representa produção.**
+> Push/merge em `main` → deploy prod automático.
+> Deploy manual via GitHub Actions → aba Actions → **Deploy — Cloudflare Workers** → Run workflow.
 
 ## Regra dos legados
 Os **19 legados** e **9 complementares** são fonte de verdade de negócio herdada, consolidados em um **legado mestre único**.
