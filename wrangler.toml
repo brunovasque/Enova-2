@@ -1,0 +1,26 @@
+# wrangler.toml — Bootstrap técnico do Cloudflare Worker da ENOVA 2
+#
+# PRODUÇÃO: nv-enova-2
+#   - Worker principal da ENOVA 2
+#   - main branch representa produção
+#   - deploy via `wrangler deploy` (sem --env flag) aponta para este ambiente
+#
+# TESTE: nv-enova-2-test (env.test)
+#   - Worker de validação controlada antes de promoção para produção
+#   - deploy via `wrangler deploy --env test`
+#
+# IMPORTANTE
+#   - deploy em test e prod usam o mesmo código-fonte; muda apenas o target env
+#   - este wrangler.toml prepara o repo para o pipeline de deploy, mas não o cria
+#   - nenhuma binding, secret, KV, R2, D1, queue ou var foi declarada neste bootstrap
+#   - quando implementação funcional começar, abrir PR dedicada para adicionar bindings
+
+name            = "nv-enova-2"
+main            = "src/worker.ts"
+compatibility_date = "2026-04-20"
+
+# ---------------------------------------------------------------------------
+# Ambiente de teste — validação controlada antes de promoção para produção
+# ---------------------------------------------------------------------------
+[env.test]
+name = "nv-enova-2-test"
