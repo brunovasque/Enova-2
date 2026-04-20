@@ -41,6 +41,8 @@ const REQUIRED_FIELDS = [
   { label: "Arquivos vivos atualizados",           group: "D. Estado vivo" },
   // E. Próximo passo
   { label: "Próximo passo autorizado",             group: "E. Próximo passo" },
+  // F. Economia de request
+  { label: "Disciplina de request e modelo",       group: "F. Economia de request" },
 ];
 
 // Prefixos de caminho considerados "arquivos vivos" no repositório

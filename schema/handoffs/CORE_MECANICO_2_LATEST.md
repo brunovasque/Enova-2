@@ -3,9 +3,9 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T04:00:00Z                                                        |
-| Estado da frente                           | não iniciada (governance gate + economia de request concluídos)              |
-| Classificação da tarefa                    | governança (PR governance gate + REQUEST_ECONOMY_PROTOCOL)                   |
+| Data                                       | 2026-04-20T04:20:00Z                                                        |
+| Estado da frente                           | não iniciada (governance gate + economia de request + correções concluídos)  |
+| Classificação da tarefa                    | governança (correcao_incidental — 2 fixes no gate da PR #9)                  |
 | Última PR relevante                        | PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL                        |
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                  |
 | Recorte executado do contrato              | N/A — nenhum contrato ativo                                                  |

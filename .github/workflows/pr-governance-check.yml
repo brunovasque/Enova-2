@@ -30,4 +30,5 @@ jobs:
       - name: Validar campos obrigatórios de governança
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
         run: node scripts/validate_pr_governance.js
