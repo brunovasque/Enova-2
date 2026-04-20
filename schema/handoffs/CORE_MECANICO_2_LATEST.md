@@ -3,16 +3,16 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
-| Data                                       | 2026-04-20T12:35:00Z                                                        |
-| Estado da frente                           | não iniciada (auto-fix controlado + regra @copilot+modelo adicionados)      |
-| Classificação da tarefa                    | governança (auto-fix controlado PR gate + regra de menção obrigatória)      |
-| Última PR relevante                        | PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo  |
+| Data                                       | 2026-04-20T14:03:00Z                                                        |
+| Estado da frente                           | não iniciada (base documental organizada — pronta para abertura de contrato)|
+| Classificação da tarefa                    | governança (organização documental — legado mestre + schema de contrato)    |
+| Última PR relevante                        | PR #12 — Organização documental do legado mestre para contrato do Core      |
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                  |
 | Recorte executado do contrato              | N/A — nenhum contrato ativo                                                  |
 | Pendência contratual remanescente          | N/A — aguardando abertura do contrato                                        |
 | Houve desvio de contrato?                  | não                                                                          |
 | Contrato encerrado nesta PR?               | não                                                                          |
-| Item do A01 atendido                       | Fase 0 — fundação documental: auto-fix controlado + regra de menção         |
+| Item do A01 atendido                       | Fase 0 — fundação documental: legado mestre organizado corretamente         |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                            |
 | Próximo passo foi alterado?                | não                                                                          |
 | Tarefa fora de contrato?                   | não — tarefa de governança                                                   |
@@ -23,9 +23,9 @@
 
 ## 1. Contexto curto
 
-O repositório da ENOVA 2 chegou à PR #9 com governança completa (gate de PR, REQUEST_ECONOMY_PROTOCOL, camada contratual, protocolos de dados e permissões). Esta PR #10 adiciona a camada de auto-fix controlado e a regra de menção obrigatória ao agente/modelo.
+O repositório da ENOVA 2 chegou à PR #10 com governança completa (gate de PR + auto-fix controlado + regra de menção obrigatória ao agente/modelo). Esta PR #12 corrige a organização documental do legado mestre, que estava desalinhada: o PDF real já existia no repo mas o source README ainda dizia "PENDENTE DE UPLOAD", o legado mestre markdown estava em estado genérico/enganoso, e o INDEX não tinha estrutura operacional real.
 
-A PR #10 entrega: workflow de auto-fix controlado (`.github/workflows/pr-governance-autofix.yml`), script determinístico de auto-fix (`scripts/autofix_pr_governance.js`), regra 26 do AGENT_CONTRACT (menção obrigatória ao agente/modelo), seções 17 e 18 do CODEX_WORKFLOW (auto-fix protocol + regra de menção). README, README_EXECUCAO atualizados.
+A PR #12 entrega: `schema/source/README.md` corrigido para refletir que o PDF existe; `LEGADO_MESTRE_ENOVA1_ENOVA2.md` reorganizado com honestidade documental (identificado estruturalmente, não transcrito); `INDEX_LEGADO_MESTRE.md` transformado em índice operacional real com colunas de ordem de leitura, status granular e observações; `CONTRACT_SCHEMA.md` expandido com três novos campos obrigatórios (seções 14, 15, 16).
 
 Nenhuma implementação funcional foi aberta. O próximo passo autorizado não foi alterado.
 
@@ -33,61 +33,57 @@ Nenhuma implementação funcional foi aberta. O próximo passo autorizado não f
 
 **governança**
 
-Não há contrato ativo do Core Mecânico 2. Esta tarefa cria auto-fix controlado do gate + regra de menção ao agente/modelo. Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
+Não há contrato ativo do Core Mecânico 2. Esta tarefa organiza corretamente a base documental do legado mestre (source README, legado markdown, índice operacional e schema de contrato). Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
 
 ## 3. Última PR relevante
 
-**PR #9** — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL.
+**PR #10** — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo.
 
-## 4. O que a PR #9 fechou
+## 4. O que a PR #10 fechou
 
-- Gate automatizado de validação de PR (`.github/workflows/pr-governance-check.yml`).
-- Script de validação determinística sem LLM (`scripts/validate_pr_governance.js`).
-- Protocolo de economia de request (`schema/REQUEST_ECONOMY_PROTOCOL.md`).
-- CODEX_WORKFLOW seção 16 (economia de request).
-- AGENT_CONTRACT regras 20-25 (economia de request).
-- PR template com campo de disciplina de request e modelo.
+- Auto-fix controlado do PR Governance Gate (`.github/workflows/pr-governance-autofix.yml`).
+- Script determinístico de auto-fix (`scripts/autofix_pr_governance.js`).
+- Regra de menção obrigatória ao agente/modelo (`@copilot+modelo`).
+- CODEX_WORKFLOW seções 17 e 18.
+- AGENT_CONTRACT regra 26.
 
-## 5. O que a PR #9 NÃO fechou
+## 5. O que a PR #10 NÃO fechou
 
-- Auto-fix controlado do gate (entregue nesta PR #10).
-- Regra de menção obrigatória ao agente/modelo (entregue nesta PR #10).
+- Organização correta da base documental do legado mestre (entregue nesta PR #12).
 - Contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
 
 ## 6. Diagnóstico confirmado
 
-- Não existia camada de auto-fix controlado do PR Governance Gate.
-- Não existia regra formal de menção obrigatória ao agente/modelo em toda instrução operacional.
-- Comentários de PR/issue sem @copilot+modelo podiam ser confundidos com comandos operacionais.
+- `schema/source/README.md` ainda dizia "PENDENTE DE UPLOAD" mesmo com o PDF presente.
+- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` estava em estado genérico/enganoso: todos os 28 blocos com placeholder idêntico sem distinguir estrutura identificada de conteúdo não transcrito.
+- `schema/legacy/INDEX_LEGADO_MESTRE.md` não tinha coluna de ordem de leitura, status granular nem observações operacionais reais.
+- `schema/CONTRACT_SCHEMA.md` não exigia campos de referências obrigatórias, blocos legados aplicáveis nem ordem mínima de leitura da frente.
 
-## 7. O que foi feito (PR #10)
+## 7. O que foi feito (PR #12)
 
-- Criado `.github/workflows/pr-governance-autofix.yml`: auto-fix controlado. Dispara em falha do governance check. Max 3 tentativas. Apenas erros triviais (campo ausente/vazio). Para obrigatoriamente em erros estruturais. Sem LLM, sem dependências externas, sem loop aberto.
-- Criado `scripts/autofix_pr_governance.js`: script Node.js de auto-fix. Sem framework. Sem deps externas. Rastreia tentativas por marcador oculto no body da PR. Escreve resultado em `/tmp/autofix_status.txt`. Para em body vazio, erros estruturais e ao atingir 3 tentativas.
-- Atualizado `.github/AGENT_CONTRACT.md`: regra 26 (menção obrigatória ao agente/modelo), referência ao auto-fix nos gates automatizados.
-- Atualizado `schema/CODEX_WORKFLOW.md`: seção 17 (auto-fix protocol com regras absolutas), seção 18 (regra de menção obrigatória com tabela de modelos e exemplos).
-- Atualizado `schema/README_EXECUCAO.md`: referência ao auto-fix e regra de menção.
-- Atualizado `README.md`: seções "Auto-fix controlado" e "Regra de menção obrigatória".
-- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`.
-- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` (este arquivo).
+- Corrigido `schema/source/README.md`: reflete que PDF existe, é fonte bruta canônica, alimenta legado operacional e contratos futuros.
+- Reorganizado `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`: estado honesto — blocos L01–L19 "identificados estruturalmente, não transcritos"; blocos C01–C09 "estrutura reservada, não confirmados". Instrução para referenciar PDF diretamente quando bloco não transcrito.
+- Transformado `schema/legacy/INDEX_LEGADO_MESTRE.md` em índice operacional real: adicionadas colunas de ordem de leitura na frente, status granular (4 níveis), observações por bloco; tabela de amarração expandida com coluna de ordem mínima de leitura por frente; regra de consulta atualizada para declarar blocos no contrato.
+- Atualizado `schema/CONTRACT_SCHEMA.md`: seção 14 (Referências obrigatórias), seção 15 (Blocos legados aplicáveis — obrigatórios e complementares), seção 16 (Ordem mínima de leitura da frente); exemplo de cabeçalho mínimo expandido com os novos campos obrigatórios.
 
 ## 8. O que não foi feito
 
+- **Transcrição do conteúdo dos legados** — deliberadamente fora de escopo. O PDF existe; a transcrição bloco a bloco é uma tarefa separada.
 - **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Próximo passo preservado.
 - **Implementação funcional** — nenhuma. Nenhum código de negócio.
 
 ## 9. O que esta PR fechou
 
-- Auto-fix controlado do PR Governance Gate (workflow + script).
-- Regra de menção obrigatória ao agente/modelo (`@copilot+modelo`).
-- CODEX_WORKFLOW seções 17 e 18.
-- AGENT_CONTRACT regra 26.
-- README e README_EXECUCAO atualizados.
+- `schema/source/README.md` corrigido — reflete existência real do PDF.
+- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` reorganizado com honestidade documental.
+- `schema/legacy/INDEX_LEGADO_MESTRE.md` transformado em índice operacional real.
+- `schema/CONTRACT_SCHEMA.md` expandido com seções 14–16 e cabeçalho mínimo atualizado.
 
 ## 10. O que continua pendente após esta PR
 
 - Abertura de contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
-- Transcrição integral do conteúdo dos legados (PDF mestre).
+- Transcrição do conteúdo dos blocos L01–L19 do PDF para o markdown (bloco a bloco, fidelidade obrigatória).
+- Confirmação de títulos, funções e frentes dos blocos C01–C09 via leitura direta do PDF.
 - Implementação funcional do worker (após contrato aprovado).
 - Verificação do escopo do token `CLOUDFLARE_API_TOKEN` antes do primeiro deploy real.
 
@@ -95,7 +91,7 @@ Não há contrato ativo do Core Mecânico 2. Esta tarefa cria auto-fix controlad
 
 **não** — classificada como `governança`.
 
-Não há contrato ativo do Core Mecânico 2. Esta tarefa cria auto-fix controlado e regra de menção ao agente. Governança documental pura, alinhada à Fase 0 do A01.
+Não há contrato ativo do Core Mecânico 2. Esta tarefa organiza corretamente a base documental do legado mestre. Governança documental pura, alinhada à Fase 0 do A01.
 
 Impacto no próximo passo autorizado: **não alterou** — próximo passo continua sendo abertura do contrato do Core Mecânico 2.
 
@@ -116,51 +112,52 @@ não
 
 ## 12. Arquivos relevantes
 
-- `.github/workflows/pr-governance-autofix.yml` *(criado — auto-fix controlado do gate)*
-- `scripts/autofix_pr_governance.js` *(criado — script determinístico de auto-fix)*
-- `.github/AGENT_CONTRACT.md` *(atualizado — regra 26 + referência ao auto-fix)*
-- `schema/CODEX_WORKFLOW.md` *(atualizado — seções 17 e 18)*
-- `schema/README_EXECUCAO.md` *(atualizado — auto-fix + regra de menção)*
-- `README.md` *(atualizado — auto-fix + regra de menção)*
+- `schema/source/README.md` *(corrigido — reflete existência real do PDF)*
+- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` *(reorganizado — honestidade documental)*
+- `schema/legacy/INDEX_LEGADO_MESTRE.md` *(transformado em índice operacional real)*
+- `schema/CONTRACT_SCHEMA.md` *(expandido — seções 14-16 + cabeçalho mínimo atualizado)*
 - `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
 
 ## 13. Item do A01 atendido
 
-- **Fase 0** — fundação documental: auto-fix controlado formalizado + regra de menção ao agente operacionalizada.
+- **Fase 0** — fundação documental: legado mestre organizado corretamente para abertura do primeiro contrato ativo do Core Mecânico 2.
 
 ## 14. Estado atual da frente
 
-**não iniciada** (auto-fix controlado + regra @copilot+modelo concluídos)
+**não iniciada** (base documental organizada — pronta para abertura de contrato)
 
-A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. Toda a governança está pronta: trio-base, workflow 16+ etapas, protocolos (dados, permissões, execução contratual, closeout, economia de request), schemas, bootstrap Cloudflare, pipeline de deploy, gate de PR, auto-fix controlado, regra de menção ao agente.
+A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. Toda a governança está pronta: trio-base, workflow 16+ etapas, protocolos (dados, permissões, execução contratual, closeout, economia de request), schemas, bootstrap Cloudflare, pipeline de deploy, gate de PR, auto-fix controlado, regra de menção ao agente. **A base documental do legado mestre agora está corretamente organizada para abertura do contrato.**
 
 ## 15. Próximo passo autorizado
 
 **Abrir contrato do Core Mecânico 2**, seguindo:
-- Formato: `schema/CONTRACT_SCHEMA.md`
+- Formato: `schema/CONTRACT_SCHEMA.md` (seções 1–16 obrigatórias)
 - Escopo: Prioridade 1 do A01 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala
-- Legados: blocos L03 + famílias L04-L17 do legado mestre unificado conforme A02 e INDEX_LEGADO_MESTRE.md
+- Referências obrigatórias (seção 14): A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, LEGADO_MESTRE_ENOVA1_ENOVA2.md, INDEX_LEGADO_MESTRE.md
+- Blocos legados obrigatórios (seção 15): L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17
+- Blocos legados complementares (seção 15): L01, L02, L18, L19, C*
+- Ordem mínima de leitura (seção 16): L03 → L04→L06 → L07→L10 → L11→L14 → L15→L16 → L17
 - Gate: Gate 1 será satisfeito com a aprovação do contrato
 - Contrato ativo: colocar em `schema/contracts/active/`
 - Atualizar `schema/contracts/_INDEX.md` ao abrir
-- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões Cloudflare ✅, pipeline de deploy ✅, camada de execução contratual ✅, gate de PR ✅, auto-fix controlado ✅
+- Dependências: trio-base ✅, workflow ✅, contexto vivo ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões ✅, pipeline de deploy ✅, camada contratual ✅, gate de PR ✅, auto-fix controlado ✅, base documental legado mestre ✅
 
-**Próximo passo preservado** — igual ao definido na PR #7.
+**Próximo passo preservado** — não alterado por esta PR.
 
 ## 16. Riscos
 
-- **Conteúdo dos legados** — O legado mestre unificado contém placeholders por bloco. O PDF mestre deve ser incorporado antes da abertura do contrato do Core.
-- **Permissão do token Cloudflare** — Verificar antes do primeiro deploy real.
-- **Auto-fix e placeholders** — Os valores inseridos pelo auto-fix são placeholders. O autor da PR deve substituir pelos valores reais antes do merge.
+- **Conteúdo dos legados não transcrito** — os blocos L01–L19 estão identificados estruturalmente mas não transcritos. A referência ao PDF é suficiente para abertura do contrato; transcrição completa é desejável mas não é pré-requisito do contrato.
+- **Blocos C não confirmados** — títulos e funções dos blocos C01–C09 dependem de leitura direta do PDF; não incluir nos campos obrigatórios do contrato até confirmação.
+- **Permissão do token Cloudflare** — verificar antes do primeiro deploy real.
 
 ## 17. Provas
 
-- PR #10 criada com escopo exclusivo de governança.
-- `.github/workflows/pr-governance-autofix.yml` criado — dispara em falha do gate, max 3 tentativas, sem LLM.
-- `scripts/autofix_pr_governance.js` criado — script determinístico, sem dependências externas, para em erros estruturais.
-- AGENT_CONTRACT regra 26 adicionada — menção @copilot+modelo obrigatória.
-- CODEX_WORKFLOW seções 17 e 18 adicionadas.
+- PR #12 criada com escopo exclusivo de organização documental.
+- `schema/source/README.md` corrigido — "PENDENTE DE UPLOAD" removido, PDF declarado como presente.
+- `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — todos os 28 blocos atualizados com honestidade documental.
+- `schema/legacy/INDEX_LEGADO_MESTRE.md` — colunas de ordem de leitura, status granular e observações adicionadas.
+- `schema/CONTRACT_SCHEMA.md` — seções 14, 15, 16 e cabeçalho mínimo expandido adicionados.
 - Nenhuma implementação funcional aberta.
 - Nenhum contrato ativo criado.
 - Status e handoff atualizados.

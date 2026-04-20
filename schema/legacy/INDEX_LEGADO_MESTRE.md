@@ -2,13 +2,16 @@
 
 ## Finalidade
 
-Este índice amarra os blocos do legado mestre unificado (`LEGADO_MESTRE_ENOVA1_ENOVA2.md`) às frentes da ENOVA 2.
-Ele substitui o antigo `INDEX_19_LEGADOS.md` e passa a cobrir também os 9 documentos complementares.
+Este índice é o painel operacional do legado mestre unificado. Ele informa, por bloco, qual é a função, quais frentes o consomem, em que ordem deve ser lido, e qual é o status real de incorporação.
+
+Substitui o antigo `INDEX_19_LEGADOS.md` e cobre também os 9 documentos complementares.
+
+**Regra de uso:** antes de qualquer execução contratual, o agente deve consultar este índice para identificar os blocos obrigatórios e complementares da frente ativa — e declarar essa seleção no campo "Blocos legados aplicáveis" do contrato.
 
 ## Fonte
 
-- **PDF mestre**: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`
-- **Markdown mestre**: `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+- **PDF mestre (fonte bruta canônica)**: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` ← **disponível no repo**
+- **Markdown mestre (blocos transcritos)**: `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
 
 ## Precedência
 
@@ -18,60 +21,62 @@ A00 > A01 > A02 > contrato específico da frente ativa > legado mestre (blocos a
 
 ## Bloco L — 19 Legados da Enova 1
 
-| Código | Nome canônico                                  | Classe / Família         | Função                                                          | Quando usar                                                        | Frentes que conversam                                    | Âncora no mestre              | Status de assimilação |
-|--------|------------------------------------------------|--------------------------|------------------------------------------------------------------|--------------------------------------------------------------------|---------------------------------------------------------|-------------------------------|-----------------------|
-| L01    | Plano Macro / Handoff Canônico (Parte 1)       | Plano macro / handoff    | Contexto geral, objetivo maior, decisões já tomadas              | Contexto global ou continuidade estratégica                        | Todas (governança)                                       | `#l01`                        | Pendente              |
-| L02    | Plano Macro / Handoff Canônico (Parte 2)       | Plano macro / handoff    | Continuidade do L01 — detalhamento e decisões complementares     | Contexto global ou continuidade estratégica                        | Todas (governança)                                       | `#l02`                        | Pendente              |
-| L03    | Mapa Canônico do Funil                         | Mapa canônico do funil   | Stages, gates, transições, microregras do funil                  | Funil, coleta, parse ou nextStage                                  | Core Mecânico 2, Speech, Contexto, Supabase              | `#l03`                        | Pendente              |
-| L04    | Topo do Funil — Contrato                       | Topo do funil            | Contrato e regras do topo                                        | Frente de topo                                                      | Core Mecânico 2                                          | `#l04`                        | Pendente              |
-| L05    | Topo do Funil — Parser                         | Topo do funil            | Parser e critérios de extração do topo                           | Frente de topo                                                      | Core Mecânico 2, Contexto/Extração                       | `#l05`                        | Pendente              |
-| L06    | Topo do Funil — Critérios                      | Topo do funil            | Critérios de aceite e validação do topo                          | Frente de topo                                                      | Core Mecânico 2                                          | `#l06`                        | Pendente              |
-| L07    | Meio A — Estado Civil (Parte 1)                | Meio A — composição      | Regras de estado civil e composição familiar                     | Frente de Meio A                                                    | Core Mecânico 2                                          | `#l07`                        | Pendente              |
-| L08    | Meio A — Estado Civil (Parte 2)                | Meio A — composição      | Continuação de regras de composição                              | Frente de Meio A                                                    | Core Mecânico 2                                          | `#l08`                        | Pendente              |
-| L09    | Meio A — Composição Familiar (Parte 1)         | Meio A — composição      | Microregras de composição familiar                               | Frente de Meio A                                                    | Core Mecânico 2                                          | `#l09`                        | Pendente              |
-| L10    | Meio A — Composição Familiar (Parte 2)         | Meio A — composição      | Continuação de microregras de composição                         | Frente de Meio A                                                    | Core Mecânico 2                                          | `#l10`                        | Pendente              |
-| L11    | Meio B — Regime e Renda (Parte 1)              | Meio B — regime/renda    | Regras de regime de bens, renda e IR                             | Frente de Meio B                                                    | Core Mecânico 2                                          | `#l11`                        | Pendente              |
-| L12    | Meio B — Regime e Renda (Parte 2)              | Meio B — regime/renda    | Continuação de regras de regime e renda                          | Frente de Meio B                                                    | Core Mecânico 2                                          | `#l12`                        | Pendente              |
-| L13    | Meio B — CTPS e Dependentes                    | Meio B — regime/renda    | Regras de CTPS, dependentes e restrições                         | Frente de Meio B                                                    | Core Mecânico 2                                          | `#l13`                        | Pendente              |
-| L14    | Meio B — Gates e Restrições                    | Meio B — regime/renda    | Gates de bloqueio e restrições de elegibilidade                  | Frente de Meio B                                                    | Core Mecânico 2                                          | `#l14`                        | Pendente              |
-| L15    | Especiais — Trilhos P3 / Multi                 | Especiais / familiar     | Trilhos especiais e variantes P3/multi                           | Frente especial/P3/multi                                            | Core Mecânico 2                                          | `#l15`                        | Pendente              |
-| L16    | Especiais — Familiar e Variantes               | Especiais / familiar     | Composição familiar especial e variantes                         | Frente especial/P3/multi                                            | Core Mecânico 2                                          | `#l16`                        | Pendente              |
-| L17    | Final Operacional / Docs / Visita              | Final operacional        | Transição final, documentos, handoff, visita                     | Frente final                                                         | Core Mecânico 2                                          | `#l17`                        | Pendente              |
-| L18    | Runner / QA / Telemetria                       | Runner / QA / telemetria | Matriz de teste, critérios de aceite e observabilidade           | Prova, regressão ou rollout                                         | Todas (telemetria, QA, rollout)                          | `#l18`                        | Pendente              |
-| L19    | Memorial do Programa / Analista MCMV           | Memorial do programa     | Regras substantivas do programa, exigências por perfil           | Interpretação de perfil, política do programa                       | Core Mecânico 2, Contexto, Áudio, Analista MCMV         | `#l19`                        | Pendente              |
+| Código | Nome canônico | Classe / Família | Função | Frentes aplicáveis | Ordem de leitura na frente | Âncora no mestre | Status de incorporação | Observação |
+|--------|--------------|-----------------|--------|-------------------|---------------------------|-----------------|----------------------|------------|
+| L01 | Plano Macro / Handoff Canônico (Parte 1) | Plano macro / handoff | Contexto geral, objetivo maior, decisões já tomadas — continuidade estratégica | Todas (governança) | 1 — ler antes do A01 quando necessário contexto histórico | `#l01` | Identificado estruturalmente — não transcrito | Título confirmado; conteúdo referenciado no PDF; sem transcrição para o markdown |
+| L02 | Plano Macro / Handoff Canônico (Parte 2) | Plano macro / handoff | Continuidade do L01 — detalhamento e decisões complementares de continuidade | Todas (governança) | 2 — ler imediatamente após L01 se contexto histórico necessário | `#l02` | Identificado estruturalmente — não transcrito | Título confirmado; conteúdo referenciado no PDF; sem transcrição para o markdown |
+| L03 | Mapa Canônico do Funil | Mapa canônico do funil | Stages, gates, transições e microregras do funil — referência central de fluxo | Core Mecânico 2, Speech, Contexto, Supabase | 1 — **obrigatório como primeiro bloco de negócio em qualquer frente de funil** | `#l03` | Identificado estruturalmente — não transcrito | Bloco mais crítico do legado; referência obrigatória para Core Mecânico 2; conteúdo no PDF |
+| L04 | Topo do Funil — Contrato | Topo do funil | Contrato e regras operacionais do topo do funil | Core Mecânico 2 | 2 — ler após L03 para frentes de topo | `#l04` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 (frente de topo); conteúdo no PDF |
+| L05 | Topo do Funil — Parser | Topo do funil | Parser e critérios de extração do topo | Core Mecânico 2, Contexto/Extração | 3 — ler após L04 para implementação de parser no topo | `#l05` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 e Contexto; conteúdo no PDF |
+| L06 | Topo do Funil — Critérios | Topo do funil | Critérios de aceite e validação do topo | Core Mecânico 2 | 4 — ler após L05 para critérios de gate no topo | `#l06` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2; conteúdo no PDF |
+| L07 | Meio A — Estado Civil (Parte 1) | Meio A — composição | Regras de estado civil e impacto na composição familiar | Core Mecânico 2 | 5 — ler após blocos de topo para frentes de Meio A | `#l07` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 (Meio A); conteúdo no PDF |
+| L08 | Meio A — Estado Civil (Parte 2) | Meio A — composição | Continuação de regras de composição por estado civil | Core Mecânico 2 | 6 — ler imediatamente após L07 | `#l08` | Identificado estruturalmente — não transcrito | Complementar a L07; conteúdo no PDF |
+| L09 | Meio A — Composição Familiar (Parte 1) | Meio A — composição | Microregras de composição familiar — elegibilidade e dependentes | Core Mecânico 2 | 7 — ler após L07-L08 para composição familiar | `#l09` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 (Meio A); conteúdo no PDF |
+| L10 | Meio A — Composição Familiar (Parte 2) | Meio A — composição | Continuação de microregras de composição familiar | Core Mecânico 2 | 8 — ler imediatamente após L09 | `#l10` | Identificado estruturalmente — não transcrito | Complementar a L09; conteúdo no PDF |
+| L11 | Meio B — Regime e Renda (Parte 1) | Meio B — regime/renda | Regras de regime de bens, renda e IR — base para elegibilidade | Core Mecânico 2 | 9 — ler após blocos de Meio A para frentes de Meio B | `#l11` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 (Meio B); conteúdo no PDF |
+| L12 | Meio B — Regime e Renda (Parte 2) | Meio B — regime/renda | Continuação de regras de regime e renda | Core Mecânico 2 | 10 — ler imediatamente após L11 | `#l12` | Identificado estruturalmente — não transcrito | Complementar a L11; conteúdo no PDF |
+| L13 | Meio B — CTPS e Dependentes | Meio B — regime/renda | Regras de CTPS, dependentes e restrições de elegibilidade | Core Mecânico 2 | 11 — ler após L11-L12 para CTPS e dependentes | `#l13` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 (Meio B); conteúdo no PDF |
+| L14 | Meio B — Gates e Restrições | Meio B — regime/renda | Gates de bloqueio e restrições de elegibilidade do Meio B | Core Mecânico 2 | 12 — ler após L11-L13 para validar gates de Meio B | `#l14` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 (Meio B); conteúdo no PDF |
+| L15 | Especiais — Trilhos P3 / Multi | Especiais / familiar | Trilhos especiais e variantes P3 e multi-proponente | Core Mecânico 2 | 13 — ler após Meio A e B para trilhos especiais | `#l15` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 (Especiais); conteúdo no PDF |
+| L16 | Especiais — Familiar e Variantes | Especiais / familiar | Composição familiar especial e variantes de elegibilidade | Core Mecânico 2 | 14 — ler imediatamente após L15 | `#l16` | Identificado estruturalmente — não transcrito | Complementar a L15; conteúdo no PDF |
+| L17 | Final Operacional / Docs / Visita | Final operacional | Transição final do funil, documentos, handoff e visita | Core Mecânico 2 | 15 — ler ao tratar da fase final do funil | `#l17` | Identificado estruturalmente — não transcrito | Obrigatório para Core Mecânico 2 (Final); conteúdo no PDF |
+| L18 | Runner / QA / Telemetria | Runner / QA / telemetria | Matriz de teste, critérios de aceite e observabilidade operacional | Todas (telemetria, QA, rollout) | Complementar — ler ao abrir frentes de QA, rollout ou telemetria | `#l18` | Identificado estruturalmente — não transcrito | Referência para todas as frentes em fases de prova e rollout; conteúdo no PDF |
+| L19 | Memorial do Programa / Analista MCMV | Memorial do programa | Regras substantivas do programa MCMV, exigências por perfil, analista virtual | Core Mecânico 2, Contexto, Áudio, Analista MCMV | Complementar — ler ao tratar de interpretação de perfil ou política do programa | `#l19` | Identificado estruturalmente — não transcrito | Obrigatório para frente de Analista MCMV; relevante para Core e Contexto; conteúdo no PDF |
 
 ---
 
 ## Bloco C — 9 Documentos Complementares
 
-| Código | Nome                             | Função                                                          | Quando usar                                      | Frentes que conversam         | Âncora no mestre | Status de assimilação |
-|--------|----------------------------------|-----------------------------------------------------------------|--------------------------------------------------|-------------------------------|------------------|-----------------------|
-| C01    | Documento Complementar 1         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c01`           | Pendente              |
-| C02    | Documento Complementar 2         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c02`           | Pendente              |
-| C03    | Documento Complementar 3         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c03`           | Pendente              |
-| C04    | Documento Complementar 4         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c04`           | Pendente              |
-| C05    | Documento Complementar 5         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c05`           | Pendente              |
-| C06    | Documento Complementar 6         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c06`           | Pendente              |
-| C07    | Documento Complementar 7         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c07`           | Pendente              |
-| C08    | Documento Complementar 8         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c08`           | Pendente              |
-| C09    | Documento Complementar 9         | *(a definir após incorporação do PDF)*                          | *(a definir)*                                     | *(a definir)*                 | `#c09`           | Pendente              |
+> **ATENÇÃO:** os títulos, funções e frentes dos blocos C ainda não foram confirmados via leitura direta do PDF. As linhas abaixo representam estrutura reservada — não são afirmações de conteúdo.
+
+| Código | Nome (provisório) | Função | Frentes aplicáveis | Ordem de leitura | Âncora no mestre | Status de incorporação | Observação |
+|--------|------------------|--------|-------------------|-----------------|-----------------|----------------------|------------|
+| C01 | Documento Complementar 1 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c01` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
+| C02 | Documento Complementar 2 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c02` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
+| C03 | Documento Complementar 3 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c03` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
+| C04 | Documento Complementar 4 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c04` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
+| C05 | Documento Complementar 5 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c05` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
+| C06 | Documento Complementar 6 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c06` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
+| C07 | Documento Complementar 7 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c07` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
+| C08 | Documento Complementar 8 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c08` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
+| C09 | Documento Complementar 9 | A confirmar via leitura do PDF | A confirmar | A confirmar | `#c09` | Estrutura reservada — não confirmado | Título, função e frentes a definir após leitura direta do PDF |
 
 ---
 
-## Amarração por frente (qual bloco ler em cada frente)
+## Amarração por frente — blocos obrigatórios e complementares
 
-| Frente                                         | Blocos obrigatórios do legado mestre | Blocos complementares           |
-|------------------------------------------------|--------------------------------------|---------------------------------|
-| Core Mecânico 2                                | L03, L04–L17                         | L01–L02, L18, L19, C*           |
-| Speech Engine e Surface Única                  | L03, L01–L02                         | Família da frente ativa, C*     |
-| Contexto, Extração e Memória Viva              | L03, L19                             | Família da frente ativa, C*     |
-| Supabase Adapter e Persistência                | L03, L18                             | Contrato da frente ativa, C*    |
-| Áudio e Multimodalidade                        | L19                                  | L03, contrato da frente, C*     |
-| Meta/WhatsApp                                  | L18                                  | Contrato da frente ativa, C*    |
-| Telemetria e Observabilidade                   | L18                                  | L03, contrato da frente, C*     |
-| Rollout                                        | L18                                  | L03, contrato da frente, C*     |
+| Frente | Blocos obrigatórios | Blocos complementares | Ordem mínima de leitura |
+|--------|--------------------|-----------------------|------------------------|
+| Core Mecânico 2 | L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17 | L01, L02, L18, L19, C* | L03 → L04→L06 (topo) → L07→L10 (Meio A) → L11→L14 (Meio B) → L15→L16 (Especiais) → L17 (Final) |
+| Speech Engine e Surface Única | L03 | L01, L02, família da frente ativa, C* | L03 → legados da frente ativa |
+| Contexto, Extração e Memória Viva | L03, L05, L19 | família da frente ativa, C* | L03 → L05 → L19 |
+| Supabase Adapter e Persistência | L03, L18 | contrato da frente ativa, C* | L03 → L18 |
+| Áudio e Multimodalidade | L19 | L03, contrato da frente ativa, C* | L19 → L03 |
+| Meta/WhatsApp | L18 | contrato da frente ativa, C* | L18 |
+| Telemetria e Observabilidade | L18 | L03, contrato da frente ativa, C* | L18 → L03 |
+| Rollout | L18 | L03, contrato da frente ativa, C* | L18 → L03 |
 
-> **C\***: blocos complementares serão amarrados por frente após incorporação do PDF mestre.
+> **C\***: blocos complementares serão amarrados por frente após confirmação dos títulos e funções via leitura direta do PDF.
 
 ---
 
@@ -79,13 +84,19 @@ A00 > A01 > A02 > contrato específico da frente ativa > legado mestre (blocos a
 
 1. Identificar a frente ativa.
 2. Consultar a tabela "Amarração por frente" acima.
-3. Navegar às âncoras indicadas no `LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
-4. Nunca ler o documento inteiro por padrão.
+3. Verificar o status de incorporação de cada bloco necessário.
+4. Se o bloco está transcrito: navegar à âncora no `LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+5. Se o bloco não está transcrito: referenciar diretamente o PDF em `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`.
+6. Nunca ler o documento inteiro por padrão.
+7. Declarar os blocos consultados no campo "Blocos legados aplicáveis" do contrato ativo.
 
-## Status canônicos de assimilação
+---
 
-| Status                  | Significado                                                        |
-|-------------------------|--------------------------------------------------------------------|
-| Pendente                | Bloco existe como placeholder, conteúdo do PDF não transcrito      |
-| Transcrito              | Conteúdo transcrito do PDF com fidelidade                          |
-| Revisado e validado     | Conteúdo revisado por humano e confirmado como fiel ao original    |
+## Status canônicos de incorporação
+
+| Status | Significado |
+|--------|-------------|
+| `Estrutura reservada — não confirmado` | Bloco C com estrutura reservada; título, função e frentes ainda não confirmados via PDF |
+| `Identificado estruturalmente — não transcrito` | Título e domínio identificados; conteúdo do PDF ainda não transcrito para o markdown |
+| `Transcrito` | Conteúdo transcrito do PDF com fidelidade para o markdown |
+| `Revisado e validado` | Conteúdo revisado por humano e confirmado como fiel ao original |
