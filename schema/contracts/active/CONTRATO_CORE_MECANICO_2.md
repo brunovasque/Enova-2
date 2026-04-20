@@ -25,7 +25,8 @@
 >
 > Os documentos canônicos que o alimentam:
 > - **PDF 1** — Plano Canônico Macro (A00) — pp. 1–10
-> - **PDF 2** — Contrato de Implantação (A01) — pp. 1–8
+> - **PDF 2** — Contrato de Implantação — pp. 1–8
+> - **PDF 3** — Plano Tático de Execução — pp. 1–8
 >
 > Este contrato ativo é uma **camada operacional vinculada** ao contrato macro.
 > Ele existe para organizar a execução do Core Mecânico 2 por etapas, com âncora explícita
@@ -54,6 +55,11 @@ Seções e páginas efetivamente lidas para fundamentar este contrato ativo:
 | PDF 2 — Contrato de Implantação | Gates G0–G7 | p. 4–5 | Gates de implantação por frente |
 | PDF 2 — Contrato de Implantação | Critérios de aceite executivos | p. 5 | Critérios funcionais, de política, telemetria, regressão e rollback |
 | PDF 2 — Contrato de Implantação | Encerramento executivo | p. 8 | "liberdade conversacional com governança dura" |
+| PDF 3 — Plano Tático de Execução | Regra executiva central + Sec. 1 Estratégia operacional | p. 1 | Fatia por fatia; princípios de separação de frentes; governança por isolamento |
+| PDF 3 — Plano Tático de Execução | Sec. 1 — Princípios de execução | p. 1 | "Separar sempre arquitetura, estado, políticas, orquestração, canais e migração de fluxo." |
+| PDF 3 — Plano Tático de Execução | Sec. 2 — Cronograma tático mestre (T0–T7) | p. 2–3 | Ordem oficial de execução por frente; dependências entre frentes; T5 Migração do funil |
+| PDF 3 — Plano Tático de Execução | T1 — Constituição do agente e contrato cognitivo canônico | p. 4 | Confirma que contrato do agente precede implementação (base de A01-01) |
+| PDF 3 — Plano Tático de Execução | T5 — Migração do funil prioritário | p. 7 | Sequência da primeira fatia funcional: topo + composição + renda + elegibilidade |
 
 ---
 

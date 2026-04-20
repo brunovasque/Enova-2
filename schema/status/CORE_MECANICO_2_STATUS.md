@@ -172,6 +172,7 @@ Fontes de verdade consultadas — última tarefa (PR desta correção — revis�
   Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
   Legado markdown consultado:  N/A — tarefa de governança; blocos legados referenciados estruturalmente
   PDF mestre consultado:       sim — lido diretamente
-    PDF 1 — Plano Canônico Macro:   pp. 1–10 (tese central, sec. 1–8, macrocronograma)
+    PDF 1 — Plano Canônico Macro:    pp. 1–10 (tese central, sec. 1–8, macrocronograma)
     PDF 2 — Contrato de Implantação: pp. 1–8 (princípio jurídico, objeto, cláusulas 1–6, não-negociáveis, gates G0–G7, critérios, rollback, encerramento)
+    PDF 3 — Plano Tático de Execução: pp. 1–8 (regra executiva central, estratégia operacional, princípios de execução, cronograma T0–T7, T1 constituição do agente, T5 migração do funil prioritário)
 ```

@@ -246,6 +246,17 @@ Fontes de verdade consultadas (PR desta correção — PDF lido diretamente):
       - p. 4–5: Gates G0–G7
       - p. 5: Critérios de aceite executivos
       - p. 8: Encerramento executivo ("liberdade conversacional com governança dura")
+    PDF 3 — Plano Tático de Execução: pp. 1–8
+      - p. 1: Regra executiva central (sequência obrigatória de frentes)
+      - p. 1: Sec. 1 Estratégia operacional — Modo de trabalho, Estratégia de risco, Princípios de execução
+        ("Separar sempre arquitetura, estado, políticas, orquestração, canais e migração de fluxo.")
+        ("Fatia por fatia, com isolamento por frente e validação antes de abrir a frente seguinte.")
+      - p. 2–3: Sec. 2 Cronograma tático mestre (tabela T0–T7 com objetivos e dependências)
+        (T5: "Migrar topo + qualificação + renda + elegibilidade"; dependência T4)
+      - p. 4: T1 — Constituição do agente e contrato cognitivo canônico
+        ("Transformar o conhecimento da Enova em um contrato operacional claro para o LLM")
+      - p. 7: T5 — Migração do funil prioritário
+        ("Quebrar a migração em fatias: topo e abertura; identificação base; composição/estado civil; renda e regime; elegibilidade e sinais de inviabilidade; envio_docs.")
 ```
 
 ---
