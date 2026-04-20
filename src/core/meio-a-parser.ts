@@ -1,5 +1,5 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Parser/Extrator do Meio A (L07 + L08)
+ * ENOVA 2 — Core Mecânico 2 — Parser/Extrator do Meio A (L07 + L10)
  *
  * O LLM extrai facts; este módulo apenas valida e normaliza sinais estruturais
  * de estado civil, processo e composição familiar mínima.
@@ -28,7 +28,14 @@ export interface MeioASignals {
   processo_value: ProcessoMode | null;
   composition_actor_detected: boolean;
   composition_actor_value: CompositionActor | null;
+  p3_required_detected: boolean;
+  p3_required_value: boolean | null;
+  dependents_applicable_detected: boolean;
+  dependents_applicable_value: boolean | null;
+  dependents_count_detected: boolean;
+  dependents_count_value: number | null;
   composition_required: boolean;
+  dependents_required: boolean;
   parse_status: MeioAParseStatus;
   keys_checked: string[];
 }
@@ -65,11 +72,19 @@ export function extractMeioASignals(input: MeioATurnExtract): MeioASignals {
   const estadoCivilValue = normalizeEstadoCivil(merged['estado_civil']);
   const processoValue = normalizeProcesso(merged['processo']);
   const compositionActorValue = normalizeCompositionActor(merged['composition_actor']);
+  const p3RequiredValue = normalizeBoolean(merged['p3_required']);
+  const dependentsApplicableValue = normalizeBoolean(merged['dependents_applicable']);
+  const dependentsCountValue = normalizeDependentsCount(merged['dependents_count']);
 
   const estadoCivilDetected = estadoCivilValue !== null;
   const processoDetected = processoValue !== null;
   const compositionActorDetected = compositionActorValue !== null;
+  const p3RequiredDetected = p3RequiredValue !== null;
+  const dependentsApplicableDetected = dependentsApplicableValue !== null;
+  const dependentsCountDetected = dependentsCountValue !== null;
   const compositionRequired = processoValue === 'composicao_familiar';
+  const dependentsRequired =
+    processoValue !== 'conjunto' && dependentsApplicableValue === true;
 
   return {
     estado_civil_detected: estadoCivilDetected,
@@ -78,11 +93,21 @@ export function extractMeioASignals(input: MeioATurnExtract): MeioASignals {
     processo_value: processoValue,
     composition_actor_detected: compositionActorDetected,
     composition_actor_value: compositionActorValue,
+    p3_required_detected: p3RequiredDetected,
+    p3_required_value: p3RequiredValue,
+    dependents_applicable_detected: dependentsApplicableDetected,
+    dependents_applicable_value: dependentsApplicableValue,
+    dependents_count_detected: dependentsCountDetected,
+    dependents_count_value: dependentsCountValue,
     composition_required: compositionRequired,
+    dependents_required: dependentsRequired,
     parse_status: computeParseStatus(
       estadoCivilDetected,
       processoDetected,
       compositionActorDetected,
+      p3RequiredDetected,
+      dependentsApplicableDetected,
+      dependentsCountDetected,
     ),
     keys_checked: [
       ...MEIO_A_REQUIRED_FACTS,
@@ -112,12 +137,41 @@ function normalizeCompositionActor(raw: unknown): CompositionActor | null {
   return null;
 }
 
+function normalizeBoolean(raw: unknown): boolean | null {
+  if (raw === null || raw === undefined) return null;
+  if (typeof raw === 'boolean') return raw;
+
+  const value = String(raw).trim().toLowerCase();
+  if (['sim', 'true', '1'].includes(value)) return true;
+  if (['nao', 'não', 'false', '0'].includes(value)) return false;
+  return null;
+}
+
+function normalizeDependentsCount(raw: unknown): number | null {
+  if (raw === null || raw === undefined) return null;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 0) return null;
+  return value;
+}
+
 function computeParseStatus(
   estadoCivilDetected: boolean,
   processoDetected: boolean,
   compositionActorDetected: boolean,
+  p3RequiredDetected: boolean,
+  dependentsApplicableDetected: boolean,
+  dependentsCountDetected: boolean,
 ): MeioAParseStatus {
   if (estadoCivilDetected && processoDetected) return 'ready';
-  if (estadoCivilDetected || processoDetected || compositionActorDetected) return 'partial';
+  if (
+    estadoCivilDetected ||
+    processoDetected ||
+    compositionActorDetected ||
+    p3RequiredDetected ||
+    dependentsApplicableDetected ||
+    dependentsCountDetected
+  ) {
+    return 'partial';
+  }
   return 'empty';
 }

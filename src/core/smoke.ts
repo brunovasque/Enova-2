@@ -1,13 +1,13 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L08)
+ * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L10)
  *
  * Âncora contratual:
- *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-06 (L07/L08)
- *   Bloco legado:    L03, L04, L05, L06, L07, L08
+ *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-08 (L07/L10)
+ *   Bloco legado:    L03, L04, L05, L06, L07, L08, L09, L10
  *   Gate-fonte:      Gate 2 (A01: "sem smoke da frente, não promove")
  *
  * ESCOPO: provar que o esqueleto estrutural (L03), o topo do funil (L04–L06)
- * e o Meio A inicial (L07/L08) existem e não produzem fala.
+ * e o Meio A expandido (L07/L10) existem e não produzem fala.
  *
  * INVIOLÁVEL: nenhum cenário gera texto ao cliente.
  */
@@ -128,10 +128,13 @@ export function smokeScenario3_BloqueioFactParcial(): SmokeResult {
 // ---------------------------------------------------------------------------
 export function smokeScenario4_MeioAIntegrado_AvancoValido(): SmokeResult {
   const state = makeState('qualification_civil', {
-    estado_civil: 'uniao_estavel',
-    processo: 'conjunto',
+    estado_civil: 'solteiro',
+    processo: 'composicao_familiar',
+    composition_actor: 'mae',
+    p3_required: false,
+    dependents_applicable: false,
   });
-  const decision = runCoreEngine(state); // fluxo integrado via topo (L05+L06 no engine)
+  const decision = runCoreEngine(state);
 
   return {
     scenario: 'Cenário 4 — Meio A integrado: trilho válido avança',
@@ -149,29 +152,63 @@ export function smokeScenario4_MeioAIntegrado_AvancoValido(): SmokeResult {
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 5: Meio A com composição mínima relevante → avança
+// Cenário 5: Meio A com composição que exige dependente → bloqueia em coleta específica
 //
-// Prova: composição familiar mínima relevante fica estruturalmente conectada ao
-// caminho real do Core sem abrir outras micro regras.
+// Prova: L09/L10 aprofundam a composição sem abrir Meio B; quando dependente faz
+// sentido, o next step muda para coleta de dependents_count.
 // ---------------------------------------------------------------------------
-export function smokeScenario5_MeioAIntegrado_ComposicaoRelevante(): SmokeResult {
+export function smokeScenario5_MeioAIntegrado_DependentesAlteramNextStep(): SmokeResult {
   const state = makeState('qualification_civil', {
     estado_civil: 'solteiro',
     processo: 'composicao_familiar',
     composition_actor: 'mae',
+    p3_required: false,
+    dependents_applicable: true,
   });
-  const decision = runCoreEngine(state); // fluxo integrado via Meio A (L07/L08 no engine)
+  const decision = runCoreEngine(state);
 
   return {
-    scenario: 'Cenário 5 — Meio A integrado: composição mínima relevante avança',
+    scenario: 'Cenário 5 — Meio A integrado: dependentes alteram o next step estrutural',
     passed: true,
     decision,
     assertions: [
       assert('stage_current = qualification_civil', 'qualification_civil', decision.stage_current),
-      assert('block_advance = false (composition_actor válido libera avanço)', false, decision.block_advance),
-      assert('stage_after = qualification_renda', 'qualification_renda', decision.stage_after),
-      assert('speech_intent = transicao_stage (sinal estrutural — não é fala)', 'transicao_stage', decision.speech_intent),
+      assert('block_advance = true (dependents_count ainda ausente)', true, decision.block_advance),
+      assert('stage_after permanece em qualification_civil', 'qualification_civil', decision.stage_after),
+      assert('next_objective = coletar_dependents_count', 'coletar_dependents_count', decision.next_objective),
+      assert('speech_intent = bloqueio (sinal estrutural — não é fala)', 'bloqueio', decision.speech_intent),
       assert('Core não produz texto — apenas estrutura de decisão', true, typeof decision.speech_intent === 'string'),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 6: Meio A com composição complexa P3 → muda o roteamento estrutural
+//
+// Prova: quando a composição exige terceiro participante, o Core segura o avanço
+// no próprio qualification_civil e manda avaliar P3 antes de seguir.
+// ---------------------------------------------------------------------------
+export function smokeScenario6_MeioAIntegrado_P3MudaRoteamento(): SmokeResult {
+  const state = makeState('qualification_civil', {
+    estado_civil: 'solteiro',
+    processo: 'composicao_familiar',
+    composition_actor: 'irmao',
+    p3_required: true,
+    dependents_applicable: false,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 6 — Meio A integrado: P3 altera o roteamento estrutural',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_civil', 'qualification_civil', decision.stage_current),
+      assert('block_advance = true (P3 exige roteamento próprio)', true, decision.block_advance),
+      assert('stage_after permanece em qualification_civil', 'qualification_civil', decision.stage_after),
+      assert('next_objective = avaliar_p3', 'avaliar_p3', decision.next_objective),
+      assert('gates_activated inclui G_COMPOSICAO_FAMILIAR', true, decision.gates_activated.includes('G_COMPOSICAO_FAMILIAR')),
+      assert('speech_intent = bloqueio (sinal estrutural — não é fala)', 'bloqueio', decision.speech_intent),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
 }
@@ -192,8 +229,8 @@ export interface SmokeSuiteResult {
  * Prova exigida (A01-05, Gate 2):
  * "Smoke de trilho e next step autorizado"
  *
- * Cenários L03/L04-L08 integrados (5): topo segue válido e o Meio A passa por
- * ausência crítica, avanço mínimo e composição mínima relevante.
+ * Cenários L03/L04-L10 integrados (6): topo segue válido e o Meio A passa por
+ * ausência crítica, composição válida, dependente aplicável e roteamento P3.
  * Todos os cenários passam pelo `runCoreEngine()`. Nenhum usa decisão fake.
  * Nenhum cenário gera fala ao cliente.
  */
@@ -203,7 +240,8 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario2_AvancaQuandoFactsPresentes,
     smokeScenario3_BloqueioFactParcial,
     smokeScenario4_MeioAIntegrado_AvancoValido,
-    smokeScenario5_MeioAIntegrado_ComposicaoRelevante,
+    smokeScenario5_MeioAIntegrado_DependentesAlteramNextStep,
+    smokeScenario6_MeioAIntegrado_P3MudaRoteamento,
   ];
 
   const results = scenarios.map((fn) => {
@@ -231,9 +269,9 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L08)');
+  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L10)');
   console.log('===========================================');
-  console.log(`Âncora: L03 + L04/L05/L06 + L07/L08 | Gate 2 (A01)`);
+  console.log(`Âncora: L03 + L04/L05/L06 + L07/L10 | Gate 2 (A01)`);
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
   console.log(`Resultado: ${suite.all_passed ? '✅ PASSOU' : '❌ FALHOU'}\n`);

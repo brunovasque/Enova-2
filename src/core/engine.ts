@@ -1,15 +1,15 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Motor de Decisão Estrutural (L03 + L04/L05/L06)
+ * ENOVA 2 — Core Mecânico 2 — Motor de Decisão Estrutural (L03 + L04/L05/L06 + L07/L10)
  *
  * Âncora contratual:
  *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06)
- *   Bloco legado:    L03 — Mapa Canônico do Funil; L04, L05, L06 — Topo do Funil
+ *   Bloco legado:    L03 — Mapa Canônico do Funil; L04-L06 — Topo; L07-L10 — Meio A
  *
  * MISSÃO: receber estado estrutural, avaliar gates, retornar decisão estrutural.
  *
  * CAMINHOS DE DECISÃO:
  *   - Stage 'discovery' (topo): usa L04/L05/L06 — extractTopoSignals + evaluateTopoCriteria
- *   - Stage 'qualification_civil' (Meio A): usa L07/L08 — extractMeioASignals + evaluateMeioACriteria
+ *   - Stage 'qualification_civil' (Meio A): usa L07/L10 — extractMeioASignals + evaluateMeioACriteria
  *   - Demais stages: usa caminho genérico L03 — G_FATO_CRITICO_AUSENTE
  *
  * RESTRIÇÃO INVIOLÁVEL: esta função não retorna texto ao cliente.
@@ -92,7 +92,7 @@ export function runCoreEngine(state: LeadState): CoreDecision {
 }
 
 // ---------------------------------------------------------------------------
-// Caminho de decisão do Meio A — integra L07/L08 no Core principal
+// Caminho de decisão do Meio A — integra L07/L10 no Core principal
 // ---------------------------------------------------------------------------
 
 function runMeioADecision(state: LeadState): CoreDecision {
@@ -105,17 +105,17 @@ function runMeioADecision(state: LeadState): CoreDecision {
   const blockAdvance = !meioACriteria.can_advance;
   const stageAfter = meioACriteria.authorized_next_step as LeadState['current_stage'];
 
-  const nextObjective = blockAdvance
-    ? `coletar_${meioACriteria.missing_required_facts[0] ?? 'ajuste_meio_a'}`
-    : `avancar_para_${stageAfter}`;
-
   return {
     stage_current: 'qualification_civil',
     stage_after: stageAfter,
-    next_objective: nextObjective,
+    next_objective: meioACriteria.next_objective,
     block_advance: blockAdvance,
     gates_activated: meioACriteria.activated_gates,
-    speech_intent: blockAdvance ? 'bloqueio' : 'transicao_stage',
+    speech_intent: blockAdvance
+      ? 'bloqueio'
+      : stageAfter !== state.current_stage
+        ? 'transicao_stage'
+        : 'coleta_dado',
     decision_id: `core-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     evaluated_at: new Date().toISOString(),
   };
