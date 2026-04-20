@@ -125,7 +125,7 @@ Ver `schema/REQUEST_ECONOMY_PROTOCOL.md` para a política de economia de request
 O repositório inclui o bootstrap mínimo e o pipeline de deploy para Cloudflare Workers:
 
 - `wrangler.toml` — configura os ambientes canônicos: `nv-enova-2` (produção) e `nv-enova-2-test` (teste)
-- `src/worker.ts` — entrypoint placeholder mínimo (sem lógica de produto)
+- `src/worker.ts` — entrypoint técnico mínimo com rota estrutural `POST /__core__/run`
 - `.github/workflows/deploy.yml` — pipeline de deploy (automático em main + manual test/prod)
 - `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação técnica do bootstrap e uso local (bash, PowerShell, VSCode)
 
