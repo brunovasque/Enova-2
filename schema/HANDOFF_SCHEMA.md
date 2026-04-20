@@ -74,6 +74,38 @@ Se sim:
 - Justificativa: `<por que foi necessária>`
 - Impacto no próximo passo autorizado: `alterou | não alterou` — `<descrição>`
 
+### 11a. Contrato ativo
+
+Referência ao contrato ativo da frente durante esta entrega.
+Se não houver contrato ativo: `Nenhum contrato ativo`.
+Caminho: `schema/contracts/active/<NOME>.md`
+
+### 11b. Recorte executado do contrato
+
+Qual parte do contrato ativo esta PR executou.
+Se não executou contrato (governança/infra): `N/A`.
+
+### 11c. Pendência contratual remanescente
+
+Itens do contrato ativo que permanecem abertos após esta PR.
+Se não há contrato ativo: `N/A`.
+
+### 11d. Houve desvio de contrato?
+
+Declarar explicitamente: `não` | `sim`
+Se sim:
+- Tipo de desvio: `<novo escopo | nova frente | entrega fora do objetivo | outro>`
+- Descrição: `<o que aconteceu>`
+- Ação tomada: `<parada | revisão formal | novo contrato>`
+
+Ver `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` seção 6.
+
+### 11e. Contrato encerrado nesta PR?
+
+Declarar explicitamente: `não` | `sim`
+Se sim: incluir bloco de encerramento conforme `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` seção 4.
+Indicar próximo contrato autorizado.
+
 ### 12. Arquivos relevantes
 
 Lista de arquivos criados, alterados ou que devem ser consultados para continuidade.
@@ -173,6 +205,11 @@ Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios
 | Estado da frente                           | <estado canônico>                                            |
 | Classificação da tarefa                    | <contratual | governança | fora_de_contrato | ...>            |
 | Última PR relevante                        | <número e título>                                            |
+| Contrato ativo                             | <caminho ou "Nenhum">                                         |
+| Recorte executado do contrato              | <descrição ou "N/A">                                          |
+| Pendência contratual remanescente          | <lista ou "N/A">                                              |
+| Houve desvio de contrato?                  | <não | sim>                                                    |
+| Contrato encerrado nesta PR?               | <não | sim>                                                    |
 | Item do A01 atendido                       | <fase/prioridade/item>                                       |
 | Próximo passo autorizado                   | <descrição>                                                  |
 | Próximo passo foi alterado?                | <sim | não>                                                   |

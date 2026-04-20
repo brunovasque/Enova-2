@@ -13,21 +13,24 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 1. `schema/A00_PLANO_CANONICO_MACRO.md`
 2. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
 3. `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
-4. Contrato específico da frente ativa (seguindo formato de `schema/CONTRACT_SCHEMA.md`)
-5. Status vivo da frente ativa (`schema/status/<FRENTE>_STATUS.md`)
-6. Último handoff da frente ativa (`schema/handoffs/<FRENTE>_LATEST.md`)
-7. `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
-8. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
-9. `schema/TASK_CLASSIFICATION.md`
-10. `schema/DATA_CHANGE_PROTOCOL.md`
-11. `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
-12. `schema/CONTRACT_SCHEMA.md`
-13. `schema/STATUS_SCHEMA.md`
-14. `schema/HANDOFF_SCHEMA.md`
-15. `schema/status/CORE_MECANICO_2_STATUS.md`
-16. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
-17. `docs/BOOTSTRAP_CLOUDFLARE.md`
-18. `wrangler.toml`
+4. `schema/contracts/_INDEX.md` — **índice canônico de contratos ativos por frente**
+5. Contrato ativo da frente (em `schema/contracts/active/`) — seguindo formato de `schema/CONTRACT_SCHEMA.md`
+6. `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo de execução contratual**
+7. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo de encerramento de contrato**
+8. Status vivo da frente ativa (`schema/status/<FRENTE>_STATUS.md`)
+9. Último handoff da frente ativa (`schema/handoffs/<FRENTE>_LATEST.md`)
+10. `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
+11. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
+12. `schema/TASK_CLASSIFICATION.md`
+13. `schema/DATA_CHANGE_PROTOCOL.md`
+14. `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
+15. `schema/CONTRACT_SCHEMA.md`
+16. `schema/STATUS_SCHEMA.md`
+17. `schema/HANDOFF_SCHEMA.md`
+18. `schema/status/CORE_MECANICO_2_STATUS.md`
+19. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
+20. `docs/BOOTSTRAP_CLOUDFLARE.md`
+21. `wrangler.toml`
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
@@ -41,31 +44,36 @@ Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas 
 
 ---
 
-## 3. Fluxo obrigatório de execução — 11 etapas
+## 3. Fluxo obrigatório de execução — 16 etapas
 
-Toda tarefa deve percorrer as 11 etapas abaixo, **em ordem, sem pular nenhuma**:
+Toda tarefa deve percorrer as 16 etapas abaixo, **em ordem, sem pular nenhuma**:
 
 ```
-Etapa 1 — Leitura canônica obrigatória (seção 1 deste documento)
-Etapa 2 — Leitura do status vivo da frente
-Etapa 3 — Leitura do último handoff da frente
-Etapa 4 — Leitura do contrato ativo (se existir)
-Etapa 5 — Leitura dos blocos aplicáveis do legado mestre
-Etapa 6 — Declaração do ESTADO HERDADO (bloco obrigatório — ver seção 4)
-Etapa 7 — Classificação da tarefa (ver schema/TASK_CLASSIFICATION.md)
-Etapa 8 — Execução (dentro do escopo declarado)
-Etapa 9 — Declaração do ESTADO ENTREGUE (bloco obrigatório — ver seção 5)
-Etapa 10 — Atualização viva obrigatória do repositório (ver seção 6)
-Etapa 11 — Resposta final padronizada (ver seção 7)
+Etapa 1  — Leitura canônica obrigatória (seção 1 deste documento)
+Etapa 2  — Leitura do índice de contratos (schema/contracts/_INDEX.md)
+Etapa 3  — Leitura do contrato ativo da frente (se existir, em schema/contracts/active/)
+Etapa 4  — Leitura do CONTRACT_EXECUTION_PROTOCOL e CONTRACT_CLOSEOUT_PROTOCOL
+Etapa 5  — Leitura do status vivo da frente
+Etapa 6  — Leitura do último handoff da frente
+Etapa 7  — Leitura dos blocos aplicáveis do legado mestre
+Etapa 8  — Declaração do ESTADO HERDADO (bloco obrigatório — ver seção 4)
+Etapa 9  — Classificação da tarefa (ver schema/TASK_CLASSIFICATION.md)
+Etapa 10 — Declaração do vínculo contratual (ver CONTRACT_EXECUTION_PROTOCOL seção 5)
+Etapa 11 — Checagem de desvio de contrato (ver CONTRACT_EXECUTION_PROTOCOL seção 6)
+Etapa 12 — Execução (dentro do escopo declarado)
+Etapa 13 — Declaração do ESTADO ENTREGUE (bloco obrigatório — ver seção 5)
+Etapa 14 — Atualização viva obrigatória do repositório (ver seção 6)
+Etapa 15 — Se houver encerramento de contrato: aplicar CONTRACT_CLOSEOUT_PROTOCOL
+Etapa 16 — Resposta final padronizada (ver seção 7)
 ```
 
-**Tarefa sem as etapas 6, 7, 9 e 10 é não conforme e não deve ser aceita.**
+**Tarefa sem as etapas 8, 9, 10, 11, 13 e 14 é não conforme e não deve ser aceita.**
 
 ---
 
 ## 4. Bloco obrigatório: ESTADO HERDADO
 
-Antes de executar (Etapa 6), o agente deve declarar explicitamente o estado herdado da frente:
+Antes de executar (Etapa 8), o agente deve declarar explicitamente o estado herdado da frente:
 
 ```
 --- ESTADO HERDADO ---
@@ -73,6 +81,8 @@ WORKFLOW_ACK: ok
 Classificação da tarefa: <contratual | governança | fora_de_contrato | correcao_incidental | hotfix | diagnostico>
 Última PR relevante: <número e título da última PR que afetou esta frente>
 Contrato ativo: <nome do contrato ou "Nenhum contrato ativo">
+Objetivo imutável do contrato: <objetivo literal do contrato ativo ou "N/A">
+Recorte a executar nesta PR: <qual parte do contrato esta PR vai executar ou "N/A">
 Item do A01: <fase/prioridade/item exato>
 Estado atual da frente: <não iniciada | contrato aberto | em execução | bloqueada | concluída>
 O que a última PR fechou: <lista objetiva>
@@ -82,6 +92,7 @@ Esta tarefa está dentro ou fora do contrato ativo: <dentro | fora — com justi
 Objetivo desta tarefa: <objetivo claro e verificável>
 Escopo: <o que está incluído>
 Fora de escopo: <o que NÃO está incluído>
+Houve desvio de contrato?: <não | sim — se sim, ver CONTRACT_EXECUTION_PROTOCOL seção 6>
 Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
 Permissões Cloudflare necessárias: <nenhuma adicional | sim — se sim, ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2>
 ```
@@ -96,7 +107,7 @@ Este bloco é a âncora de rastreabilidade entre PRs. Sem ele, a tarefa não com
 
 ## 5. Bloco obrigatório: ESTADO ENTREGUE
 
-Ao final da execução (Etapa 9), o agente deve declarar explicitamente o estado entregue:
+Ao final da execução (Etapa 13), o agente deve declarar explicitamente o estado entregue:
 
 ```
 --- ESTADO ENTREGUE ---
@@ -104,6 +115,10 @@ O que foi feito nesta PR: <lista objetiva e verificável>
 O que foi fechado nesta PR: <lista dos itens que foram concluídos>
 O que continua pendente: <lista do que não coube ou não foi feito>
 O que ainda não foi fechado do contrato ativo: <itens do contrato ainda em aberto>
+Recorte executado do contrato: <qual parte do contrato esta PR executou>
+Pendência contratual remanescente: <itens do contrato que permanecem abertos>
+Houve desvio de contrato?: <não | sim — se sim, ver CONTRACT_EXECUTION_PROTOCOL seção 6>
+Contrato encerrado nesta PR?: <não | sim — se sim, ver CONTRACT_CLOSEOUT_PROTOCOL>
 O próximo passo autorizado foi alterado? <sim | não — se sim, descrever a mudança>
 Esta tarefa foi fora de contrato? <sim | não — se sim, justificar>
 Arquivos vivos atualizados: <lista de arquivos de status/handoff/contrato efetivamente atualizados>
@@ -211,8 +226,11 @@ Provas
 - **Sem mistura de frentes sem necessidade comprovada e documentada.**
 - **Diagnóstico antes de patch.** Toda mudança começa com leitura e prova do problema.
 - **Prova antes de promoção.** Toda entrega precisa de smoke, evidência e plano de rollback.
-- **Sem pular etapas.** O fluxo de 11 etapas é obrigatório. Pular etapas é não conformidade.
+- **Sem pular etapas.** O fluxo de 16 etapas é obrigatório. Pular etapas é não conformidade.
 - **Sem contexto implícito.** Estado herdado e estado entregue devem ser declarados explicitamente — nunca implícitos.
+- **Contrato ativo é imutável por PR de execução.** Nenhuma PR de execução pode alterar silenciosamente o contrato ativo. Qualquer alteração exige revisão contratual formal (ver `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` seção 7).
+- **Desvio de contrato é condição de parada.** Toda PR de execução deve declarar explicitamente se houve desvio de contrato. Desvio identificado = parada + revisão formal.
+- **Contrato só encerra via protocolo formal.** Nenhum contrato pode ser considerado encerrado sem cumprir integralmente o `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`.
 
 ---
 
@@ -257,6 +275,9 @@ Os seguintes schemas definem o formato obrigatório de artefatos de governança:
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs.
 - `schema/DATA_CHANGE_PROTOCOL.md` — protocolo obrigatório de mudanças em dados persistidos do Supabase.
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — protocolo obrigatório de permissões Cloudflare.
+- `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — protocolo obrigatório de execução contratual por PR.
+- `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — protocolo obrigatório de encerramento formal de contrato.
+- `schema/contracts/_INDEX.md` — índice canônico de contratos ativos por frente.
 
 Nenhum contrato, status ou handoff deve ser criado fora destes formatos.
 
@@ -268,6 +289,7 @@ O repositório mantém contexto vivo em:
 
 - `schema/status/` — status vivos por frente (índice em `_INDEX.md`)
 - `schema/handoffs/` — handoffs persistidos por frente (índice em `_INDEX.md`)
+- `schema/contracts/` — contratos ativos e arquivados (índice em `_INDEX.md`, contratos ativos em `active/`, arquivados em `archive/`)
 - `schema/legacy/` — legado mestre unificado (índice em `INDEX_LEGADO_MESTRE.md`, conteúdo em `LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
 - `schema/source/` — PDF mestre original (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`)
 
@@ -283,6 +305,9 @@ Se qualquer das condições abaixo for identificada, parar e reportar em vez de 
 - Escopo que ultrapassa o contrato ativo sem autorização
 - Estado herdado não declarado ou inconsistente com o repositório
 - Classificação de tarefa ausente ou incompatível com o escopo
+- **Desvio de contrato identificado** — PR tentando abrir nova frente, novo escopo, entrega fora do objetivo do contrato ou mudança de objetivo sem revisão formal (ver `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` seção 6)
+- **Contrato ativo sendo alterado silenciosamente por PR de execução** — qualquer alteração de contrato sem classificação como revisão contratual/governança
+- **Tentativa de encerramento implícito de contrato** — sem checklist formal de closeout (ver `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`)
 - Mudança em dados persistidos (Supabase) sem declaração completa dos campos obrigatórios (tabela, tipo, colunas, motivo, impacto, rollback) — ver `schema/DATA_CHANGE_PROTOCOL.md` seção 5
 - Introdução de dependência de recurso Cloudflare sem declaração completa dos campos obrigatórios (recurso, ação, permissões suficientes, impacto) — ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` seção 5
 
