@@ -93,6 +93,27 @@ Deve seguir a amarração definida no A02.
 Data e hora (ISO 8601) da última atualização deste status.
 Indicar também o agente ou humano responsável pela atualização.
 
+### 15. Mudanças em dados persistidos (Supabase) — última tarefa
+
+Declaração obrigatória — inclusive quando não houver mudança na última tarefa:
+
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+
+ou, se a última tarefa declarou mudança:
+
+```
+Mudanças em dados persistidos (Supabase): sim
+  Tabela(s) afetada(s):    <lista>
+  Tipo(s) de mudança:      <tipos canônicos>
+  Impacto na frente:       <como esta mudança afeta o estado ou o próximo passo autorizado>
+```
+
+Se a mudança de dados afetar o estado da frente ou o próximo passo autorizado, refletir isso explicitamente nas seções 4 (Estado atual), 12 (Próximo passo autorizado) e 9 (Pendências) deste status.
+
+Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos e campos obrigatórios.
+
 ---
 
 ## Regras de uso
@@ -111,17 +132,18 @@ Indicar também o agente ou humano responsável pela atualização.
 ```markdown
 # STATUS VIVO — <Nome da Frente> — ENOVA 2
 
-| Campo                          | Valor                                                                                    |
-|--------------------------------|------------------------------------------------------------------------------------------|
-| Frente                         | <nome>                                                                                   |
-| Contrato ativo                 | <referência ou "Nenhum">                                                                 |
-| Item do A01                    | <fase/prioridade/item>                                                                   |
-| Estado atual                   | <não iniciada / contrato aberto / em execução / bloqueada / concluída>                   |
-| Classe da última tarefa        | <contratual / governança / fora_de_contrato / correcao_incidental / hotfix / diagnostico>|
-| Última PR relevante            | <referência e descrição ou "Nenhuma">                                                    |
-| Último commit                  | <hash ou "Nenhum">                                                                       |
-| Pendência remanescente herdada | <descrição ou "Nenhuma">                                                                 |
-| Próximo passo autorizado       | <descrição> (preservado / alterado)                                                      |
-| Legados aplicáveis             | <L0x, L0y, ...>                                                                          |
-| Última atualização             | <data ISO 8601>                                                                          |
+| Campo                                      | Valor                                                                                    |
+|--------------------------------------------|------------------------------------------------------------------------------------------|
+| Frente                                     | <nome>                                                                                   |
+| Contrato ativo                             | <referência ou "Nenhum">                                                                 |
+| Item do A01                                | <fase/prioridade/item>                                                                   |
+| Estado atual                               | <não iniciada / contrato aberto / em execução / bloqueada / concluída>                   |
+| Classe da última tarefa                    | <contratual / governança / fora_de_contrato / correcao_incidental / hotfix / diagnostico>|
+| Última PR relevante                        | <referência e descrição ou "Nenhuma">                                                    |
+| Último commit                              | <hash ou "Nenhum">                                                                       |
+| Pendência remanescente herdada             | <descrição ou "Nenhuma">                                                                 |
+| Próximo passo autorizado                   | <descrição> (preservado / alterado)                                                      |
+| Legados aplicáveis                         | <L0x, L0y, ...>                                                                          |
+| Mudanças em dados persistidos (Supabase)   | <nenhuma | sim — ver seção 15>                                                          |
+| Última atualização                         | <data ISO 8601>                                                                          |
 ```

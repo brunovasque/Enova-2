@@ -88,3 +88,31 @@ Toda PR deve descrever:
 - O que permanece aberto.
 
 O repositório é a única fonte de verdade sobre o estado da frente — não a conversa.
+
+---
+
+## Protocolo de dados persistidos (Supabase) — obrigatório em toda tarefa
+
+Toda tarefa deve declarar explicitamente no ESTADO HERDADO e no ESTADO ENTREGUE:
+
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+ou
+```
+Mudanças em dados persistidos (Supabase): sim
+  [campos obrigatórios conforme DATA_CHANGE_PROTOCOL.md seção 4.2]
+```
+
+Esta declaração é obrigatória **em toda tarefa**, qualquer que seja a classe.  
+Ausência = tarefa não conforme.
+
+**Nenhuma mudança em tabela, coluna, índice, constraint ou relacionamento do Supabase pode acontecer sem declaração prévia, aprovação e rastreabilidade total.**
+
+Ver `schema/DATA_CHANGE_PROTOCOL.md` para o protocolo completo:
+- Tipos canônicos de mudança
+- Campos obrigatórios quando `sim`
+- Regra de parada
+- Regra de rollback e compatibilidade retroativa
+- O que é proibido
+- Exemplos

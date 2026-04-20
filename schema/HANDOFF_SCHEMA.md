@@ -102,6 +102,27 @@ Riscos identificados, ambiguidades não resolvidas, dependências externas ou co
 
 Evidências apresentadas para validar a entrega: diffs, PRs, commits, smoke tests, capturas, logs ou qualquer artefato verificável.
 
+### 18. Mudanças em dados persistidos (Supabase)
+
+Declaração obrigatória — inclusive quando não houver mudança:
+
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+
+ou, se houver mudança:
+
+```
+Mudanças em dados persistidos (Supabase): sim
+  Tabela(s) afetada(s):    <lista>
+  Tipo(s) de mudança:      <tipos canônicos — ver schema/DATA_CHANGE_PROTOCOL.md seção 3>
+  Coluna(s) afetada(s):   <lista ou "N/A">
+  O que ficou pendente:    <qualquer mudança de dado iniciada mas não concluída nesta PR>
+  Rollback disponível:     <sim | não — referência ao plano de rollback>
+```
+
+Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos, campos obrigatórios e regra de parada.
+
 ---
 
 ## Regras de uso
@@ -121,15 +142,16 @@ Evidências apresentadas para validar a entrega: diffs, PRs, commits, smoke test
 ```markdown
 # HANDOFF — <Nome da Frente> — ENOVA 2
 
-| Campo                          | Valor                                                        |
-|--------------------------------|--------------------------------------------------------------|
-| Frente                         | <nome>                                                       |
-| Data                           | <data ISO 8601>                                              |
-| Estado da frente               | <estado canônico>                                            |
-| Classificação da tarefa        | <contratual | governança | fora_de_contrato | ...>            |
-| Última PR relevante            | <número e título>                                            |
-| Item do A01 atendido           | <fase/prioridade/item>                                       |
-| Próximo passo autorizado       | <descrição>                                                  |
-| Próximo passo foi alterado?    | <sim | não>                                                   |
-| Tarefa fora de contrato?       | <sim | não>                                                   |
+| Campo                                      | Valor                                                        |
+|--------------------------------------------|--------------------------------------------------------------|
+| Frente                                     | <nome>                                                       |
+| Data                                       | <data ISO 8601>                                              |
+| Estado da frente                           | <estado canônico>                                            |
+| Classificação da tarefa                    | <contratual | governança | fora_de_contrato | ...>            |
+| Última PR relevante                        | <número e título>                                            |
+| Item do A01 atendido                       | <fase/prioridade/item>                                       |
+| Próximo passo autorizado                   | <descrição>                                                  |
+| Próximo passo foi alterado?                | <sim | não>                                                   |
+| Tarefa fora de contrato?                   | <sim | não>                                                   |
+| Mudanças em dados persistidos (Supabase)   | <nenhuma | sim — ver seção 18>                               |
 ```

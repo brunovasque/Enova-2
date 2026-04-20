@@ -1,18 +1,19 @@
 # STATUS VIVO — Core Mecânico 2 — ENOVA 2
 
-| Campo                          | Valor                                                                                     |
-|--------------------------------|-------------------------------------------------------------------------------------------|
-| Frente                         | Core Mecânico 2                                                                           |
-| Contrato ativo                 | Nenhum contrato ativo — aguardando abertura                                               |
-| Item do A01                    | Fase 0 concluída / Fase 1 — Prioridade 1 aguardando                                      |
-| Estado atual                   | não iniciada                                                                              |
-| Classe da última tarefa        | governança                                                                                |
-| Última PR relevante            | PR #3 — endurecimento do workflow de continuidade e rastreabilidade entre PRs             |
-| Último commit                  | Nenhum commit de implementação técnica                                                    |
-| Pendência remanescente herdada | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2)                        |
-| Próximo passo autorizado       | Abrir contrato do Core Mecânico 2 (preservado)                                           |
-| Legados aplicáveis             | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
-| Última atualização             | 2026-04-20T00:07:00Z                                                                      |
+| Campo                                      | Valor                                                                                     |
+|--------------------------------------------|-------------------------------------------------------------------------------------------|
+| Frente                                     | Core Mecânico 2                                                                           |
+| Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                               |
+| Item do A01                                | Fase 0 concluída / Fase 1 — Prioridade 1 aguardando                                      |
+| Estado atual                               | não iniciada                                                                              |
+| Classe da última tarefa                    | governança                                                                                |
+| Última PR relevante                        | PR #4 — endurecimento de governança com protocolo obrigatório de dados persistidos (Supabase) |
+| Último commit                              | Nenhum commit de implementação técnica                                                    |
+| Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
+| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado)                                           |
+| Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
+| Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
+| Última atualização                         | 2026-04-20T00:26:00Z                                                                      |
 
 ---
 
@@ -42,14 +43,20 @@ O workflow de continuidade entre PRs foi endurecido com obrigação de ESTADO HE
 
 ## 5. Classe da última tarefa
 
-**governança** — tarefa exclusiva de endurecimento do workflow operacional. Nenhuma implementação funcional aberta.
+**governança** — tarefa exclusiva de endurecimento de governança operacional com protocolo obrigatório de dados persistidos. Nenhuma implementação funcional aberta.
 
 ## 6. Última PR relevante
 
-PR #3 — Endurecimento do workflow de continuidade e rastreabilidade entre PRs (governança operacional).
-- Criou `schema/TASK_CLASSIFICATION.md` com 6 classes canônicas.
-- Endureceu `CODEX_WORKFLOW.md` com fluxo obrigatório de 11 etapas, ESTADO HERDADO, ESTADO ENTREGUE.
-- Atualizou HANDOFF_SCHEMA, STATUS_SCHEMA, PULL_REQUEST_TEMPLATE, AGENT_CONTRACT, README_EXECUCAO, README.
+PR #4 — Endurecimento de governança com protocolo obrigatório de dados persistidos (Supabase).
+- Criou `schema/DATA_CHANGE_PROTOCOL.md` com tipos canônicos, campos obrigatórios, regras de rollback e compatibilidade.
+- Endureceu `CODEX_WORKFLOW.md` com bloco obrigatório de dados persistidos em ESTADO HERDADO e ESTADO ENTREGUE, seção 14 (protocolo de dados), regra de parada para mudança não declarada.
+- Atualizou `TASK_CLASSIFICATION.md` com obrigação universal de declaração de dados em todas as classes.
+- Atualizou `PULL_REQUEST_TEMPLATE.md` com campos explícitos de dados persistidos (tabela, tipo, colunas, impacto, rollback).
+- Atualizou `AGENT_CONTRACT.md` com regras 13–15: declaração obrigatória, bloqueio total sem rastreabilidade, parada imediata.
+- Atualizou `HANDOFF_SCHEMA.md` com seção 18 obrigatória de dados persistidos.
+- Atualizou `STATUS_SCHEMA.md` com seção 15 de dados persistidos e novo campo no cabeçalho.
+- Atualizou `README_EXECUCAO.md` com seção de protocolo de dados persistidos.
+- Atualizou `README.md` com `DATA_CHANGE_PROTOCOL.md` como documento canônico.
 
 ## 7. Último commit
 
@@ -68,6 +75,8 @@ Nenhum commit de implementação técnica. Apenas commits documentais e de gover
 - [x] HANDOFF_SCHEMA — formato com classificação, PR anterior, o que fechou/não fechou
 - [x] Estrutura de status vivos e handoffs
 - [x] Incorporação dos legados em legado mestre unificado
+- [x] DATA_CHANGE_PROTOCOL — protocolo obrigatório de mudanças em dados persistidos do Supabase
+- [x] Rastreabilidade total de dados: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template
 
 ## 9. Pendências
 
@@ -104,5 +113,5 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T00:07:00Z
-- **Responsável**: Copilot (PR #3 — endurecimento do workflow de continuidade)
+- **Data**: 2026-04-20T00:26:00Z
+- **Responsável**: Copilot (PR #4 — protocolo de dados persistidos)

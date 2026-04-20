@@ -206,3 +206,24 @@ A classificação da tarefa deve aparecer:
 4. No `STATUS_SCHEMA` — campo `Classe da última tarefa`.
 
 Qualquer tarefa não classificada explicitamente é **não conforme** e deve ser parada até que a classificação seja declarada.
+
+---
+
+## Obrigação universal de declaração de dados persistidos
+
+**Independente da classe da tarefa**, toda tarefa deve declarar explicitamente no ESTADO HERDADO e no ESTADO ENTREGUE:
+
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+ou
+```
+Mudanças em dados persistidos (Supabase): sim
+  [campos obrigatórios conforme schema/DATA_CHANGE_PROTOCOL.md seção 4.2]
+```
+
+Esta declaração é obrigatória em **todas** as classes: `contratual`, `governança`, `fora_de_contrato`, `correcao_incidental`, `hotfix` e `diagnostico`.
+
+Ausência desta declaração = tarefa não conforme, independente da classe.
+
+Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos, campos obrigatórios, regra de parada e exemplos.

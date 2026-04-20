@@ -68,6 +68,9 @@ Tarefa não classificada = tarefa não conforme.
 10. Marcar explicitamente como `fora_de_contrato` quando a tarefa não pertencer ao contrato ativo.
 11. Se houver ambiguidade estrutural, conflito documental ou falta de contrato ativo: parar e reportar.
 12. Ao final de cada tarefa, emitir resposta no formato definido pelo CODEX_WORKFLOW (seção 7).
+13. **Declarar obrigatoriamente** em todo ESTADO HERDADO e ESTADO ENTREGUE se houve ou não mudança em dados persistidos do Supabase — inclusive quando a resposta for `nenhuma`.
+14. **Nenhuma mudança** em tabela, coluna, índice, constraint ou relacionamento do Supabase pode ser executada sem declaração prévia completa e rastreabilidade total conforme `schema/DATA_CHANGE_PROTOCOL.md`.
+15. **Parar imediatamente** se uma tarefa mexer em dados persistidos do Supabase sem declarar tabela, tipo de mudança, colunas afetadas, motivo, impacto e rollback.
 
 ## Atualização viva obrigatória ao final de qualquer tarefa
 Independente de ser tarefa contratual ou fora de contrato:
@@ -91,6 +94,17 @@ Esta regra garante que o repositório seja a única fonte de verdade — não a 
 - `schema/STATUS_SCHEMA.md` — formato de status vivo
 - `schema/HANDOFF_SCHEMA.md` — formato de handoff persistido
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs
+- `schema/DATA_CHANGE_PROTOCOL.md` — protocolo obrigatório de mudanças em dados persistidos do Supabase
+
+## Protocolo de dados persistidos (Supabase)
+Nenhuma mudança em schema, tabela, coluna, índice, constraint ou relacionamento do Supabase pode acontecer sem:
+- Declaração explícita no ESTADO HERDADO e ESTADO ENTREGUE
+- Preenchimento de todos os campos obrigatórios (tabela, tipo, colunas, motivo, impacto, rollback)
+- Rastreabilidade completa no handoff e no PR template
+
+Mesmo quando não houver mudança de dados, declarar: `Mudanças em dados persistidos (Supabase): nenhuma`
+
+Ver `schema/DATA_CHANGE_PROTOCOL.md` para o protocolo completo.
 
 ## Proibições nesta fase fundadora
 - Criar app funcional

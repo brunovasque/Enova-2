@@ -72,9 +72,12 @@ Esta tarefa está dentro ou fora do contrato ativo: <dentro | fora — com justi
 Objetivo desta tarefa: <objetivo claro e verificável>
 Escopo: <o que está incluído>
 Fora de escopo: <o que NÃO está incluído>
+Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
 ```
 
 Este bloco é a âncora de rastreabilidade entre PRs. Sem ele, a tarefa não começa.
+
+> **Regra de dados persistidos:** A declaração `Mudanças em dados persistidos (Supabase)` é obrigatória em todo ESTADO HERDADO — inclusive quando a resposta for `nenhuma`. Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos, campos obrigatórios e regra de parada.
 
 ---
 
@@ -91,7 +94,10 @@ O que ainda não foi fechado do contrato ativo: <itens do contrato ainda em aber
 O próximo passo autorizado foi alterado? <sim | não — se sim, descrever a mudança>
 Esta tarefa foi fora de contrato? <sim | não — se sim, justificar>
 Arquivos vivos atualizados: <lista de arquivos de status/handoff/contrato efetivamente atualizados>
+Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
 ```
+
+> **Regra de dados persistidos:** A declaração `Mudanças em dados persistidos (Supabase)` é obrigatória em todo ESTADO ENTREGUE — inclusive quando a resposta for `nenhuma`. Se `sim`, todos os campos do bloco detalhado (tabela, tipo, colunas, motivo, impacto, rollback) devem ter sido declarados antes da execução. Ver `schema/DATA_CHANGE_PROTOCOL.md`.
 
 ---
 
@@ -233,6 +239,7 @@ Os seguintes schemas definem o formato obrigatório de artefatos de governança:
 - `schema/STATUS_SCHEMA.md` — formato obrigatório de status vivo por frente.
 - `schema/HANDOFF_SCHEMA.md` — formato obrigatório de handoff persistido por frente.
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs.
+- `schema/DATA_CHANGE_PROTOCOL.md` — protocolo obrigatório de mudanças em dados persistidos do Supabase.
 
 Nenhum contrato, status ou handoff deve ser criado fora destes formatos.
 
@@ -259,5 +266,32 @@ Se qualquer das condições abaixo for identificada, parar e reportar em vez de 
 - Escopo que ultrapassa o contrato ativo sem autorização
 - Estado herdado não declarado ou inconsistente com o repositório
 - Classificação de tarefa ausente ou incompatível com o escopo
+- Mudança em dados persistidos (Supabase) sem declaração completa dos campos obrigatórios (tabela, tipo, colunas, motivo, impacto, rollback) — ver `schema/DATA_CHANGE_PROTOCOL.md` seção 5
 
 **Regra de parada não é falha — é conformidade.**
+
+---
+
+## 14. Protocolo de dados persistidos (Supabase)
+
+Toda tarefa deve declarar explicitamente se há ou não mudanças em dados persistidos do Supabase.
+
+Ver `schema/DATA_CHANGE_PROTOCOL.md` para:
+- Tipos canônicos de mudança (`create_table`, `add_column`, `alter_column`, etc.)
+- Campos obrigatórios de declaração quando houver mudança
+- Regra de parada para mudança não declarada
+- Regra de rollback e compatibilidade retroativa
+- O que é proibido
+- Exemplos de declaração
+
+**Declaração obrigatória em todo ESTADO HERDADO e ESTADO ENTREGUE:**
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+ou
+```
+Mudanças em dados persistidos (Supabase): sim
+  [campos obrigatórios conforme DATA_CHANGE_PROTOCOL.md seção 4.2]
+```
+
+Ausência desta declaração = tarefa não conforme.
