@@ -3,22 +3,21 @@
 | Campo                                      | Valor                                                                             |
 |--------------------------------------------|-----------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                   |
-| Data                                       | 2026-04-20T19:30:00Z                                                              |
-| Estado da frente                           | em execução — primeiro recorte contratual (L03) entregue; smoke 5/5 passando     |
-| Classificação da tarefa                    | contratual — primeiro recorte do Core Mecânico 2: mapa de stages e gates (L03)   |
-| Última PR relevante                        | PR de execução L03 — Core Mecânico 2: mapa de stages e gates                     |
+| Data                                       | 2026-04-20T20:30:00Z                                                              |
+| Estado da frente                           | em execução — esqueleto L03 entregue (Caminho A); smoke 3/3 passando             |
+| Classificação da tarefa                    | contratual — recorte L03 simplificado: esqueleto mínimo de stages/gates (Caminho A) |
+| Última PR relevante                        | PR de execução L03 — Caminho A: esqueleto mínimo do Core Mecânico 2              |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`                            |
-| Recorte executado do contrato              | L03 — Mapa Canônico do Funil: stages, gates, motor de decisão, smoke suite        |
-| Pendência contratual remanescente          | L04–L17 em aberto; trilho completo pendente                                       |
+| Recorte executado do contrato              | L03 — esqueleto estrutural: stages, slots de gate, engine mínimo, smoke 3 cenários |
+| Pendência contratual remanescente          | L04–L17 em aberto; regras e micro regras de negócio pendentes                    |
 | Houve desvio de contrato?                  | não                                                                               |
 | Contrato encerrado nesta PR?               | não                                                                               |
 | Item do A01 atendido                       | Fase 2 — Prioridade 1; Gate 2 satisfeito no recorte L03                          |
-| Próximo passo autorizado                   | Segunda PR contratual: L04 + L05 + L06 — topo do funil (regras, parser e gates)  |
+| Próximo passo autorizado                   | Segunda PR contratual: L04 + L05 + L06 — regras de negócio do topo do funil      |
 | Próximo passo foi alterado?                | sim — de "Primeira PR contratual de execução" para "Segunda PR: L04–L06"         |
 | Tarefa fora de contrato?                   | não — primeira PR de execução contratual                                          |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                           |
 | Permissões Cloudflare necessárias          | nenhuma adicional                                                                 |
-| Fontes de verdade consultadas              | ver seção 20 abaixo                                                               |
 
 ---
 
@@ -26,21 +25,27 @@
 
 O repositório da ENOVA 2 chegou à PR de abertura do contrato com toda a governança documental pronta e o contrato ativo do Core Mecânico 2 aberto. Gate 1 do A01 ("sem contrato da frente, não começa implementação") satisfeito.
 
-Esta PR executa o **primeiro recorte contratual do Core Mecânico 2**: L03 — Mapa Canônico do Funil. Entrega o mapa estrutural de stages e gates, o motor de decisão estrutural e a smoke suite determinística com 5 cenários passando.
+Esta PR executa o **primeiro recorte contratual do Core Mecânico 2**: L03 — esqueleto estrutural do funil. Aplica o **Caminho A**: entrega apenas o esqueleto mínimo necessário para L03, sem embutir regras ou micro regras de negócio que pertencem a L04–L06+.
 
-**O que foi entregue:**
-- `src/core/types.ts` — tipos estruturais (StageId, LeadState, CoreDecision, GateResult)
-- `src/core/stage-map.ts` — STAGE_MAP canônico com 8 stages + gates R1–R6 derivados de L03
-- `src/core/engine.ts` — motor de decisão estrutural (entrada → decisão; sem fala)
-- `src/core/smoke.ts` — smoke suite: 5/5 cenários passando (bloqueio RNM, casado civil, autônomo/IR, renda baixa, trilho completo)
+**O que foi entregue (Caminho A — esqueleto mínimo):**
+- `src/core/types.ts` — tipos mínimos (StageId, LeadState simples, GateId como slots, CoreDecision)
+- `src/core/stage-map.ts` — STAGE_MAP (8 stages, slots de gate por stage) + G_FATO_CRITICO_AUSENTE ativo
+- `src/core/engine.ts` — motor mínimo: block/no-block → next_stage → speech_intent (sinal estrutural)
+- `src/core/smoke.ts` — 3 cenários estruturais: 3/3 passando
 
-Gate 2 do A01 ("sem smoke da frente, não promove") satisfeito no recorte L03.
+**O que não foi embutido (vai para L04–L06+):**
+- regras de negócio detalhadas: casado civil, autônomo/IR, renda solo baixa, estrangeiro/RNM
+- gate evaluators com condições específicas (G_COMPOSICAO_FAMILIAR, G_REGIME_RENDA, G_ELEGIBILIDADE)
+- LeadState rico com campos F0–F8 tipados (simplificado para Record<string, unknown>)
+- persist_ops, slot classification, contradiction detection (arquitetura futura)
+
+Gate 2 do A01 ("sem smoke da frente, não promove") satisfeito no recorte L03 esqueleto.
 
 ## 2. Classificação da tarefa
 
 **contratual**
 
-Primeiro recorte de execução do contrato ativo do Core Mecânico 2. Implementação do mapa de stages e gates derivado de L03 com motor de decisão estrutural. Nenhuma fala, surface ou resposta ao cliente gerada pelo Core. Smoke suite executada e passando.
+Primeiro recorte de execução do contrato ativo do Core Mecânico 2. Caminho A: esqueleto mínimo de stages/gates (L03), sem embutir regras de negócio. Core desacoplado da fala.
 
 ## 3. Última PR relevante
 
@@ -67,67 +72,65 @@ Primeiro recorte de execução do contrato ativo do Core Mecânico 2. Implementa
 - Nenhum bloco L03 transcrito no markdown — conteúdo lido diretamente do PDF.
 - Estágio inicial do repo: sem qualquer implementação funcional do Core.
 
-## 7. O que foi feito (esta PR)
+## 7. O que foi feito (esta PR — Caminho A)
 
-- Criado `src/core/types.ts`:
-  - `StageId` (8 stages canônicos derivados de L03)
-  - `LeadState` (estado estruturado mínimo — PDF 8, seção 3.1)
-  - `GateId` (R1–R6 — PDF 8, seção 4)
-  - `GateResult`, `CoreDecision`, `PersistOp`, `SpeechIntent`, `StageDefinition`
-- Criado `src/core/stage-map.ts`:
-  - `STAGE_MAP` — 8 stages com facts obrigatórios, transições e gates aplicáveis
-  - `GATE_DEFINITIONS` — metadados de todos os gates (severidade, block_advance)
-  - Avaliadores: `evaluateGateCasadoConjunto`, `evaluateGateAutonomoIR`, `evaluateGateRendaSoloBaixa`, `evaluateGateEstrangeiroRNM`, `evaluateGateFatoCriticoAusente`, `evaluateApplicableGates`
-  - `CANONICAL_STAGE_ORDER` — sequência canônica do funil
-- Criado `src/core/engine.ts`:
-  - `runCoreEngine(input)` — ciclo de decisão estrutural (9 etapas)
-  - Sem fala; `speech_intent` é sinal estrutural ao Speech Engine
-  - Funções: `mergeFactsFromTurn`, `classifySlots`, `computeNextStep`, `deriveSpeechIntent`, `buildPersistOps`
-- Criado `src/core/smoke.ts`:
-  - 5 cenários determinísticos com assertions explícitas
-  - Cenário 1: Discovery sem facts → G_FATO_CRITICO_AUSENTE → block_advance=true
-  - Cenário 2: Casado civil + processo=solo → G_CASADO_CONJUNTO → forçar processo=conjunto
-  - Cenário 3: Estrangeiro sem RNM → G_ESTRANGEIRO_RNM (critical) → bloqueio total
-  - Cenário 4: Autônomo sem IR → G_AUTONOMO_IR → block_advance=true, pending=[autonomo_tem_ir]
-  - Cenário 5: Discovery com customer_goal → sem bloqueio → transição para qualification_civil
-  - **Resultado: 5/5 passando**
-- Criado `package.json` com script `npm run smoke`
-- Criado `.gitignore` (node_modules, dist, .wrangler)
-- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`
-- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md`
+**Caminho A: simplificação para esqueleto mínimo**
+
+- Simplificado `src/core/types.ts`:
+  - `StageId` (8 stages canônicos — mantidos)
+  - `LeadState` simplificado: `lead_id`, `current_stage`, `facts: Record<string, unknown>` (sem campos F0–F8 tipados)
+  - `GateId` como slots estruturais: `G_FATO_CRITICO_AUSENTE` (ativo), `G_COMPOSICAO_FAMILIAR` / `G_REGIME_RENDA` / `G_ELEGIBILIDADE` (reservados para L04–L06+)
+  - `CoreDecision` mínimo: stage_current, stage_after, next_objective, block_advance, gates_activated, speech_intent
+  - Removidos: `PersistOp`, `SpeechIntent` como union rica, `StageDefinition` com descrição e optional_facts
+
+- Simplificado `src/core/stage-map.ts`:
+  - `STAGE_MAP` — 8 stages com `required_facts` mínimos e slots de gate
+  - Gate ativo: apenas `evaluateGateFatoCriticoAusente` (estrutural: required_facts presentes?)
+  - Slots reservados: `G_COMPOSICAO_FAMILIAR`, `G_REGIME_RENDA`, `G_ELEGIBILIDADE` retornam não-ativados
+  - Removidos: `GATE_DEFINITIONS`, avaliadores individuais de regras de negócio (casado civil, autônomo/IR, renda baixa, estrangeiro/RNM)
+
+- Simplificado `src/core/engine.ts`:
+  - `runCoreEngine(state: LeadState): CoreDecision` — entrada direta (sem TurnExtract, PolicyContext)
+  - Fluxo: carregar stage → avaliar gates → block/no-block → stage_after → next_objective → speech_intent
+  - Removidos: `mergeFactsFromTurn`, `classifySlots`, `computeNextStep`, `deriveSpeechIntent`, `buildPersistOps`
+
+- Simplificado `src/core/smoke.ts`:
+  - 3 cenários (reduzido de 5):
+    - Cenário 1: Stage sem facts → G_FATO_CRITICO_AUSENTE → block=true
+    - Cenário 2: Stage com todos facts → sem bloqueio → avança para próximo stage
+    - Cenário 3: Facts parciais → bloqueia no fact faltando
+  - Removidos: cenários de casado civil, estrangeiro/RNM, autônomo/IR (regras de negócio → L04+)
+  - **Resultado: 3/3 passando**
 
 ## 8. O que não foi feito
 
 - **Speech Engine** — não criado (soberania do LLM preservada)
 - **Response builder** — não criado (Core não escreve fala)
 - **Surface final** — não criada
-- **Extractor / Parser** — não criado (frente separada)
-- **Persistência Supabase** — não implementada (persist_ops declaradas, não executadas)
+- **Extractor / Parser** — não criado (frente separada — L04+)
+- **Persistência Supabase** — não implementada (frente separada)
 - **Canal Meta/WhatsApp** — não aberto
-- **L04+ junto** — não misturado
-- **Regra inventada fora da âncora contratual** — nenhuma
+- **Regras de negócio detalhadas** — não embutidas nesta PR (casado civil, autônomo/IR, renda baixa, estrangeiro/RNM → L04–L06+)
+- **LeadState tipado por campo (F0–F8)** — não implementado nesta PR → L04+
+- **persist_ops e slot classification** — não implementados nesta PR → L04+
 
 ## 9. O que esta PR fechou
 
-- Mapa estrutural de stages/gates do Core derivado de L03.
-- Motor de decisão estrutural (entrada → CoreDecision; sem fala).
-- Smoke suite: 5/5 passando. Gate 2 do A01 satisfeito no recorte L03.
-- Status e handoff atualizados.
+- Esqueleto estrutural de stages/gates do Core derivado de L03 (Caminho A).
+- Motor mínimo: block/no-block → next_stage → speech_intent (sinal estrutural).
+- Smoke: 3/3 passando. Gate 2 do A01 satisfeito no recorte L03.
+- Status e handoff atualizados com descrição honesta do recorte.
 
 ## 10. O que continua pendente após esta PR
 
-- L04: Topo do Funil — Contrato
-- L05: Topo do Funil — Parser
-- L06: Topo do Funil — Critérios
-- L07–L10: Meio A — Composição Familiar
-- L11–L14: Meio B — Regime e Renda
-- L15–L16: Especiais
-- L17: Final Operacional
-- Trilho completo fim-a-fim
-- Integração com Extractor (frente separada)
-- Persistência Supabase (frente separada)
-- Smoke de trilho e next step autorizado (Gate 2 do A01).
-- Verificação do escopo do token `CLOUDFLARE_API_TOKEN` antes do primeiro deploy real.
+- **L04 + L05 + L06**: regras de negócio do topo do funil (casado civil, autônomo/IR, renda, elegibilidade)
+  - G_COMPOSICAO_FAMILIAR (L04), G_REGIME_RENDA (L05), G_ELEGIBILIDADE (L06)
+  - LeadState com campos F0–F8 tipados
+  - Avaliadores de gate com condições específicas de negócio
+- **L07–L17**: meio e final do funil
+- **Extractor / Parser**: frente separada
+- **Persistência Supabase**: persist_ops a implementar em frente separada
+- **Smoke de trilho completo** (topo → final) — Gate 2 definitivo
 
 ## 11. Esta tarefa foi fora de contrato?
 
@@ -141,7 +144,9 @@ Impacto no próximo passo autorizado: **alterou** — de "Primeira PR contratual
 `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` — em execução.
 
 ### 11b. Recorte executado do contrato
-L03 — Mapa Canônico do Funil: stages, gates, motor de decisão, smoke suite.
+L03 — esqueleto estrutural (Caminho A): stages, slots de gate, engine mínimo, smoke 3 cenários.
+
+Regras e micro regras de negócio ficam explicitamente para L04–L06+.
 
 ### 11c. Pendência contratual remanescente
 L04–L17 em aberto. Trilho completo pendente.
@@ -154,52 +159,50 @@ não
 
 ## 12. Arquivos relevantes
 
-- `src/core/types.ts` *(criado — tipos estruturais do Core)*
-- `src/core/stage-map.ts` *(criado — mapa canônico de stages e gates derivado de L03)*
-- `src/core/engine.ts` *(criado — motor de decisão estrutural)*
-- `src/core/smoke.ts` *(criado — smoke suite: 5/5 passando)*
-- `package.json` *(criado — script npm run smoke)*
-- `.gitignore` *(criado)*
+- `src/core/types.ts` *(simplificado — Caminho A: tipos mínimos sem F0–F8)*
+- `src/core/stage-map.ts` *(simplificado — Caminho A: slots de gate, G_FATO_CRITICO_AUSENTE ativo)*
+- `src/core/engine.ts` *(simplificado — Caminho A: engine mínimo block/no-block)*
+- `src/core/smoke.ts` *(simplificado — Caminho A: 3 cenários estruturais: 3/3 passando)*
+- `package.json` *(script npm run smoke)*
+- `.gitignore`
 - `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
 
 ## 13. Item do A01 atendido
 
 - **Fase 2** — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala.
-- **Gate 2 do A01** ("sem smoke da frente, não promove") — satisfeito no recorte L03 (smoke 5/5 passando).
+- **Gate 2 do A01** ("sem smoke da frente, não promove") — satisfeito no recorte L03 (smoke 3/3 passando).
 
 ## 14. Estado atual da frente
 
-**em execução** — primeiro recorte contratual (L03) entregue; smoke 5/5 passando.
+**em execução** — esqueleto L03 entregue (Caminho A); smoke 3/3 passando.
 
-O Core Mecânico 2 tem mapa de stages/gates funcional, motor de decisão estrutural e smoke suite determinística. O Core está totalmente desacoplado da fala. Nenhuma fala, surface ou resposta ao cliente é gerada pelo Core.
+O Core Mecânico 2 tem esqueleto de stages/gates funcional, engine mínimo e smoke determinístico. O Core está totalmente desacoplado da fala. Nenhuma fala, surface ou resposta ao cliente é gerada pelo Core.
 
 ## 15. Próximo passo autorizado
 
-**Segunda PR contratual de execução do Core Mecânico 2**: L04 + L05 + L06 — topo do funil.
+**Segunda PR contratual de execução do Core Mecânico 2**: L04 + L05 + L06 — regras de negócio do topo do funil.
 
 - Classificação: `contratual`
-- Cláusula-fonte: L-02 (mapa de cláusulas)
-- Blocos: L04 (Topo — Contrato), L05 (Topo — Parser), L06 (Topo — Critérios)
-- Consulta obrigatória ao PDF-fonte para esses blocos
+- Blocos: L04, L05, L06 (casado civil, autônomo/IR, renda, elegibilidade)
+- Consulta obrigatória ao PDF-fonte para cada bloco
+- Ativar G_COMPOSICAO_FAMILIAR, G_REGIME_RENDA, G_ELEGIBILIDADE com condições reais
 
 **Próximo passo alterado** — sim: de "Primeira PR contratual" para "Segunda PR: L04–L06".
 
 ## 16. Riscos
 
-- **Conteúdo dos legados não transcrito** — L04–L17 estão "não transcritos". Consultar PDF para cada bloco.
-- **Blocos C não confirmados** — pendentes de confirmação via PDF.
+- **Regras de negócio não embutidas** — L04–L17 com regras detalhadas pendentes. Consultar PDF.
 - **Permissão do token Cloudflare** — verificar antes do primeiro deploy real.
 
 ## 17. Provas
 
-- `src/core/types.ts` criado — tipos estruturais sem fala
-- `src/core/stage-map.ts` criado — 8 stages + 6 gates derivados de L03
-- `src/core/engine.ts` criado — motor de decisão estrutural
-- `src/core/smoke.ts` criado — smoke suite 5/5 passando
-- Smoke output: `Total: 5 | Passou: 5 | Falhou: 0 | Resultado: ✅ PASSOU`
-- Status atualizado: estado "em execução", Gate 2 satisfeito no recorte L03
-- Handoff atualizado: próximo passo alterado para Segunda PR: L04–L06
+- `src/core/types.ts` simplificado — Caminho A: tipos mínimos
+- `src/core/stage-map.ts` simplificado — Caminho A: slots de gate estruturais
+- `src/core/engine.ts` simplificado — Caminho A: engine mínimo block/no-block
+- `src/core/smoke.ts` simplificado — Caminho A: 3 cenários: 3/3 passando
+- Smoke output: `Total: 3 | Passou: 3 | Falhou: 0 | Resultado: ✅ PASSOU`
+- Status e handoff atualizados com descrição honesta do recorte mínimo
 
 ## 18. Mudanças em dados persistidos (Supabase)
 
