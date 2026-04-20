@@ -16,13 +16,14 @@ Nenhuma etapa pode ser pulada. Pular etapa é não conformidade.
 2. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
 3. `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
 4. `schema/contracts/_INDEX.md` — **índice canônico de contratos ativos**
-5. Contrato ativo da frente (em `schema/contracts/active/`, formato em `schema/CONTRACT_SCHEMA.md`)
+5. Contrato ativo da frente (em `schema/contracts/active/`, formato em `schema/CONTRACT_SCHEMA.md`) — **se ausente: condição de parada contratual (ver regra 11)**
 6. `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo de execução contratual**
 7. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo de encerramento de contrato**
 8. Status vivo da frente (`schema/status/<FRENTE>_STATUS.md`)
 9. Último handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`)
 10. Índice do legado mestre (`schema/legacy/INDEX_LEGADO_MESTRE.md`)
-11. Blocos aplicáveis do legado mestre (`schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
+11. Blocos aplicáveis do legado mestre (`schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`) — se transcrito; se não, ver PDF em `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`
+12. `schema/CONTRACT_SOURCE_MAP.md` — **mapa de fontes e ponte documental operacional**
 
 ## Declaração obrigatória de estado herdado (Etapa 8 do CODEX_WORKFLOW)
 Antes de executar qualquer tarefa, o agente deve declarar o bloco `ESTADO HERDADO`:
@@ -47,6 +48,14 @@ Fora de escopo: <não incluído>
 Houve desvio de contrato?: <não | sim — se sim, ver CONTRACT_EXECUTION_PROTOCOL seção 6>
 Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
 Permissões Cloudflare necessárias: <nenhuma adicional | sim — se sim, ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2>
+Fontes de verdade consultadas:
+  Índice de contratos lido:    schema/contracts/_INDEX.md
+  Contrato ativo lido:         schema/contracts/active/<NOME>.md | Nenhum — ausência é condição de parada para execução contratual
+  Status da frente lido:       schema/status/<FRENTE>_STATUS.md
+  Handoff da frente lido:      schema/handoffs/<FRENTE>_LATEST.md
+  Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
+  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
+  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — blocos transcritos disponíveis
 ```
 
 Tarefa sem esta declaração não deve ser iniciada.
@@ -70,7 +79,7 @@ Tarefa não classificada = tarefa não conforme.
 4. Não introduzir drift de objetivo, escopo ou arquitetura.
 5. Não abrir implementação funcional sem autorização do contrato ativo.
 6. Declarar sempre qual contrato está ativo e qual item do A01 está sendo atendido.
-7. Não pular etapas do fluxo de 11 etapas do CODEX_WORKFLOW.
+7. Não pular etapas do fluxo de 16 etapas do CODEX_WORKFLOW.
 8. Declarar explicitamente o contexto herdado da PR anterior antes de executar.
 9. Declarar explicitamente o que foi herdado, o que foi resolvido e o que permanece aberto.
 10. Marcar explicitamente como `fora_de_contrato` quando a tarefa não pertencer ao contrato ativo.
@@ -83,6 +92,10 @@ Tarefa não classificada = tarefa não conforme.
 17. **Nenhuma tarefa** que passe a depender de novo recurso Cloudflare pode seguir com a necessidade de permissão implícita — declarar recurso, ação, permissões suficientes e impacto antes de prosseguir.
 18. **Avisar preventivamente** ao usuário quando a PR passar a exigir novas permissões Cloudflare — nunca deixar esse risco implícito ou silencioso.
 19. **Parar imediatamente** se uma tarefa introduzir dependência de recurso Cloudflare sem declaração completa dos campos obrigatórios conforme `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`.
+20. **Ausência de contrato ativo NÃO autoriza improvisação contratual.** Ausência de contrato ativo é condição de parada para execução contratual. Prosseguir apenas com tarefas de `governança`, `diagnostico` ou `correcao_incidental` que não abram execução de negócio.
+21. **Declarar obrigatoriamente** em todo ESTADO HERDADO e ESTADO ENTREGUE o bloco "Fontes de verdade consultadas" — com os caminhos exatos de todos os artefatos lidos como fonte de verdade. Ver `schema/CONTRACT_SOURCE_MAP.md` e `schema/CODEX_WORKFLOW.md` seção 19.
+22. **Nunca declarar "lido" um arquivo que não foi efetivamente consultado.** A declaração de fontes é rastreabilidade real, não formalidade.
+23. **Quando bloco legado necessário não estiver transcrito no markdown:** referenciar diretamente o PDF mestre em `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` e declarar explicitamente qual seção foi consultada.
 
 ## Atualização viva obrigatória ao final de qualquer tarefa
 Independente de ser tarefa contratual ou fora de contrato:
@@ -102,6 +115,7 @@ Toda PR deve descrever:
 Esta regra garante que o repositório seja a única fonte de verdade — não a conversa.
 
 ## Schemas de governança
+- `schema/CONTRACT_SOURCE_MAP.md` — mapa de fontes e ponte documental operacional (contrato ativo ↔ legado ↔ PDF ↔ status ↔ handoff)
 - `schema/CONTRACT_SCHEMA.md` — formato de contrato novo
 - `schema/STATUS_SCHEMA.md` — formato de status vivo
 - `schema/HANDOFF_SCHEMA.md` — formato de handoff persistido

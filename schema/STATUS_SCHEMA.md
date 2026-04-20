@@ -157,6 +157,26 @@ Se a necessidade de permissão Cloudflare bloquear o avanço da frente, refletir
 
 Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios e regra de parada.
 
+### 17. Fontes consultadas — última tarefa
+
+Declaração obrigatória — inclusive quando a tarefa for de governança sem consumo de legado:
+
+```
+Fontes de verdade consultadas — última tarefa:
+  Índice de contratos lido:    schema/contracts/_INDEX.md
+  Contrato ativo lido:         schema/contracts/active/<NOME>.md | Nenhum — ausência é condição de parada para execução contratual
+  Status da frente lido:       schema/status/<FRENTE>_STATUS.md
+  Handoff da frente lido:      schema/handoffs/<FRENTE>_LATEST.md
+  Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
+  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
+  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — blocos transcritos disponíveis
+```
+
+**Regras:**
+- O campo `Contrato ativo lido` é obrigatório — mesmo quando "Nenhum".
+- O campo `PDF mestre consultado` é obrigatório quando qualquer bloco legado necessário não estiver transcrito.
+- Ver `schema/CONTRACT_SOURCE_MAP.md` para o mapa completo de fontes e a precedência entre elas.
+
 ---
 
 ## Regras de uso
@@ -193,5 +213,6 @@ Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios
 | Legados aplicáveis                         | <L0x, L0y, ...>                                                                          |
 | Mudanças em dados persistidos (Supabase)   | <nenhuma | sim — ver seção 15>                                                          |
 | Permissões Cloudflare necessárias          | <nenhuma adicional | sim — ver seção 16>                                                 |
+| Fontes consultadas — última tarefa         | <ver seção 17>                                                                           |
 | Última atualização                         | <data ISO 8601>                                                                          |
 ```
