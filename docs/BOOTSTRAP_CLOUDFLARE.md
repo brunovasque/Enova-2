@@ -52,20 +52,23 @@ O pipeline está em `.github/workflows/deploy.yml`.
 
 ### Pré-requisitos
 
+Não é necessário instalar o wrangler globalmente. Use `npx` com a versão pinada:
+
 ```bash
-npm install -g wrangler@3.114.17
+# Opcional: instalar wrangler localmente no projeto
+npm install --save-dev wrangler@3.114.17
 ```
 
 ### Deploy local para teste
 
 ```bash
-CLOUDFLARE_API_TOKEN=<seu-token> CLOUDFLARE_ACCOUNT_ID=<seu-account-id> wrangler deploy --env test
+CLOUDFLARE_API_TOKEN=<seu-token> CLOUDFLARE_ACCOUNT_ID=<seu-account-id> npx wrangler@3.114.17 deploy --env test
 ```
 
 ### Deploy local para produção
 
 ```bash
-CLOUDFLARE_API_TOKEN=<seu-token> CLOUDFLARE_ACCOUNT_ID=<seu-account-id> wrangler deploy
+CLOUDFLARE_API_TOKEN=<seu-token> CLOUDFLARE_ACCOUNT_ID=<seu-account-id> npx wrangler@3.114.17 deploy
 ```
 
 ### Usando arquivo `.env` local (não commitar)
@@ -77,11 +80,14 @@ CLOUDFLARE_API_TOKEN=<seu-token>
 CLOUDFLARE_ACCOUNT_ID=<seu-account-id>
 ```
 
-Exporte antes de usar o wrangler:
+Carregue as variáveis e use o wrangler:
 
 ```bash
-export $(cat .env | xargs) && wrangler deploy --env test
+set -a; source .env; set +a
+wrangler deploy --env test
 ```
+
+> **Atenção:** não use `cat .env | xargs` — pode causar problemas com valores que contenham espaços ou caracteres especiais.
 
 ### VSCode — Terminal integrado
 

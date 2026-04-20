@@ -48,6 +48,8 @@ jobs:
   deploy:
     name: Deploy ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Proteger prod — branch deve ser main
@@ -64,19 +66,16 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Instalar Wrangler
-        run: npm install -g wrangler@3.114.17
-
       - name: Deploy test
         if: github.event.inputs.environment == 'test'
-        run: wrangler deploy --env test
+        run: npx wrangler@3.114.17 deploy --env test
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy prod
         if: github.event.inputs.environment == 'prod'
-        run: wrangler deploy
+        run: npx wrangler@3.114.17 deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
