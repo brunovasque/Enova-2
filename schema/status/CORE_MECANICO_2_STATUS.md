@@ -10,16 +10,16 @@
 | Contrato encerrado?                        | não                                                                                       |
 | Item do A01                                | Fase 1 — scaffold técnico (pipeline de deploy Cloudflare concluído)                       |
 | Estado atual                               | não iniciada (bootstrap infra + pipeline de deploy concluídos)                            |
-| Classe da última tarefa                    | governança (filosofia do gate: live files como fonte real, body como checklist) |
-| Última PR relevante                        | PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL                                     |
-| Último commit                              | Governança: camada de execução contratual + protocolos + workflow 16 etapas               |
+| Classe da última tarefa                    | governança (auto-fix controlado + regra de menção obrigatória ao agente/modelo)           |
+| Última PR relevante                        | PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo               |
+| Último commit                              | Governança: auto-fix controlado (max 3 tentativas, sem LLM) + regra de menção ao agente  |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta infra)             |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
 | Permissões Cloudflare — infra herdada (PR #7) | Workers Scripts:Edit — obrigatório para deploy via wrangler (aviso preventivo ativo) |
-| Permissões Cloudflare — última tarefa (PR #8) | nenhuma adicional — tarefa de governança documental                                  |
-| Última atualização                         | 2026-04-20T04:35:00Z                                                                      |
+| Permissões Cloudflare — última tarefa (PR #10) | nenhuma adicional — tarefa de governança documental                                 |
+| Última atualização                         | 2026-04-20T12:35:00Z                                                                      |
 
 ---
 
@@ -45,28 +45,26 @@ A frente depende da conclusão da fundação documental (Fase 0) e da organizaç
 
 A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio.
 O scaffold técnico (wrangler.toml + entrypoint placeholder + pipeline de deploy) está pronto.
-A governança completa está pronta (trio-base, workflow, protocolos de dados e permissões Cloudflare).
+A governança completa está pronta (trio-base, workflow, protocolos de dados e permissões Cloudflare, gate de PR, auto-fix controlado).
 
 ## 5. Classe da última tarefa
 
-**governança** — camada formal de execução contratual. Criação do índice de contratos, protocolo de execução contratual, protocolo de encerramento de contrato. Atualização do CODEX_WORKFLOW para 16 etapas com vínculo contratual obrigatório. Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
+**governança** — auto-fix controlado do PR Governance Gate. Criação de `.github/workflows/pr-governance-autofix.yml` e `scripts/autofix_pr_governance.js`. Adição da regra de menção obrigatória ao agente/modelo (`@copilot+modelo`) em AGENT_CONTRACT (regra 26), CODEX_WORKFLOW (seção 18), README_EXECUCAO e README. Atualização do CODEX_WORKFLOW (seção 17 — auto-fix protocol). Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
 
 ## 6. Última PR relevante
 
-PR #8 — Camada formal de execução contratual.
-PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL (esta PR).
-- Criou `.github/workflows/pr-governance-check.yml` — gate de validação determinística
-- Criou `scripts/validate_pr_governance.js` — script de validação (sem LLM, sem dependências externas)
-- Criou `schema/REQUEST_ECONOMY_PROTOCOL.md` — protocolo de economia de request e modelo
-- Atualizou CODEX_WORKFLOW com seção 16 (economia de request) e referência ao novo protocolo
-- Atualizou PULL_REQUEST_TEMPLATE com campo de disciplina de request e modelo
-- Atualizou AGENT_CONTRACT com regras 20-25 de economia de request
-- Atualizou README_EXECUCAO com seção de economia de request
-- Atualizou README com referências ao gate e ao protocolo
+PR #9 — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL.
+PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo (esta PR).
+- Criou `.github/workflows/pr-governance-autofix.yml` — auto-fix controlado (max 3 tentativas, apenas erros triviais, sem LLM)
+- Criou `scripts/autofix_pr_governance.js` — script determinístico de auto-fix
+- Atualizou AGENT_CONTRACT com regra 26 (menção obrigatória ao agente/modelo)
+- Atualizou CODEX_WORKFLOW com seção 17 (auto-fix protocol) e seção 18 (regra de menção)
+- Atualizou README_EXECUCAO com auto-fix e regra de menção
+- Atualizou README com seções de auto-fix e regra de menção
 
 ## 7. Último commit
 
-Governança: PR Governance Gate + REQUEST_ECONOMY_PROTOCOL — workflow, script de validação, protocolo de economia de request, atualização de docs canônicos.
+Governança: auto-fix controlado do PR Governance Gate (max 3 tentativas, sem LLM) + regra @copilot+modelo obrigatória em toda instrução operacional.
 
 ## 8. Entregas concluídas
 
@@ -92,6 +90,8 @@ Governança: PR Governance Gate + REQUEST_ECONOMY_PROTOCOL — workflow, script 
 - [x] **Camada formal de execução contratual** — `schema/contracts/`: índice, protocolo de execução, protocolo de closeout, diretórios active/archive. CODEX_WORKFLOW 16 etapas. PR template com vínculo contratual. Agent contract com regras anti-desvio.
 - [x] **PR Governance Gate** — `.github/workflows/pr-governance-check.yml` + `scripts/validate_pr_governance.js`. Validação determinística de PR sem LLM, sem custo extra. Gate valida campos obrigatórios: vínculo contratual, Supabase, Cloudflare, arquivos vivos, próximo passo.
 - [x] **REQUEST_ECONOMY_PROTOCOL** — `schema/REQUEST_ECONOMY_PROTOCOL.md`. Protocolo de economia de request e preferência por modelo barato. Incorporado no CODEX_WORKFLOW (seção 16), AGENT_CONTRACT (regras 20-25), PR template, README e README_EXECUCAO.
+- [x] **Auto-fix controlado do PR Governance Gate** — `.github/workflows/pr-governance-autofix.yml` + `scripts/autofix_pr_governance.js`. Auto-fix determinístico: max 3 tentativas, apenas erros triviais, sem LLM. Para obrigatoriamente em erros estruturais.
+- [x] **Regra de menção obrigatória ao agente/modelo** — `@copilot+modelo` obrigatório em toda instrução operacional. Documentado em AGENT_CONTRACT (regra 26), CODEX_WORKFLOW (seção 18), README_EXECUCAO e README.
 
 ## 9. Pendências
 
@@ -103,7 +103,7 @@ Governança: PR Governance Gate + REQUEST_ECONOMY_PROTOCOL — workflow, script 
 ## 10. Pendência remanescente herdada
 
 Da PR #2: abertura de contrato formal do Core Mecânico 2.
-Esta pendência permanece em aberto — as PRs #3 a #8 não a afetaram.
+Esta pendência permanece em aberto — as PRs #3 a #10 não a afetaram.
 A camada de execução contratual está pronta para receber o primeiro contrato ativo.
 
 ## 11. Bloqueios
@@ -120,7 +120,7 @@ Verificar antes do primeiro deploy real. Ver `docs/BOOTSTRAP_CLOUDFLARE.md` e `s
 **Abrir contrato do Core Mecânico 2**, seguindo o formato definido em `schema/CONTRACT_SCHEMA.md`, com:
 - Escopo alinhado ao A01 (Prioridade 1)
 - Legados aplicáveis conforme A02 e INDEX_LEGADO_MESTRE.md (blocos L03 + L04-L17)
-- Dependências satisfeitas (trio-base + workflow endurecido + contexto vivo + classificação de tarefas + protocolo de dados + bootstrap Cloudflare + protocolo de permissões Cloudflare + pipeline de deploy + camada de execução contratual)
+- Dependências satisfeitas (trio-base + workflow endurecido + contexto vivo + classificação de tarefas + protocolo de dados + bootstrap Cloudflare + protocolo de permissões Cloudflare + pipeline de deploy + camada de execução contratual + gate de PR + auto-fix controlado)
 - Contrato ativo deve ser colocado em `schema/contracts/active/`
 - `schema/contracts/_INDEX.md` deve ser atualizado ao abrir o contrato
 
@@ -136,5 +136,6 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T03:37:47Z
-- **Responsável**: Copilot (PR #8 — correções de consistência documental)
+- **Data**: 2026-04-20T12:35:00Z
+- **Responsável**: Copilot (PR #10 — auto-fix controlado + regra @copilot+modelo)
+

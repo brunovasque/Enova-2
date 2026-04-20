@@ -3,6 +3,195 @@
 | Campo                                      | Valor                                                                        |
 |--------------------------------------------|------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                              |
+| Data                                       | 2026-04-20T12:35:00Z                                                        |
+| Estado da frente                           | não iniciada (auto-fix controlado + regra @copilot+modelo adicionados)      |
+| Classificação da tarefa                    | governança (auto-fix controlado PR gate + regra de menção obrigatória)      |
+| Última PR relevante                        | PR #10 — Auto-fix controlado do PR Governance Gate + regra @copilot+modelo  |
+| Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                  |
+| Recorte executado do contrato              | N/A — nenhum contrato ativo                                                  |
+| Pendência contratual remanescente          | N/A — aguardando abertura do contrato                                        |
+| Houve desvio de contrato?                  | não                                                                          |
+| Contrato encerrado nesta PR?               | não                                                                          |
+| Item do A01 atendido                       | Fase 0 — fundação documental: auto-fix controlado + regra de menção         |
+| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2                                            |
+| Próximo passo foi alterado?                | não                                                                          |
+| Tarefa fora de contrato?                   | não — tarefa de governança                                                   |
+| Mudanças em dados persistidos (Supabase)   | nenhuma                                                                      |
+| Permissões Cloudflare necessárias          | nenhuma adicional                                                            |
+
+---
+
+## 1. Contexto curto
+
+O repositório da ENOVA 2 chegou à PR #9 com governança completa (gate de PR, REQUEST_ECONOMY_PROTOCOL, camada contratual, protocolos de dados e permissões). Esta PR #10 adiciona a camada de auto-fix controlado e a regra de menção obrigatória ao agente/modelo.
+
+A PR #10 entrega: workflow de auto-fix controlado (`.github/workflows/pr-governance-autofix.yml`), script determinístico de auto-fix (`scripts/autofix_pr_governance.js`), regra 26 do AGENT_CONTRACT (menção obrigatória ao agente/modelo), seções 17 e 18 do CODEX_WORKFLOW (auto-fix protocol + regra de menção). README, README_EXECUCAO atualizados.
+
+Nenhuma implementação funcional foi aberta. O próximo passo autorizado não foi alterado.
+
+## 2. Classificação da tarefa
+
+**governança**
+
+Não há contrato ativo do Core Mecânico 2. Esta tarefa cria auto-fix controlado do gate + regra de menção ao agente/modelo. Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
+
+## 3. Última PR relevante
+
+**PR #9** — PR Governance Gate + REQUEST_ECONOMY_PROTOCOL.
+
+## 4. O que a PR #9 fechou
+
+- Gate automatizado de validação de PR (`.github/workflows/pr-governance-check.yml`).
+- Script de validação determinística sem LLM (`scripts/validate_pr_governance.js`).
+- Protocolo de economia de request (`schema/REQUEST_ECONOMY_PROTOCOL.md`).
+- CODEX_WORKFLOW seção 16 (economia de request).
+- AGENT_CONTRACT regras 20-25 (economia de request).
+- PR template com campo de disciplina de request e modelo.
+
+## 5. O que a PR #9 NÃO fechou
+
+- Auto-fix controlado do gate (entregue nesta PR #10).
+- Regra de menção obrigatória ao agente/modelo (entregue nesta PR #10).
+- Contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
+
+## 6. Diagnóstico confirmado
+
+- Não existia camada de auto-fix controlado do PR Governance Gate.
+- Não existia regra formal de menção obrigatória ao agente/modelo em toda instrução operacional.
+- Comentários de PR/issue sem @copilot+modelo podiam ser confundidos com comandos operacionais.
+
+## 7. O que foi feito (PR #10)
+
+- Criado `.github/workflows/pr-governance-autofix.yml`: auto-fix controlado. Dispara em falha do governance check. Max 3 tentativas. Apenas erros triviais (campo ausente/vazio). Para obrigatoriamente em erros estruturais. Sem LLM, sem dependências externas, sem loop aberto.
+- Criado `scripts/autofix_pr_governance.js`: script Node.js de auto-fix. Sem framework. Sem deps externas. Rastreia tentativas por marcador oculto no body da PR. Escreve resultado em `/tmp/autofix_status.txt`. Para em body vazio, erros estruturais e ao atingir 3 tentativas.
+- Atualizado `.github/AGENT_CONTRACT.md`: regra 26 (menção obrigatória ao agente/modelo), referência ao auto-fix nos gates automatizados.
+- Atualizado `schema/CODEX_WORKFLOW.md`: seção 17 (auto-fix protocol com regras absolutas), seção 18 (regra de menção obrigatória com tabela de modelos e exemplos).
+- Atualizado `schema/README_EXECUCAO.md`: referência ao auto-fix e regra de menção.
+- Atualizado `README.md`: seções "Auto-fix controlado" e "Regra de menção obrigatória".
+- Atualizado `schema/status/CORE_MECANICO_2_STATUS.md`.
+- Atualizado `schema/handoffs/CORE_MECANICO_2_LATEST.md` (este arquivo).
+
+## 8. O que não foi feito
+
+- **Contrato do Core Mecânico 2** — deliberadamente fora de escopo. Próximo passo preservado.
+- **Implementação funcional** — nenhuma. Nenhum código de negócio.
+
+## 9. O que esta PR fechou
+
+- Auto-fix controlado do PR Governance Gate (workflow + script).
+- Regra de menção obrigatória ao agente/modelo (`@copilot+modelo`).
+- CODEX_WORKFLOW seções 17 e 18.
+- AGENT_CONTRACT regra 26.
+- README e README_EXECUCAO atualizados.
+
+## 10. O que continua pendente após esta PR
+
+- Abertura de contrato formal do Core Mecânico 2 (próximo passo autorizado — preservado).
+- Transcrição integral do conteúdo dos legados (PDF mestre).
+- Implementação funcional do worker (após contrato aprovado).
+- Verificação do escopo do token `CLOUDFLARE_API_TOKEN` antes do primeiro deploy real.
+
+## 11. Esta tarefa foi fora de contrato?
+
+**não** — classificada como `governança`.
+
+Não há contrato ativo do Core Mecânico 2. Esta tarefa cria auto-fix controlado e regra de menção ao agente. Governança documental pura, alinhada à Fase 0 do A01.
+
+Impacto no próximo passo autorizado: **não alterou** — próximo passo continua sendo abertura do contrato do Core Mecânico 2.
+
+### 11a. Contrato ativo
+Nenhum contrato ativo — aguardando abertura.
+
+### 11b. Recorte executado do contrato
+N/A — nenhum contrato ativo.
+
+### 11c. Pendência contratual remanescente
+N/A — aguardando abertura do contrato.
+
+### 11d. Houve desvio de contrato?
+não
+
+### 11e. Contrato encerrado nesta PR?
+não
+
+## 12. Arquivos relevantes
+
+- `.github/workflows/pr-governance-autofix.yml` *(criado — auto-fix controlado do gate)*
+- `scripts/autofix_pr_governance.js` *(criado — script determinístico de auto-fix)*
+- `.github/AGENT_CONTRACT.md` *(atualizado — regra 26 + referência ao auto-fix)*
+- `schema/CODEX_WORKFLOW.md` *(atualizado — seções 17 e 18)*
+- `schema/README_EXECUCAO.md` *(atualizado — auto-fix + regra de menção)*
+- `README.md` *(atualizado — auto-fix + regra de menção)*
+- `schema/status/CORE_MECANICO_2_STATUS.md` *(atualizado)*
+- `schema/handoffs/CORE_MECANICO_2_LATEST.md` *(este arquivo)*
+
+## 13. Item do A01 atendido
+
+- **Fase 0** — fundação documental: auto-fix controlado formalizado + regra de menção ao agente operacionalizada.
+
+## 14. Estado atual da frente
+
+**não iniciada** (auto-fix controlado + regra @copilot+modelo concluídos)
+
+A frente Core Mecânico 2 ainda não possui contrato aberto nem execução técnica de negócio. Toda a governança está pronta: trio-base, workflow 16+ etapas, protocolos (dados, permissões, execução contratual, closeout, economia de request), schemas, bootstrap Cloudflare, pipeline de deploy, gate de PR, auto-fix controlado, regra de menção ao agente.
+
+## 15. Próximo passo autorizado
+
+**Abrir contrato do Core Mecânico 2**, seguindo:
+- Formato: `schema/CONTRACT_SCHEMA.md`
+- Escopo: Prioridade 1 do A01 — modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala
+- Legados: blocos L03 + famílias L04-L17 do legado mestre unificado conforme A02 e INDEX_LEGADO_MESTRE.md
+- Gate: Gate 1 será satisfeito com a aprovação do contrato
+- Contrato ativo: colocar em `schema/contracts/active/`
+- Atualizar `schema/contracts/_INDEX.md` ao abrir
+- Dependências: trio-base ✅, workflow endurecido ✅, contexto vivo ✅, classificação de tarefas ✅, protocolo de dados ✅, bootstrap Cloudflare ✅, protocolo de permissões Cloudflare ✅, pipeline de deploy ✅, camada de execução contratual ✅, gate de PR ✅, auto-fix controlado ✅
+
+**Próximo passo preservado** — igual ao definido na PR #7.
+
+## 16. Riscos
+
+- **Conteúdo dos legados** — O legado mestre unificado contém placeholders por bloco. O PDF mestre deve ser incorporado antes da abertura do contrato do Core.
+- **Permissão do token Cloudflare** — Verificar antes do primeiro deploy real.
+- **Auto-fix e placeholders** — Os valores inseridos pelo auto-fix são placeholders. O autor da PR deve substituir pelos valores reais antes do merge.
+
+## 17. Provas
+
+- PR #10 criada com escopo exclusivo de governança.
+- `.github/workflows/pr-governance-autofix.yml` criado — dispara em falha do gate, max 3 tentativas, sem LLM.
+- `scripts/autofix_pr_governance.js` criado — script determinístico, sem dependências externas, para em erros estruturais.
+- AGENT_CONTRACT regra 26 adicionada — menção @copilot+modelo obrigatória.
+- CODEX_WORKFLOW seções 17 e 18 adicionadas.
+- Nenhuma implementação funcional aberta.
+- Nenhum contrato ativo criado.
+- Status e handoff atualizados.
+
+## 18. Mudanças em dados persistidos (Supabase)
+
+```
+Mudanças em dados persistidos (Supabase): nenhuma
+```
+
+Esta PR é de governança documental. Nenhuma tabela, coluna, índice, constraint, relacionamento ou migration do Supabase foi criado, alterado ou removido.
+
+## 19. Permissões Cloudflare necessárias
+
+```
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+
+Esta PR é de governança documental e não exige nova permissão operacional além das já documentadas.
+
+---
+
+*(Handoff histórico PR #9 preservado abaixo para rastreabilidade)*
+
+O repositório chegou à PR #9 com gate de PR automatizado e REQUEST_ECONOMY_PROTOCOL. A PR #9 entregou: workflow determinístico de validação de PR, script de validação sem LLM, e protocolo formal de economia de request. O CODEX_WORKFLOW recebeu a seção 16 (economia de request). O AGENT_CONTRACT recebeu regras 20-25 (economia de request). PR template, README e README_EXECUCAO foram atualizados.
+
+A frente Core Mecânico 2 permanece sem contrato aberto nem execução técnica de negócio. O próximo passo autorizado continua sendo a abertura formal do contrato.
+
+| Campo                                      | Valor                                                                        |
+|--------------------------------------------|------------------------------------------------------------------------------|
+| Frente                                     | Core Mecânico 2                                                              |
 | Data                                       | 2026-04-20T04:35:00Z                                                        |
 | Estado da frente                           | não iniciada (gate refatorado: live files como fonte real, body como checklist) |
 | Classificação da tarefa                    | governança (refactor: filosofia gate — body mínimo + live files obrigatórios)  |

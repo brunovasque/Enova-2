@@ -1,0 +1,185 @@
+name: PR Governance Auto-fix (Controlado)
+
+# Auto-fix CONTROLADO de falhas triviais do PR Governance Gate.
+#
+# REGRAS:
+#   - Dispara apenas quando o PR Governance Check falha.
+#   - Atua SOMENTE em erros triviais (campo ausente ou vazio).
+#   - Máximo 3 tentativas por PR (rastreado com marcador no body).
+#   - Sem LLM. Sem loop aberto. Sem API externa.
+#   - Para imediatamente em erros estruturais ou ao atingir o limite.
+#
+# Fluxo:
+#   1. PR governance check falha
+#   2. Este workflow dispara
+#   3. Busca o body atual da PR
+#   4. Roda autofix_pr_governance.js (determinístico, sem LLM)
+#   5. Se houve correção trivial: atualiza o body da PR via API
+#   6. O PR body editado dispara novo "edited" → PR Governance Check roda novamente
+#   7. Repete até: gate passa | limite de 3 tentativas | erro estrutural detectado
+
+on:
+  workflow_run:
+    workflows: ["PR Governance Check"]
+    types: [completed]
+
+# Permissões mínimas necessárias
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  autofix:
+    name: Auto-fix de Governança (máx. 3 tentativas)
+    runs-on: ubuntu-latest
+    # Executar apenas quando o governance check falhou
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extrair número da PR associada
+        id: pr-info
+        env:
+          # Expandir expressão via env (não via shell) para prevenir code injection
+          PULL_REQUESTS_JSON: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: |
+          # Extrair PR number do evento workflow_run
+          PR_NUMBER=$(echo "$PULL_REQUESTS_JSON" | \
+            node -e "
+              const data = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8'));
+              console.log((data && data[0] && data[0].number) ? data[0].number : '');
+            ")
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "⚠️  Nenhuma PR associada ao workflow_run. Ignorando."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Buscar body atual da PR
+        id: fetch-body
+        if: steps.pr-info.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          RESPONSE=$(curl -sf \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")
+
+          if [ $? -ne 0 ]; then
+            echo "❌ Falha ao buscar dados da PR ${PR_NUMBER}."
+            exit 1
+          fi
+
+          # Extrair body e salvar em arquivo (evita problemas com multiline em env vars)
+          echo "$RESPONSE" | node -e "
+            const d = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8'));
+            require('fs').writeFileSync('/tmp/pr_body.txt', d.body || '', 'utf8');
+          "
+
+          echo "body_fetched=true" >> "$GITHUB_OUTPUT"
+
+      - name: Executar auto-fix controlado (sem LLM, sem dependências externas)
+        id: autofix
+        if: steps.pr-info.outputs.skip != 'true'
+        run: |
+          export PR_BODY="$(cat /tmp/pr_body.txt)"
+          node scripts/autofix_pr_governance.js
+          # Script sempre exit 0 — resultado lido de /tmp/autofix_status.txt
+          AUTOFIX_STATUS=$(cat /tmp/autofix_status.txt 2>/dev/null || echo "noop")
+          echo "status=$AUTOFIX_STATUS" >> "$GITHUB_OUTPUT"
+
+      - name: Registrar resultado do auto-fix
+        if: steps.pr-info.outputs.skip != 'true'
+        run: |
+          STATUS="${{ steps.autofix.outputs.status }}"
+          echo "══════════════════════════════════════════════"
+          echo "  ENOVA 2 — PR Governance Auto-fix — Resultado"
+          echo "══════════════════════════════════════════════"
+          case "$STATUS" in
+            fixed)
+              echo "✅ Correções triviais aplicadas. Body da PR será atualizado."
+              echo "   O PR Governance Check será re-executado automaticamente."
+              ;;
+            noop)
+              echo "⚠️  Nenhuma correção trivial aplicável."
+              echo "   A falha do gate é por erro estrutural ou ambíguo."
+              echo "   Revisão manual necessária pelo autor da PR."
+              ;;
+            max_attempts)
+              echo "❌ Limite de 3 tentativas de auto-fix atingido."
+              echo "   O PR Governance Gate continua falhando."
+              echo "   Revisão manual obrigatória: .github/PULL_REQUEST_TEMPLATE.md"
+              ;;
+            structural)
+              echo "❌ Erro estrutural detectado (ex: body vazio)."
+              echo "   O auto-fix não atua em erros estruturais."
+              echo "   Revisão manual obrigatória pelo autor da PR."
+              ;;
+            *)
+              echo "⚠️  Status desconhecido: $STATUS"
+              ;;
+          esac
+          echo "══════════════════════════════════════════════"
+
+      - name: Atualizar body da PR com correções triviais
+        if: >
+          steps.pr-info.outputs.skip != 'true' &&
+          steps.autofix.outputs.status == 'fixed'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ ! -f /tmp/new_pr_body.txt ]; then
+            echo "❌ Arquivo de novo body não encontrado. Abortando update."
+            exit 1
+          fi
+
+          # Construir payload JSON com o novo body (usando node para escape seguro)
+          node -e "
+            const body = require('fs').readFileSync('/tmp/new_pr_body.txt', 'utf8');
+            const payload = JSON.stringify({ body });
+            require('fs').writeFileSync('/tmp/pr_update_payload.json', payload, 'utf8');
+          "
+
+          # Atualizar body da PR via GitHub API
+          curl -sf -X PATCH \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" \
+            -d @/tmp/pr_update_payload.json
+
+          echo ""
+          echo "✅ Body da PR #${PR_NUMBER} atualizado."
+          echo "   O PR Governance Check será re-executado pelo evento 'edited' da PR."
+          echo ""
+          echo "⚠️  ATENÇÃO AO AUTOR DA PR:"
+          echo "   Campos preenchidos automaticamente com PLACEHOLDERS."
+          echo "   Substitua pelos valores reais antes do merge."
+          echo "   Template: .github/PULL_REQUEST_TEMPLATE.md"
+
+      - name: Falhar o job se limite ou erro estrutural atingido
+        if: >
+          steps.pr-info.outputs.skip != 'true' &&
+          (steps.autofix.outputs.status == 'max_attempts' ||
+           steps.autofix.outputs.status == 'structural')
+        run: |
+          STATUS="${{ steps.autofix.outputs.status }}"
+          if [ "$STATUS" = "max_attempts" ]; then
+            echo "❌ FALHA: Limite de 3 tentativas de auto-fix atingido sem resolução."
+          else
+            echo "❌ FALHA: Erro estrutural no body da PR — auto-fix não atua."
+          fi
+          echo "Ação necessária: revisar manualmente o body conforme o template."
+          echo "Template: .github/PULL_REQUEST_TEMPLATE.md"
+          echo "Protocolo: schema/CODEX_WORKFLOW.md"
+          exit 1

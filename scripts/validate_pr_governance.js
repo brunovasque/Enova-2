@@ -39,6 +39,18 @@ const REQUIRED_FIELDS = [
   { label: "Próximo passo autorizado", group: "Próximo passo" },
 ];
 
+// Placeholders conhecidos do auto-fix NÃO satisfazem a governança real.
+// O auto-fix pode adicionar a moldura mínima, mas esses valores devem continuar
+// bloqueando o gate até substituição manual por valor real.
+const INVALID_REQUIRED_FIELD_PATTERNS = [
+  /verificar\s+schema\//i,
+  /nenhum\s+contrato\s+ativo\s+—\s+verificar/i,
+  /placeholder/i,
+  /preencher\s+manualmente/i,
+  /pend[êe]ncia\s+de\s+preenchimento/i,
+  /\bTODO\b/i,
+];
+
 // Prefixos de caminho considerados "arquivos vivos" no repositório
 const LIVE_FILE_PREFIXES = [
   "schema/status/",
@@ -146,6 +158,13 @@ function isEffectivelyEmpty(content) {
 }
 
 /**
+ * Placeholders do auto-fix não podem satisfazer os campos mínimos obrigatórios.
+ */
+function isKnownInvalidRequiredFieldValue(content) {
+  return INVALID_REQUIRED_FIELD_PATTERNS.some((re) => re.test(content));
+}
+
+/**
  * Verifica se o conteúdo da seção "Arquivos vivos atualizados" indica
  * que nenhuma atualização foi necessária (justificativa aceita).
  */
@@ -188,7 +207,8 @@ function main() {
   // ------------------------------------------------------------------
   // Checagem: campos obrigatórios com conteúdo real não vazio
   // Presença do heading/label não é suficiente: o campo deve ter valor real.
-  // Comentário HTML, espaço em branco e label sem valor são rejeitados.
+  // Comentário HTML, espaço em branco, label sem valor e placeholders do
+  // auto-fix são rejeitados.
   // ------------------------------------------------------------------
   for (const field of REQUIRED_FIELDS) {
     if (!fieldPresent(prBody, field.label)) {
@@ -199,6 +219,11 @@ function main() {
         failures.push(
           `[${field.group}] Campo obrigatório vazio: "${field.label}" — ` +
           "preencha com valor real (comentário HTML e espaço em branco não são aceitos)"
+        );
+      } else if (isKnownInvalidRequiredFieldValue(content)) {
+        failures.push(
+          `[${field.group}] Campo obrigatório com placeholder inválido: "${field.label}" — ` +
+          "o auto-fix pode criar a moldura mínima, mas o gate só aprova com valor real"
         );
       } else {
         passes.push(`[${field.group}] ✓ "${field.label}"`);
