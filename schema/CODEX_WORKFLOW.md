@@ -20,11 +20,12 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 8. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
 9. `schema/TASK_CLASSIFICATION.md`
 10. `schema/DATA_CHANGE_PROTOCOL.md`
-11. `schema/CONTRACT_SCHEMA.md`
-12. `schema/STATUS_SCHEMA.md`
-13. `schema/HANDOFF_SCHEMA.md`
-14. `schema/status/CORE_MECANICO_2_STATUS.md`
-15. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
+11. `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
+12. `schema/CONTRACT_SCHEMA.md`
+13. `schema/STATUS_SCHEMA.md`
+14. `schema/HANDOFF_SCHEMA.md`
+15. `schema/status/CORE_MECANICO_2_STATUS.md`
+16. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
@@ -80,11 +81,14 @@ Objetivo desta tarefa: <objetivo claro e verificável>
 Escopo: <o que está incluído>
 Fora de escopo: <o que NÃO está incluído>
 Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
+Permissões Cloudflare necessárias: <nenhuma adicional | sim — se sim, ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2>
 ```
 
 Este bloco é a âncora de rastreabilidade entre PRs. Sem ele, a tarefa não começa.
 
 > **Regra de dados persistidos:** A declaração `Mudanças em dados persistidos (Supabase)` é obrigatória em todo ESTADO HERDADO — inclusive quando a resposta for `nenhuma`. Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos, campos obrigatórios e regra de parada.
+
+> **Regra de permissões Cloudflare:** A declaração `Permissões Cloudflare necessárias` é obrigatória em todo ESTADO HERDADO — inclusive quando a resposta for `nenhuma adicional`. Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios e regra de parada.
 
 ---
 
@@ -102,9 +106,12 @@ O próximo passo autorizado foi alterado? <sim | não — se sim, descrever a mu
 Esta tarefa foi fora de contrato? <sim | não — se sim, justificar>
 Arquivos vivos atualizados: <lista de arquivos de status/handoff/contrato efetivamente atualizados>
 Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
+Permissões Cloudflare necessárias: <nenhuma adicional | sim — se sim, ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2>
 ```
 
 > **Regra de dados persistidos:** A declaração `Mudanças em dados persistidos (Supabase)` é obrigatória em todo ESTADO ENTREGUE — inclusive quando a resposta for `nenhuma`. Se `sim`, todos os campos do bloco detalhado (tabela, tipo, colunas, motivo, impacto, rollback) devem ter sido declarados antes da execução. Ver `schema/DATA_CHANGE_PROTOCOL.md`.
+
+> **Regra de permissões Cloudflare:** A declaração `Permissões Cloudflare necessárias` é obrigatória em todo ESTADO ENTREGUE — inclusive quando a resposta for `nenhuma adicional`. Se `sim`, todos os campos do bloco detalhado devem ter sido declarados. Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`.
 
 ---
 
@@ -247,6 +254,7 @@ Os seguintes schemas definem o formato obrigatório de artefatos de governança:
 - `schema/HANDOFF_SCHEMA.md` — formato obrigatório de handoff persistido por frente.
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs.
 - `schema/DATA_CHANGE_PROTOCOL.md` — protocolo obrigatório de mudanças em dados persistidos do Supabase.
+- `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — protocolo obrigatório de permissões Cloudflare.
 
 Nenhum contrato, status ou handoff deve ser criado fora destes formatos.
 
@@ -274,6 +282,7 @@ Se qualquer das condições abaixo for identificada, parar e reportar em vez de 
 - Estado herdado não declarado ou inconsistente com o repositório
 - Classificação de tarefa ausente ou incompatível com o escopo
 - Mudança em dados persistidos (Supabase) sem declaração completa dos campos obrigatórios (tabela, tipo, colunas, motivo, impacto, rollback) — ver `schema/DATA_CHANGE_PROTOCOL.md` seção 5
+- Introdução de dependência de recurso Cloudflare sem declaração completa dos campos obrigatórios (recurso, ação, permissões suficientes, impacto) — ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` seção 5
 
 **Regra de parada não é falha — é conformidade.**
 
@@ -299,6 +308,32 @@ ou
 ```
 Mudanças em dados persistidos (Supabase): sim
   [campos obrigatórios conforme DATA_CHANGE_PROTOCOL.md seção 4.2]
+```
+
+Ausência desta declaração = tarefa não conforme.
+
+---
+
+## 15. Protocolo de permissões Cloudflare
+
+Toda tarefa deve declarar explicitamente se há ou não necessidade nova de permissão Cloudflare.
+
+Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para:
+- Recursos cobertos (Workers, KV, R2, D1, Queues, Service Bindings, Routes, Secrets, Vars, Observability)
+- Campos obrigatórios de declaração quando houver necessidade nova
+- Regra de parada para necessidade não declarada
+- Regra de escopo mínimo do token
+- Regra de aviso preventivo ao usuário
+- Exemplos de declaração
+
+**Declaração obrigatória em todo ESTADO HERDADO e ESTADO ENTREGUE:**
+```
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+ou
+```
+Permissões Cloudflare necessárias: sim
+  [campos obrigatórios conforme CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2]
 ```
 
 Ausência desta declaração = tarefa não conforme.

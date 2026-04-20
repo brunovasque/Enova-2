@@ -12,6 +12,7 @@ Estabelecer governança, ordem executiva, contratos de trabalho, memória operac
 - `schema/CODEX_WORKFLOW.md` — **lei operacional única entre PRs** (11 etapas obrigatórias)
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs
 - `schema/DATA_CHANGE_PROTOCOL.md` — **protocolo obrigatório de mudanças em dados persistidos do Supabase**
+- `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — **protocolo obrigatório de permissões Cloudflare**
 - `schema/A00_PLANO_CANONICO_MACRO.md`
 - `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
 - `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
@@ -24,6 +25,7 @@ Estabelecer governança, ordem executiva, contratos de trabalho, memória operac
 - `schema/HANDOFF_SCHEMA.md` — formato obrigatório de handoff persistido
 - `schema/TASK_CLASSIFICATION.md` — 6 classes canônicas de tarefas
 - `schema/DATA_CHANGE_PROTOCOL.md` — rastreabilidade total de mudanças em dados do Supabase
+- `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — rastreabilidade total de permissões Cloudflare
 
 ## Contexto vivo do repositório
 - `schema/status/_INDEX.md` — índice de status vivos por frente
@@ -51,6 +53,9 @@ Toda PR deve declarar: de qual PR continua, o que herdou, o que resolveu e o que
 
 **Toda tarefa deve declarar explicitamente se houve ou não mudança em dados persistidos do Supabase.**
 Ver `schema/DATA_CHANGE_PROTOCOL.md` para o protocolo completo de rastreabilidade.
+
+**Toda tarefa que passe a usar, alterar ou depender de qualquer recurso Cloudflare deve declarar explicitamente se as permissões atuais bastam ou não.**
+Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para o protocolo completo de rastreabilidade de permissões.
 
 ## Cloudflare Workers — Bootstrap técnico
 

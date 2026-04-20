@@ -114,6 +114,27 @@ Se a mudança de dados afetar o estado da frente ou o próximo passo autorizado,
 
 Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos e campos obrigatórios.
 
+### 16. Permissões Cloudflare necessárias — última tarefa
+
+Declaração obrigatória — inclusive quando não houver necessidade nova na última tarefa:
+
+```
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+
+ou, se a última tarefa declarou necessidade nova:
+
+```
+Permissões Cloudflare necessárias: sim
+  Recurso Cloudflare afetado:    <recurso>
+  Permissão necessária:          <permissão>
+  Status atual:                  <pendente | satisfeita | bloqueante>
+```
+
+Se a necessidade de permissão Cloudflare bloquear o avanço da frente, refletir isso explicitamente nas seções 4 (Estado atual), 11 (Bloqueios) e 12 (Próximo passo autorizado) deste status.
+
+Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios e regra de parada.
+
 ---
 
 ## Regras de uso
@@ -145,5 +166,6 @@ Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos e campos obrigatório
 | Próximo passo autorizado                   | <descrição> (preservado / alterado)                                                      |
 | Legados aplicáveis                         | <L0x, L0y, ...>                                                                          |
 | Mudanças em dados persistidos (Supabase)   | <nenhuma | sim — ver seção 15>                                                          |
+| Permissões Cloudflare necessárias          | <nenhuma adicional | sim — ver seção 16>                                                 |
 | Última atualização                         | <data ISO 8601>                                                                          |
 ```

@@ -16,7 +16,6 @@ O `CODEX_WORKFLOW.md` define o fluxo obrigatório de 11 etapas: leitura canônic
 7. Último handoff da frente ativa (`handoffs/<FRENTE>_LATEST.md`)
 8. `legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
 9. `legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
-
 ## Precedência documental
 **A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis**
 
@@ -114,5 +113,36 @@ Ver `schema/DATA_CHANGE_PROTOCOL.md` para o protocolo completo:
 - Campos obrigatórios quando `sim`
 - Regra de parada
 - Regra de rollback e compatibilidade retroativa
+- O que é proibido
+- Exemplos
+
+---
+
+## Protocolo de permissões Cloudflare — obrigatório em tarefas de infra/deploy/bindings
+
+Toda tarefa que passe a usar, configurar, alterar ou depender de qualquer recurso Cloudflare deve declarar explicitamente no ESTADO HERDADO e no ESTADO ENTREGUE:
+
+```
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+ou
+```
+Permissões Cloudflare necessárias: sim
+  [campos obrigatórios conforme CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2]
+```
+
+Esta declaração é obrigatória **em toda tarefa**, qualquer que seja a classe.
+Ausência = tarefa não conforme.
+
+**Recursos cobertos:** Workers Scripts, Workers Routes, KV, R2, D1, Queues, Service Bindings, Secrets, Vars de deploy, Observability e qualquer outro recurso Cloudflare que a PR passe a usar.
+
+**Falha futura de deploy, binding ou recurso pode ser causada por permissão insuficiente do token Cloudflare.** O agente deve avisar preventivamente — nunca deixar esse risco implícito.
+
+Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para o protocolo completo:
+- Escopo completo de recursos cobertos
+- Campos obrigatórios quando `sim`
+- Regra de parada
+- Regra de escopo mínimo do token
+- Regra de aviso preventivo
 - O que é proibido
 - Exemplos

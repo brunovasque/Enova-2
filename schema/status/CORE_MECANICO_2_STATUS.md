@@ -6,14 +6,15 @@
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                               |
 | Item do A01                                | Fase 1 — scaffold técnico (bootstrap Cloudflare Workers concluído)                        |
 | Estado atual                               | não iniciada (bootstrap infra concluído)                                                  |
-| Classe da última tarefa                    | fora_de_contrato                                                                          |
-| Última PR relevante                        | PR #5 — bootstrap técnico mínimo Cloudflare Workers (wrangler.toml)                      |
-| Último commit                              | Bootstrap wrangler.toml com ambientes canônicos nv-enova-2 e nv-enova-2-test             |
+| Classe da última tarefa                    | governança                                                                                |
+| Última PR relevante                        | PR #6 — Protocolo obrigatório de permissões Cloudflare (CLOUDFLARE_PERMISSION_PROTOCOL)  |
+| Último commit                              | Governança: protocolo de permissões Cloudflare + endurecimento de workflow                |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
-| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por este bootstrap)         |
+| Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta governança)        |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
-| Última atualização                         | 2026-04-20T01:00:00Z                                                                      |
+| Permissões Cloudflare necessárias          | nenhuma adicional                                                                         |
+| Última atualização                         | 2026-04-20T01:33:47Z                                                                      |
 
 ---
 
@@ -43,20 +44,21 @@ O workflow de continuidade entre PRs foi endurecido com obrigação de ESTADO HE
 
 ## 5. Classe da última tarefa
 
-**governança** — tarefa exclusiva de endurecimento de governança operacional com protocolo obrigatório de dados persistidos. Nenhuma implementação funcional aberta.
+**governança** — tarefa exclusiva de endurecimento de governança operacional com protocolo obrigatório de permissões Cloudflare. Nenhuma implementação funcional aberta.
 
 ## 6. Última PR relevante
 
-PR #4 — Endurecimento de governança com protocolo obrigatório de dados persistidos (Supabase).
-- Criou `schema/DATA_CHANGE_PROTOCOL.md` com tipos canônicos, campos obrigatórios, regras de rollback e compatibilidade.
-- Endureceu `CODEX_WORKFLOW.md` com bloco obrigatório de dados persistidos em ESTADO HERDADO e ESTADO ENTREGUE, seção 14 (protocolo de dados), regra de parada para mudança não declarada.
-- Atualizou `TASK_CLASSIFICATION.md` com obrigação universal de declaração de dados em todas as classes.
-- Atualizou `PULL_REQUEST_TEMPLATE.md` com campos explícitos de dados persistidos (tabela, tipo, colunas, impacto, rollback).
-- Atualizou `AGENT_CONTRACT.md` com regras 13–15: declaração obrigatória, bloqueio total sem rastreabilidade, parada imediata.
-- Atualizou `HANDOFF_SCHEMA.md` com seção 18 obrigatória de dados persistidos.
-- Atualizou `STATUS_SCHEMA.md` com seção 15 de dados persistidos e novo campo no cabeçalho.
-- Atualizou `README_EXECUCAO.md` com seção de protocolo de dados persistidos.
-- Atualizou `README.md` com `DATA_CHANGE_PROTOCOL.md` como documento canônico.
+PR #5 — bootstrap técnico mínimo Cloudflare Workers (wrangler.toml).
+PR #6 — Protocolo obrigatório de permissões Cloudflare (governança).
+- Criou `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` com escopo, campos obrigatórios, regras de parada/aviso preventivo/escopo mínimo do token.
+- Endureceu `CODEX_WORKFLOW.md` com bloco de permissões Cloudflare em ESTADO HERDADO e ESTADO ENTREGUE, seção 15 (protocolo Cloudflare), regra de parada para necessidade não declarada.
+- Atualizou `TASK_CLASSIFICATION.md` com obrigação universal de declaração de permissões Cloudflare em todas as classes.
+- Atualizou `PULL_REQUEST_TEMPLATE.md` com campos explícitos de permissões Cloudflare.
+- Atualizou `AGENT_CONTRACT.md` com regras 16–19: declaração obrigatória, proibição de permissão implícita, aviso preventivo, parada imediata.
+- Atualizou `HANDOFF_SCHEMA.md` com seção 19 obrigatória de permissões Cloudflare.
+- Atualizou `STATUS_SCHEMA.md` com seção 16 de permissões Cloudflare e novo campo no cabeçalho.
+- Atualizou `README_EXECUCAO.md` com seção de protocolo de permissões Cloudflare.
+- Atualizou `README.md` com `CLOUDFLARE_PERMISSION_PROTOCOL.md` como documento canônico.
 
 ## 7. Último commit
 
@@ -80,6 +82,8 @@ Nenhum commit de implementação técnica. Apenas commits documentais e de gover
 - [x] Bootstrap técnico Cloudflare Workers: `wrangler.toml` com ambientes canônicos `nv-enova-2` (prod) e `nv-enova-2-test` (test)
 - [x] Entrypoint placeholder mínimo `src/worker.ts` (sem lógica de produto)
 - [x] `docs/BOOTSTRAP_CLOUDFLARE.md` — documentação curta do bootstrap
+- [x] CLOUDFLARE_PERMISSION_PROTOCOL — protocolo obrigatório de permissões Cloudflare
+- [x] Rastreabilidade total de permissões Cloudflare: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template
 
 ## 9. Pendências
 
@@ -117,5 +121,5 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T01:00:00Z
-- **Responsável**: Copilot (PR #5 — bootstrap técnico Cloudflare Workers)
+- **Data**: 2026-04-20T01:33:47Z
+- **Responsável**: Copilot (PR #6 — protocolo obrigatório de permissões Cloudflare)

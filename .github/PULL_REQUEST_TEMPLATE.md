@@ -48,6 +48,24 @@ Mudanças em dados persistidos (Supabase): sim
 -->
 <!-- Ver schema/DATA_CHANGE_PROTOCOL.md para referência completa -->
 
+## Permissões Cloudflare necessárias
+<!-- OBRIGATÓRIO em toda PR — inclusive quando não houver necessidade nova -->
+<!-- Se não houver necessidade nova: "Permissões Cloudflare necessárias: nenhuma adicional" -->
+<!-- Se houver necessidade nova, preencher o bloco abaixo para CADA recurso afetado: -->
+<!--
+Permissões Cloudflare necessárias: sim
+
+  Recurso Cloudflare afetado:          (Workers Script | KV | R2 | D1 | Queues | Routes | Service Binding | Secrets | Vars | Observability | Outro)
+  Ação pretendida:
+  Permissões atuais suficientes?        (sim | não | incerto)
+  Permissões adicionais necessárias:
+  Motivo:
+  Impacto se não ampliar permissões:
+  Pode prosseguir sem ampliar?          (sim | não — justificativa)
+  Onde ajustar:                         (token Cloudflare | GitHub Secrets | wrangler.toml bindings | Cloudflare Dashboard | outro)
+-->
+<!-- Ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md para referência completa -->
+
 ## O que esta PR fecha
 <!-- Lista objetiva do que foi concluído e fechado nesta PR -->
 

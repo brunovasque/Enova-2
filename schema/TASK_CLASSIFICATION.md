@@ -227,3 +227,24 @@ Esta declaração é obrigatória em **todas** as classes: `contratual`, `govern
 Ausência desta declaração = tarefa não conforme, independente da classe.
 
 Ver `schema/DATA_CHANGE_PROTOCOL.md` para tipos canônicos, campos obrigatórios, regra de parada e exemplos.
+
+---
+
+## Obrigação universal de declaração de permissões Cloudflare
+
+**Independente da classe da tarefa**, toda tarefa deve declarar explicitamente no ESTADO HERDADO e no ESTADO ENTREGUE:
+
+```
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+ou
+```
+Permissões Cloudflare necessárias: sim
+  [campos obrigatórios conforme schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2]
+```
+
+Esta declaração é obrigatória em **todas** as classes: `contratual`, `governança`, `fora_de_contrato`, `correcao_incidental`, `hotfix` e `diagnostico`.
+
+Ausência desta declaração = tarefa não conforme, independente da classe.
+
+Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios, regra de parada e exemplos.
