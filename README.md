@@ -9,10 +9,12 @@ Estabelecer governança, ordem executiva, contratos de trabalho, memória operac
 
 ## Documentos canônicos
 - `schema/README_EXECUCAO.md`
-- `schema/CODEX_WORKFLOW.md` — **lei operacional única entre PRs** (11 etapas obrigatórias)
+- `schema/CODEX_WORKFLOW.md` — **lei operacional única entre PRs** (16 etapas obrigatórias)
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs
 - `schema/DATA_CHANGE_PROTOCOL.md` — **protocolo obrigatório de mudanças em dados persistidos do Supabase**
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — **protocolo obrigatório de permissões Cloudflare**
+- `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo obrigatório de execução contratual por PR**
+- `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo obrigatório de encerramento formal de contrato**
 - `schema/A00_PLANO_CANONICO_MACRO.md`
 - `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
 - `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
@@ -26,16 +28,20 @@ Estabelecer governança, ordem executiva, contratos de trabalho, memória operac
 - `schema/TASK_CLASSIFICATION.md` — 6 classes canônicas de tarefas
 - `schema/DATA_CHANGE_PROTOCOL.md` — rastreabilidade total de mudanças em dados do Supabase
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — rastreabilidade total de permissões Cloudflare
+- `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — execução contratual por PR (vínculo, anti-desvio, revisão)
+- `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — encerramento formal de contrato (checklist, evidências, archive)
 
 ## Contexto vivo do repositório
 - `schema/status/_INDEX.md` — índice de status vivos por frente
 - `schema/handoffs/_INDEX.md` — índice de handoffs por frente
+- `schema/contracts/_INDEX.md` — **índice de contratos ativos por frente**
 - `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice do legado mestre unificado
 
 ## Como saber o estado de qualquer frente
-1. Consultar `schema/status/_INDEX.md` para localizar o arquivo de status.
-2. Ler o status vivo da frente (`schema/status/<FRENTE>_STATUS.md`).
-3. Ler o último handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`).
+1. Consultar `schema/contracts/_INDEX.md` para saber qual contrato está ativo.
+2. Consultar `schema/status/_INDEX.md` para localizar o arquivo de status.
+3. Ler o status vivo da frente (`schema/status/<FRENTE>_STATUS.md`).
+4. Ler o último handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`).
 
 ## Como saber quais legados ler
 1. Consultar `schema/legacy/INDEX_LEGADO_MESTRE.md` — seção "Amarração por frente".
@@ -43,19 +49,26 @@ Estabelecer governança, ordem executiva, contratos de trabalho, memória operac
 3. Consultar `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md` — seções 4 e 5.
 
 ## Precedência documental (obrigatória)
-**A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis**
+**A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
 
 ## Protocolo de execução
-Toda tarefa segue o fluxo obrigatório de 11 etapas definido em `schema/CODEX_WORKFLOW.md`:
-leitura canônica → estado herdado → classificação → execução → estado entregue → atualização viva → resposta final.
+Toda tarefa segue o fluxo obrigatório de 16 etapas definido em `schema/CODEX_WORKFLOW.md`:
+leitura canônica → leitura de contratos → estado herdado → classificação → vínculo contratual → checagem de desvio → execução → estado entregue → atualização viva → closeout (se aplicável) → resposta final.
 
 Toda PR deve declarar: de qual PR continua, o que herdou, o que resolveu e o que permanece aberto.
+Toda PR deve declarar vínculo contratual: contrato ativo lido, recorte executado, o que fecha e o que não fecha do contrato, desvio de contrato e encerramento.
 
 **Toda tarefa deve declarar explicitamente se houve ou não mudança em dados persistidos do Supabase.**
 Ver `schema/DATA_CHANGE_PROTOCOL.md` para o protocolo completo de rastreabilidade.
 
 **Toda tarefa que passe a usar, alterar ou depender de qualquer recurso Cloudflare deve declarar explicitamente se as permissões atuais bastam ou não.**
 Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para o protocolo completo de rastreabilidade de permissões.
+
+**Toda PR de execução deve estar vinculada ao contrato ativo — desvio de contrato é condição de parada.**
+Ver `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` para o protocolo completo de execução contratual.
+
+**Contrato só encerra via protocolo formal — encerramento implícito é proibido.**
+Ver `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` para o protocolo completo de encerramento.
 
 ## Cloudflare Workers — Bootstrap técnico e pipeline de deploy
 

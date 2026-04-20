@@ -4,17 +4,22 @@
 |--------------------------------------------|-------------------------------------------------------------------------------------------|
 | Frente                                     | Core Mecânico 2                                                                           |
 | Contrato ativo                             | Nenhum contrato ativo — aguardando abertura                                               |
+| Estado do contrato                         | aguardando abertura                                                                       |
+| Última PR executou qual recorte            | N/A — nenhum contrato ativo                                                               |
+| Pendência contratual                       | N/A — aguardando abertura do contrato                                                     |
+| Contrato encerrado?                        | não                                                                                       |
 | Item do A01                                | Fase 1 — scaffold técnico (pipeline de deploy Cloudflare concluído)                       |
 | Estado atual                               | não iniciada (bootstrap infra + pipeline de deploy concluídos)                            |
-| Classe da última tarefa                    | fora_de_contrato (infra — pipeline de deploy)                                             |
-| Última PR relevante                        | PR #7 — Pipeline de deploy GitHub Actions (deploy.yml — test e prod)                     |
-| Último commit                              | Infra: deploy automático em main + docs PowerShell/Windows/VSCode                        |
+| Classe da última tarefa                    | governança (camada de execução contratual)                                                |
+| Última PR relevante                        | PR #8 — Camada formal de execução contratual                                              |
+| Último commit                              | Governança: camada de execução contratual + protocolos + workflow 16 etapas               |
 | Pendência remanescente herdada             | Abertura de contrato formal do Core Mecânico 2 (herdada da PR #2, preservada)            |
 | Próximo passo autorizado                   | Abrir contrato do Core Mecânico 2 (preservado — não alterado por esta infra)             |
 | Legados aplicáveis                         | Legado mestre unificado — blocos L03, L04–L17 (conforme INDEX_LEGADO_MESTRE.md)           |
 | Mudanças em dados persistidos (Supabase)   | nenhuma                                                                                   |
-| Permissões Cloudflare necessárias          | sim — Workers Scripts:Edit (necessário para wrangler deploy — aviso preventivo ativo)     |
-| Última atualização                         | 2026-04-20T02:46:46Z                                                                      |
+| Permissões Cloudflare — infra herdada (PR #7) | Workers Scripts:Edit — obrigatório para deploy via wrangler (aviso preventivo ativo) |
+| Permissões Cloudflare — última tarefa (PR #8) | nenhuma adicional — tarefa de governança documental                                  |
+| Última atualização                         | 2026-04-20T03:37:47Z                                                                      |
 
 ---
 
@@ -44,21 +49,24 @@ A governança completa está pronta (trio-base, workflow, protocolos de dados e 
 
 ## 5. Classe da última tarefa
 
-**fora_de_contrato** — pipeline de deploy mínimo de infraestrutura. Sem contrato ativo do Core Mecânico 2, mas alinhado à Fase 1 do A01 (scaffold técnico). Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
+**governança** — camada formal de execução contratual. Criação do índice de contratos, protocolo de execução contratual, protocolo de encerramento de contrato. Atualização do CODEX_WORKFLOW para 16 etapas com vínculo contratual obrigatório. Nenhuma implementação funcional aberta. Próximo passo autorizado não alterado.
 
 ## 6. Última PR relevante
 
-PR #6 — Protocolo obrigatório de permissões Cloudflare (governança).
-PR #7 — Pipeline de deploy GitHub Actions (esta PR).
-- Criou `.github/workflows/deploy.yml`: pipeline mínimo com disparo manual, suporte a test e prod, proteção de branch para prod, sem bindings fictícios.
-- Atualizou `docs/BOOTSTRAP_CLOUDFLARE.md`: uso local via terminal/VSCode, permissões Cloudflare declaradas, aviso preventivo.
-- Atualizou `README.md`: referência ao pipeline criado.
-- Atualizou `schema/status/CORE_MECANICO_2_STATUS.md` (este arquivo).
-- Atualizou `schema/handoffs/CORE_MECANICO_2_LATEST.md`.
+PR #7 — Pipeline de deploy GitHub Actions (deploy.yml — test e prod).
+PR #8 — Camada formal de execução contratual (esta PR).
+- Criou `schema/contracts/_INDEX.md`, `CONTRACT_EXECUTION_PROTOCOL.md`, `CONTRACT_CLOSEOUT_PROTOCOL.md`
+- Criou `schema/contracts/active/` e `schema/contracts/archive/`
+- Atualizou CODEX_WORKFLOW para 16 etapas com vínculo contratual obrigatório
+- Atualizou PR template com campos de contrato, desvio e closeout
+- Atualizou AGENT_CONTRACT com regras anti-desvio e governança contratual
+- Atualizou HANDOFF_SCHEMA e STATUS_SCHEMA com campos contratuais
+- Atualizou README e README_EXECUCAO
+- Atualizou CONTRACT_SCHEMA para coerência com closeout
 
 ## 7. Último commit
 
-Pipeline de deploy: deploy automático em push/merge em `main` (prod) + deploy manual test/prod. Docs locais com PowerShell/Windows/VSCode.
+Governança: camada formal de execução contratual — contratos, protocolos, workflow 16 etapas, PR template, agent contract.
 
 ## 8. Entregas concluídas
 
@@ -81,6 +89,7 @@ Pipeline de deploy: deploy automático em push/merge em `main` (prod) + deploy m
 - [x] CLOUDFLARE_PERMISSION_PROTOCOL — protocolo obrigatório de permissões Cloudflare
 - [x] Rastreabilidade total de permissões Cloudflare: declaração obrigatória em todo ESTADO HERDADO, ESTADO ENTREGUE, handoff, status e PR template
 - [x] **Pipeline de deploy GitHub Actions** — `.github/workflows/deploy.yml`: disparo manual, test e prod, proteção de branch para prod
+- [x] **Camada formal de execução contratual** — `schema/contracts/`: índice, protocolo de execução, protocolo de closeout, diretórios active/archive. CODEX_WORKFLOW 16 etapas. PR template com vínculo contratual. Agent contract com regras anti-desvio.
 
 ## 9. Pendências
 
@@ -92,7 +101,8 @@ Pipeline de deploy: deploy automático em push/merge em `main` (prod) + deploy m
 ## 10. Pendência remanescente herdada
 
 Da PR #2: abertura de contrato formal do Core Mecânico 2.
-Esta pendência permanece em aberto — as PRs #3 a #7 não a afetaram.
+Esta pendência permanece em aberto — as PRs #3 a #8 não a afetaram.
+A camada de execução contratual está pronta para receber o primeiro contrato ativo.
 
 ## 11. Bloqueios
 
@@ -108,9 +118,11 @@ Verificar antes do primeiro deploy real. Ver `docs/BOOTSTRAP_CLOUDFLARE.md` e `s
 **Abrir contrato do Core Mecânico 2**, seguindo o formato definido em `schema/CONTRACT_SCHEMA.md`, com:
 - Escopo alinhado ao A01 (Prioridade 1)
 - Legados aplicáveis conforme A02 e INDEX_LEGADO_MESTRE.md (blocos L03 + L04-L17)
-- Dependências satisfeitas (trio-base + workflow endurecido + contexto vivo + classificação de tarefas + protocolo de dados + bootstrap Cloudflare + protocolo de permissões Cloudflare + pipeline de deploy)
+- Dependências satisfeitas (trio-base + workflow endurecido + contexto vivo + classificação de tarefas + protocolo de dados + bootstrap Cloudflare + protocolo de permissões Cloudflare + pipeline de deploy + camada de execução contratual)
+- Contrato ativo deve ser colocado em `schema/contracts/active/`
+- `schema/contracts/_INDEX.md` deve ser atualizado ao abrir o contrato
 
-**Próximo passo preservado** em relação à PR #6.
+**Próximo passo preservado** em relação à PR #7.
 
 ## 13. Legados aplicáveis
 
@@ -122,5 +134,5 @@ Conforme A02 e `schema/legacy/INDEX_LEGADO_MESTRE.md`:
 
 ## 14. Última atualização
 
-- **Data**: 2026-04-20T02:46:46Z
-- **Responsável**: Copilot (PR #7 — deploy automático em main + docs PowerShell/Windows/VSCode)
+- **Data**: 2026-04-20T03:37:47Z
+- **Responsável**: Copilot (PR #8 — correções de consistência documental)

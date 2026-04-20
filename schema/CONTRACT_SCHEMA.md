@@ -87,7 +87,11 @@ Deve seguir a amarração definida no A02 (seções 4 e 5).
 2. **O contrato não pode crescer de escopo durante a execução** sem atualização explícita e aprovada.
 3. **Conflitos entre contrato e legado** seguem a regra de precedência: o contrato novo só vence se não violar A00, A01 e lógica de negócio consolidada no A02.
 4. **O contrato deve ser atualizado ao final da execução** para refletir o estado real da frente, incluindo pendências, bloqueios e próximo passo autorizado.
-5. **Contratos encerrados devem ser marcados como concluídos**, com referência à PR de entrega e às provas apresentadas.
+5. **Contratos encerrados devem seguir o protocolo formal de closeout** — ver `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`. Encerramento implícito é proibido.
+6. **Um contrato ativo por frente** — cada frente pode ter no máximo 1 contrato ativo por vez. Versões anteriores vão para `schema/contracts/archive/`.
+7. **Contrato ativo não pode ser alterado por PR de execução** — qualquer alteração de objetivo, escopo, critério de aceite ou condição de encerramento exige revisão contratual formal (ver `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` seção 7).
+8. **O contrato deve residir em `schema/contracts/active/`** quando ativo e ser movido para `schema/contracts/archive/` quando encerrado.
+9. **O índice `schema/contracts/_INDEX.md`** deve sempre refletir o estado real dos contratos.
 
 ---
 

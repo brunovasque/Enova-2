@@ -25,6 +25,28 @@ Nome canônico da frente, idêntico ao usado no A01 e no contrato.
 
 Referência ao contrato atualmente ativo para esta frente.
 Se não houver contrato aberto, declarar explicitamente: `Nenhum contrato ativo — aguardando abertura`.
+Quando houver contrato ativo, indicar caminho: `schema/contracts/active/<NOME>.md`.
+
+### 2a. Estado do contrato
+
+Estado atual do contrato ativo, usando os valores canônicos definidos em `schema/contracts/_INDEX.md`:
+`aguardando abertura` | `aberto` | `em execução` | `em revisão` | `encerrado` | `arquivado`
+
+### 2b. Última PR executou qual recorte do contrato
+
+Descrição do recorte do contrato ativo executado pela última PR.
+Se a última PR não executou contrato: `N/A`.
+
+### 2c. Pendência contratual
+
+Itens do contrato ativo que permanecem abertos.
+Se não há contrato ativo: `N/A`.
+
+### 2d. Contrato encerrado?
+
+Declarar explicitamente: `não` | `sim`
+Se sim: indicar data de encerramento, PR que encerrou e próximo contrato autorizado.
+Ver `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`.
 
 ### 3. Item do A01
 
@@ -157,6 +179,10 @@ Ver `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` para escopo, campos obrigatórios
 |--------------------------------------------|------------------------------------------------------------------------------------------|
 | Frente                                     | <nome>                                                                                   |
 | Contrato ativo                             | <referência ou "Nenhum">                                                                 |
+| Estado do contrato                         | <aguardando abertura / aberto / em execução / em revisão / encerrado / arquivado>        |
+| Última PR executou qual recorte            | <descrição ou "N/A">                                                                     |
+| Pendência contratual                       | <lista ou "N/A">                                                                         |
+| Contrato encerrado?                        | <não | sim>                                                                              |
 | Item do A01                                | <fase/prioridade/item>                                                                   |
 | Estado atual                               | <não iniciada / contrato aberto / em execução / bloqueada / concluída>                   |
 | Classe da última tarefa                    | <contratual / governança / fora_de_contrato / correcao_incidental / hotfix / diagnostico>|

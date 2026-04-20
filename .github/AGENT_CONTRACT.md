@@ -5,23 +5,26 @@ Atuar com escopo fechado, execução controlada e aderência total à precedênc
 Seguir o ritual definido em `schema/CODEX_WORKFLOW.md` em toda tarefa — **sem pular nenhuma etapa**.
 
 ## Precedência obrigatória
-**A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis**
+**A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
 
-## Ritual obrigatório — 11 etapas (ver CODEX_WORKFLOW.md seção 3)
-Toda tarefa percorre as 11 etapas do CODEX_WORKFLOW em ordem.
+## Ritual obrigatório — 16 etapas (ver CODEX_WORKFLOW.md seção 3)
+Toda tarefa percorre as 16 etapas do CODEX_WORKFLOW em ordem.
 Nenhuma etapa pode ser pulada. Pular etapa é não conformidade.
 
 ## Leitura obrigatória antes de qualquer tarefa
 1. `schema/A00_PLANO_CANONICO_MACRO.md`
 2. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
 3. `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
-4. Contrato da frente ativa (formato em `schema/CONTRACT_SCHEMA.md`)
-5. Status vivo da frente (`schema/status/<FRENTE>_STATUS.md`)
-6. Último handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`)
-7. Índice do legado mestre (`schema/legacy/INDEX_LEGADO_MESTRE.md`)
-8. Blocos aplicáveis do legado mestre (`schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
+4. `schema/contracts/_INDEX.md` — **índice canônico de contratos ativos**
+5. Contrato ativo da frente (em `schema/contracts/active/`, formato em `schema/CONTRACT_SCHEMA.md`)
+6. `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo de execução contratual**
+7. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo de encerramento de contrato**
+8. Status vivo da frente (`schema/status/<FRENTE>_STATUS.md`)
+9. Último handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`)
+10. Índice do legado mestre (`schema/legacy/INDEX_LEGADO_MESTRE.md`)
+11. Blocos aplicáveis do legado mestre (`schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
 
-## Declaração obrigatória de estado herdado (Etapa 6 do CODEX_WORKFLOW)
+## Declaração obrigatória de estado herdado (Etapa 8 do CODEX_WORKFLOW)
 Antes de executar qualquer tarefa, o agente deve declarar o bloco `ESTADO HERDADO`:
 
 ```
@@ -30,6 +33,8 @@ WORKFLOW_ACK: ok
 Classificação da tarefa: <contratual | governança | fora_de_contrato | correcao_incidental | hotfix | diagnostico>
 Última PR relevante: <número e título>
 Contrato ativo: <nome ou "Nenhum contrato ativo">
+Objetivo imutável do contrato: <objetivo literal ou "N/A">
+Recorte a executar nesta PR: <qual parte do contrato ou "N/A">
 Item do A01: <fase/prioridade/item exato>
 Estado atual da frente: <estado canônico>
 O que a última PR fechou: <lista>
@@ -39,6 +44,7 @@ Esta tarefa está dentro ou fora do contrato ativo: <dentro | fora — justifica
 Objetivo desta tarefa: <objetivo>
 Escopo: <incluído>
 Fora de escopo: <não incluído>
+Houve desvio de contrato?: <não | sim — se sim, ver CONTRACT_EXECUTION_PROTOCOL seção 6>
 Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
 Permissões Cloudflare necessárias: <nenhuma adicional | sim — se sim, ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2>
 ```
@@ -102,6 +108,18 @@ Esta regra garante que o repositório seja a única fonte de verdade — não a 
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs
 - `schema/DATA_CHANGE_PROTOCOL.md` — protocolo obrigatório de mudanças em dados persistidos do Supabase
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md` — protocolo obrigatório de permissões Cloudflare
+- `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — protocolo obrigatório de execução contratual por PR
+- `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — protocolo obrigatório de encerramento formal de contrato
+- `schema/contracts/_INDEX.md` — índice canônico de contratos ativos por frente
+
+## Governança contratual — regras anti-desvio
+
+1. **PR de execução não altera contrato silenciosamente.** Qualquer alteração de objetivo, escopo, critério de aceite, fora de escopo ou condição de encerramento do contrato ativo exige classificação como `governança` (revisão contratual) e PR dedicada.
+2. **Qualquer desvio de contrato deve parar.** Se a PR tenta abrir nova frente, novo escopo, fazer entrega fora do objetivo do contrato ou mudar objetivo sem revisão formal, marcar como **DESVIO DE CONTRATO**, parar e exigir revisão formal.
+3. **Contrato só encerra via protocolo formal.** Nenhum contrato pode ser considerado encerrado sem cumprir integralmente o `CONTRACT_CLOSEOUT_PROTOCOL.md`. Encerramento implícito é proibido.
+4. **Macro não pode ser traído por micro execução.** Nenhuma PR pode contradizer o A00, reordenar o A01 ou expandir escopo além do contrato ativo.
+5. **Um contrato ativo por frente.** Contratos anteriores vão para `archive/`. O `_INDEX.md` deve sempre refletir o estado real.
+6. **Toda PR de execução declara vínculo contratual.** Contrato lido, objetivo imutável, recorte executado, o que fecha, o que não fecha, desvio e encerramento.
 
 ## Protocolo de dados persistidos (Supabase)
 Nenhuma mudança em schema, tabela, coluna, índice, constraint ou relacionamento do Supabase pode acontecer sem:

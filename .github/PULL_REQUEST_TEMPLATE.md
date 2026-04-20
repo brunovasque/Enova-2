@@ -11,6 +11,46 @@
 
 ## Contrato ativo
 <!-- Qual contrato da frente está ativo nesta PR? Se nenhum: "Nenhum contrato ativo" -->
+<!-- Caminho completo: schema/contracts/active/<NOME>.md -->
+
+## Objetivo imutável do contrato
+<!-- Transcrição literal do objetivo do contrato ativo. Se nenhum contrato: "N/A" -->
+
+## Recorte executado nesta PR
+<!-- Qual parte do contrato ativo esta PR executa? -->
+<!-- Se esta PR não executa contrato (governança/infra): "N/A" -->
+
+## O que esta PR fecha do contrato
+<!-- Lista objetiva dos itens do contrato concluídos por esta PR -->
+
+## O que esta PR NÃO fecha do contrato
+<!-- Lista dos itens do contrato que permanecem abertos após esta PR -->
+
+## Houve desvio de contrato?
+<!-- não | sim -->
+<!-- Se sim: -->
+<!--   Tipo de desvio: <novo escopo | nova frente | entrega fora do objetivo | outro> -->
+<!--   Descrição: <o que aconteceu> -->
+<!--   Ação tomada: <parada | revisão formal | novo contrato> -->
+<!-- Ver schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md seção 6 -->
+
+## Contrato encerrado nesta PR?
+<!-- não | sim -->
+<!-- Se sim: preencher o bloco de encerramento abaixo conforme CONTRACT_CLOSEOUT_PROTOCOL.md -->
+<!--
+--- ENCERRAMENTO DE CONTRATO ---
+Contrato encerrado:                     <caminho do contrato>
+Contrato encerrado com sucesso?:        sim | não
+Objetivo do contrato cumprido?:         sim | não
+Critérios de aceite cumpridos?:         sim | não — <lista com status individual>
+Fora de escopo respeitado?:             sim | não
+Pendências remanescentes:               <lista ou "nenhuma">
+Evidências / provas do encerramento:    <lista>
+Data de encerramento:                   <data ISO 8601>
+PR que encerrou:                        <esta PR>
+Destino do contrato encerrado:          archive
+Próximo contrato autorizado:            <nome ou "nenhum">
+-->
 
 ## Item do A01
 <!-- Qual fase/prioridade/item exato do A01 esta PR atende? -->
@@ -81,10 +121,10 @@ Permissões Cloudflare necessárias: sim
 
 ## Arquivos vivos atualizados
 <!-- Lista dos arquivos de status/handoff/contrato efetivamente atualizados nesta PR -->
-<!-- Ex: schema/status/CORE_MECANICO_2_STATUS.md, schema/handoffs/CORE_MECANICO_2_LATEST.md -->
+<!-- Ex: schema/status/CORE_MECANICO_2_STATUS.md, schema/handoffs/CORE_MECANICO_2_LATEST.md, schema/contracts/_INDEX.md -->
 
 ## Referência de precedência
-<!-- Confirmar: A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis -->
+<!-- Confirmar: A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis -->
 
 ## Testes / Validação
 <!-- Quais validações foram executadas? -->
