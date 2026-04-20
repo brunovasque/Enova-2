@@ -1,9 +1,22 @@
 <!-- =====================================================================
      ENOVA 2 — PR TEMPLATE
      Gate bloqueante (obrigatório no body): "Contrato ativo" + "Próximo passo autorizado"
-     Todos os demais campos são checklist de apoio humano — não bloqueiam o gate.
+     Estes 2 campos são preenchidos automaticamente pelo auto-fix a partir dos arquivos vivos
+     quando estiverem ausentes ou vazios. Verifique se os valores refletem o estado atual.
      Governança real: arquivos vivos em schema/status/, schema/handoffs/, schema/contracts/
      ===================================================================== -->
+
+## Contrato ativo
+<!-- ⚠️ CAMPO OBRIGATÓRIO — GATE BLOQUEANTE ⚠️ -->
+<!-- Copiar do arquivo vivo: schema/contracts/_INDEX.md → coluna "Contrato ativo" -->
+<!-- Exemplo: schema/contracts/active/CONTRATO_CORE_MECANICO_2.md -->
+<!-- Se nenhum contrato ativo: "Nenhum contrato ativo" -->
+
+## Próximo passo autorizado
+<!-- ⚠️ CAMPO OBRIGATÓRIO — GATE BLOQUEANTE ⚠️ -->
+<!-- Copiar do último handoff: schema/handoffs/<FRENTE>_LATEST.md → campo "Próximo passo autorizado" -->
+<!-- Ou do status vivo: schema/status/<FRENTE>_STATUS.md → campo "Próximo passo autorizado" -->
+<!-- Este passo foi preservado ou alterado em relação ao que estava antes desta PR? -->
 
 ## Objetivo
 <!-- Qual objetivo desta PR? -->
@@ -15,10 +28,6 @@
 
 ## Última PR relevante
 <!-- Número e título da última PR que afetou esta frente -->
-
-## Contrato ativo
-<!-- Qual contrato da frente está ativo nesta PR? Se nenhum: "Nenhum contrato ativo" -->
-<!-- Caminho completo: schema/contracts/active/<NOME>.md -->
 
 ## Objetivo imutável do contrato
 <!-- Transcrição literal do objetivo do contrato ativo. Se nenhum contrato: "N/A" -->
@@ -121,10 +130,6 @@ Permissões Cloudflare necessárias: sim
 
 ## Estado atual da frente
 <!-- Em que fase/estado a frente se encontra após esta entrega? -->
-
-## Próximo passo autorizado após esta PR
-<!-- Qual é o próximo passo explicitamente autorizado pelo A01 e pelo contrato ativo? -->
-<!-- Este passo foi preservado ou alterado em relação ao que estava antes desta PR? -->
 
 ## Arquivos vivos atualizados
 <!-- Lista dos arquivos de status/handoff/contrato efetivamente atualizados nesta PR -->

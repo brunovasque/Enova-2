@@ -567,3 +567,61 @@ Fontes de verdade consultadas:
 - Nunca declarar "lido" um arquivo que não foi consultado.
 
 **Tarefa sem este bloco de declaração de fontes = tarefa não conforme.**
+
+---
+
+## 20. Regra de sincronização: body da PR = reflexo mínimo dos arquivos vivos
+
+> **O body da PR não é fonte primária de verdade — os arquivos vivos são.**
+> Mas o body não pode divergir dos arquivos vivos nos 2 campos mínimos exigidos pelo gate.
+
+### 20.1 Princípio
+
+| Aspecto                  | Regra                                                                                      |
+|--------------------------|--------------------------------------------------------------------------------------------|
+| Fonte primária de verdade | Arquivos vivos: `schema/contracts/`, `schema/handoffs/`, `schema/status/`                 |
+| Body da PR               | Reflexo mínimo — transcreve os campos `Contrato ativo` e `Próximo passo autorizado` dos vivos |
+| Gate bloqueante          | Body vazio ou com placeholder genérico nesses 2 campos = **falha de governança**           |
+| Auto-fix                 | Extrai valores reais dos vivos automaticamente quando os campos estão ausentes ou vazios   |
+
+### 20.2 Campos obrigatórios no body (gate bloqueante)
+
+Os seguintes campos **devem estar presentes e preenchidos com valores reais** em toda PR:
+
+| Campo                    | Fonte de verdade para transcrição                                     |
+|--------------------------|-----------------------------------------------------------------------|
+| `## Contrato ativo`      | `schema/contracts/_INDEX.md` → coluna "Contrato ativo" da frente     |
+| `## Próximo passo autorizado` | `schema/handoffs/<FRENTE>_LATEST.md` → campo "Próximo passo autorizado" |
+
+**Valores aceitos:**
+- Caminho real do contrato: `schema/contracts/active/<NOME>.md`
+- Ausência declarada: `Nenhum contrato ativo` (quando não há contrato ativo na frente)
+- Texto real extraído do handoff ou status da frente
+
+**Valores rejeitados (placeholder puro):**
+- `Nenhum contrato ativo — verificar schema/...` (instrução não resolvida)
+- `Verificar schema/...` como valor primário
+- `TODO`, `preencher manualmente`, `pendência de preenchimento`
+
+### 20.3 Responsabilidade de sincronização
+
+1. **Responsabilidade primária do agente:** ao abrir a PR, transcrever os valores reais dos arquivos vivos nos 2 campos do body. Os arquivos vivos **já devem estar atualizados** antes da abertura da PR (Etapa 14 do fluxo de execução).
+2. **Auto-fix como rede de segurança:** se os campos estiverem ausentes ou vazios, o auto-fix extrai valores dos arquivos vivos e preenche automaticamente. Mas o auto-fix é fallback — não substitui a responsabilidade do agente.
+3. **Body vazio ou placeholder genérico = falha de governança**, não falha do validator. O validator detecta o sintoma; a causa é a falta de sincronização com os vivos.
+
+### 20.4 Fluxo de sincronização obrigatório
+
+```
+Etapa 14 (Atualização viva) → arquivos vivos atualizados
+                           ↓
+Abertura da PR             → body transcreve Contrato ativo + Próximo passo dos vivos
+                           ↓
+PR Governance Gate         → valida os 2 campos no body
+                           ↓
+Se ausentes/vazios         → auto-fix extrai dos vivos e preenche automaticamente
+                           ↓
+Gate aprovado              → body sincronizado com os vivos
+```
+
+**Regra de parada:** se o auto-fix não conseguir extrair valor determinístico dos arquivos vivos (arquivos inexistentes, formato não reconhecido), o gate falha e exige intervenção manual. Isso indica que os arquivos vivos não estão atualizados — a causa deve ser resolvida nos vivos, não no body.
+

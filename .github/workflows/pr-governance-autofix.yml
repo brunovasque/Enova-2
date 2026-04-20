@@ -9,12 +9,19 @@ name: PR Governance Auto-fix (Controlado)
 #   - Sem LLM. Sem loop aberto. Sem API externa.
 #   - Para imediatamente em erros estruturais ou ao atingir o limite.
 #
+# Estratégia de preenchimento:
+#   - O script extrai valores reais dos arquivos vivos do repositório:
+#       Contrato ativo    → schema/contracts/_INDEX.md
+#       Próximo passo     → schema/handoffs/<FRENTE>_LATEST.md (ou status como fallback)
+#   - Fallback seguro quando não há fonte determinística disponível.
+#   - O gate valida e aprova na próxima rodada sem atingir max_attempts.
+#
 # Fluxo:
 #   1. PR governance check falha
 #   2. Este workflow dispara
 #   3. Busca o body atual da PR
-#   4. Roda autofix_pr_governance.js (determinístico, sem LLM)
-#   5. Se houve correção trivial: atualiza o body da PR via API
+#   4. Roda autofix_pr_governance.js (determinístico, sem LLM, lê arquivos vivos)
+#   5. Se houve correção: atualiza o body da PR via API com valores dos vivos
 #   6. O PR body editado dispara novo "edited" → PR Governance Check roda novamente
 #   7. Repete até: gate passa | limite de 3 tentativas | erro estrutural detectado
 
@@ -162,9 +169,9 @@ jobs:
           echo "✅ Body da PR #${PR_NUMBER} atualizado."
           echo "   O PR Governance Check será re-executado pelo evento 'edited' da PR."
           echo ""
-          echo "⚠️  ATENÇÃO AO AUTOR DA PR:"
-          echo "   Campos preenchidos automaticamente com PLACEHOLDERS."
-          echo "   Substitua pelos valores reais antes do merge."
+          echo "📋 VALORES INSERIDOS:"
+          echo "   Extraídos dos arquivos vivos do repositório (contracts/_INDEX.md, handoffs/, status/)."
+          echo "   Verifique se refletem corretamente o estado atual da frente antes do merge."
           echo "   Template: .github/PULL_REQUEST_TEMPLATE.md"
 
       - name: Falhar o job se limite ou erro estrutural atingido
