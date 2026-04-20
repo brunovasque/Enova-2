@@ -5,21 +5,21 @@
 | Frente                                     | Core Mecânico 2 |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | Integração mínima do Core atual ao Worker — rota técnica `POST /__core__/run` + smoke real da rota |
-| Pendência contratual                       | L07–L17 em aberto; Meio A, Meio B, Especiais e Final permanecem pendentes |
+| Última PR executou qual recorte            | L07 + L08 — Meio A: estado civil e composição familiar (parte 1) |
+| Pendência contratual                       | L09–L17 em aberto; continuação do Meio A, Meio B, Especiais e Final permanecem pendentes |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala |
-| Estado atual                               | em execução — Core já roda no Worker via rota estrutural isolada, sem fala mecânica |
-| Classe da última tarefa                    | contratual — integração mínima do Core no Worker, sem abrir nova frente |
-| Última PR relevante                        | PR de integração mínima do Worker — Core exposto via `/__core__/run` |
-| Último commit                              | `01da787578d2f2e22fb81bee854d87103ef819d8` — `feat(worker): expor rota minima do core` |
-| Pendência remanescente herdada             | O topo já estava integrado ao `engine.ts`; faltava expor o Core pelo Worker com uma entrada técnica viva e provar a rota real |
-| Próximo passo autorizado                   | Terceira PR contratual: L07 + L08 — Meio A: estado civil e composição familiar (preservado) |
-| Legados aplicáveis                         | L03, L04, L05, L06 executados; L07–L17 pendentes |
+| Estado atual                               | em execução — Meio A inicial já roda no Core principal, sem fala mecânica e sem abrir novas frentes |
+| Classe da última tarefa                    | contratual — L07 + L08 do Core Mecânico 2, mantendo Worker sem fala |
+| Última PR relevante                        | PR de execução L07 + L08 — Meio A integrado ao `engine.ts` |
+| Último commit                              | `cc1e98aae76fc6ca7c3c224ce134eed89dc44948` — `feat(core): integrar meio a inicial no engine` |
+| Pendência remanescente herdada             | O Core já estava vivo no Worker; faltava entrar no primeiro recorte de Meio A com estado civil e composição familiar mínima |
+| Próximo passo autorizado                   | Quarta PR contratual: L09 + L10 — Meio A: composição familiar (parte 2) |
+| Legados aplicáveis                         | L03, L04, L05, L06, L07, L08 executados; L09–L17 pendentes |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-20T19:04:45.2886583-03:00 |
+| Última atualização                         | 2026-04-20T19:41:16.3186022-03:00 |
 
 ---
 
@@ -37,16 +37,14 @@ Core Mecânico 2
 
 ## 2b. Última PR executou qual recorte do contrato
 
-Integração mínima do Core atual ao Worker:
-- `src/worker.ts` deixou de ser placeholder puro
-- rota técnica isolada `POST /__core__/run`
-- execução do `runCoreEngine()` real com input estrutural controlado
-- saída JSON estritamente estrutural
-- smoke real da rota passando pelo `fetch` do Worker
+L07 + L08 — Meio A: estado civil e composição familiar (parte 1):
+- parser/extrator mínimo de `estado_civil`, `processo` e `composition_actor`
+- critérios/gates mínimos do Meio A
+- integração real de `qualification_civil` ao `engine.ts`
+- smoke integrado do caminho real do Core
 
 ## 2c. Pendência contratual
 
-- L07 + L08 — Meio A: estado civil e composição familiar (parte 1)
 - L09 + L10 — Meio A: composição familiar (parte 2)
 - L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade
 - L15 + L16 — Especiais
@@ -66,17 +64,17 @@ Integração mínima do Core atual ao Worker:
 
 **em execução**
 
-O Core Mecânico 2 continua desacoplado da fala e agora possui uma entrada técnica viva no Worker:
-- `GET /` responde com status técnico simples
-- `POST /__core__/run` aceita `lead_id`, `current_stage` e `facts`
-- o Worker chama o Core real (`runCoreEngine()`)
-- a resposta inclui apenas `stage_current`, `stage_after`, `next_objective`, `block_advance`, `gates_activated` e `speech_intent`
+O Core Mecânico 2 continua desacoplado da fala e agora já executa o primeiro recorte real do Meio A:
+- `qualification_civil` deixou de depender apenas do gate genérico de L03
+- `engine.ts` chama parser e criteria próprios do Meio A
+- o Core decide estruturalmente entre bloquear ou avançar para `qualification_renda`
+- o Worker permanece apenas como entrada técnica estrutural, sem fala mecânica
 
 ## 5. Classe da última tarefa
 
 **contratual**
 
-Recorte contratual de integração mínima do Core no Worker, ainda dentro da frente Core Mecânico 2 e sem abrir fala, Supabase, Meta/WhatsApp ou surface final.
+Recorte contratual L07 + L08 do Core Mecânico 2, ainda sem abrir renda, elegibilidade, fala, Supabase, Meta/WhatsApp ou surface final.
 
 ## 6. Última PR relevante
 
@@ -95,10 +93,11 @@ PR de integração mínima do Worker — Core exposto via `/__core__/run`.
 - [x] Integração mínima do Core atual ao Worker
 - [x] Rota técnica `POST /__core__/run`
 - [x] Smoke real da rota do Worker
+- [x] L07 — estado civil
+- [x] L08 — composição familiar (parte 1)
 
 ## 9. Pendências
 
-- [ ] L07 + L08 — Meio A: estado civil e composição familiar (parte 1)
 - [ ] L09 + L10 — Meio A: composição familiar (parte 2)
 - [ ] L11 + L12 + L13 + L14 — Meio B
 - [ ] L15 + L16 — Especiais
@@ -106,7 +105,7 @@ PR de integração mínima do Worker — Core exposto via `/__core__/run`.
 
 ## 10. Pendência remanescente herdada
 
-O Core já existia internamente no repositório, mas ainda não estava exposto pelo Worker. Esta pendência técnica foi fechada nesta PR sem alterar o próximo passo de negócio da frente.
+O Core já estava exposto minimamente pelo Worker, mas `qualification_civil` ainda não tinha trilho próprio de Meio A no motor principal. Esta pendência foi fechada nesta PR sem abrir o restante do funil.
 
 ## 11. Bloqueios
 
@@ -114,18 +113,18 @@ Nenhum bloqueio ativo.
 
 ## 12. Próximo passo autorizado
 
-**Terceira PR contratual: L07 + L08 — Meio A: estado civil e composição familiar (parte 1).**
+**Quarta PR contratual: L09 + L10 — Meio A: composição familiar (parte 2).**
 
-Este próximo passo foi **preservado**. A integração mínima do Worker não altera a ordem contratual de evolução das regras de negócio.
+Este próximo passo segue a ordem contratual natural após o fechamento de L07 + L08.
 
 ## 13. Legados aplicáveis
 
-- **Executados**: L03, L04, L05, L06
-- **Pendentes**: L07–L17
+- **Executados**: L03, L04, L05, L06, L07, L08
+- **Pendentes**: L09–L17
 
 ## 14. Última atualização
 
-2026-04-20T19:04:45.2886583-03:00
+2026-04-20T19:41:16.3186022-03:00
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -140,8 +139,10 @@ Permissões Cloudflare necessárias: nenhuma adicional
 Fontes de verdade consultadas — última tarefa:
   Índice de contratos lido:    `schema/contracts/_INDEX.md`
   Contrato ativo lido:         `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`
+  Clause map lido:             `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`
+  Execution rules lidas:       `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md`
   Status da frente lido:       `schema/status/CORE_MECANICO_2_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/CORE_MECANICO_2_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos L03–L17 identificados estruturalmente
-  PDF mestre consultado:       não consultado — esta PR não implementa nova regra de negócio; consome o Core já executado em L03/L04/L05/L06
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — taxonomia F2 e regras mínimas de estado civil/processo/composição consultadas diretamente para L07 + L08

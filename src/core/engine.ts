@@ -9,6 +9,7 @@
  *
  * CAMINHOS DE DECISÃO:
  *   - Stage 'discovery' (topo): usa L04/L05/L06 — extractTopoSignals + evaluateTopoCriteria
+ *   - Stage 'qualification_civil' (Meio A): usa L07/L08 — extractMeioASignals + evaluateMeioACriteria
  *   - Demais stages: usa caminho genérico L03 — G_FATO_CRITICO_AUSENTE
  *
  * RESTRIÇÃO INVIOLÁVEL: esta função não retorna texto ao cliente.
@@ -20,6 +21,8 @@ import type { LeadState, CoreDecision } from './types.ts';
 import { STAGE_MAP, evaluateApplicableGates } from './stage-map.ts';
 import { extractTopoSignals } from './topo-parser.ts';
 import { evaluateTopoCriteria } from './topo-gates.ts';
+import { extractMeioASignals } from './meio-a-parser.ts';
+import { evaluateMeioACriteria } from './meio-a-gates.ts';
 
 // ---------------------------------------------------------------------------
 // Ponto de entrada do motor
@@ -47,6 +50,10 @@ export function runCoreEngine(state: LeadState): CoreDecision {
   //   L06 (topo-gates):  critérios de aceite e next step estrutural do topo
   if (state.current_stage === 'discovery') {
     return runTopoDecision(state);
+  }
+
+  if (state.current_stage === 'qualification_civil') {
+    return runMeioADecision(state);
   }
 
   // --- Caminho genérico (L03): demais stages ---
@@ -79,6 +86,36 @@ export function runCoreEngine(state: LeadState): CoreDecision {
     block_advance: blockAdvance,
     gates_activated: activatedGates.map((g) => g.gate_id),
     speech_intent: speechIntent,
+    decision_id: `core-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    evaluated_at: new Date().toISOString(),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Caminho de decisão do Meio A — integra L07/L08 no Core principal
+// ---------------------------------------------------------------------------
+
+function runMeioADecision(state: LeadState): CoreDecision {
+  const meioASignals = extractMeioASignals({
+    facts_current: state.facts,
+    facts_extracted: {},
+  });
+
+  const meioACriteria = evaluateMeioACriteria(meioASignals);
+  const blockAdvance = !meioACriteria.can_advance;
+  const stageAfter = meioACriteria.authorized_next_step as LeadState['current_stage'];
+
+  const nextObjective = blockAdvance
+    ? `coletar_${meioACriteria.missing_required_facts[0] ?? 'ajuste_meio_a'}`
+    : `avancar_para_${stageAfter}`;
+
+  return {
+    stage_current: 'qualification_civil',
+    stage_after: stageAfter,
+    next_objective: nextObjective,
+    block_advance: blockAdvance,
+    gates_activated: meioACriteria.activated_gates,
+    speech_intent: blockAdvance ? 'bloqueio' : 'transicao_stage',
     decision_id: `core-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     evaluated_at: new Date().toISOString(),
   };

@@ -5,8 +5,8 @@
  *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06)
  *   Bloco legado:    L03 — Mapa Canônico do Funil; L04, L05, L06 — Topo do Funil
  *
- * ESCOPO DESTE ARQUIVO: esqueleto estrutural do Core + tipos do topo do funil.
- * Regras de Meio A (casado civil, composição familiar) ficam para L07–L10.
+ * ESCOPO DESTE ARQUIVO: esqueleto estrutural do Core + tipos do topo do funil
+ * e do Meio A inicial.
  * Regras de Meio B (autônomo/IR, renda, elegibilidade) ficam para L11–L14.
  *
  * RESTRIÇÃO INVIOLÁVEL: nenhum tipo aqui representa fala, surface ou resposta ao cliente.
@@ -17,6 +17,14 @@
 export type { CustomerGoal, CurrentIntent, OfftrackType } from './topo-rules.ts';
 export type { TopoTurnExtract, TopoSignals } from './topo-parser.ts';
 export type { TopoCriteriaResult } from './topo-gates.ts';
+export type {
+  EstadoCivil,
+  ProcessoMode,
+  CompositionActor,
+  MeioAParseStatus,
+} from './meio-a-rules.ts';
+export type { MeioATurnExtract, MeioASignals } from './meio-a-parser.ts';
+export type { MeioACriteriaResult } from './meio-a-gates.ts';
 
 // ---------------------------------------------------------------------------
 // Stages canônicos do funil — derivados de L03
