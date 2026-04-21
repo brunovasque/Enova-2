@@ -555,6 +555,107 @@ function smokeScenario14_PreparacaoMultimodalSemAbrirAudioReal(): SpeechSmokeRes
   };
 }
 
+function smokeScenario15_ProvaFinalIntegrada(): SpeechSmokeResult {
+  // Prova integrada: policy -> cognitive -> free-response -> composite-turn -> surface -> multimodal-readiness
+  // Cobre explicitamente os 7 critérios de aceite da Frente 2 (FRENTE2_CLOSEOUT_READINESS.md §2)
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+
+  // [Camada 1] Policy
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+
+  // [Camada 2] Cognitive
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+
+  // [Camada 3+4] Composite turn (múltiplos sinais) → free-response → surface
+  const llmIntegratedText = [
+    'Você trouxe mais de uma informação: objetivo de comprar, dúvida sobre o programa e preferência de ritmo.',
+    'Vou considerar tudo isso no próximo passo permitido pela qualificação, sem prometer aprovação antes das validações.',
+  ].join(' ');
+
+  const compositeTurn = buildGovernedCompositeTurn({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    signals: [
+      { kind: 'intent', key: 'customer_goal', value: 'comprar_imovel', handling: 'inform_llm' },
+      { kind: 'question', key: 'mcmv_program_question', value: 'duvida_sobre_programa', handling: 'inform_llm' },
+      { kind: 'preference', key: 'pace', value: 'com_calma', handling: 'inform_llm' },
+    ],
+    draft: {
+      author: 'llm',
+      text: llmIntegratedText,
+    },
+  });
+
+  // [Camada 5] Multimodal readiness
+  const multimodalReadiness = buildMultimodalReadinessContract({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    future_modalities: ['text', 'audio'],
+  });
+  const multimodalViolations = assertMultimodalReadinessConformance(multimodalReadiness);
+
+  const assertions = [
+    // Critério 2.1 — Uma única surface final por turno
+    assert('[2.1] surface_owner = llm', 'llm', envelope.surface_owner),
+    assert('[2.1] surface aceita apenas autoria llm', true, compositeTurn.free_response.surface.accepted),
+    assert('[2.1] mechanical_text_generated = false na surface final', false, compositeTurn.free_response.surface.mechanical_text_generated),
+
+    // Critério 2.2 — Mecânico sem prioridade de fala
+    assert('[2.2] mechanical_speech_priority = forbidden na policy', 'forbidden', envelope.mechanical_speech_priority),
+    assert('[2.2] mechanical_may_write_customer_text = false', false, envelope.mechanical_may_write_customer_text),
+    assert('[2.2] mechanical_parser_dominant = false no turno composto', false, compositeTurn.mechanical_parser_dominant),
+    assert('[2.2] governance_wrote_text = false', false, compositeTurn.governance_wrote_text),
+
+    // Critério 2.3 — Resposta livre sob governança estrutural
+    assert('[2.3] response_owner = llm', 'llm', compositeTurn.free_response.model.response_owner),
+    assert('[2.3] response_mode = free_under_structural_governance', 'free_under_structural_governance', compositeTurn.free_response.model.response_mode),
+    assert('[2.3] governance_role = restricts_validates_informs_only', 'restricts_validates_informs_only', compositeTurn.free_response.model.governance_role),
+    assert('[2.3] texto final preserva exatamente a autoria da IA', llmIntegratedText, compositeTurn.final_text),
+
+    // Critério 2.4 — Múltiplas informações no mesmo turno sem perder trilho
+    assert('[2.4] multiple_information_supported = true', true, compositeTurn.context.multiple_information_supported),
+    assert('[2.4] 3 sinais processados sem script rígido', 3, compositeTurn.context.signal_count),
+    assert('[2.4] next_objective preservado após múltiplos sinais', envelope.next_objective, compositeTurn.context.next_objective),
+    assert('[2.4] interpretation_owner = llm no turno composto', 'llm', compositeTurn.context.interpretation_owner),
+
+    // Critério 2.5 — Promessa de aprovação proibida
+    assert('[2.5] nao_prometer_aprovacao em knowledge_boundaries', true, cognitiveContract.knowledge_boundaries.includes('nao_prometer_aprovacao')),
+    assert('[2.5] nao_prometer_aprovacao em structural_constraints', true, compositeTurn.free_response.model.structural_constraints.includes('nao_prometer_aprovacao')),
+    assert('[2.5] turno integrado sem promessa aceito com sucesso', true, compositeTurn.accepted),
+
+    // Critério 2.6 — Preparação multimodal mínima sem áudio real
+    assert('[2.6] readiness_status = preparatory_contract_only', 'preparatory_contract_only', multimodalReadiness.readiness_status),
+    assert('[2.6] audio real continua desligado', false, multimodalReadiness.runtime_locks.real_audio_enabled),
+    assert('[2.6] STT real continua desligado', false, multimodalReadiness.runtime_locks.stt_provider_enabled),
+    assert('[2.6] TTS real continua desligado', false, multimodalReadiness.runtime_locks.tts_provider_enabled),
+    assert('[2.6] sem violações na preparação multimodal', [], multimodalViolations),
+
+    // Critério 2.7 — Postura consultiva MCMV — não vira script rígido
+    assert('[2.7] mode = mcmv_specialist_consultative', 'mcmv_specialist_consultative', cognitiveContract.mode),
+    assert('[2.7] postura_consultiva_humana em specialist_principles', true, cognitiveContract.specialist_principles.includes('postura_consultiva_humana')),
+    assert('[2.7] script_rigido_dominante em forbidden_behaviors', true, cognitiveContract.forbidden_behaviors.includes('script_rigido_dominante')),
+    assert('[2.7] conduzir_com_naturalidade_sem_trilho_duro em required_behaviors', true, cognitiveContract.required_behaviors.includes('conduzir_com_naturalidade_sem_trilho_duro')),
+
+    // Resultado integrado
+    assert('[FINAL] sem violações end-to-end', [], compositeTurn.violations),
+    assert('[FINAL] turno final aceito pela cadeia completa', true, compositeTurn.accepted),
+  ];
+
+  return {
+    scenario: 'Cenário 15 — prova final integrada: policy → cognitive → free-response → composite-turn → surface → multimodal-readiness',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface: compositeTurn.free_response.surface,
+    free_response: compositeTurn.free_response,
+    composite_turn: compositeTurn,
+    multimodal_readiness: multimodalReadiness,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 export function runSpeechSmokeSuite() {
   const results = [
     smokeScenario1_BlockPreservaSoberaniaDaIa(),
@@ -571,6 +672,7 @@ export function runSpeechSmokeSuite() {
     smokeScenario12_TurnoCompostoNaoSobrescreveCore(),
     smokeScenario13_TurnoCompostoNaoPrometeAprovacao(),
     smokeScenario14_PreparacaoMultimodalSemAbrirAudioReal(),
+    smokeScenario15_ProvaFinalIntegrada(),
   ];
   const passed = results.filter((item) => item.passed).length;
 
@@ -588,7 +690,7 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runSpeechSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Speech Engine — Smoke textual mínimo');
+  console.log('ENOVA 2 — Speech Engine — Smoke textual mínimo + Prova Final Integrada (PR 33)');
   console.log('===========================================');
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
