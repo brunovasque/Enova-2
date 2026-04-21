@@ -3,18 +3,18 @@
 | Campo | Valor |
 |---|---|
 | Frente | Contexto, Extração e Memória Viva |
-| Contrato ativo | `schema/contracts/active/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA.md` |
-| Estado do contrato | em execução |
-| Última PR executou qual recorte | PR 38 — memória viva mínima e útil |
-| Pendência contratual | executar PR 39 — acceptance smoke + closeout conforme contrato ativo |
-| Contrato encerrado? | não |
+| Contrato ativo | Nenhum — contrato anterior encerrado em 2026-04-21 |
+| Estado do contrato | encerrado |
+| Última PR executou qual recorte | PR 39 — acceptance smoke + closeout da Frente 3 |
+| Pendência contratual | nenhuma |
+| Contrato encerrado? | sim — PR 39, contrato arquivado em `schema/contracts/archive/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA_2026-04-21.md` |
 | Item do A01 | Fase 3 — Prioridade 3: plugar extração multi-intenção e memória curta úteis; captar mais de um fato por turno sem perder trilho |
-| Estado atual | PR 38 entregue — memória viva mínima consolidada; frente segue ativa para acceptance smoke + closeout |
+| Estado atual | concluída — acceptance smoke final passou e contrato encerrado formalmente |
 | Classe da última tarefa | contratual |
-| Última PR relevante | PR 38 — memória viva mínima e útil |
-| Último commit funcional | `e462fd3` — `feat(context): consolidar memoria viva minima` |
-| Pendência remanescente herdada | executar PR 39 — acceptance smoke + closeout |
-| Próximo passo autorizado | PR 39 — acceptance smoke + closeout da Frente 3 |
+| Última PR relevante | PR 39 — acceptance smoke + closeout da Frente 3 |
+| Último commit funcional | `b2ddcec` — `test(context): adicionar acceptance smoke final` |
+| Pendência remanescente herdada | nenhuma |
+| Próximo passo autorizado | abrir o contrato da Frente 4 — Supabase Adapter e Persistência |
 | Legados aplicáveis | L03 e L05 como base estrutural; L19 como frente canônica de Contexto e Memória Viva |
 | Mudanças em dados persistidos (Supabase) | nenhuma |
 | Permissões Cloudflare necessárias | nenhuma adicional |
@@ -32,7 +32,7 @@ Contexto, Extração Estruturada e Memória Viva.
 
 ## 3. Estado atual
 
-Contrato em execução. A PR 36 entregou o schema base canônico, a PR 37 entregou consolidação mínima de múltiplos sinais no mesmo turno e a PR 38 entregou memória viva mínima útil, sem abrir persistência, PR39, integração externa ou autoria de fala.
+Contrato encerrado formalmente. A PR 36 entregou o schema base canônico, a PR 37 entregou consolidação mínima de múltiplos sinais no mesmo turno, a PR 38 entregou memória viva mínima útil e a PR 39 entregou o acceptance smoke final + closeout protocolar, sem abrir persistência, integração externa ou autoria de fala.
 
 ## 4. Entregas concluídas
 
@@ -59,14 +59,20 @@ Contrato em execução. A PR 36 entregou o schema base canônico, a PR 37 entreg
   - rejeição explícita de transcript bruto, resposta anterior inteira, estado estrutural do Core, slot oficial e persistência de banco
   - consolidação derivada dos sinais da PR37 para próximo raciocínio, sem substituir Core, Speech ou Supabase Adapter
   - smoke específico ampliado em `src/context/smoke.ts`
+- PR 39 — acceptance smoke + closeout:
+  - acceptance smoke final integrado adicionado em `src/context/smoke.ts`
+  - critérios C1-C7 verificados
+  - readiness de closeout registrado em `schema/contracts/closeout/CONTEXTO_EXTRACAO_MEMORIA_VIVA_CLOSEOUT_READINESS.md`
+  - contrato arquivado em `schema/contracts/archive/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA_2026-04-21.md`
+  - Frente 4 declarada como próxima frente autorizada, sem implementação
 
 ## 5. Pendências
 
-- PR 39 — acceptance smoke + closeout formal
+nenhuma
 
 ## 6. Próximo passo autorizado
 
-PR 39 — acceptance smoke + closeout da Frente 3.
+Abrir o contrato da Frente 4 — Supabase Adapter e Persistência.
 
 ## 6.1. Âncora e provas da PR 36
 
@@ -115,6 +121,39 @@ PR 39 — acceptance smoke + closeout da Frente 3.
   - memória viva não assume persistência real da Frente 4
   - PR39 permanece pendente como acceptance smoke + closeout formal
 
+## 6.4. Âncora e provas da PR 39
+
+- Contrato encerrado: `schema/contracts/archive/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA_2026-04-21.md`
+- Closeout readiness: `schema/contracts/closeout/CONTEXTO_EXTRACAO_MEMORIA_VIVA_CLOSEOUT_READINESS.md`
+- A01: Fase 3 — Prioridade 3 concluída
+- PDF mestre consultado: páginas 122-123, Contrato de Contexto, Extração de Slots e Memória Viva; apoio nas páginas 7, 14 e 24.
+- Acceptance smoke: `npm run smoke:context` — 11/11
+- Smoke agregado: `npm run smoke:all`
+- Critérios C1-C7:
+  - C1 — Turno estruturado: cumprido
+  - C2 — Sinais estruturados: cumprido
+  - C3 — Multi-intenção real: cumprido
+  - C4 — Governança preservada: cumprido
+  - C5 — IA soberana na fala: cumprido
+  - C6 — Memória viva mínima útil: cumprido
+  - C7 — Smoke integrado final: cumprido
+- Próxima frente autorizada: Frente 4 — Supabase Adapter e Persistência, apenas abertura contratual.
+
+## 6.5. Encerramento de contrato
+
+--- ENCERRAMENTO DE CONTRATO ---
+Contrato encerrado:                     `schema/contracts/archive/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA_2026-04-21.md`
+Contrato encerrado com sucesso?:        sim
+Objetivo do contrato cumprido?:         sim — PRs 35-39 entregaram contexto estruturado, multi-sinal, memória viva mínima e acceptance smoke final
+Critérios de aceite cumpridos?:         sim — C1, C2, C3, C4, C5, C6 e C7 cumpridos
+Fora de escopo respeitado?:             sim
+Pendências remanescentes:               nenhuma
+Evidências / provas do encerramento:    PR 35-39, `npm run smoke:context`, `npm run smoke:all`, closeout readiness
+Data de encerramento:                   2026-04-21
+PR que encerrou:                        PR 39 — acceptance smoke + closeout da Frente 3
+Destino do contrato encerrado:          archive — `schema/contracts/archive/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA_2026-04-21.md`
+Próximo contrato autorizado:            Frente 4 — Supabase Adapter e Persistência
+
 ## 7. Mudanças em dados persistidos (Supabase)
 
 Mudanças em dados persistidos (Supabase): nenhuma
@@ -127,7 +166,7 @@ Permissões Cloudflare necessárias: nenhuma adicional
 
 Fontes de verdade consultadas — última tarefa:
   Índice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         `schema/contracts/active/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA.md`
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA.md` — lido antes do arquivamento; arquivado após closeout em `schema/contracts/archive/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA_2026-04-21.md`
   Status da frente lido:       `schema/status/CONTEXTO_EXTRACAO_MEMORIA_VIVA_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/CONTEXTO_EXTRACAO_MEMORIA_VIVA_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
