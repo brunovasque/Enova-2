@@ -5,13 +5,13 @@
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | PR em preparação — PR2 textual: primeira surface final mínima autorada pela IA |
+| Última PR executou qual recorte            | PR 27 — PR2 textual: primeira surface final mínima autorada pela IA |
 | Pendência contratual                       | próximos recortes textuais da atendente especialista MCMV; provedor LLM real e prompt final de produção ainda não abertos |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
 | Estado atual                               | em execução |
 | Classe da última tarefa                    | contratual |
-| Última PR relevante                        | PR em preparação — PR2 textual: primeira surface final mínima autorada pela IA |
+| Última PR relevante                        | PR 27 — PR2 textual: primeira surface final mínima autorada pela IA |
 | Último commit funcional                    | `19c83aab7fd4b48d1a2ef54e23f18a49dcace24a` — `feat(speech): criar surface final minima da ia` |
 | Pendência remanescente herdada             | após a PR 26 ainda faltava provar surface final real escrita pela IA |
 | Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV após a surface mínima, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
@@ -39,7 +39,7 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR em preparação — PR2 textual: primeira surface final mínima autorada pela IA.
+PR 27 — PR2 textual: primeira surface final mínima autorada pela IA.
 
 O recorte saiu do envelope puramente estrutural da PR 26 e criou uma camada mínima de publicação de surface final: o texto final precisa chegar como draft autorado por `llm`; a camada de Speech apenas valida a política, preserva a governança estrutural e rejeita qualquer autoria mecânica.
 
@@ -76,7 +76,7 @@ A frente agora possui:
 
 ## 6. Última PR relevante
 
-PR em preparação — PR2 textual: primeira surface final mínima autorada pela IA.
+PR 27 — PR2 textual: primeira surface final mínima autorada pela IA.
 
 ## 7. Último commit funcional
 
@@ -126,7 +126,7 @@ Esse próximo recorte deve continuar provando que a IA escreve a resposta final 
 
 ## 14. Última atualização
 
-2026-04-21T10:58:44.7862454-03:00 — PR2 textual: primeira surface final mínima autorada pela IA.
+2026-04-21T10:58:44.7862454-03:00 — PR 27: primeira surface final mínima autorada pela IA.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
