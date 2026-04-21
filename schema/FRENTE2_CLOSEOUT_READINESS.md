@@ -1,8 +1,8 @@
 # FRENTE 2 — CLOSEOUT READINESS — Speech Engine e Surface Única — ENOVA 2
 
-> **Status:** prova final executada — PR 33 acceptance smoke aprovado — aguardando closeout formal
-> **Contrato ativo:** `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md`
-> **Última atualização:** PR 33 — prova final / acceptance smoke executada — 15/15 cenários passando
+> **Status:** ✅ ENCERRADO — closeout formal executado em 2026-04-21T17:24:15Z
+> **Contrato arquivado:** `schema/contracts/archive/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL_2026-04-21.md`
+> **Última atualização:** PR closeout — encerramento formal concluído — Frente 3 declarada como próxima
 
 ---
 
@@ -213,17 +213,19 @@ A PR 33 é a **prova final / acceptance smoke** da Frente 2. Ela não abre nova 
 
 ---
 
-## 6. O que a PR de closeout formal deve fazer
+## 6. O que a PR de closeout formal fez
 
-A PR de closeout (posterior à PR 33) deve:
+**✅ CONCLUÍDO — PR closeout executada em 2026-04-21T17:24:15Z.**
 
-1. Cumprir integralmente o `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`.
-2. Preencher o bloco `--- ENCERRAMENTO DE CONTRATO ---` com todos os campos obrigatórios.
-3. Mapear cada critério de aceite do contrato ao smoke ou prova que o satisfez.
-4. Declarar explicitamente as pendências remanescentes (itens bloqueados da seção 4).
-5. Mover `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` para `schema/contracts/archive/`.
-6. Atualizar `schema/contracts/_INDEX.md`, status e handoff para refletir encerramento.
-7. Declarar o próximo contrato autorizado (Frente 3 — Contexto, Extração e Memória Viva).
+A PR de closeout:
+
+1. ✅ Cumpriu integralmente o `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`.
+2. ✅ Preencheu o bloco `--- ENCERRAMENTO DE CONTRATO ---` com todos os campos obrigatórios.
+3. ✅ Mapeou cada critério de aceite do contrato ao smoke ou prova que o satisfez (ver bloco de encerramento no arquivo arquivado).
+4. ✅ Declarou explicitamente as pendências remanescentes (itens bloqueados da seção 4 — responsabilidade de frentes futuras).
+5. ✅ Moveu `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` para `schema/contracts/archive/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL_2026-04-21.md`.
+6. ✅ Atualizou `schema/contracts/_INDEX.md`, status e handoff para refletir encerramento.
+7. ✅ Declarou a Frente 3 — Contexto, Extração Estruturada e Memória Viva — como próxima frente autorizada.
 
 ---
 
