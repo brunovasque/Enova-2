@@ -10,6 +10,11 @@ import {
   buildMultiSignalTurnConsolidation,
   type MultiSignalTurnConsolidation,
 } from './multi-signal.ts';
+import {
+  assertLivingMemoryConformance,
+  buildLivingMemorySnapshot,
+  type LivingMemorySnapshot,
+} from './living-memory.ts';
 
 interface Assertion {
   description: string;
@@ -22,6 +27,7 @@ interface ContextSmokeResult {
   scenario: string;
   packet: SemanticTurnPacket;
   multi_signal?: MultiSignalTurnConsolidation;
+  living_memory?: LivingMemorySnapshot;
   assertions: Assertion[];
   passed: boolean;
 }
@@ -389,6 +395,204 @@ function smokeScenario7_RespostaMedoPerguntaNoMesmoTexto(): ContextSmokeResult {
   };
 }
 
+function smokeScenario8_MemoriaVivaConsolidaSinaisUteis(): ContextSmokeResult {
+  const packet = buildSemanticTurnPacket({
+    packet_id: 'ctx-packet-008',
+    lead_id: 'lead-008',
+    turn_id: 'turn-008',
+    source: {
+      channel: 'text',
+      modality: 'text',
+      raw_text: 'Moro com minha mae, tenho medo de mandar documento e queria saber se da para visitar. Prefiro continuar por texto.',
+    },
+    signals: {
+      facts: [signal('fact', 'household_hint', 'mora_com_mae', 0.89)],
+      questions: [signal('question', 'visit_question', 'duvida_sobre_visita', 0.86)],
+      objections: [signal('objection', 'docs_channel_resistance', 'medo_docs_celular', 0.84)],
+      pending: [signal('pending', 'conversation_preference', 'prefere_texto', 0.78)],
+      evidence: [evidence('Moro com minha mae, tenho medo de mandar documento e queria saber se da para visitar.')],
+      confidence: {
+        overall: 0.84,
+        rationale: 'contexto_util_objecao_duvida_e_preferencia_no_mesmo_turno',
+      },
+    },
+  });
+  const multiSignal = buildMultiSignalTurnConsolidation({
+    packet,
+    context: {
+      stage_current: 'docs_prep',
+      current_objective: 'preparar_docs',
+      block_advance: false,
+    },
+  });
+  const livingMemory = buildLivingMemorySnapshot({ consolidation: multiSignal });
+  const violations = assertLivingMemoryConformance(livingMemory);
+  const assertions = [
+    assert(
+      'memoria viva guarda categorias uteis sem texto bruto',
+      ['useful_context', 'open_question', 'open_objection', 'next_turn_pending'],
+      livingMemory.items.map((item) => item.kind),
+    ),
+    assert('memoria preserva objetivo atual', 'preparar_docs', livingMemory.current_objective),
+    assert('memoria nao escreve fala ao cliente', false, livingMemory.for_speech.may_write_customer_text),
+    assert('memoria nao decide regra de negocio', false, livingMemory.for_core.may_decide_business_rule),
+    assert('memoria nao persiste em banco', false, livingMemory.for_persistence.may_write_database),
+    assert('sem violacoes de memoria viva', [], violations),
+  ];
+
+  return {
+    scenario: 'Cenario 8 — memoria viva consolida sinais uteis para o proximo turno',
+    packet,
+    multi_signal: multiSignal,
+    living_memory: livingMemory,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario9_MemoriaVivaRejeitaHistoricoBruto(): ContextSmokeResult {
+  const packet = buildSemanticTurnPacket({
+    packet_id: 'ctx-packet-009',
+    lead_id: 'lead-009',
+    turn_id: 'turn-009',
+    source: {
+      channel: 'text',
+      modality: 'text',
+    },
+    signals: {
+      facts: [signal('fact', 'work_regime', 'clt', 0.9)],
+      questions: [signal('question', 'docs_question', 'duvida_documentos', 0.82)],
+      evidence: [evidence('Sou CLT e queria entender os documentos.')],
+      confidence: {
+        overall: 0.86,
+        rationale: 'fato_e_duvida_para_memoria_curta',
+      },
+    },
+  });
+  const multiSignal = buildMultiSignalTurnConsolidation({
+    packet,
+    context: {
+      stage_current: 'qualification_renda',
+      current_objective: 'coletar_regime_trabalho',
+      block_advance: false,
+    },
+  });
+  const livingMemory = buildLivingMemorySnapshot({
+    consolidation: multiSignal,
+    candidates: [
+      {
+        candidate_id: 'candidate_raw_transcript',
+        kind: 'raw_transcript',
+        key: 'turno_completo',
+        value: 'transcript bruto completo do atendimento anterior',
+        reason: 'nao_pode_entrar_como_memoria_viva',
+      },
+      {
+        candidate_id: 'candidate_previous_answer',
+        kind: 'full_previous_answer',
+        key: 'resposta_anterior',
+        value: 'resposta final inteira anterior',
+        reason: 'nao_pode_virar_dependencia_de_prompt',
+      },
+      {
+        candidate_id: 'candidate_core_state',
+        kind: 'core_structural_state',
+        key: 'stage_current',
+        value: 'qualification_renda',
+        reason: 'estado_do_core_nao_e_memoria_viva',
+      },
+      {
+        candidate_id: 'candidate_db_write',
+        kind: 'database_persistence',
+        key: 'supabase_write',
+        value: 'memory_runtime_v2',
+        reason: 'persistencia_real_e_frente_futura',
+      },
+    ],
+  });
+  const violations = assertLivingMemoryConformance(livingMemory);
+  const assertions = [
+    assert(
+      'memoria rejeita itens proibidos',
+      ['raw_transcript', 'full_previous_answer', 'core_structural_state', 'database_persistence'],
+      livingMemory.rejected_items.map((item) => item.kind),
+    ),
+    assert('nenhum item proibido entra na memoria viva', false, livingMemory.items.some((item) => (
+      item.key === 'turno_completo' || item.key === 'resposta_anterior' || item.key === 'stage_current' || item.key === 'supabase_write'
+    ))),
+    assert('memoria segue informativa para LLM', true, livingMemory.for_speech.may_inform_llm),
+    assert('memoria nao sobrescreve surface', false, livingMemory.for_speech.may_override_surface),
+    assert('sem violacoes de memoria viva', [], violations),
+  ];
+
+  return {
+    scenario: 'Cenario 9 — memoria viva rejeita historico bruto, prompt inflado e persistencia',
+    packet,
+    multi_signal: multiSignal,
+    living_memory: livingMemory,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario10_MemoriaVivaNaoSubstituiCoreNemSupabase(): ContextSmokeResult {
+  const packet = buildSemanticTurnPacket({
+    packet_id: 'ctx-packet-010',
+    lead_id: 'lead-010',
+    turn_id: 'turn-010',
+    source: {
+      channel: 'text',
+      modality: 'text',
+      raw_text: 'Minha renda mudou para 3400, mas nao tenho certeza se conto o extra.',
+    },
+    signals: {
+      slot_candidates: [signal('slot_candidate', 'monthly_income_hint', 3400, 0.76)],
+      ambiguities: [signal('ambiguity', 'extra_income_scope', 'duvida_sobre_extra', 0.58)],
+      evidence: [evidence('Minha renda mudou para 3400, mas nao tenho certeza se conto o extra.')],
+      confidence: {
+        overall: 0.72,
+        rationale: 'mudanca_de_renda_com_ambiguidade_nao_oficializa_estado',
+      },
+    },
+  });
+  const multiSignal = buildMultiSignalTurnConsolidation({
+    packet,
+    context: {
+      stage_current: 'qualification_renda',
+      current_objective: 'confirmar_renda',
+      block_advance: true,
+      gates_activated: ['G_CONFIRMAR_RENDA'],
+    },
+    disposition_overrides: [
+      {
+        signal_id: 'slot_candidate_monthly_income_hint',
+        disposition: 'requires_confirmation',
+        reason: 'renda_informada_com_ambiguidade_exige_confirmacao',
+      },
+    ],
+  });
+  const livingMemory = buildLivingMemorySnapshot({ consolidation: multiSignal });
+  const violations = assertLivingMemoryConformance(livingMemory);
+  const assertions = [
+    assert('memoria preserva bloqueio estrutural', true, livingMemory.for_core.block_advance),
+    assert('memoria preserva objetivo atual do Core', 'confirmar_renda', livingMemory.for_core.current_objective),
+    assert('memoria nao substitui estado do Core', false, livingMemory.for_core.may_replace_core_state),
+    assert('memoria nao oficializa slot', false, livingMemory.for_core.may_persist_official_slot),
+    assert('memoria nao exige Supabase', false, livingMemory.for_persistence.requires_supabase),
+    assert('sinais que exigem confirmacao viram pendencia curta', ['next_turn_pending', 'next_turn_pending'], livingMemory.items.map((item) => item.kind)),
+    assert('sem violacoes de memoria viva', [], violations),
+  ];
+
+  return {
+    scenario: 'Cenario 10 — memoria viva informa sem substituir Core nem Supabase',
+    packet,
+    multi_signal: multiSignal,
+    living_memory: livingMemory,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 export function runContextSmokeSuite() {
   const results = [
     smokeScenario1_ShapeCanonicoDoTurno(),
@@ -398,6 +602,9 @@ export function runContextSmokeSuite() {
     smokeScenario5_DoisDadosDePerfilNoMesmoTurno(),
     smokeScenario6_ObjectionMaisRenda(),
     smokeScenario7_RespostaMedoPerguntaNoMesmoTexto(),
+    smokeScenario8_MemoriaVivaConsolidaSinaisUteis(),
+    smokeScenario9_MemoriaVivaRejeitaHistoricoBruto(),
+    smokeScenario10_MemoriaVivaNaoSubstituiCoreNemSupabase(),
   ];
   const passed = results.filter((item) => item.passed).length;
 
@@ -415,7 +622,7 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runContextSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Contexto + Extracao — Smoke schema base + multi-sinal (PR 36/37)');
+  console.log('ENOVA 2 — Contexto + Extracao — Smoke schema base + multi-sinal + memoria viva (PR 36/37/38)');
   console.log('===========================================');
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
