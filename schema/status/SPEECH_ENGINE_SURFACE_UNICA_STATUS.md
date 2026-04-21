@@ -3,23 +3,23 @@
 | Campo                                      | Valor |
 |--------------------------------------------|-------|
 | Frente                                     | Speech Engine e Surface Única |
-| Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
-| Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | PR 33 — prova final / acceptance smoke da Frente 2 |
-| Pendência contratual                       | encerramento formal do contrato (PR closeout); provedor LLM real, prompt final de produção, áudio real e multimodalidade plena permanecem bloqueados |
-| Contrato encerrado?                        | não |
+| Contrato ativo                             | Nenhum — contrato anterior encerrado em 2026-04-21 |
+| Estado do contrato                         | encerrado |
+| Última PR executou qual recorte            | PR closeout — encerramento formal da Frente 2 |
+| Pendência contratual                       | nenhuma — contrato encerrado formalmente; pendências remanescentes são escopo de frentes futuras (ver seção 9) |
+| Contrato encerrado?                        | sim |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
-| Estado atual                               | prova final executada — aguardando closeout formal |
-| Classe da última tarefa                    | acceptance smoke |
-| Última PR relevante                        | PR 33 — prova final / acceptance smoke da Frente 2 |
+| Estado atual                               | encerrado — Frente 2 concluída formalmente |
+| Classe da última tarefa                    | governança / closeout |
+| Última PR relevante                        | PR closeout — encerramento formal da Frente 2 |
 | Último commit funcional                    | PR 33 — `feat(speech): PR 33 acceptance smoke — Cenário 15 integrado` |
-| Pendência remanescente herdada             | Gate 2 (A01) satisfeito — prova final 15/15 passando — próxima PR é o closeout formal |
-| Próximo passo autorizado                   | PR closeout formal — encerrar contrato via `CONTRACT_CLOSEOUT_PROTOCOL.md`, arquivar contrato, declarar Frente 3 como próxima |
+| Pendência remanescente herdada             | nenhuma contratual — frentes futuras são responsáveis pelas pendências declaradas no bloco de encerramento |
+| Próximo passo autorizado                   | Abertura do contrato da Frente 3 — Contexto, Extração Estruturada e Memória Viva |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-21T17:01:27.000Z |
+| Última atualização                         | 2026-04-21T17:24:15Z |
 
 ---
 
@@ -31,27 +31,35 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2. Contrato ativo
 
-`schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md`
+Nenhum — contrato anterior encerrado em 2026-04-21.
+
+Contrato arquivado em: `schema/contracts/archive/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL_2026-04-21.md`
 
 ## 2a. Estado do contrato
 
-**em execução**
+**encerrado**
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR 33 — prova final / acceptance smoke da Frente 2.
+PR closeout — encerramento formal da Frente 2 (Speech Engine e Surface Única).
 
-O recorte adicionou o Cenário 15 integrado ao `src/speech/smoke.ts`, cobrindo o fluxo completo policy → cognitive → free-response → composite-turn → surface → multimodal-readiness com 29 assertions explicitamente mapeadas aos 7 critérios de aceite da seção 2 do `FRENTE2_CLOSEOUT_READINESS.md`. Resultado: 15/15 cenários passando, `all_passed = true`. Nenhuma nova feature foi criada. Nenhum artefato de negócio foi alterado.
+Cumpriu integralmente o `CONTRACT_CLOSEOUT_PROTOCOL.md`: bloco `--- ENCERRAMENTO DE CONTRATO ---` preenchido, contrato arquivado, índice atualizado, status e handoff atualizados, Frente 3 declarada como próxima.
 
 ## 2c. Pendência contratual
 
-Encerramento formal do contrato (PR closeout) via `CONTRACT_CLOSEOUT_PROTOCOL.md`.
-
-Ainda não foram abertos: provedor LLM real, prompt final de produção completo, áudio real, STT/TTS real, multimodalidade plena, Supabase, Meta/WhatsApp, Worker e telemetria.
+Nenhuma — contrato encerrado formalmente. Pendências remanescentes são escopo de frentes futuras:
+- Provedor LLM real e prompt final de produção → recorte próprio pós-closeout
+- Áudio real, STT real, TTS real → Frente 5
+- Multimodalidade plena → Frente 5
+- Canal Meta/WhatsApp → Frente 6
+- Telemetria → Frente 7
+- Shadow mode, canary, rollout → Frente 8
+- Worker → frente específica
+- Supabase Adapter → Frente 4
 
 ## 2d. Contrato encerrado?
 
-**não**
+**sim — 2026-04-21T17:24:15Z**
 
 ## 3. Item do A01
 
@@ -61,9 +69,9 @@ Ainda não foram abertos: provedor LLM real, prompt final de produção completo
 
 ## 4. Estado atual
 
-**prova final executada — aguardando closeout formal**
+**encerrado — Frente 2 concluída formalmente em 2026-04-21**
 
-A frente agora possui:
+A frente entregou e provou:
 
 - envelope estrutural de política para IA soberana;
 - primeira surface final mínima que publica somente texto autorado pela IA;
@@ -72,16 +80,17 @@ A frente agora possui:
 - modelo mínimo de resposta livre governada;
 - modelo mínimo de turno composto governado;
 - fronteira preparatória mínima para multimodalidade/áudio futuro;
-- smoke específico cobrindo 14 cenários: fallback não dominante, ausência de texto final gerado pelo mecânico, proibição de script rígido dominante, rejeição de promessa de aprovação, múltiplos sinais sem sobrescrever o Core e preparação multimodal sem áudio real;
-- checklist canônico de critérios de fechamento em `schema/FRENTE2_CLOSEOUT_READINESS.md`.
+- smoke específico cobrindo 15 cenários (acceptance smoke PR 33 — 15/15 passando, `all_passed = true`);
+- checklist canônico de critérios de fechamento em `schema/FRENTE2_CLOSEOUT_READINESS.md`;
+- **encerramento formal via `CONTRACT_CLOSEOUT_PROTOCOL.md`** — bloco de encerramento preenchido, contrato arquivado.
 
 ## 5. Classe da última tarefa
 
-**acceptance smoke**
+**governança / closeout**
 
 ## 6. Última PR relevante
 
-PR 33 — prova final / acceptance smoke da Frente 2.
+PR closeout — encerramento formal da Frente 2 (Speech Engine e Surface Única).
 
 ## 7. Último commit funcional
 
@@ -111,13 +120,13 @@ PR 33 — prova final / acceptance smoke da Frente 2.
 
 ## 9. Pendências
 
-- Encerramento formal do contrato via `CONTRACT_CLOSEOUT_PROTOCOL.md` (PR closeout, próxima PR).
-- Integração futura com provedor LLM real e prompt final de produção completo, em recorte próprio pós-closeout.
-- Áudio, multimodalidade plena, Supabase, Meta/WhatsApp e telemetria seguem bloqueados nesta frente.
+- **Nenhuma pendência contratual remanescente.**
+- Integração futura com provedor LLM real e prompt final de produção completo, em recorte próprio pós-closeout (fora de escopo desta frente).
+- Áudio, multimodalidade plena, Supabase, Meta/WhatsApp e telemetria seguem bloqueados e são escopo de frentes específicas (ver seção 2c).
 
 ## 10. Pendência remanescente herdada
 
-Gate 2 (A01) satisfeito — prova final 15/15 passando (PR 33). Próxima PR é o closeout formal do contrato via `CONTRACT_CLOSEOUT_PROTOCOL.md`.
+Nenhuma pendência contratual. Contrato encerrado formalmente em 2026-04-21T17:24:15Z.
 
 ## 11. Bloqueios
 
@@ -131,9 +140,9 @@ Gate 2 (A01) satisfeito — prova final 15/15 passando (PR 33). Próxima PR é o
 
 ## 12. Próximo passo autorizado
 
-**PR closeout formal — encerramento da Frente 2.**
+**Abertura do contrato da Frente 3 — Contexto, Extração Estruturada e Memória Viva.**
 
-A PR de closeout deve cumprir o `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`, mapear cada critério ao smoke que o satisfez, arquivar o contrato ativo e declarar a Frente 3 (Contexto, Extração e Memória Viva) como próxima.
+A Frente 3 é a próxima frente autorizada conforme A01 (Fase 3 — Prioridade 3). O contrato da Frente 3 deve seguir o formato `schema/CONTRACT_SCHEMA.md` e ser aprovado antes de qualquer implementação.
 
 ## 13. Legados aplicáveis
 
@@ -142,7 +151,7 @@ A PR de closeout deve cumprir o `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
 
 ## 14. Última atualização
 
-2026-04-21T17:01:27.000Z — PR 33: prova final / acceptance smoke executada — 15/15 cenários passando.
+2026-04-21T17:24:15Z — PR closeout: encerramento formal da Frente 2 executado — contrato arquivado, Frente 3 declarada como próxima.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -156,8 +165,9 @@ Permissões Cloudflare necessárias: nenhuma adicional
 
 Fontes de verdade consultadas — última tarefa:
   Índice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md`
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` (antes do arquivamento)
   Status da frente lido:       `schema/status/SPEECH_ENGINE_SURFACE_UNICA_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
   Closeout readiness lido:     `schema/FRENTE2_CLOSEOUT_READINESS.md`
-  Artefatos técnicos lidos:    `src/speech/policy.ts`, `surface.ts`, `cognitive.ts`, `free-response.ts`, `composite-turn.ts`, `multimodal-readiness.ts`, `smoke.ts`
+  Protocol lido:               `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
+  Contrato arquivado em:       `schema/contracts/archive/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL_2026-04-21.md`

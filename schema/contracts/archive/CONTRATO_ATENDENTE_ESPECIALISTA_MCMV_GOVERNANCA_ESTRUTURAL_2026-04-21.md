@@ -170,3 +170,68 @@ A governança estrutural existe para restringir, validar, registrar e informar. 
 É proibido interpretar esta frente como retorno ao paradigma de fala mecânica. Fallback rígido dominante, script textual duro e surface engessada como motor principal da conversa são não conformes.
 
 Se uma PR futura tentar fazer o mecânico escrever a resposta final ou reduzir a IA a bot de regra, a execução deve parar por violação de A00-ADENDO-01.
+
+---
+
+## 20. Encerramento formal
+
+```
+--- ENCERRAMENTO DE CONTRATO ---
+Contrato encerrado:                     schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md
+Contrato encerrado com sucesso?:        sim
+Objetivo do contrato cumprido?:         sim
+Critérios de aceite cumpridos?:         sim
+  - [x] A IA é declarada soberana em raciocínio, condução conversacional e fala
+        → src/speech/policy.ts (surface_owner='llm'), cognitive.ts (mode='mcmv_specialist_consultative'),
+          free-response.ts (response_owner='llm'); smoke cenários 1, 2, 3, 5, 6, 7, 10, 11, 12, 15
+  - [x] O mecânico é formalmente proibido de ter qualquer prioridade de fala
+        → src/speech/policy.ts (mechanical_speech_priority='forbidden'),
+          surface.ts (rejeita autoria mecânica — final_surface_author_must_be_llm),
+          composite-turn.ts (mechanical_parser_priority='forbidden');
+          smoke cenários 4, 6, 10, 11, 12, 15
+  - [x] "Speech Engine" e "Surface Única" interpretados como atendente especialista MCMV com governança estrutural
+        → src/speech/cognitive.ts (mode='mcmv_specialist_consultative', postura_consultiva_humana);
+          smoke cenários 5, 6, 15
+  - [x] Fallback rígido dominante proibido como motor principal da conversa
+        → src/speech/policy.ts, cognitive.ts, free-response.ts (fallback_dominante em forbidden_behaviors);
+          smoke cenários 1, 2, 15
+  - [x] Script textual duro proibido como arquitetura de atendimento
+        → src/speech/cognitive.ts (script_rigido_dominante, resposta_engessada_por_stage em forbidden_behaviors);
+          smoke cenários 5, 6, 15
+  - [x] Conversa orientada por conhecimento MCMV/CEF sem LLM contradizer restrições estruturais do Core
+        → src/speech/free-response.ts (STRUCTURAL_CONSTRAINTS: nao_contrariar_core),
+          composite-turn.ts (assertCompositeTurnConformance — rejeita sobrescrita de next_objective e bloqueios);
+          smoke cenários 7, 8, 10, 11, 12, 15
+  - [x] Governança estrutural restringindo/validando/informando — nunca redigindo resposta final ao cliente
+        → src/speech/free-response.ts (governance_wrote_text=false imutável),
+          surface.ts (mechanical_text_generated=false imutável),
+          composite-turn.ts (governance_wrote_text=false);
+          smoke cenários 3, 4, 9, 13, 15
+  - [x] PRs futuras bloqueadas para Supabase, Meta/WhatsApp, telemetria, áudio real e multimodalidade plena
+        → src/speech/multimodal-readiness.ts (runtime locks: real_audio_enabled=false,
+          stt_provider_enabled=false, tts_provider_enabled=false, external_channel_enabled=false,
+          media_processing_enabled=false); smoke cenário 14; declaração negativa confirmada em PRs 25–33
+Fora de escopo respeitado?:             sim
+Pendências remanescentes:               As pendências abaixo estão fora do escopo da Frente 2 e são responsabilidade das frentes indicadas:
+  - Provedor LLM real e prompt final de produção completo → recorte próprio pós-closeout
+  - Áudio real, STT real, TTS real → Frente 5
+  - Multimodalidade plena → Frente 5
+  - Canal Meta/WhatsApp → Frente 6
+  - Telemetria e observabilidade → Frente 7
+  - Shadow mode, canary, rollout → Frente 8
+  - Worker → frente específica
+  - Supabase Adapter e persistência explicável → Frente 4
+Evidências / provas do encerramento:    PR 25 (abertura do contrato — CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md),
+  PR 26 (política textual mínima — src/speech/policy.ts),
+  PR 27 (surface final mínima — src/speech/surface.ts),
+  PR 28 (contrato cognitivo mínimo — src/speech/cognitive.ts),
+  PR 29 (resposta livre governada — src/speech/free-response.ts),
+  PR 30 (turno composto governado — src/speech/composite-turn.ts),
+  PR 31 (preparação multimodal mínima — src/speech/multimodal-readiness.ts),
+  PR 32 (consolidação de critérios — schema/FRENTE2_CLOSEOUT_READINESS.md),
+  PR 33 (acceptance smoke — src/speech/smoke.ts Cenário 15 integrado — 15/15 passando, all_passed=true)
+Data de encerramento:                   2026-04-21T17:24:15Z
+PR que encerrou:                        PR closeout formal — Encerramento formal da Frente 2 (Speech Engine e Surface Única)
+Destino do contrato encerrado:          archive (schema/contracts/archive/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL_2026-04-21.md)
+Próximo contrato autorizado:            Contrato da Frente 3 — Contexto, Extração Estruturada e Memória Viva
+```
