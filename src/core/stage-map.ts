@@ -73,7 +73,7 @@ export const STAGE_MAP: Record<StageId, StageDefinition> = {
     name: 'Docs Prep — Preparação Documental',
     required_facts: ['docs_channel_choice'],
     next_stages: ['docs_collection', 'visit'],
-    applicable_gates: ['G_FATO_CRITICO_AUSENTE'],
+    applicable_gates: ['G_FATO_CRITICO_AUSENTE', 'G_FINAL_OPERACIONAL'],
   },
 
   docs_collection: {
@@ -81,7 +81,7 @@ export const STAGE_MAP: Record<StageId, StageDefinition> = {
     name: 'Docs Collection — Coleta Documental',
     required_facts: ['doc_identity_status', 'doc_income_status', 'doc_residence_status'],
     next_stages: ['broker_handoff'],
-    applicable_gates: ['G_FATO_CRITICO_AUSENTE'],
+    applicable_gates: ['G_FATO_CRITICO_AUSENTE', 'G_FINAL_OPERACIONAL'],
   },
 
   broker_handoff: {
@@ -89,7 +89,7 @@ export const STAGE_MAP: Record<StageId, StageDefinition> = {
     name: 'Broker Handoff — Handoff ao Correspondente',
     required_facts: [],
     next_stages: [],
-    applicable_gates: [],
+    applicable_gates: ['G_FINAL_OPERACIONAL'],
   },
 
   visit: {
@@ -97,7 +97,7 @@ export const STAGE_MAP: Record<StageId, StageDefinition> = {
     name: 'Visit — Agendamento de Visita',
     required_facts: ['visit_interest'],
     next_stages: ['broker_handoff'],
-    applicable_gates: ['G_FATO_CRITICO_AUSENTE'],
+    applicable_gates: ['G_FATO_CRITICO_AUSENTE', 'G_FINAL_OPERACIONAL'],
   },
 };
 
@@ -154,7 +154,7 @@ export function evaluateGateFatoCriticoAusente(
 /**
  * Avalia todos os gates aplicáveis ao stage atual.
  * Em L03 apenas G_FATO_CRITICO_AUSENTE é avaliado ativamente.
- * Os demais slots (G_COMPOSICAO_FAMILIAR, G_REGIME_RENDA, G_ELEGIBILIDADE)
+ * Os demais slots (G_COMPOSICAO_FAMILIAR, G_REGIME_RENDA, G_ELEGIBILIDADE, G_FINAL_OPERACIONAL)
  * retornam não-ativados e serão implementados em L04–L06+.
  */
 export function evaluateApplicableGates(
@@ -167,7 +167,7 @@ export function evaluateApplicableGates(
     if (gateId === 'G_FATO_CRITICO_AUSENTE') {
       results.push(evaluateGateFatoCriticoAusente(state, stageDef));
     } else {
-      // Slots reservados para L04–L06+ — não ativos em L03
+      // Slots reservados para L04–L17 — não ativos em L03
       results.push({
         gate_id: gateId as GateId,
         activated: false,

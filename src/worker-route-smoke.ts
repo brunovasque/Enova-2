@@ -4,7 +4,7 @@
  * Prova mínima exigida nesta PR:
  * - o Worker expõe POST /__core__/run
  * - a rota chama o Core real
- * - a saída segue estrutural
+ * - a saída segue estrutural, inclusive no recorte final L17
  * - nenhuma fala mecânica é produzida
  */
 
@@ -89,6 +89,24 @@ async function main() {
       current_stage: 'discovery',
       facts: {},
     }),
+    runScenario('Cenário C — entrada válida em qualification_special avança para docs', {
+      lead_id: 'worker-smoke-003',
+      current_stage: 'qualification_special',
+      facts: {
+        processo: 'conjunto',
+        work_regime_p2: 'clt',
+        monthly_income_p2: 3600,
+      },
+    }),
+    runScenario('Cenário D — docs completos chegam ao broker_handoff pelo Worker', {
+      lead_id: 'worker-smoke-004',
+      current_stage: 'docs_collection',
+      facts: {
+        doc_identity_status: 'validado',
+        doc_income_status: 'recebido',
+        doc_residence_status: 'recebido',
+      },
+    }),
   ]);
 
   const scenarioA = scenarios[0];
@@ -107,6 +125,23 @@ async function main() {
     assert('speech_intent = bloqueio', 'bloqueio', scenarioB.response_json.speech_intent),
   );
   scenarioB.passed = scenarioB.assertions.every((item) => item.passed);
+
+  const scenarioC = scenarios[2];
+  scenarioC.assertions.push(
+    assert('stage_after = docs_prep', 'docs_prep', scenarioC.response_json.stage_after),
+    assert('block_advance = false', false, scenarioC.response_json.block_advance),
+    assert('speech_intent = transicao_stage', 'transicao_stage', scenarioC.response_json.speech_intent),
+  );
+  scenarioC.passed = scenarioC.assertions.every((item) => item.passed);
+
+  const scenarioD = scenarios[3];
+  scenarioD.assertions.push(
+    assert('stage_after = broker_handoff', 'broker_handoff', scenarioD.response_json.stage_after),
+    assert('block_advance = false', false, scenarioD.response_json.block_advance),
+    assert('next_objective = preparar_handoff_correspondente', 'preparar_handoff_correspondente', scenarioD.response_json.next_objective),
+    assert('speech_intent = transicao_stage', 'transicao_stage', scenarioD.response_json.speech_intent),
+  );
+  scenarioD.passed = scenarioD.assertions.every((item) => item.passed);
 
   const allPassed = scenarios.every((scenario) => scenario.passed);
 
