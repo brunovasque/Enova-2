@@ -15,6 +15,11 @@ import {
 import { buildGovernedCompositeTurn, type GovernedCompositeTurnResult } from './composite-turn.ts';
 import { buildGovernedFreeResponse, type GovernedFreeResponseResult } from './free-response.ts';
 import {
+  assertMultimodalReadinessConformance,
+  buildMultimodalReadinessContract,
+  type MultimodalReadinessContract,
+} from './multimodal-readiness.ts';
+import {
   assertSpeechPolicyConformance,
   buildSpeechPolicyEnvelope,
   type SpeechPolicyEnvelope,
@@ -35,6 +40,7 @@ interface SpeechSmokeResult {
   surface?: FinalSurfaceResult;
   free_response?: GovernedFreeResponseResult;
   composite_turn?: GovernedCompositeTurnResult;
+  multimodal_readiness?: MultimodalReadinessContract;
   assertions: Assertion[];
   passed: boolean;
 }
@@ -513,6 +519,42 @@ function smokeScenario13_TurnoCompostoNaoPrometeAprovacao(): SpeechSmokeResult {
   };
 }
 
+function smokeScenario14_PreparacaoMultimodalSemAbrirAudioReal(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const multimodalReadiness = buildMultimodalReadinessContract({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    future_modalities: ['text', 'audio'],
+  });
+  const violations = assertMultimodalReadinessConformance(multimodalReadiness);
+
+  const assertions = [
+    assert('preparacao multimodal permanece apenas contratual', 'preparatory_contract_only', multimodalReadiness.readiness_status),
+    assert('IA segue soberana na autoridade da fala', 'llm', multimodalReadiness.authority_owner),
+    assert('audio futuro nao vira novo cerebro', 'input_output_adapter_only', multimodalReadiness.pipeline_role),
+    assert('audio real continua desligado', false, multimodalReadiness.runtime_locks.real_audio_enabled),
+    assert('STT real continua desligado', false, multimodalReadiness.runtime_locks.stt_provider_enabled),
+    assert('TTS real continua desligado', false, multimodalReadiness.runtime_locks.tts_provider_enabled),
+    assert('canal externo continua desligado', false, multimodalReadiness.runtime_locks.external_channel_enabled),
+    assert('next_objective do Core permanece preservado', envelope.next_objective, multimodalReadiness.policy_alignment.next_objective),
+    assert('promessa de aprovacao segue proibida', true, multimodalReadiness.preparation_constraints.includes('promessa_de_aprovacao_permanece_proibida')),
+    assert('sem violacoes na preparacao multimodal', [], violations),
+  ];
+
+  return {
+    scenario: 'Cenario 14 — preparacao multimodal sem abrir audio real',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    multimodal_readiness: multimodalReadiness,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 export function runSpeechSmokeSuite() {
   const results = [
     smokeScenario1_BlockPreservaSoberaniaDaIa(),
@@ -528,6 +570,7 @@ export function runSpeechSmokeSuite() {
     smokeScenario11_TurnoCompostoRespeitaBloqueio(),
     smokeScenario12_TurnoCompostoNaoSobrescreveCore(),
     smokeScenario13_TurnoCompostoNaoPrometeAprovacao(),
+    smokeScenario14_PreparacaoMultimodalSemAbrirAudioReal(),
   ];
   const passed = results.filter((item) => item.passed).length;
 
