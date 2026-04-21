@@ -38,6 +38,24 @@ const BAD_PATTERNS = [
 
 const LIVE_PREFIXES = ["schema/status/", "schema/handoffs/", "schema/contracts/"];
 
+// Keywords that trigger mandatory adendo check (A00-ADENDO-01).
+// If any changed file path or the PR body's Objetivo/Escopo sections contain
+// one of these, the field must be confirmed as "sim".
+const ADENDO_KEYWORDS = [
+  /speech/i,
+  /surface/i,
+  /\bllm\b/i,
+  /fallback/i,
+  /conversa/i,
+  /atendimento/i,
+  /multimodal/i,
+  /cognitivo/i,
+  /engine/i,
+  /brain/i,
+  /extractor/i,
+  /\bcanal\b/i,
+];
+
 function clean(text) {
   return (text || "").replace(/<!--[\s\S]*?-->/g, "").trim();
 }
@@ -68,6 +86,37 @@ function invalidValue(value) {
 
 function hasLiveDiff(changedFiles) {
   return changedFiles.some((file) => LIVE_PREFIXES.some((prefix) => file.startsWith(prefix)));
+}
+
+/**
+ * Returns true when the PR touches conversation/LLM/speech/surface/fallback areas,
+ * meaning the adendo check is mandatory.
+ * Detection is based on changed file paths and key PR body sections (Objetivo + Escopo).
+ */
+function isAdendoRequired(changedFiles, body) {
+  const candidates = [
+    ...changedFiles,
+    getSection(body, "Objetivo"),
+    getSection(body, "Escopo"),
+  ].join(" ");
+  return ADENDO_KEYWORDS.some((re) => re.test(candidates));
+}
+
+/**
+ * Extracts the declared value of the adendo field from the body.
+ * Looks for the inline pattern:
+ *   "Adendo de soberania da IA lido ...: <value>"
+ * inside or outside an ## section.
+ * Returns the trimmed value after the colon, or "" if not found.
+ */
+function getAdendoValue(body) {
+  const cleaned = clean(body);
+  // Match the inline field anywhere in the body
+  const match = cleaned.match(
+    /Adendo de soberania da IA lido[^:\n]*:\s*([^\n]*)/i
+  );
+  if (!match) return "";
+  return match[1].trim();
 }
 
 function main() {
@@ -107,6 +156,21 @@ function main() {
     }
   }
 
+  // Adendo canônico A00-ADENDO-01 — soberania da IA
+  // When the PR touches conversation/LLM/speech/surface/fallback areas,
+  // the field "Adendo de soberania da IA lido (...): sim" is mandatory.
+  if (isAdendoRequired(changedFiles, body)) {
+    const adendoValue = getAdendoValue(body);
+    if (!/^sim$/i.test(adendoValue)) {
+      failures.push(
+        "Adendo A00-ADENDO-01 obrigatório: campo " +
+        "'Adendo de soberania da IA lido (schema/ADENDO_CANONICO_SOBERANIA_IA.md)' " +
+        "deve ser 'sim' quando a PR toca conversa, LLM, speech, surface, fallback ou fluxo cognitivo. " +
+        `Valor encontrado: "${adendoValue || "(ausente)"}"`
+      );
+    }
+  }
+
   console.log("\nENOVA 2 — PR Governance Check\n");
 
   if (failures.length > 0) {
@@ -119,3 +183,4 @@ function main() {
 }
 
 main();
+
