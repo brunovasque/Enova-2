@@ -12,6 +12,7 @@ import {
   buildMcmvCognitiveContract,
   type McmvCognitiveContract,
 } from './cognitive.ts';
+import { buildGovernedFreeResponse, type GovernedFreeResponseResult } from './free-response.ts';
 import {
   assertSpeechPolicyConformance,
   buildSpeechPolicyEnvelope,
@@ -31,6 +32,7 @@ interface SpeechSmokeResult {
   envelope: SpeechPolicyEnvelope;
   cognitive_contract?: McmvCognitiveContract;
   surface?: FinalSurfaceResult;
+  free_response?: GovernedFreeResponseResult;
   assertions: Assertion[];
   passed: boolean;
 }
@@ -224,6 +226,114 @@ function smokeScenario6_ContratoCognitivoRespeitaSurfaceDaIa(): SpeechSmokeResul
   };
 }
 
+function smokeScenario7_RespostaLivreGovernada(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const llmFreeText = [
+    'Posso te orientar por esse caminho com calma.',
+    'Como seu objetivo é comprar, vou seguir pelo próximo ponto permitido da qualificação sem prometer aprovação antes das validações.',
+  ].join(' ');
+  const freeResponse = buildGovernedFreeResponse({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    draft: {
+      author: 'llm',
+      text: llmFreeText,
+    },
+  });
+
+  const assertions = [
+    assert('resposta livre aceita sob governança', true, freeResponse.accepted),
+    assert('texto final preserva exatamente a autoria da IA', llmFreeText, freeResponse.final_text),
+    assert('resposta livre permanece da IA', 'llm', freeResponse.model.response_owner),
+    assert('governança não escreveu texto', false, freeResponse.governance_wrote_text),
+    assert('modelo permite adaptar tom e profundidade', true, freeResponse.model.freedoms.includes('adaptar_tom_e_profundidade_ao_contexto')),
+    assert('modelo preserva next_objective do Core', envelope.next_objective, freeResponse.model.policy_alignment.next_objective),
+    assert('sem violações na resposta livre governada', [], freeResponse.violations),
+  ];
+
+  return {
+    scenario: 'Cenário 7 — resposta livre da IA sob governança estrutural',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface: freeResponse.surface,
+    free_response: freeResponse,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario8_RespostaLivreRespeitaBloqueio(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {}));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const llmFreeText = 'Antes de avançar, preciso entender seu objetivo com o imóvel para seguir apenas pelo caminho permitido.';
+  const freeResponse = buildGovernedFreeResponse({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    draft: {
+      author: 'llm',
+      text: llmFreeText,
+    },
+  });
+
+  const assertions = [
+    assert('resposta livre pode existir mesmo com bloqueio estrutural', true, freeResponse.accepted),
+    assert('bloqueio estrutural permanece preservado', true, freeResponse.model.policy_alignment.block_advance),
+    assert('next_objective bloqueado é preservado', 'coletar_customer_goal', freeResponse.model.policy_alignment.next_objective),
+    assert('governança restringe mas não escreve', false, freeResponse.governance_wrote_text),
+    assert('texto final segue exatamente o draft da IA', llmFreeText, freeResponse.final_text),
+    assert('mecânico não gera texto na surface', false, freeResponse.surface.mechanical_text_generated),
+  ];
+
+  return {
+    scenario: 'Cenário 8 — resposta livre respeita bloqueio e next_objective',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface: freeResponse.surface,
+    free_response: freeResponse,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario9_RespostaLivreNaoPrometeAprovacao(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const freeResponse = buildGovernedFreeResponse({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    draft: {
+      author: 'llm',
+      text: 'Seu financiamento aprovado está garantido antes das validações.',
+    },
+  });
+
+  const assertions = [
+    assert('promessa de aprovação é rejeitada', false, freeResponse.accepted),
+    assert('texto com promessa não é publicado', null, freeResponse.final_text),
+    assert('violação aponta promessa de aprovação', true, freeResponse.violations.includes('approval_promise_not_allowed')),
+    assert('fallback não assume a resposta', 'non_dominant_guardrail_only', freeResponse.surface.fallback_mode),
+    assert('governança não reescreve texto alternativo', false, freeResponse.governance_wrote_text),
+  ];
+
+  return {
+    scenario: 'Cenário 9 — resposta livre rejeita promessa de aprovação',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface: freeResponse.surface,
+    free_response: freeResponse,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 export function runSpeechSmokeSuite() {
   const results = [
     smokeScenario1_BlockPreservaSoberaniaDaIa(),
@@ -232,6 +342,9 @@ export function runSpeechSmokeSuite() {
     smokeScenario4_MecanicoNaoPublicaSurfaceFinal(),
     smokeScenario5_ContratoCognitivoMcmv(),
     smokeScenario6_ContratoCognitivoRespeitaSurfaceDaIa(),
+    smokeScenario7_RespostaLivreGovernada(),
+    smokeScenario8_RespostaLivreRespeitaBloqueio(),
+    smokeScenario9_RespostaLivreNaoPrometeAprovacao(),
   ];
   const passed = results.filter((item) => item.passed).length;
 
