@@ -12,6 +12,7 @@ import {
   buildMcmvCognitiveContract,
   type McmvCognitiveContract,
 } from './cognitive.ts';
+import { buildGovernedCompositeTurn, type GovernedCompositeTurnResult } from './composite-turn.ts';
 import { buildGovernedFreeResponse, type GovernedFreeResponseResult } from './free-response.ts';
 import {
   assertSpeechPolicyConformance,
@@ -33,6 +34,7 @@ interface SpeechSmokeResult {
   cognitive_contract?: McmvCognitiveContract;
   surface?: FinalSurfaceResult;
   free_response?: GovernedFreeResponseResult;
+  composite_turn?: GovernedCompositeTurnResult;
   assertions: Assertion[];
   passed: boolean;
 }
@@ -334,6 +336,183 @@ function smokeScenario9_RespostaLivreNaoPrometeAprovacao(): SpeechSmokeResult {
   };
 }
 
+function smokeScenario10_TurnoCompostoMantemIaLivre(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const llmCompositeText = [
+    'Você já trouxe mais de uma coisa útil: quer comprar, tem dúvida sobre o programa e prefere entender o próximo passo com calma.',
+    'Eu vou aproveitar esse contexto sem pular a qualificação permitida agora.',
+  ].join(' ');
+  const compositeTurn = buildGovernedCompositeTurn({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    signals: [
+      { kind: 'intent', key: 'customer_goal', value: 'comprar_imovel', handling: 'inform_llm' },
+      { kind: 'question', key: 'mcmv_program_question', value: 'duvida_sobre_programa', handling: 'inform_llm' },
+      { kind: 'preference', key: 'pace', value: 'com_calma', handling: 'inform_llm' },
+    ],
+    draft: {
+      author: 'llm',
+      text: llmCompositeText,
+    },
+  });
+
+  const assertions = [
+    assert('turno composto é aceito sob governança', true, compositeTurn.accepted),
+    assert('IA segue dona da interpretação do turno composto', 'llm', compositeTurn.context.interpretation_owner),
+    assert('parser mecânico dominante continua proibido', false, compositeTurn.mechanical_parser_dominant),
+    assert('texto final preserva autoria livre da IA', llmCompositeText, compositeTurn.final_text),
+    assert('múltiplos sinais são reconhecidos sem script rígido', 3, compositeTurn.context.signal_count),
+    assert('next_objective do Core permanece preservado', envelope.next_objective, compositeTurn.context.next_objective),
+    assert('governança não escreveu texto', false, compositeTurn.governance_wrote_text),
+  ];
+
+  return {
+    scenario: 'Cenário 10 — turno composto mantém resposta livre da IA',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface: compositeTurn.free_response.surface,
+    free_response: compositeTurn.free_response,
+    composite_turn: compositeTurn,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario11_TurnoCompostoRespeitaBloqueio(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {}));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const llmCompositeText = [
+    'Você trouxe algumas informações juntas, mas antes de aproveitar tudo eu preciso confirmar o objetivo principal.',
+    'Assim eu sigo o próximo passo permitido sem assumir dado que ainda não está validado.',
+  ].join(' ');
+  const compositeTurn = buildGovernedCompositeTurn({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    signals: [
+      { kind: 'fact_candidate', key: 'income_hint', value: 'renda_mencionada', handling: 'defer_due_to_policy' },
+      { kind: 'question', key: 'docs_question', value: 'pergunta_sobre_documentos', handling: 'defer_due_to_policy' },
+    ],
+    draft: {
+      author: 'llm',
+      text: llmCompositeText,
+    },
+  });
+
+  const assertions = [
+    assert('turno composto bloqueado ainda aceita fala livre governada', true, compositeTurn.accepted),
+    assert('bloqueio estrutural permanece preservado', true, compositeTurn.context.block_advance),
+    assert('next_objective bloqueado permanece preservado', 'coletar_customer_goal', compositeTurn.context.next_objective),
+    assert('sinais extras não desbloqueiam o fluxo', false, compositeTurn.context.signals.some((signal) => signal.attempts_to_unblock)),
+    assert('texto final continua da IA', llmCompositeText, compositeTurn.final_text),
+    assert('governança não vira parser dominante', false, compositeTurn.mechanical_parser_dominant),
+  ];
+
+  return {
+    scenario: 'Cenário 11 — turno composto respeita bloqueio estrutural',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface: compositeTurn.free_response.surface,
+    free_response: compositeTurn.free_response,
+    composite_turn: compositeTurn,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario12_TurnoCompostoNaoSobrescreveCore(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {}));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const compositeTurn = buildGovernedCompositeTurn({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    signals: [
+      {
+        kind: 'fact_candidate',
+        key: 'income_hint',
+        value: 'renda_mencionada',
+        handling: 'inform_llm',
+        attempts_to_override_next_objective: 'avancar_para_qualification_renda',
+      },
+      {
+        kind: 'intent',
+        key: 'customer_goal',
+        value: 'comprar_imovel',
+        handling: 'inform_llm',
+        attempts_to_unblock: true,
+      },
+    ],
+    draft: {
+      author: 'llm',
+      text: 'Vou usar tudo que você trouxe para avançar direto.',
+    },
+  });
+
+  const assertions = [
+    assert('tentativa de sobrescrever Core é rejeitada', false, compositeTurn.accepted),
+    assert('texto não é publicado quando sinal tenta sobrescrever Core', null, compositeTurn.final_text),
+    assert('violação aponta next_objective preservado', true, compositeTurn.violations.includes('turn_signal_must_not_override_next_objective')),
+    assert('violação aponta bloqueio preservado', true, compositeTurn.violations.includes('turn_signal_must_not_override_structural_block')),
+    assert('governança não reescreve alternativa', false, compositeTurn.governance_wrote_text),
+    assert('parser mecânico dominante continua falso', false, compositeTurn.mechanical_parser_dominant),
+  ];
+
+  return {
+    scenario: 'Cenário 12 — turno composto não sobrescreve Core',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface: compositeTurn.free_response.surface,
+    free_response: compositeTurn.free_response,
+    composite_turn: compositeTurn,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario13_TurnoCompostoNaoPrometeAprovacao(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const compositeTurn = buildGovernedCompositeTurn({
+    policy: envelope,
+    cognitive_contract: cognitiveContract,
+    signals: [
+      { kind: 'intent', key: 'customer_goal', value: 'comprar_imovel', handling: 'inform_llm' },
+      { kind: 'fact_candidate', key: 'income_hint', value: 'renda_mencionada', handling: 'requires_confirmation' },
+    ],
+    draft: {
+      author: 'llm',
+      text: 'Com essas informações, sua aprovação garantida já está encaminhada.',
+    },
+  });
+
+  const assertions = [
+    assert('turno composto com promessa de aprovação é rejeitado', false, compositeTurn.accepted),
+    assert('texto com promessa não é publicado', null, compositeTurn.final_text),
+    assert('violação de promessa permanece ativa', true, compositeTurn.violations.includes('approval_promise_not_allowed')),
+    assert('fallback não assume o turno composto', 'non_dominant_guardrail_only', compositeTurn.free_response.surface.fallback_mode),
+    assert('governança não escreve resposta substituta', false, compositeTurn.governance_wrote_text),
+  ];
+
+  return {
+    scenario: 'Cenário 13 — turno composto mantém proibição de promessa de aprovação',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface: compositeTurn.free_response.surface,
+    free_response: compositeTurn.free_response,
+    composite_turn: compositeTurn,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 export function runSpeechSmokeSuite() {
   const results = [
     smokeScenario1_BlockPreservaSoberaniaDaIa(),
@@ -345,6 +524,10 @@ export function runSpeechSmokeSuite() {
     smokeScenario7_RespostaLivreGovernada(),
     smokeScenario8_RespostaLivreRespeitaBloqueio(),
     smokeScenario9_RespostaLivreNaoPrometeAprovacao(),
+    smokeScenario10_TurnoCompostoMantemIaLivre(),
+    smokeScenario11_TurnoCompostoRespeitaBloqueio(),
+    smokeScenario12_TurnoCompostoNaoSobrescreveCore(),
+    smokeScenario13_TurnoCompostoNaoPrometeAprovacao(),
   ];
   const passed = results.filter((item) => item.passed).length;
 
