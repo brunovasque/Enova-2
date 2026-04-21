@@ -5,18 +5,18 @@
 | Frente | Supabase Adapter e Persistencia |
 | Contrato ativo | `schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md` |
 | Estado do contrato | em execução |
-| Ultima PR executou qual recorte | PR 42 — adapter base de leitura/escrita canônica |
-| Pendencia contratual | executar PR 43 (politica de merge/update/consistencia) |
+| Ultima PR executou qual recorte | PR 43 — política de merge/update/consistência e estratégia de TTL |
+| Pendencia contratual | executar PR 44 (smoke persistente + closeout formal da frente) |
 | Contrato encerrado? | nao |
 | Item do A01 | Prioridade 4 — criar Supabase Adapter com namespace novo, persistencia explicavel e trilho de compatibilidade com ENOVA 1 |
 | Estado atual | em execução |
 | Classe da ultima tarefa | contratual |
-| Ultima PR relevante | PR 42 — adapter base de leitura/escrita canônica |
-| Ultimo commit funcional | fdff52d — feat(adapter): criar casca canônica do Supabase Adapter base — PR42 |
-| Pendencia remanescente herdada | nenhuma da PR 41; casca tecnica minima do adapter entregue nesta PR 42 |
-| Proximo passo autorizado | executar PR 43 — politica de merge/update/consistencia e estrategia de TTL |
+| Ultima PR relevante | PR 43 — política de merge/update/consistência e estratégia de TTL |
+| Ultimo commit funcional | 1c145c7 — feat(adapter): política canônica de consistência PR43 — policy.ts + policy-smoke.ts |
+| Pendencia remanescente herdada | nenhuma da PR 42; casca técnica mínima entregue e política de consistência entregue |
+| Proximo passo autorizado | executar PR 44 — smoke persistente + closeout formal da Frente 4 |
 | Legados aplicaveis | L03 e L18 obrigatorios; L19 complementar quando recorte exigir |
-| Mudancas em dados persistidos (Supabase) | nenhuma — casca com stubs, sem migration real |
+| Mudancas em dados persistidos (Supabase) | nenhuma — política declarativa sem migration real, sem conexão ao banco |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
 | Ultima atualizacao | 2026-04-21 |
 
@@ -32,7 +32,7 @@ Supabase Adapter e Persistencia.
 
 ## 3. Estado atual
 
-Contrato em execução. A PR 42 entregou a casca técnica mínima do Supabase Adapter com interfaces, boundaries e smoke. A implementação runtime real (com cliente Supabase) e o smoke persistente virão nas PRs 43 e 44.
+Contrato em execução. A PR 43 entregou a política canônica de consistência do Adapter — comportamento de merge/update/overwrite por entidade, TTL da memória viva e mapa de compatibilidade do projection_bridge para ENOVA 1. A implementação runtime real (com cliente Supabase) e o smoke persistente virão na PR 44.
 
 ## 4. Entregas concluidas
 
@@ -51,24 +51,37 @@ Contrato em execução. A PR 42 entregou a casca técnica mínima do Supabase Ad
 - **boundaries e ownership de layers declarados em `src/adapter/boundaries.ts` (PR 42)**
 - **SupabaseAdapterBase centralizada em `src/adapter/index.ts` com stubs documentados (PR 42)**
 - **smoke do adapter base executado em `src/adapter/smoke.ts` — 4 cenários, 68 assertions, ✅ PASSOU (PR 42)**
+- **política canônica de consistência criada em `src/adapter/policy.ts` (PR 43):**
+  - WriteStrategy por entidade (append / upsert / overwrite / insert_versioned)
+  - ReprocessBehavior por entidade (ignore / update / replace / append)
+  - idempotency_key por entidade (10 chaves explícitas)
+  - immutable_after_insert por entidade (campos imutáveis após insert)
+  - monotonicidade de status por entidade (tabela STATUS_MONOTONICITY)
+  - TTL da memória viva: 48h padrão, 72h estendido, 24h mínimo
+  - regra de leitura se expirada: found: false
+  - regra de refresh: novo upsert a cada turno estende TTL
+  - regra de descarte: dado expirado pode ser deletado — não é audit trail
+  - mapa de compatibilidade ENOVA 1 (8 campos permitidos, 17 proibidos)
+  - pre_write_validation obrigatória antes de upsertProjection
+  - POLICY_SUMMARY: tabela-resumo de 10 linhas (uma por entidade)
+- **smoke de política da PR 43 executado em `src/adapter/policy-smoke.ts` — 8 cenários, ✅ PASSOU (PR 43)**
+- **`package.json` atualizado com `smoke:adapter:policy` incluído em `smoke:all` (PR 43)**
 
 ## 5. Pendencias
 
-- PR 43 — politica de merge/update/consistencia e estrategia de TTL da memoria viva
-- PR 44 — smoke persistente + closeout formal da frente
+- PR 44 — smoke persistente com cliente Supabase real + closeout formal da frente
 
 ## 6. Bloqueios
 
-- sem bloqueio tecnico imediato
 - implementacao runtime do Supabase client para PR 44
 
 ## 7. Proximo passo autorizado
 
-Executar PR 43 — politica de merge/update/overwrite detalhada por entidade e estrategia de TTL da memoria viva. Sem client Supabase real ainda.
+Executar PR 44 — smoke persistente integrado e closeout formal da Frente 4. A política declarada em `src/adapter/policy.ts` deve ser respeitada fielmente pelo runtime.
 
 ## 8. Mudancas em dados persistidos (Supabase)
 
-Mudancas em dados persistidos (Supabase): nenhuma — casca com stubs, sem migration real, sem conexao ao banco
+Mudancas em dados persistidos (Supabase): nenhuma — política declarativa sem migration real, sem conexão ao banco
 
 ## 9. Permissoes Cloudflare necessarias
 
@@ -82,6 +95,6 @@ Fontes de verdade consultadas — ultima tarefa:
   Contrato de dados lido:      `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md`
   Status da frente lido:       `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md`
+  Adapter base lido:           `src/adapter/types.ts`, `src/adapter/boundaries.ts`, `src/adapter/index.ts`, `src/adapter/smoke.ts`
   Indice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — paginas 126-127
 

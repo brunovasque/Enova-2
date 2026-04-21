@@ -6,18 +6,256 @@
 | Data | 2026-04-21 |
 | Estado da frente | em execução |
 | Classificacao da tarefa | contratual |
-| Ultima PR relevante | PR 41 — contrato de dados e shape persistivel |
+| Ultima PR relevante | PR 43 — política de merge/update/consistência e estratégia de TTL |
 | Contrato ativo | `schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md` |
-| Recorte executado do contrato | PR 42 — adapter base de leitura/escrita canônica |
-| Pendencia contratual remanescente | PR43 e PR44 |
+| Recorte executado do contrato | PR 43 — política de merge/update/consistência e estratégia de TTL |
+| Pendencia contratual remanescente | PR44 |
 | Houve desvio de contrato? | nao |
 | Contrato encerrado nesta PR? | nao |
-| Item do A01 atendido | Prioridade 4 — casca técnica mínima do adapter com interfaces, boundaries e smoke |
-| Proximo passo autorizado | PR 43 — politica de merge/update/consistencia e estrategia de TTL |
+| Item do A01 atendido | Prioridade 4 — política de consistência do Adapter declarada e provada com smoke |
+| Proximo passo autorizado | PR 44 — smoke persistente com Supabase real + closeout formal da Frente 4 |
 | Proximo passo foi alterado? | nao |
-| Tarefa fora de contrato? | nao (recorte contratual da PR 42) |
-| Mudancas em dados persistidos (Supabase) | nenhuma — casca com stubs, sem migration real |
+| Tarefa fora de contrato? | nao (recorte contratual da PR 43) |
+| Mudancas em dados persistidos (Supabase) | nenhuma — política declarativa sem migration real, sem conexão ao banco |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
+
+---
+
+## 1. Contexto curto
+
+A PR 42 entregou a casca técnica mínima do Supabase Adapter com interfaces, boundaries e smoke base.
+Nesta **PR 43**, entregamos a **política canônica de consistência** em `src/adapter/policy.ts` — o arquivo que define explicitamente:
+
+- como cada entidade é escrita (append / upsert / overwrite / insert_versioned)
+- o que acontece no reprocessamento (ignore / update / replace / append)
+- quais campos são imutáveis após insert
+- a monotonicidade de status por entidade (transições válidas e inválidas)
+- TTL da memória viva: 48h padrão, 72h estendido, 24h mínimo, 72h máximo
+- regras de leitura, refresh e descarte da memória viva
+- mapa de compatibilidade ENOVA 1: 8 campos permitidos, 17 proibidos
+- pre_write_validation obrigatória antes de upsertProjection
+
+O smoke da PR 43 (`src/adapter/policy-smoke.ts`) valida toda esta declaração — 8 cenários, ✅ PASSOU.
+
+**A PR 44 implementa o runtime que RESPEITA esta política.** Este arquivo (policy.ts) é declarativo — não contém lógica de negócio.
+
+## 2. Classificacao da tarefa
+
+contratual
+
+## 3. Ultima PR relevante
+
+PR 42 — adapter base de leitura/escrita canônica (casca técnica, interfaces, boundaries, smoke base).
+
+## 4. O que a PR anterior fechou
+
+- casca técnica mínima do Supabase Adapter (`src/adapter/`)
+- interfaces de leitura/escrita das 10 entidades (`types.ts`)
+- boundaries e ownership de layers (`boundaries.ts`)
+- SupabaseAdapterBase com stubs documentados (`index.ts`)
+- smoke do adapter base: 4 cenários, 68 assertions, ✅ PASSOU (`smoke.ts`)
+
+## 5. O que a PR anterior NAO fechou
+
+- política exata de append vs merge vs overwrite por entidade
+- estratégia de TTL da memória viva (valores numéricos formais)
+- mapa de compatibilidade ENOVA 1 detalhado para projection_bridge
+- smoke de política (sem Supabase real ainda)
+
+## 6. Diagnostico confirmado
+
+- `schema/contracts/_INDEX.md` confirmou Frente 4 ativa com PR 43 como próximo passo autorizado
+- status e handoff da PR 42 confirmaram: `Próximo passo autorizado: PR 43`
+- `FRENTE4_PERSISTABLE_DATA_CONTRACT.md` lido como contrato autoritativo das 10 entidades
+- contrato ativo confirmou: PR 43 é recorte contratual autorizado com microetapas 1-5
+
+## 7. O que foi feito
+
+- criado `src/adapter/policy.ts` — política canônica de consistência (PR 43):
+  - **Seção A** — Tipos canônicos: WriteStrategy, ReprocessBehavior, MonotonicityLevel, EntityConsistencyPolicy
+  - **Seção B** — Política por entidade (10 políticas declaradas individualmente):
+    - POLICY_LEAD: upsert, ignore, idempotency por external_ref
+    - POLICY_LEAD_STATE: insert_versioned, ignore, idempotency por (lead_id, source_turn_id)
+    - POLICY_TURN_EVENTS: append, ignore, idempotency por idempotency_key
+    - POLICY_SIGNALS: upsert, ignore, idempotency por (turn_id, signal_key)
+    - POLICY_MEMORY_RUNTIME: overwrite, replace, idempotency por lead_id
+    - POLICY_DOCUMENTS: upsert, update, idempotency por (lead_id, doc_type)
+    - POLICY_DOSSIER: overwrite, replace, idempotency por lead_id
+    - POLICY_VISIT_SCHEDULE: append, ignore, idempotency por (lead_id, source_turn_id)
+    - POLICY_OPERATIONAL_HISTORY: append, ignore, idempotency por (lead_id, turn_id, event_type)
+    - POLICY_PROJECTION_BRIDGE: overwrite, replace, idempotency por (lead_id, target_system)
+  - **Seção C** — TTL da memória viva:
+    - TTL_DEFAULT_HOURS = 48
+    - TTL_EXTENDED_HOURS = 72
+    - TTL_MINIMUM_HOURS = 24
+    - TTL_MAXIMUM_HOURS = 72
+    - regra de leitura expirada: found: false
+    - regra de refresh: upsert a cada turno estende TTL
+    - regra de descarte: expirado pode ser deletado — não é audit trail
+  - **Seção D** — Projection bridge ENOVA 1:
+    - PROJECTION_BRIDGE_ENOVA1_ALLOWED_FIELDS (8 campos)
+    - PROJECTION_BRIDGE_ENOVA1_PROHIBITED_FIELDS (17 campos)
+    - compatibility_map com fonte e condição de cada campo
+    - pre_write_validation obrigatória
+  - **Seção E** — Monotonicidade de status por entidade:
+    - STATUS_MONOTONICITY: lead, signals, documents, visit_schedule
+    - transições válidas e inválidas declaradas explicitamente
+  - **Seção F** — POLICY_SUMMARY: tabela-resumo de 10 linhas com never_regresses por entidade
+  - **ADAPTER_CONSISTENCY_POLICY** — objeto canônico unificado para PR 44
+- criado `src/adapter/policy-smoke.ts` — smoke da PR 43:
+  - 8 cenários, todos os critérios de aceite da PR 43 validados, ✅ PASSOU
+  - Cenário 1: cobertura das 10 entidades na política consolidada
+  - Cenário 2: estratégias de escrita por entidade
+  - Cenário 3: campos imutáveis e TTL
+  - Cenário 4: TTL numérico e invariantes lógicos
+  - Cenário 5: projection bridge — campos permitidos, proibidos e mapa ENOVA 1
+  - Cenário 6: monotonicidade de status (transições válidas e inválidas)
+  - Cenário 7: consistência entre POLICY_SUMMARY e ENTITY_CONSISTENCY_POLICY
+  - Cenário 8: metadados, vínculos contratuais e soberanias
+- atualizado `package.json` — adicionado `smoke:adapter:policy` e incluído em `smoke:all`
+- atualizado `schema/contracts/_INDEX.md` — PR 43 como última PR que executou
+- atualizado `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`
+- atualizado `schema/handoffs/SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md` (este arquivo)
+
+## 8. O que nao foi feito
+
+- nao foi implementado Supabase client real
+- nao foi criada migration SQL real
+- nao foi criada tabela real no banco
+- nao foi implementado write path runtime real (policy.ts é declarativo)
+- nao foi criado endpoint funcional novo
+- nao houve mudanca em audio, Meta/WhatsApp, telemetria ou rollout
+- smoke persistente com dados reais (fica para PR 44)
+
+## 9. O que esta PR fechou
+
+- microetapa 1 da PR 43: política de append vs merge vs overwrite por entidade ✅
+- microetapa 2 da PR 43: estratégia de TTL da memória viva ✅
+- microetapa 3 da PR 43: mapa de compatibilidade ENOVA 1 para projection_bridge ✅
+- microetapa 4 da PR 43: expiração/limpeza da memória viva definida ✅
+- microetapa 5 da PR 43: smoke de política executado e aprovado ✅
+
+## 10. O que continua pendente apos esta PR
+
+- PR 44 — smoke persistente com cliente Supabase real + closeout formal da Frente 4
+
+## 11. Esta tarefa foi fora de contrato?
+
+nao
+
+## 11a. Contrato ativo
+
+`schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md`
+
+## 11b. Recorte executado do contrato
+
+PR 43 — política de merge/update/consistência e estratégia de TTL — todas as 5 microetapas concluídas.
+
+## 11c. Pendencia contratual remanescente
+
+PR44.
+
+## 11d. Houve desvio de contrato?
+
+nao
+
+## 11e. Contrato encerrado nesta PR?
+
+nao
+
+## 12. Arquivos relevantes
+
+- `src/adapter/policy.ts` ← **criado nesta PR 43**
+- `src/adapter/policy-smoke.ts` ← **criado nesta PR 43**
+- `package.json` ← atualizado nesta PR 43 (smoke:adapter:policy + smoke:all)
+- `src/adapter/types.ts` (contrato autoritativo de tipos — PR 42)
+- `src/adapter/boundaries.ts` (ownership de layers — PR 42)
+- `src/adapter/index.ts` (SupabaseAdapterBase com stubs — PR 42)
+- `src/adapter/smoke.ts` (smoke base — PR 42)
+- `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md` (contrato autoritativo — PR 41)
+- `schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md`
+- `schema/contracts/_INDEX.md`
+- `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`
+- `schema/handoffs/SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md`
+
+## 13. Item do A01 atendido
+
+Prioridade 4 — política de consistência do Adapter declarada, testada e aprovada. Comportamento explícito por entidade, TTL da memória viva e mapa de compatibilidade ENOVA 1 formalizados.
+
+## 14. Estado atual da frente
+
+em execução
+
+## 15. Proximo passo autorizado
+
+PR 44 — smoke persistente com cliente Supabase real + closeout formal da Frente 4:
+1. acceptance smoke de persistência com dados reais
+2. prova de consistência por replay seguro respeitando policy.ts
+3. prova de soberania preservada (Core regra, IA fala, Adapter persiste)
+4. executar `CONTRACT_CLOSEOUT_PROTOCOL.md`
+5. arquivar contrato e atualizar vivos
+
+## 16. Riscos
+
+- risco de drift da PR 44 em relação à política declarada em policy.ts — mitigação: PR 44 deve importar ADAPTER_CONSISTENCY_POLICY e validar por entidade
+- risco de campo proibido vazar para projection_payload_json — mitigação: pre_write_validation declarada e validada no smoke
+- risco de TTL não ser respeitado no runtime — mitigação: getActiveMemory deve checar expires_at antes de retornar
+- risco de status regredir em signals/documents/visits — mitigação: STATUS_MONOTONICITY com transições inválidas declaradas e testadas
+
+## 17. Provas
+
+- `src/adapter/policy.ts` criado — 10 políticas, TTL, projection_bridge, monotonicity, POLICY_SUMMARY
+- `src/adapter/policy-smoke.ts` criado e executado: 8/8 cenários passaram, exit 0
+- `package.json` atualizado com `smoke:adapter:policy`
+- `schema/contracts/_INDEX.md` atualizado — PR 43 como última PR executada
+- `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md` atualizado
+- smoke do adapter base (PR 42) continua passando: 4/4 cenários, exit 0
+
+## 18. Mudancas em dados persistidos (Supabase)
+
+Mudancas em dados persistidos (Supabase): nenhuma — política declarativa sem migration real, sem conexão ao banco
+
+## 19. Permissoes Cloudflare necessarias
+
+Permissoes Cloudflare necessarias: nenhuma adicional
+
+## 20. Fontes consultadas como fonte de verdade
+
+Fontes de verdade consultadas:
+  Indice de contratos lido:    `schema/contracts/_INDEX.md`
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md`
+  Contrato de dados lido:      `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md`
+  Status da frente lido:       `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`
+  Handoff da frente lido:      `schema/handoffs/SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md`
+  Adapter base lido:           `src/adapter/types.ts`, `src/adapter/boundaries.ts`, `src/adapter/index.ts`, `src/adapter/smoke.ts`
+  Indice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
+
+---
+
+## ESTADO HERDADO (para PR 44)
+
+```
+--- ESTADO HERDADO ---
+WORKFLOW_ACK: ok
+Classificação da tarefa: contratual
+Última PR relevante: PR 43 — política de merge/update/consistência e estratégia de TTL
+Contrato ativo: schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md
+Objetivo imutável do contrato: persistência canônica idempotente e auditável com separação de soberanias
+Recorte a executar na PR 44: smoke persistente com Supabase real + closeout formal da Frente 4
+Item do A01: Prioridade 4
+Estado atual da frente: em execução
+O que a PR 43 fechou: política de consistência completa, TTL da memória viva, mapa de compatibilidade ENOVA 1, smoke de política aprovado
+O que a PR 43 NAO fechou: runtime real do Supabase, migration, smoke persistente com dados reais
+Por que a PR 44 existe: provar o behavior declarado na política com dados reais e encerrar formalmente a Frente 4
+Esta tarefa está dentro do contrato ativo: dentro
+Objetivo da PR 44: smoke persistente integrado + closeout formal
+Escopo: acceptance smoke de persistência, prova de replay seguro, prova de soberania, closeout protocolar
+Fora de escopo: áudio, Meta/WhatsApp, telemetria, rollout
+Houve desvio de contrato?: nao
+Mudanças em dados persistidos (Supabase): a declarar na PR 44 (primeiro write real)
+Permissões Cloudflare necessárias: nenhuma adicional
+```
+
 
 ---
 
