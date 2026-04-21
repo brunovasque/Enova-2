@@ -6,27 +6,27 @@
 | Data | 2026-04-21 |
 | Estado da frente | em execução |
 | Classificacao da tarefa | contratual |
-| Ultima PR relevante | PR 40 — abertura contratual + schema canonico |
+| Ultima PR relevante | PR 41 — contrato de dados e shape persistivel |
 | Contrato ativo | `schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md` |
-| Recorte executado do contrato | PR 41 — contrato de dados e shape persistivel |
-| Pendencia contratual remanescente | PR42, PR43 e PR44 |
+| Recorte executado do contrato | PR 42 — adapter base de leitura/escrita canônica |
+| Pendencia contratual remanescente | PR43 e PR44 |
 | Houve desvio de contrato? | nao |
 | Contrato encerrado nesta PR? | nao |
-| Item do A01 atendido | Prioridade 4 — contrato de dados persistíveis consolidado com shape fechado |
-| Proximo passo autorizado | PR 42 — adapter base de leitura/escrita canonica |
+| Item do A01 atendido | Prioridade 4 — casca técnica mínima do adapter com interfaces, boundaries e smoke |
+| Proximo passo autorizado | PR 43 — politica de merge/update/consistencia e estrategia de TTL |
 | Proximo passo foi alterado? | nao |
-| Tarefa fora de contrato? | nao (recorte contratual da PR 41) |
-| Mudancas em dados persistidos (Supabase) | nenhuma |
+| Tarefa fora de contrato? | nao (recorte contratual da PR 42) |
+| Mudancas em dados persistidos (Supabase) | nenhuma — casca com stubs, sem migration real |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
 
 ---
 
 ## 1. Contexto curto
 
-A PR 40 abriu a governança completa da Frente 4 com contrato ativo, vivos e desenho canônico de persistência.
-Nesta PR 41, entregamos o **contrato de dados persistíveis** completo e versionado — com 10 entidades definidas, ownership explícito, idempotência por entidade, versionamento, políticas de retenção e as quatro zonas de soberania de dados.
+A PR 41 entregou o contrato de dados persistíveis completo com as 10 entidades, ownership, idempotência e zonas de soberania.
+Nesta PR 42, entregamos a **casca técnica mínima do Supabase Adapter** em `src/adapter/` — com interfaces de leitura/escrita, boundaries explícitas e smoke base.
 
-O shape está fechado o suficiente para a PR 42 implementar o adapter base sem inventar.
+O adapter nasce como camada única e explícita. Todo write/read futuro das tabelas `enova2_*` passa por esta camada. O Core entrega payload — o Adapter projeta/persiste. Speech e Context não escrevem direto.
 
 ## 2. Classificacao da tarefa
 
@@ -34,79 +34,93 @@ contratual
 
 ## 3. Ultima PR relevante
 
-PR 40 — abertura contratual + schema canonico documental da Frente 4.
+PR 41 — contrato de dados e shape persistivel (10 entidades, shape fechado).
 
 ## 4. O que a PR anterior fechou
 
-- contrato ativo da Frente 4 aberto
-- vivos (status + handoff) da Frente 4 criados
-- desenho macro de persistência criado em `schema/data/FRENTE4_SUPABASE_ADAPTER_PERSISTENCIA_SCHEMA_CANONICO.md`
-- quebra oficial PR40-PR44 definida
+- contrato de dados persistíveis completo criado (`FRENTE4_PERSISTABLE_DATA_CONTRACT.md`)
+- 10 entidades com campos, tipos, ownership, idempotência, versionamento e retenção
+- quatro zonas de soberania de dados declaradas
+- smoke documental/estrutural do contrato executado (seção 13.1)
 
 ## 5. O que a PR anterior NAO fechou
 
-- contrato de dados persistíveis detalhado por entidade
-- campos, tipos, ownership, idempotência, versionamento e retenção por entidade
-- quatro zonas de soberania explicitadas
-- como cada categoria de dado é salva (cliente, docs, dossiê, visita, histórico, contexto/sinais/memória)
+- interfaces TypeScript de read/write do adapter
+- casca técnica do adapter (módulo, classe, stubs)
+- boundaries explícitas de layer (quem pode, quem não pode escrever direto)
+- smoke do adapter base
 
 ## 6. Diagnostico confirmado
 
-- `schema/contracts/_INDEX.md` confirmou Frente 4 ativa com PR 41 como próximo passo autorizado
-- status e handoff da PR 40 confirmaram: `Próximo passo autorizado: PR 41 — contrato de dados e shape persistivel`
-- `FRENTE4_SUPABASE_ADAPTER_PERSISTENCIA_SCHEMA_CANONICO.md` (v1.0) identificado como base a refinar
-- contrato ativo lido confirmou: PR 41 é recorte contratual autorizado com microetapas 1-5
+- `schema/contracts/_INDEX.md` confirmou Frente 4 ativa com PR 42 como próximo passo autorizado
+- status e handoff da PR 41 confirmaram: `Próximo passo autorizado: PR 42 — adapter base de leitura/escrita canonica`
+- `FRENTE4_PERSISTABLE_DATA_CONTRACT.md` lido como contrato autoritativo das 10 entidades
+- contrato ativo confirmou: PR 42 é recorte contratual autorizado com microetapas 1-5
 
 ## 7. O que foi feito
 
-- criado `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md` — contrato de dados persistíveis completo:
-  - 10 entidades com campos, tipos, obrigatório/opcional
-  - Chaves primárias (UUID) e FKs por entidade
-  - Idempotency keys por entidade com comportamento em reprocessamento
-  - Versionamento por entidade
-  - Evidência/origem declarada
-  - Owner de escrita e owner de definição declarados
-  - Política de retenção/expiração por entidade
-  - Quatro zonas de soberania de dados declaradas
-  - O que persiste, o que não persiste, o que é temporário e o que exige confirmação
-  - Como cada categoria é salva (10.1-10.6): cliente, docs, dossiê, visita, histórico, contexto/sinais/memória
-  - Diagrama de relacionamentos
-  - Tabela de ownership consolidado por layer
-  - Tabela de idempotência consolidada
-  - Smoke documental/estrutural executado (seção 13.1)
-- refinado `schema/data/FRENTE4_SUPABASE_ADAPTER_PERSISTENCIA_SCHEMA_CANONICO.md` para v1.1.0:
-  - header de versão adicionado
-  - referência ao contrato autoritativo de PR 41 adicionada
-  - seção 10 atualizada: PR 41 marcada como concluída
-  - seção 11 atualizada: referência ao `FRENTE4_PERSISTABLE_DATA_CONTRACT.md` adicionada
+- criado `src/adapter/types.ts` — interfaces e tipos das 10 entidades:
+  - `AdapterLeadRecord`, `AdapterLeadWriteInput`, `AdapterLeadUpdateInput`
+  - `AdapterLeadStateRecord`, `AdapterLeadStateWriteInput`
+  - `AdapterTurnEventRecord`, `AdapterTurnEventWriteInput`
+  - `AdapterSignalRecord`, `AdapterSignalWriteInput`, `AdapterSignalStatusUpdateInput`
+  - `AdapterMemoryRuntimeRecord`, `AdapterMemoryRuntimeWriteInput`
+  - `AdapterDocumentRecord`, `AdapterDocumentWriteInput`, `AdapterDocumentStatusUpdateInput`
+  - `AdapterDossierRecord`, `AdapterDossierWriteInput`
+  - `AdapterVisitScheduleRecord`, `AdapterVisitScheduleWriteInput`, `AdapterVisitStatusUpdateInput`
+  - `AdapterOperationalHistoryRecord`, `AdapterOperationalHistoryAppendInput`
+  - `AdapterProjectionBridgeRecord`, `AdapterProjectionBridgeWriteInput`
+  - `AdapterWriteResult<T>`, `AdapterReadResult<T>`, `AdapterListResult<T>`
+  - `IAdapterLeadOps` ... `IAdapterProjectionBridgeOps` (10 interfaces de operação)
+  - `ISupabaseAdapter` (interface completa — extends todas as 10)
+- criado `src/adapter/boundaries.ts` — boundaries e ownership:
+  - `ADAPTER_ROLE` — papel soberano (persistence_only, may_decide_business_rule: false...)
+  - `ADAPTER_ALLOWED_CALLERS` — worker, core_mechanical, async_worker, human_admin
+  - `ADAPTER_PROHIBITED_DIRECT_WRITERS` — context_extraction, speech_engine, llm_layer...
+  - `CORE_SOVEREIGN_FIELDS` — campos que o Adapter projeta, nunca calcula (6 campos)
+  - `ADAPTER_WRITE_OWNERSHIP` — mapa de ownership das 10 entidades (writer: 'adapter' em todas)
+  - `ADAPTER_CANONICAL_CONSTRAINTS` — 11 constraints declaradas em código
+- criado `src/adapter/index.ts` — `SupabaseAdapterBase`:
+  - única porta de entrada para write/read das tabelas `enova2_*`
+  - stubs documentados para todas as 26 operações (10 entidades)
+  - PLACEHOLDER marcado — implementação runtime na PR 44
+  - constraints, role, coreSovereignFields, writeOwnership declarados na instância
+- criado `src/adapter/smoke.ts` — smoke do adapter base:
+  - 4 cenários, 68 assertions, ✅ PASSOU
+  - Cenário 1: instância, role e constraints canônicas
+  - Cenário 2: stubs retornam not_implemented para todas as 10 entidades
+  - Cenário 3: boundaries, campos soberanos do Core e ownership por layer
+  - Cenário 4: cobertura completa das 10 entidades (operações + ownership)
+- atualizado `package.json` — adicionado `smoke:adapter` e incluído em `smoke:all`
+- atualizado `schema/contracts/_INDEX.md` — PR 42 como última PR que executou
 - atualizado `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`
 - atualizado `schema/handoffs/SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md`
-- atualizado `schema/contracts/_INDEX.md`
 
 ## 8. O que nao foi feito
 
-- nao foi implementado Supabase real
+- nao foi implementado Supabase client real
 - nao foi criada migration SQL real
-- nao foi criada tabela real
-- nao foi criado write path/runtime real
-- nao foi criado endpoint funcional
+- nao foi criada tabela real no banco
+- nao foi criado write path runtime real (placeholder para PR 44)
+- nao foi criado endpoint funcional novo
 - nao houve mudanca em audio, Meta/WhatsApp, telemetria ou rollout
 - politica de TTL exata da memoria viva (fica para PR 43)
 - estrategia de append vs merge vs overwrite por entidade (fica para PR 43)
+- mapa de compatibilidade ENOVA 1 detalhado (fica para PR 43)
+- smoke persistente com dados reais (fica para PR 44)
 
 ## 9. O que esta PR fechou
 
-- microetapa 1: entidades persistíveis definidas (10 entidades)
-- microetapa 2: tabelas/colunas canônicas definidas
-- microetapa 3: ids/chaves/timestamps/versionamento definidos
-- microetapa 4: o que pode e não pode ser persistido declarado
-- microetapa 5: smoke documental/estrutural do contrato de dados executado
+- microetapa 1 da PR 42: interfaces de leitura/escrita declaradas
+- microetapa 2 da PR 42: ownership de cada write path declarado explicitamente
+- microetapa 3 da PR 42: integração centralizada em `src/adapter/` sem espalhar chamada direta
+- microetapa 4 da PR 42: sem canal externo, sem áudio, sem Meta
+- microetapa 5 da PR 42: smoke do adapter base executado e aprovado
 
 ## 10. O que continua pendente apos esta PR
 
-- PR 42 — adapter base de leitura/escrita canonica
-- PR 43 — politica de merge/update/consistencia
-- PR 44 — smoke persistente + closeout formal
+- PR 43 — politica de merge/update/consistencia e estrategia de TTL
+- PR 44 — smoke persistente + closeout formal da frente
 
 ## 11. Esta tarefa foi fora de contrato?
 
@@ -118,11 +132,11 @@ nao
 
 ## 11b. Recorte executado do contrato
 
-PR 41 — contrato de dados e shape persistivel — todas as 5 microetapas concluídas.
+PR 42 — adapter base de leitura/escrita canônica — todas as 5 microetapas concluídas.
 
 ## 11c. Pendencia contratual remanescente
 
-PR42, PR43 e PR44.
+PR43 e PR44.
 
 ## 11d. Houve desvio de contrato?
 
@@ -134,8 +148,11 @@ nao
 
 ## 12. Arquivos relevantes
 
-- `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md` ← **criado nesta PR 41**
-- `schema/data/FRENTE4_SUPABASE_ADAPTER_PERSISTENCIA_SCHEMA_CANONICO.md` ← **refinado para v1.1.0**
+- `src/adapter/types.ts` ← **criado nesta PR 42**
+- `src/adapter/boundaries.ts` ← **criado nesta PR 42**
+- `src/adapter/index.ts` ← **criado nesta PR 42**
+- `src/adapter/smoke.ts` ← **criado nesta PR 42**
+- `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md` (contrato autoritativo — PR 41)
 - `schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md`
 - `schema/contracts/_INDEX.md`
 - `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`
@@ -143,7 +160,7 @@ nao
 
 ## 13. Item do A01 atendido
 
-Prioridade 4 — contrato de dados persistíveis da Frente 4 consolidado com shape fechado para PR 42 implementar.
+Prioridade 4 — casca técnica mínima do Supabase Adapter entregue com interfaces, boundaries e smoke base aprovado.
 
 ## 14. Estado atual da frente
 
@@ -151,29 +168,30 @@ em execução
 
 ## 15. Proximo passo autorizado
 
-PR 42 — adapter base de leitura/escrita canonica:
-1. criar interfaces de leitura/escrita
-2. definir ownership de cada write path
-3. centralizar integração sem espalhar chamada direta
-4. manter sem canal externo, sem áudio, sem Meta
-5. smoke do adapter base
+PR 43 — politica de merge/update/consistencia e estrategia de TTL da memoria viva:
+1. política exata de append vs merge vs overwrite por entidade
+2. estratégia de TTL da memória viva (24h–72h — parâmetros formais)
+3. mapa de compatibilidade ENOVA 1 detalhado para projection_bridge
+4. smoke de política (sem Supabase real ainda)
 
 ## 16. Riscos
 
-- risco de drift do contrato de dados na implementação do adapter (PR 42) — mitigação: este contrato autoritativo deve ser lido antes da PR 42
-- risco de TTL da memória viva não ser definido antes da PR 44 — mitigação: PR 43 cobre isso
-- risco de projeção de compatibilidade ENOVA 1 ficar vaga — mitigação: PR 42 define o mapa de compatibilidade
+- risco de drift da implementação runtime (PR 44) em relação aos tipos declarados aqui — mitigação: ISupabaseAdapter deve ser implementada fielmente
+- risco de TTL da memória viva não ser definido antes da PR 44 — mitigação: PR 43 cobre isso obrigatoriamente
+- risco de escrita direta nas tabelas bypassar o Adapter — mitigação: ADAPTER_PROHIBITED_DIRECT_WRITERS declarado em código e em smoke
 
 ## 17. Provas
 
-- `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md` criado (662 linhas, 10 entidades, smoke documental positivo)
-- `schema/data/FRENTE4_SUPABASE_ADAPTER_PERSISTENCIA_SCHEMA_CANONICO.md` refinado para v1.1.0
-- status atualizado com estado `em execução`
-- handoff atualizado com contexto completo
+- `src/adapter/types.ts` criado (10 entidades, 26 operações, ISupabaseAdapter)
+- `src/adapter/boundaries.ts` criado (ADAPTER_ROLE, ALLOWED_CALLERS, PROHIBITED_DIRECT_WRITERS, CORE_SOVEREIGN_FIELDS, WRITE_OWNERSHIP, CONSTRAINTS)
+- `src/adapter/index.ts` criado (SupabaseAdapterBase com stubs documentados)
+- `src/adapter/smoke.ts` criado e executado: 4/4 cenários passaram, 68 assertions, exit 0
+- `package.json` atualizado com `smoke:adapter`
+- status, handoff e _INDEX.md atualizados
 
 ## 18. Mudancas em dados persistidos (Supabase)
 
-Mudancas em dados persistidos (Supabase): nenhuma
+Mudancas em dados persistidos (Supabase): nenhuma — casca com stubs, sem migration real, sem conexao ao banco
 
 ## 19. Permissoes Cloudflare necessarias
 
@@ -184,15 +202,16 @@ Permissoes Cloudflare necessarias: nenhuma adicional
 Fontes de verdade consultadas:
   Indice de contratos lido:    `schema/contracts/_INDEX.md`
   Contrato ativo lido:         `schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md`
+  Contrato de dados lido:      `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md`
+  Schema canonico lido:        `schema/data/FRENTE4_SUPABASE_ADAPTER_PERSISTENCIA_SCHEMA_CANONICO.md`
   Status da frente lido:       `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md`
   Indice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos L03/L18 identificados como nao transcritos
   PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — paginas 126-127
 
 ---
 
-## 1. Contexto curto
+
 
 A Frente 3 foi encerrada formalmente na PR39 e autorizou a abertura da Frente 4.
 Nesta PR40, abrimos a governanca completa da Frente 4 com contrato ativo, vivos e desenho canonico de persistencia, sem implementacao real de Supabase.
