@@ -3,18 +3,18 @@
 | Campo                                      | Valor |
 |--------------------------------------------|-------|
 | Frente                                     | Core Mecânico 2 |
-| Data                                       | 2026-04-20T20:58:44.4419816-03:00 |
-| Estado da frente                           | em execução — Especiais integrados ao Core principal, com Worker ainda estrutural e sem fala mecânica |
-| Classificação da tarefa                    | contratual — L15 + L16 do Core Mecânico 2 |
-| Última PR relevante                        | PR de execução L11 + L12 + L13 + L14 — Meio B inicial integrado ao Core Mecânico 2 |
+| Data                                       | 2026-04-20T21:34:11.7830094-03:00 |
+| Estado da frente                           | em execução — Core completo até o handoff final, com Worker estrutural e sem fala mecânica |
+| Classificação da tarefa                    | contratual — L17 do Core Mecânico 2 |
+| Última PR relevante                        | PR de execução L15 + L16 — Especiais integrados ao Core Mecânico 2 |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` |
-| Recorte executado do contrato              | L15 + L16 — Especiais: trilhos P3 / multi e variantes |
-| Pendência contratual remanescente          | L17 em aberto; Final pendente |
+| Recorte executado do contrato              | L17 — Final operacional, docs, visita e handoff |
+| Pendência contratual remanescente          | nenhuma |
 | Houve desvio de contrato?                  | não |
 | Contrato encerrado nesta PR?               | não |
-| Item do A01 atendido                       | Fase 2 — Prioridade 1: Core Mecânico 2 desacoplado da fala, agora com Especiais plugados ao motor real |
-| Próximo passo autorizado                   | Sétima PR contratual: L17 — Final operacional, docs, visita e handoff |
-| Próximo passo foi alterado?                | não |
+| Item do A01 atendido                       | Fase 2 — Prioridade 1: Core Mecânico 2 desacoplado da fala, agora completo do topo ao handoff |
+| Próximo passo autorizado                   | reavaliar encerramento formal do contrato do Core Mecânico 2 |
+| Próximo passo foi alterado?                | sim |
 | Tarefa fora de contrato?                   | não |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
@@ -24,11 +24,11 @@
 
 ## 1. Contexto curto
 
-O Core Mecânico 2 já tinha L03–L14 entregues, além de uma rota técnica mínima no Worker. O gap contratual seguinte era abrir os trilhos especiais P3 / multi sem misturar docs/final.
+O Core Mecânico 2 já tinha L03–L16 entregues, além de uma rota técnica mínima no Worker. O gap contratual final era ligar docs, visita e handoff ao motor real sem abrir fala, canal ou persistência.
 
-Esta PR fecha exatamente L15 + L16 em recorte mínimo: stage `qualification_special`, parser de P3 / multi, gates mínimos de ausência crítica e IR do co-participante autônomo, além do roteamento real a partir da elegibilidade. O recorte continua dentro do contrato ativo e sem drift porque não abre L17, docs, surface final ou fala mecânica. O Core continua devolvendo apenas estrutura.
+Esta PR fecha exatamente L17 em recorte mínimo: parser final, gates de docs/visita/handoff, integração de `docs_prep`, `docs_collection`, `visit` e `broker_handoff` ao `engine.ts`, além da prova ponta a ponta no Worker. O recorte continua dentro do contrato ativo e sem drift porque não abre Supabase, canal, surface final ou fala mecânica. O Core continua devolvendo apenas estrutura.
 
-O próximo passo autorizado muda de forma natural para L17, entrada na fase final operacional.
+Como L03–L17 ficaram cobertos e o smoke topo → final passou, o contrato agora pode ser reavaliado para encerramento com segurança, mas o closeout formal ainda não foi aplicado nesta PR.
 
 ## 2. Classificação da tarefa
 
@@ -36,7 +36,7 @@ O próximo passo autorizado muda de forma natural para L17, entrada na fase fina
 
 ## 3. Última PR relevante
 
-PR de execução L11 + L12 + L13 + L14 — Meio B inicial integrado ao `engine.ts`.
+PR de execução L15 + L16 — Especiais integrados ao `engine.ts`.
 
 ## 4. O que a PR anterior fechou
 
@@ -50,10 +50,9 @@ PR de execução L11 + L12 + L13 + L14 — Meio B inicial integrado ao `engine.t
 
 ## 5. O que a PR anterior NÃO fechou
 
-- trilho próprio de especiais
-- roteamento real de P3 / multi
-- stage contratado entre elegibilidade e docs
-- L15–L17
+- docs_prep, docs_collection, visit e broker_handoff ainda dependiam do caminho genérico de L03
+- faltava tratar handoff e visita como estado estrutural real
+- faltava prova topo → final para encerrar o contrato
 
 ## 6. Diagnóstico confirmado
 
@@ -66,47 +65,45 @@ PR de execução L11 + L12 + L13 + L14 — Meio B inicial integrado ao `engine.t
 
 ## 7. O que foi feito
 
-- `src/core/especiais-rules.ts`
-  - definiu facts, trilhos e políticas mínimas dos Especiais
-- `src/core/especiais-parser.ts`
-  - normalizou sinais de P3, multi-proponente e variante do co-participante
-- `src/core/especiais-gates.ts`
-  - adicionou gate de ausência crítica para P3 e multi
-  - adicionou gate para co-participante autônomo sem IR confirmado
+- `src/core/final-rules.ts`
+  - definiu facts, trilhos e políticas mínimas do recorte final
+- `src/core/final-parser.ts`
+  - normalizou canal de docs, visita, status documentais e handoff_readiness
+- `src/core/final-gates.ts`
+  - adicionou gates mínimos de docs, visita e handoff
 - `src/core/engine.ts`
-  - plugou `qualification_special` no caminho real do Core
-  - fez `qualification_eligibility` rotear para o stage especial quando houver P3 ou multi
+  - plugou `docs_prep`, `docs_collection`, `visit` e `broker_handoff` no caminho real do Core
   - preservou a saída estritamente estrutural
 - `src/core/stage-map.ts`
-  - adicionou `qualification_special` entre elegibilidade e docs
+  - adicionou slot de gate final para os stages operacionais
 - `src/core/types.ts`
-  - adicionou o stage e gate estruturais dos Especiais
-- `src/core/meio-a-gates.ts`
-  - deixou o sinal de P3 seguir até o stage especial contratado
+  - adicionou o gate estrutural do Final operacional
 - `src/core/smoke.ts`
-  - adicionou cenários integrados de roteamento P3, bloqueio crítico e trilho multi válido
+  - adicionou cenários integrados do final e a trilha completa topo → handoff
+- `src/worker.ts`
+  - passou a aceitar `qualification_special` na rota viva
+- `src/worker-route-smoke.ts`
+  - adicionou provas reais de L17 via `POST /__core__/run`
 
 ## 8. O que não foi feito
 
-- não abriu L17
-- não abriu docs, visita ou final operacional
+- não abriu Supabase
+- não abriu Meta/WhatsApp
+- não abriu surface final nem fala mecânica
 - não adicionou fala mecânica
-- não integrou Supabase
-- não integrou Meta/WhatsApp
 - não alterou o contrato ativo
 
 ## 9. O que esta PR fechou
 
-- L15 — trilhos especiais P3 / multi
-- L16 — variantes estruturais mínimas dos especiais
-- `qualification_special` passou a rodar no caminho real do `engine.ts`
-- `qualification_eligibility` agora decide entre `docs_prep` e `qualification_special`
-- smoke integrado do Core passou com cenários de P3, ausência crítica, multi válido e co-participante autônomo
+- L17 — final operacional / docs / visita / handoff
+- `docs_prep`, `docs_collection`, `visit` e `broker_handoff` passaram a rodar no caminho real do `engine.ts`
+- smoke topo → final passou no Core
+- Worker provou o recorte final via rota `/__core__/run`
 - Worker permaneceu sem fala mecânica
 
 ## 10. O que continua pendente após esta PR
 
-- L17 — Final operacional
+nenhuma
 
 ## 11. Esta tarefa foi fora de contrato?
 
@@ -118,11 +115,11 @@ PR de execução L11 + L12 + L13 + L14 — Meio B inicial integrado ao `engine.t
 
 ## 11b. Recorte executado do contrato
 
-L15 + L16 — Especiais: trilhos P3 / multi e variantes.
+L17 — Final operacional, docs, visita e handoff.
 
 ## 11c. Pendência contratual remanescente
 
-L17 permanece em aberto.
+nenhuma técnica.
 
 ## 11d. Houve desvio de contrato?
 
@@ -130,7 +127,7 @@ L17 permanece em aberto.
 
 Esta PR continua dentro do contrato e sem drift porque:
 - não muda o objetivo do contrato
-- implementa exatamente o próximo recorte autorizado dos Especiais
+- implementa exatamente o recorte final autorizado do contrato
 - não abre Speech, Supabase, Áudio, Meta ou surface final
 - mantém o Core devolvendo apenas estrutura e preserva a soberania do LLM sobre a fala
 
@@ -140,16 +137,15 @@ Esta PR continua dentro do contrato e sem drift porque:
 
 ## 12. Arquivos relevantes
 
-- `src/core/meio-a-rules.ts`
-- `src/core/meio-a-parser.ts`
-- `src/core/meio-a-gates.ts`
 - `src/core/engine.ts`
-- `src/core/especiais-rules.ts`
-- `src/core/especiais-parser.ts`
-- `src/core/especiais-gates.ts`
+- `src/core/final-rules.ts`
+- `src/core/final-parser.ts`
+- `src/core/final-gates.ts`
 - `src/core/stage-map.ts`
 - `src/core/types.ts`
 - `src/core/smoke.ts`
+- `src/worker.ts`
+- `src/worker-route-smoke.ts`
 - `schema/status/CORE_MECANICO_2_STATUS.md`
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md`
 - `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`
@@ -167,27 +163,28 @@ Esta PR continua dentro do contrato e sem drift porque:
 
 ## 15. Próximo passo autorizado
 
-**Sétima PR contratual: L17 — Final operacional, docs, visita e handoff.**
+**Reavaliar encerramento formal do contrato do Core Mecânico 2.**
 
-Próximo passo **atualizado** pela sequência natural do contrato após o fechamento de L15 + L16.
+O recorte técnico do Core foi fechado; o closeout formal depende de decisão explícita após esta PR.
 
 ## 16. Riscos
 
-- o recorte de Especiais foi mantido mínimo de propósito; L17 continua fechado
-- qualquer expansão para renda, elegibilidade, canal ou fala precisa de PR própria
-- o bloco L17 continua dependente de execução contratual futura
+- o recorte final foi mantido no mínimo estrutural ancorado ao PDF
+- qualquer expansão para Speech, Supabase, Meta, telemetria ou surface precisa de contrato próprio
+- o contrato do Core ainda está ativo até a aplicação formal do closeout
 
 ## 17. Provas
 
-- `npm run smoke` → 14/14 passando pelo `runCoreEngine()`
+- `npm run smoke` → 19/19 passando pelo `runCoreEngine()`
 - `npm run smoke:all` → Core + Worker passando
-- commit técnico: `a3c27abec10af5222501e8dbcfae39705900af97` — `feat(core): integrar trilhos especiais no engine`
-- cenário real de roteamento P3:
-  - `qualification_eligibility` com `{"nacionalidade":"brasileiro","processo":"composicao_familiar","p3_required":true}` -> `stage_after="qualification_special"`, `next_objective="validar_trilho_p3"`
-- cenário real de bloqueio crítico:
-  - `qualification_special` com `{"processo":"composicao_familiar","p3_required":true}` -> `block_advance=true`, `next_objective="coletar_work_regime_p3"`
-- cenário real de trilho especial válido:
-  - `qualification_special` com `{"processo":"conjunto","work_regime_p2":"clt","monthly_income_p2":3600,"ctps_36m_p2":true}` -> `stage_after="docs_prep"`
+- `npm run smoke:worker` → Worker passando com cenário L17 via rota viva
+- commit técnico: `18fef05f62a6ba9eec01cbef378607459dca4c1f` — `feat(core): integrar l17 final operacional`
+- cenário real de visita:
+  - `docs_prep` com `{"docs_channel_choice":"visita presencial","visit_interest":"sim"}` -> `stage_after="visit"`
+- cenário real de docs completos:
+  - `docs_collection` com `{"doc_identity_status":"validado","doc_income_status":"recebido","doc_residence_status":"recebido"}` -> `stage_after="broker_handoff"`
+- cenário real de handoff concluído:
+  - `broker_handoff` com `{"handoff_readiness":"pronto para correspondente"}` -> `next_objective="handoff_concluido_correspondente"`
 
 ## 18. Mudanças em dados persistidos (Supabase)
 
@@ -208,4 +205,4 @@ Fontes de verdade consultadas:
   Handoff da frente lido:      `schema/handoffs/CORE_MECANICO_2_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos L03–L17 identificados estruturalmente
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — E6.2, F2 e F4; p3_required, work_regime_p2, monthly_income_p2, autonomo_has_ir_p2, ctps_36m_p2 e work_regime_p3 consultados diretamente
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — E7.3, F7, F8, handoff_readiness e 4.1 Fases macro consultados diretamente
