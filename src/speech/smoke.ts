@@ -8,6 +8,11 @@
 import { runCoreEngine } from '../core/engine.ts';
 import type { LeadState } from '../core/types.ts';
 import {
+  assertMcmvCognitiveContractConformance,
+  buildMcmvCognitiveContract,
+  type McmvCognitiveContract,
+} from './cognitive.ts';
+import {
   assertSpeechPolicyConformance,
   buildSpeechPolicyEnvelope,
   type SpeechPolicyEnvelope,
@@ -24,6 +29,7 @@ interface Assertion {
 interface SpeechSmokeResult {
   scenario: string;
   envelope: SpeechPolicyEnvelope;
+  cognitive_contract?: McmvCognitiveContract;
   surface?: FinalSurfaceResult;
   assertions: Assertion[];
   passed: boolean;
@@ -159,12 +165,73 @@ function smokeScenario4_MecanicoNaoPublicaSurfaceFinal(): SpeechSmokeResult {
   };
 }
 
+function smokeScenario5_ContratoCognitivoMcmv(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const violations = assertMcmvCognitiveContractConformance(cognitiveContract);
+
+  const assertions = [
+    assert('dona do contrato cognitivo = llm', 'llm', cognitiveContract.cognitive_owner),
+    assert('autoridade da surface final = llm', 'llm', cognitiveContract.final_surface_authority),
+    assert('mecânico fica só em governança estrutural', 'structural_governance_only', cognitiveContract.mechanical_role),
+    assert('postura consultiva humana presente', true, cognitiveContract.specialist_principles.includes('postura_consultiva_humana')),
+    assert('qualificação inteligente presente', true, cognitiveContract.specialist_principles.includes('qualificacao_inteligente_de_perfil')),
+    assert('não promete aprovação', true, cognitiveContract.knowledge_boundaries.includes('nao_prometer_aprovacao')),
+    assert('não cria script rígido dominante', true, cognitiveContract.forbidden_behaviors.includes('script_rigido_dominante')),
+    assert('sem violações cognitivas', [], violations),
+  ];
+
+  return {
+    scenario: 'Cenário 5 — contrato cognitivo mínimo da atendente MCMV',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario6_ContratoCognitivoRespeitaSurfaceDaIa(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {}));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const cognitiveContract = buildMcmvCognitiveContract({ policy: envelope });
+  const surface = buildAiFinalSurface({
+    policy: envelope,
+    draft: {
+      author: 'llm',
+      text: 'Vou respeitar o próximo passo autorizado e seguir sem prometer aprovação.',
+    },
+  });
+
+  const assertions = [
+    assert('contrato cognitivo preserva next_objective', envelope.next_objective, cognitiveContract.policy_alignment.next_objective),
+    assert('contrato cognitivo preserva bloqueio', envelope.block_advance, cognitiveContract.policy_alignment.block_advance),
+    assert('surface final continua autorada pela IA', true, surface.accepted),
+    assert('mecânico não gera texto na surface', false, surface.mechanical_text_generated),
+    assert('cognitivo proíbe resposta engessada por stage', true, cognitiveContract.forbidden_behaviors.includes('resposta_engessada_por_stage')),
+    assert('cognitivo proíbe fallback dominante', true, cognitiveContract.forbidden_behaviors.includes('fallback_dominante')),
+  ];
+
+  return {
+    scenario: 'Cenário 6 — contrato cognitivo respeita policy e surface da IA',
+    envelope,
+    cognitive_contract: cognitiveContract,
+    surface,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 export function runSpeechSmokeSuite() {
   const results = [
     smokeScenario1_BlockPreservaSoberaniaDaIa(),
     smokeScenario2_TransicaoPreservaIaSoberana(),
     smokeScenario3_SurfaceFinalDaIa(),
     smokeScenario4_MecanicoNaoPublicaSurfaceFinal(),
+    smokeScenario5_ContratoCognitivoMcmv(),
+    smokeScenario6_ContratoCognitivoRespeitaSurfaceDaIa(),
   ];
   const passed = results.filter((item) => item.passed).length;
 
