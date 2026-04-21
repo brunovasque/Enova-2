@@ -5,21 +5,21 @@
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | PR 29 — PR4 textual: modelo mínimo de resposta livre governada |
+| Última PR executou qual recorte            | PR 30 — PR5 textual: múltiplas informações no mesmo turno |
 | Pendência contratual                       | próximos recortes textuais da atendente especialista MCMV; provedor LLM real e prompt final de produção completo ainda não abertos |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
 | Estado atual                               | em execução |
 | Classe da última tarefa                    | contratual |
-| Última PR relevante                        | PR 29 — PR4 textual: modelo mínimo de resposta livre governada |
-| Último commit funcional                    | `3cbeba4d120748e62fa79497c5c470872d6a750b` — `feat(speech): criar resposta livre governada` |
-| Pendência remanescente herdada             | após a PR 28 ainda faltava explicitar como a resposta livre da IA permanece alinhada ao Core e ao contrato cognitivo sem virar script |
-| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV após resposta livre governada, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
+| Última PR relevante                        | PR 30 — PR5 textual: múltiplas informações no mesmo turno |
+| Último commit funcional                    | `5df32be9e7d1b5b33c44b034aad03aa02d5095be` — `feat(speech): tratar turno composto governado` |
+| Pendência remanescente herdada             | após a PR 29 ainda faltava tratar múltiplas informações no mesmo turno sem virar parser mecânico dominante |
+| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV após turno composto governado, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-21T11:46:39.4804111-03:00 |
+| Última atualização                         | 2026-04-21T12:03:16.1940591-03:00 |
 
 ---
 
@@ -39,9 +39,9 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR 29 — PR4 textual: modelo mínimo de resposta livre governada.
+PR 30 — PR5 textual: múltiplas informações no mesmo turno.
 
-O recorte adicionou `src/speech/free-response.ts` para validar uma resposta livre autorada pela IA contra policy, surface e contrato cognitivo. A governança continua invisível e estrutural: preserva `next_objective`, bloqueios e limites MCMV/CEF, rejeita promessa de aprovação e não escreve texto alternativo.
+O recorte adicionou `src/speech/composite-turn.ts` para organizar múltiplos sinais já interpretados como contexto da IA, sem parsear texto cru e sem dar prioridade ao mecânico. A camada preserva `next_objective`, bloqueios, limites MCMV/CEF e resposta livre governada.
 
 ## 2c. Pendência contratual
 
@@ -70,7 +70,8 @@ A frente agora possui:
 - rejeição explícita de autoria mecânica para resposta final;
 - contrato cognitivo mínimo da atendente especialista MCMV;
 - modelo mínimo de resposta livre governada;
-- smoke específico cobrindo fallback não dominante, ausência de texto final gerado pelo mecânico, proibição de script rígido dominante e rejeição de promessa de aprovação.
+- modelo mínimo de turno composto governado;
+- smoke específico cobrindo fallback não dominante, ausência de texto final gerado pelo mecânico, proibição de script rígido dominante, rejeição de promessa de aprovação e múltiplos sinais sem sobrescrever o Core.
 
 ## 5. Classe da última tarefa
 
@@ -78,11 +79,11 @@ A frente agora possui:
 
 ## 6. Última PR relevante
 
-PR 29 — PR4 textual: modelo mínimo de resposta livre governada.
+PR 30 — PR5 textual: múltiplas informações no mesmo turno.
 
 ## 7. Último commit funcional
 
-`3cbeba4d120748e62fa79497c5c470872d6a750b` — `feat(speech): criar resposta livre governada`.
+`5df32be9e7d1b5b33c44b034aad03aa02d5095be` — `feat(speech): tratar turno composto governado`.
 
 ## 8. Entregas concluídas
 
@@ -99,6 +100,8 @@ PR 29 — PR4 textual: modelo mínimo de resposta livre governada.
 - Smoke ampliado para provar postura consultiva MCMV, autoridade cognitiva da IA, proibição de promessa de aprovação, proibição de script rígido e fallback dominante.
 - Modelo mínimo de resposta livre governada criado em `src/speech/free-response.ts`.
 - Smoke ampliado para provar resposta livre da IA, respeito a bloqueio/`next_objective`, ausência de texto escrito pela governança e rejeição de promessa de aprovação.
+- Modelo mínimo de turno composto governado criado em `src/speech/composite-turn.ts`.
+- Smoke ampliado para provar que múltiplas informações informam a IA sem parser mecânico dominante, sem sobrescrever `next_objective`/bloqueios e sem promessa de aprovação.
 
 ## 9. Pendências
 
@@ -108,7 +111,7 @@ PR 29 — PR4 textual: modelo mínimo de resposta livre governada.
 
 ## 10. Pendência remanescente herdada
 
-Após a PR 28, ainda faltava explicitar o modelo mínimo de resposta livre sob governança estrutural. Este recorte prova que a IA pode adaptar tom e profundidade ao contexto sem contrariar o Core, sem ignorar bloqueios e sem promessa de aprovação.
+Após a PR 29, ainda faltava tratar respostas compostas com múltiplas informações no mesmo turno. Este recorte prova que a IA pode receber vários sinais como contexto sem perder liberdade de fala e sem permitir que sinais extras sobrescrevam o Core.
 
 ## 11. Bloqueios
 
@@ -122,7 +125,7 @@ Após a PR 28, ainda faltava explicitar o modelo mínimo de resposta livre sob g
 
 ## 12. Próximo passo autorizado
 
-Próximo recorte textual da atendente especialista MCMV após resposta livre governada, ainda sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+Próximo recorte textual da atendente especialista MCMV após turno composto governado, ainda sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
 
 Esse próximo recorte deve continuar provando que a IA escreve a resposta final, que a governança estrutural apenas restringe/valida/informa e que a postura consultiva MCMV não vira script rígido.
 
@@ -133,7 +136,7 @@ Esse próximo recorte deve continuar provando que a IA escreve a resposta final,
 
 ## 14. Última atualização
 
-2026-04-21T11:46:39.4804111-03:00 — PR 29: modelo mínimo de resposta livre governada.
+2026-04-21T12:03:16.1940591-03:00 — PR 30: múltiplas informações no mesmo turno.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -152,4 +155,4 @@ Fontes de verdade consultadas — última tarefa:
   Handoff da frente lido:      `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — L03 identificado, conteúdo não transcrito
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — ancoragem L03/L19, fluxo LLM-first, conversa livre sob governança, MCMV/CEF e não promessa de aprovação; sem regra nova de negócio nesta PR
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — ancoragem L03/L19, LLM conversa livremente, múltiplas informações no mesmo turno, resposta natural + payload estruturado, MCMV/CEF e não promessa de aprovação; sem regra nova de negócio nesta PR
