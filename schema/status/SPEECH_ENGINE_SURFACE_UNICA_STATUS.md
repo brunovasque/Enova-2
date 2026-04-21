@@ -5,21 +5,21 @@
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | PR 31 — PR5 canônica: preparação para multimodalidade/áudio |
-| Pendência contratual                       | próximos recortes textuais/preparatórios da atendente especialista MCMV; provedor LLM real, prompt final de produção, áudio real e multimodalidade plena ainda não abertos |
+| Última PR executou qual recorte            | PR 32 — consolidação de critérios de fechamento e preparação de acceptance smoke |
+| Pendência contratual                       | prova final / acceptance smoke (PR 33); encerramento formal do contrato (PR closeout); provedor LLM real, prompt final de produção, áudio real e multimodalidade plena permanecem bloqueados |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
-| Estado atual                               | em execução |
-| Classe da última tarefa                    | contratual |
-| Última PR relevante                        | PR 31 — PR5 canônica: preparação para multimodalidade/áudio |
-| Último commit funcional                    | `289e8a9` — `feat(speech): preparar fronteira multimodal` |
-| Pendência remanescente herdada             | após a PR 30 faltava preparar a fronteira futura de multimodalidade/áudio sem abrir áudio real, STT/TTS, canal, Worker ou integração externa |
-| Próximo passo autorizado                   | próximo recorte textual/preparatório da atendente especialista MCMV após fronteira multimodal mínima, sem áudio real, multimodalidade plena, Supabase, Meta/WhatsApp, Worker ou telemetria |
+| Estado atual                               | em consolidação para closeout |
+| Classe da última tarefa                    | governança |
+| Última PR relevante                        | PR 32 — consolidação de critérios de fechamento e preparação de acceptance smoke |
+| Último commit funcional                    | `289e8a9` — `feat(speech): preparar fronteira multimodal` (última entrega técnica — PR 31) |
+| Pendência remanescente herdada             | após a PR 31 faltava consolidar critérios explícitos de fechamento, mapear cada critério ao que já foi entregue nas PRs anteriores e preparar a PR de prova final/acceptance smoke |
+| Próximo passo autorizado                   | PR 33 — prova final / acceptance smoke da Frente 2; sem nova feature, sem abrir Supabase, Meta/WhatsApp, Worker, telemetria, áudio real ou multimodalidade plena |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-21T12:24:16.7397546-03:00 |
+| Última atualização                         | 2026-04-21T16:17:00.000Z |
 
 ---
 
@@ -39,13 +39,13 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR 31 — PR5 canônica: preparação para multimodalidade/áudio.
+PR 32 — consolidação de critérios de fechamento e preparação de acceptance smoke.
 
-O recorte adicionou `src/speech/multimodal-readiness.ts` para declarar a fronteira preparatória de multimodalidade/áudio futuro. A camada não executa áudio real, STT, TTS, mídia, canal ou provedor externo; ela apenas fixa que modalidade futura será forma de entrada/saída sob a mesma governança, sem virar novo cérebro e sem dar prioridade de fala ao mecânico.
+O recorte criou `schema/FRENTE2_CLOSEOUT_READINESS.md` com critérios explícitos, verificáveis e vivos de fechamento da Frente 2, mapeando cada critério ao que já foi entregue nas PRs 25–31 e declarando explicitamente o que será provado na PR 33 (acceptance smoke) e encerrado na PR de closeout formal. Nenhuma nova feature foi criada. Nenhum artefato técnico de speech foi alterado.
 
 ## 2c. Pendência contratual
 
-Executar os próximos recortes textuais/preparatórios da atendente especialista MCMV, preservando IA soberana e sem fala mecânica.
+Prova final / acceptance smoke (PR 33) e encerramento formal do contrato (PR closeout).
 
 Ainda não foram abertos: provedor LLM real, prompt final de produção completo, áudio real, STT/TTS real, multimodalidade plena, Supabase, Meta/WhatsApp, Worker e telemetria.
 
@@ -61,7 +61,7 @@ Ainda não foram abertos: provedor LLM real, prompt final de produção completo
 
 ## 4. Estado atual
 
-**em execução**
+**em consolidação para closeout**
 
 A frente agora possui:
 
@@ -72,15 +72,16 @@ A frente agora possui:
 - modelo mínimo de resposta livre governada;
 - modelo mínimo de turno composto governado;
 - fronteira preparatória mínima para multimodalidade/áudio futuro;
-- smoke específico cobrindo fallback não dominante, ausência de texto final gerado pelo mecânico, proibição de script rígido dominante, rejeição de promessa de aprovação, múltiplos sinais sem sobrescrever o Core e preparação multimodal sem áudio real.
+- smoke específico cobrindo 14 cenários: fallback não dominante, ausência de texto final gerado pelo mecânico, proibição de script rígido dominante, rejeição de promessa de aprovação, múltiplos sinais sem sobrescrever o Core e preparação multimodal sem áudio real;
+- checklist canônico de critérios de fechamento em `schema/FRENTE2_CLOSEOUT_READINESS.md`.
 
 ## 5. Classe da última tarefa
 
-**contratual**
+**governança**
 
 ## 6. Última PR relevante
 
-PR 31 — PR5 canônica: preparação para multimodalidade/áudio.
+PR 32 — consolidação de critérios de fechamento e preparação de acceptance smoke.
 
 ## 7. Último commit funcional
 
@@ -105,16 +106,18 @@ PR 31 — PR5 canônica: preparação para multimodalidade/áudio.
 - Smoke ampliado para provar que múltiplas informações informam a IA sem parser mecânico dominante, sem sobrescrever `next_objective`/bloqueios e sem promessa de aprovação.
 - Preparação multimodal mínima criada em `src/speech/multimodal-readiness.ts`.
 - Smoke ampliado para provar que áudio futuro é apenas modalidade/adaptador, não novo cérebro, e que áudio real, STT/TTS, canal externo e processamento de mídia continuam desligados.
+- **PR 32:** checklist canônico de critérios de fechamento criado em `schema/FRENTE2_CLOSEOUT_READINESS.md`, com mapeamento de cada critério ao artefato entregue e declaração explícita do que a PR 33 deve provar.
 
 ## 9. Pendências
 
-- Próximos recortes textuais/preparatórios da atendente especialista MCMV.
-- Integração futura com provedor LLM real e prompt final de produção completo, em recorte próprio.
+- PR 33 — prova final / acceptance smoke: execução dos critérios consolidados no `FRENTE2_CLOSEOUT_READINESS.md`.
+- Encerramento formal do contrato via `CONTRACT_CLOSEOUT_PROTOCOL.md` (PR closeout, posterior à PR 33).
+- Integração futura com provedor LLM real e prompt final de produção completo, em recorte próprio pós-closeout.
 - Áudio, multimodalidade plena, Supabase, Meta/WhatsApp e telemetria seguem bloqueados nesta frente.
 
 ## 10. Pendência remanescente herdada
 
-Após a PR 30, ainda faltava preparar a fronteira futura de multimodalidade/áudio sem abrir implementação real. Este recorte prova que áudio futuro será apenas forma de entrada/saída sob a mesma governança textual, sem mudar autoridade de decisão, sem mudar autoridade de fala e sem prioridade mecânica.
+Após a PR 31, faltava consolidar critérios explícitos de fechamento, mapear cada critério ao que já foi entregue nas PRs 25–31 e preparar a PR de prova final/acceptance smoke. A PR 32 entrega esse consolidado.
 
 ## 11. Bloqueios
 
@@ -128,9 +131,9 @@ Após a PR 30, ainda faltava preparar a fronteira futura de multimodalidade/áud
 
 ## 12. Próximo passo autorizado
 
-Próximo recorte textual/preparatório da atendente especialista MCMV após fronteira multimodal mínima, ainda sem áudio real, STT/TTS real, multimodalidade plena, Supabase, Meta/WhatsApp, Worker ou telemetria.
+**PR 33 — prova final / acceptance smoke da Frente 2.**
 
-Esse próximo recorte deve continuar provando que a IA escreve a resposta final, que a governança estrutural apenas restringe/valida/informa e que a postura consultiva MCMV não vira script rígido.
+A PR 33 deve executar os critérios consolidados em `schema/FRENTE2_CLOSEOUT_READINESS.md` sem abrir nova feature, sem abrir áudio real, STT/TTS real, multimodalidade plena, Supabase, Meta/WhatsApp, Worker ou telemetria.
 
 ## 13. Legados aplicáveis
 
@@ -139,7 +142,7 @@ Esse próximo recorte deve continuar provando que a IA escreve a resposta final,
 
 ## 14. Última atualização
 
-2026-04-21T12:24:16.7397546-03:00 — PR 31: preparação para multimodalidade/áudio.
+2026-04-21T16:17:00.000Z — PR 32: consolidação de critérios de fechamento e preparação de acceptance smoke.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -158,4 +161,4 @@ Fontes de verdade consultadas — última tarefa:
   Handoff da frente lido:      `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — L03 identificado, conteúdo não transcrito
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — páginas 3, 8, 12, 13, 14, 124 e 125; conversa livre governada, multimodal sob mesma governança, áudio como apresentação e dependência futura de persistência; sem áudio real nesta PR
+  PDF mestre consultado:       não consultado — blocos aplicáveis disponíveis no markdown mestre
