@@ -107,6 +107,17 @@ async function main() {
         doc_residence_status: 'recebido',
       },
     }),
+    runScenario('Cenário E — recusa explícita de visita bloqueia o trilho presencial', {
+      lead_id: 'worker-smoke-005',
+      current_stage: 'docs_collection',
+      facts: {
+        docs_channel_choice: 'visita presencial',
+        visit_interest: 'nao',
+        doc_identity_status: 'validado',
+        doc_income_status: 'recebido',
+        doc_residence_status: 'recebido',
+      },
+    }),
   ]);
 
   const scenarioA = scenarios[0];
@@ -142,6 +153,16 @@ async function main() {
     assert('speech_intent = transicao_stage', 'transicao_stage', scenarioD.response_json.speech_intent),
   );
   scenarioD.passed = scenarioD.assertions.every((item) => item.passed);
+
+  const scenarioE = scenarios[4];
+  scenarioE.assertions.push(
+    assert('stage_after permanece em docs_collection', 'docs_collection', scenarioE.response_json.stage_after),
+    assert('block_advance = true', true, scenarioE.response_json.block_advance),
+    assert('next_objective = confirmar_visit_interest', 'confirmar_visit_interest', scenarioE.response_json.next_objective),
+    assert('gates_activated = [G_FINAL_OPERACIONAL]', ['G_FINAL_OPERACIONAL'], scenarioE.response_json.gates_activated),
+    assert('speech_intent = bloqueio', 'bloqueio', scenarioE.response_json.speech_intent),
+  );
+  scenarioE.passed = scenarioE.assertions.every((item) => item.passed);
 
   const allPassed = scenarios.every((scenario) => scenario.passed);
 

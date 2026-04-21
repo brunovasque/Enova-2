@@ -564,6 +564,34 @@ export function smokeScenario19_TrilhoCompletoTopoAoFinal(): SmokeResult {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Cenário 20: Recusa explícita de visita bloqueia o trilho presencial
+// ---------------------------------------------------------------------------
+export function smokeScenario20_Final_RecusaExplicitaVisitaBloqueia(): SmokeResult {
+  const state = makeState('docs_collection', {
+    docs_channel_choice: 'visita presencial',
+    visit_interest: 'nao',
+    doc_identity_status: 'validado',
+    doc_income_status: 'recebido',
+    doc_residence_status: 'recebido',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 20 — Final: recusa explícita de visita bloqueia o trilho presencial',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = docs_collection', 'docs_collection', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em docs_collection', 'docs_collection', decision.stage_after),
+      assert('next_objective = confirmar_visit_interest', 'confirmar_visit_interest', decision.next_objective),
+      assert('gates_activated inclui G_FINAL_OPERACIONAL', true, decision.gates_activated.includes('G_FINAL_OPERACIONAL')),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
 
 export interface SmokeSuiteResult {
   total: number;
@@ -580,9 +608,10 @@ export interface SmokeSuiteResult {
  * Prova exigida (A01-05, Gate 2):
  * "Smoke de trilho e next step autorizado"
  *
- * Cenários L03/L04-L17 integrados (19): topo segue válido, o Meio A e Meio B
+ * Cenários L03/L04-L17 integrados (20): topo segue válido, o Meio A e Meio B
  * permanecem íntegros, os Especiais continuam roteando P3/multi e o Final
- * agora cobre docs, visita e handoff sem abrir fala mecânica.
+ * agora cobre docs, visita e handoff sem abrir fala mecânica. O cenário 20
+ * protege a recusa explícita de visita no trilho presencial.
  * Todos os cenários passam pelo `runCoreEngine()`. Nenhum usa decisão fake.
  * Nenhum cenário gera fala ao cliente.
  */
@@ -607,6 +636,7 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario17_Final_DocsCompletosAvancamParaHandoff,
     smokeScenario18_Final_HandoffConcluido,
     smokeScenario19_TrilhoCompletoTopoAoFinal,
+    smokeScenario20_Final_RecusaExplicitaVisitaBloqueia,
   ];
 
   const results = scenarios.map((fn) => {

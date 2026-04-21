@@ -38,6 +38,20 @@ export function evaluateDocsPrepCriteria(signals: FinalSignals): FinalCriteriaRe
     };
   }
 
+  if (signals.docs_channel_choice_value === 'visita_presencial' && signals.visit_interest_value === 'nao') {
+    return {
+      can_advance: false,
+      authorized_next_step: FINAL_NEXT_STEP.REMAIN_IN_DOCS_PREP,
+      next_objective: 'confirmar_visit_interest',
+      criteria_code: FINAL_BLOCKING_CONDITIONS.VISITA_NAO_CONFIRMADA,
+      structural_reason:
+        'recusa explícita de visita bloqueia a trilha presencial até a inconsistência estrutural ser resolvida.',
+      track_signal: FINAL_SIGNAL_POLICY.VISITA_APLICAVEL,
+      missing_required_facts: [],
+      activated_gates: ['G_FINAL_OPERACIONAL'],
+    };
+  }
+
   if (signals.visit_track_active) {
     return {
       can_advance: true,
@@ -108,6 +122,20 @@ export function evaluateDocsCollectionCriteria(signals: FinalSignals): FinalCrit
     };
   }
 
+  if (signals.docs_channel_choice_value === 'visita_presencial' && signals.visit_interest_value === 'nao') {
+    return {
+      can_advance: false,
+      authorized_next_step: FINAL_NEXT_STEP.REMAIN_IN_DOCS_COLLECTION,
+      next_objective: 'confirmar_visit_interest',
+      criteria_code: FINAL_BLOCKING_CONDITIONS.VISITA_NAO_CONFIRMADA,
+      structural_reason:
+        'docs completos não autorizam handoff de visita quando há recusa explícita de visita.',
+      track_signal: FINAL_SIGNAL_POLICY.VISITA_APLICAVEL,
+      missing_required_facts: [],
+      activated_gates: ['G_FINAL_OPERACIONAL'],
+    };
+  }
+
   return {
     can_advance: true,
     authorized_next_step: FINAL_NEXT_STEP.ADVANCE_TO_BROKER_HANDOFF,
@@ -149,7 +177,7 @@ export function evaluateVisitCriteria(signals: FinalSignals): FinalCriteriaResul
     };
   }
 
-  if (signals.visit_interest_value === 'nao' && signals.docs_channel_choice_value !== 'visita_presencial') {
+  if (signals.visit_interest_value === 'nao') {
     return {
       can_advance: false,
       authorized_next_step: FINAL_NEXT_STEP.REMAIN_IN_VISIT,
