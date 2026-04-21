@@ -78,20 +78,6 @@ export function evaluateMeioACriteria(signals: MeioASignals): MeioACriteriaResul
     };
   }
 
-  if (signals.p3_required_value === true) {
-    return {
-      can_advance: false,
-      authorized_next_step: MEIO_A_NEXT_STEP.REMAIN_IN_QUALIFICATION_CIVIL,
-      next_objective: 'avaliar_p3',
-      criteria_code: MEIO_A_BLOCKING_CONDITIONS.P3_REQUER_ROTEAMENTO,
-      structural_reason:
-        `composição atual exige terceiro participante (p3_required=true) antes de seguir para renda.`,
-      track_signal: MEIO_A_SIGNAL_POLICY.COMPOSICAO_COMPLEXA_P3,
-      missing_required_facts: [],
-      activated_gates: ['G_COMPOSICAO_FAMILIAR'],
-    };
-  }
-
   if (signals.dependents_required && !signals.dependents_count_detected) {
     return {
       can_advance: false,
@@ -133,6 +119,10 @@ function buildAdvanceReason(signals: MeioASignals): string {
 function buildTrackSignal(signals: MeioASignals): string {
   if (signals.dependents_required) {
     return MEIO_A_SIGNAL_POLICY.DEPENDENTE_APLICAVEL;
+  }
+
+  if (signals.p3_required_value === true) {
+    return MEIO_A_SIGNAL_POLICY.COMPOSICAO_COMPLEXA_P3;
   }
 
   if (signals.composition_actor_detected) {

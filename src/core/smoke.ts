@@ -1,13 +1,13 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L14)
+ * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L16)
  *
  * Âncora contratual:
- *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-12 (L07/L14)
- *   Bloco legado:    L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14
+ *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-14 (L07/L16)
+ *   Bloco legado:    L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16
  *   Gate-fonte:      Gate 2 (A01: "sem smoke da frente, não promove")
  *
  * ESCOPO: provar que o esqueleto estrutural (L03), o topo do funil (L04–L06)
- * e os Meios A/B iniciais (L07/L14) existem e não produzem fala.
+ * e os Meios A/B + Especiais (L07/L16) existem e não produzem fala.
  *
  * INVIOLÁVEL: nenhum cenário gera texto ao cliente.
  */
@@ -183,12 +183,12 @@ export function smokeScenario5_MeioAIntegrado_DependentesAlteramNextStep(): Smok
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 6: Meio A com composição complexa P3 → muda o roteamento estrutural
+// Cenário 6: Meio A com sinal P3 → não bloqueia mais e segue para o trilho especial
 //
-// Prova: quando a composição exige terceiro participante, o Core segura o avanço
-// no próprio qualification_civil e manda avaliar P3 antes de seguir.
+// Prova: L15/L16 passam a ser o dono do roteamento especial; o Meio A só preserva
+// o sinal estrutural para a fase correta do funil.
 // ---------------------------------------------------------------------------
-export function smokeScenario6_MeioAIntegrado_P3MudaRoteamento(): SmokeResult {
+export function smokeScenario6_MeioAIntegrado_P3SegueParaMeioB(): SmokeResult {
   const state = makeState('qualification_civil', {
     estado_civil: 'solteiro',
     processo: 'composicao_familiar',
@@ -199,16 +199,16 @@ export function smokeScenario6_MeioAIntegrado_P3MudaRoteamento(): SmokeResult {
   const decision = runCoreEngine(state);
 
   return {
-    scenario: 'Cenário 6 — Meio A integrado: P3 altera o roteamento estrutural',
+    scenario: 'Cenário 6 — Meio A integrado: P3 segue para o trilho especial no ponto correto',
     passed: true,
     decision,
     assertions: [
       assert('stage_current = qualification_civil', 'qualification_civil', decision.stage_current),
-      assert('block_advance = true (P3 exige roteamento próprio)', true, decision.block_advance),
-      assert('stage_after permanece em qualification_civil', 'qualification_civil', decision.stage_after),
-      assert('next_objective = avaliar_p3', 'avaliar_p3', decision.next_objective),
-      assert('gates_activated inclui G_COMPOSICAO_FAMILIAR', true, decision.gates_activated.includes('G_COMPOSICAO_FAMILIAR')),
-      assert('speech_intent = bloqueio (sinal estrutural — não é fala)', 'bloqueio', decision.speech_intent),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after = qualification_renda', 'qualification_renda', decision.stage_after),
+      assert('next_objective = avancar_para_qualification_renda', 'avancar_para_qualification_renda', decision.next_objective),
+      assert('gates_activated vazio', 0, decision.gates_activated.length),
+      assert('speech_intent = transicao_stage (sinal estrutural — não é fala)', 'transicao_stage', decision.speech_intent),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
 }
@@ -314,6 +314,108 @@ export function smokeScenario10_MeioB_ElegibilidadeAlteraNextStep(): SmokeResult
   };
 }
 
+// ---------------------------------------------------------------------------
+// Cenário 11: Elegibilidade com P3 ativo → abre trilho especial
+// ---------------------------------------------------------------------------
+export function smokeScenario11_Especiais_P3RoteiaParaStageEspecial(): SmokeResult {
+  const state = makeState('qualification_eligibility', {
+    nacionalidade: 'brasileiro',
+    processo: 'composicao_familiar',
+    p3_required: true,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 11 — Especiais: P3 roteia para qualification_special',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_eligibility', 'qualification_eligibility', decision.stage_current),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after = qualification_special', 'qualification_special', decision.stage_after),
+      assert('next_objective = validar_trilho_p3', 'validar_trilho_p3', decision.next_objective),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 12: Trilho especial P3 sem fact crítico → bloqueia
+// ---------------------------------------------------------------------------
+export function smokeScenario12_Especiais_P3BloqueiaSemFactCritico(): SmokeResult {
+  const state = makeState('qualification_special', {
+    processo: 'composicao_familiar',
+    p3_required: true,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 12 — Especiais: P3 bloqueia sem work_regime_p3',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_special', 'qualification_special', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em qualification_special', 'qualification_special', decision.stage_after),
+      assert('next_objective = coletar_work_regime_p3', 'coletar_work_regime_p3', decision.next_objective),
+      assert('gates_activated inclui G_TRILHO_ESPECIAL', true, decision.gates_activated.includes('G_TRILHO_ESPECIAL')),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 13: Trilho especial multi válido → avança para docs
+// ---------------------------------------------------------------------------
+export function smokeScenario13_Especiais_MultiValidoAvancaParaDocs(): SmokeResult {
+  const state = makeState('qualification_special', {
+    processo: 'conjunto',
+    work_regime_p2: 'clt',
+    monthly_income_p2: 3600,
+    ctps_36m_p2: true,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 13 — Especiais: multi válido avança para docs',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_special', 'qualification_special', decision.stage_current),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after = docs_prep', 'docs_prep', decision.stage_after),
+      assert('next_objective = avancar_para_docs_prep', 'avancar_para_docs_prep', decision.next_objective),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 14: Trilho especial multi com autônomo sem IR → altera next step estrutural
+// ---------------------------------------------------------------------------
+export function smokeScenario14_Especiais_MultiAutonomoExigeIR(): SmokeResult {
+  const state = makeState('qualification_special', {
+    processo: 'conjunto',
+    work_regime_p2: 'autonomo',
+    monthly_income_p2: 5100,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 14 — Especiais: multi autônomo exige IR do co-participante',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_special', 'qualification_special', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em qualification_special', 'qualification_special', decision.stage_after),
+      assert('next_objective = coletar_autonomo_has_ir_p2', 'coletar_autonomo_has_ir_p2', decision.next_objective),
+      assert('gates_activated inclui G_TRILHO_ESPECIAL', true, decision.gates_activated.includes('G_TRILHO_ESPECIAL')),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
 
 export interface SmokeSuiteResult {
   total: number;
@@ -330,8 +432,9 @@ export interface SmokeSuiteResult {
  * Prova exigida (A01-05, Gate 2):
  * "Smoke de trilho e next step autorizado"
  *
- * Cenários L03/L04-L14 integrados (10): topo segue válido, o Meio A estável
- * continua íntegro e o Meio B cobre ausência crítica, IR obrigatório, trilho válido e elegibilidade.
+ * Cenários L03/L04-L16 integrados (14): topo segue válido, o Meio A continua
+ * íntegro, o Meio B segue cobrindo ausência crítica/elegibilidade e os Especiais
+ * agora roteiam P3/multi sem abrir L17.
  * Todos os cenários passam pelo `runCoreEngine()`. Nenhum usa decisão fake.
  * Nenhum cenário gera fala ao cliente.
  */
@@ -342,11 +445,15 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario3_BloqueioFactParcial,
     smokeScenario4_MeioAIntegrado_AvancoValido,
     smokeScenario5_MeioAIntegrado_DependentesAlteramNextStep,
-    smokeScenario6_MeioAIntegrado_P3MudaRoteamento,
+    smokeScenario6_MeioAIntegrado_P3SegueParaMeioB,
     smokeScenario7_MeioB_BloqueioFactCriticoAusente,
     smokeScenario8_MeioB_TrilhoValidoAvanca,
     smokeScenario9_MeioB_AutonomoSemIRExigeConfirmacao,
     smokeScenario10_MeioB_ElegibilidadeAlteraNextStep,
+    smokeScenario11_Especiais_P3RoteiaParaStageEspecial,
+    smokeScenario12_Especiais_P3BloqueiaSemFactCritico,
+    smokeScenario13_Especiais_MultiValidoAvancaParaDocs,
+    smokeScenario14_Especiais_MultiAutonomoExigeIR,
   ];
 
   const results = scenarios.map((fn) => {
@@ -374,9 +481,9 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L14)');
+  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L16)');
   console.log('===========================================');
-  console.log(`Âncora: L03 + L04/L05/L06 + L07/L14 | Gate 2 (A01)`);
+  console.log(`Âncora: L03 + L04/L05/L06 + L07/L16 | Gate 2 (A01)`);
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
   console.log(`Resultado: ${suite.all_passed ? '✅ PASSOU' : '❌ FALHOU'}\n`);

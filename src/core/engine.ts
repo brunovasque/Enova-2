@@ -1,9 +1,9 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Motor de Decisão Estrutural (L03 + L04/L05/L06 + L07/L14)
+ * ENOVA 2 — Core Mecânico 2 — Motor de Decisão Estrutural (L03 + L04/L05/L06 + L07/L16)
  *
  * Âncora contratual:
  *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06)
- *   Bloco legado:    L03 — Mapa Canônico do Funil; L04-L06 — Topo; L07-L10 — Meio A; L11-L14 — Meio B
+ *   Bloco legado:    L03 — Mapa Canônico do Funil; L04-L06 — Topo; L07-L10 — Meio A; L11-L14 — Meio B; L15-L16 — Especiais
  *
  * MISSÃO: receber estado estrutural, avaliar gates, retornar decisão estrutural.
  *
@@ -11,6 +11,7 @@
  *   - Stage 'discovery' (topo): usa L04/L05/L06 — extractTopoSignals + evaluateTopoCriteria
  *   - Stage 'qualification_civil' (Meio A): usa L07/L10 — extractMeioASignals + evaluateMeioACriteria
  *   - Stage 'qualification_renda' e 'qualification_eligibility' (Meio B): usa L11/L14
+ *   - Stage 'qualification_special' (Especiais): usa L15/L16
  *   - Demais stages: usa caminho genérico L03 — G_FATO_CRITICO_AUSENTE
  *
  * RESTRIÇÃO INVIOLÁVEL: esta função não retorna texto ao cliente.
@@ -29,6 +30,8 @@ import {
   evaluateMeioBElegibilidadeCriteria,
   evaluateMeioBRendaCriteria,
 } from './meio-b-gates.ts';
+import { extractEspeciaisSignals } from './especiais-parser.ts';
+import { evaluateEspeciaisCriteria } from './especiais-gates.ts';
 
 // ---------------------------------------------------------------------------
 // Ponto de entrada do motor
@@ -68,6 +71,10 @@ export function runCoreEngine(state: LeadState): CoreDecision {
 
   if (state.current_stage === 'qualification_eligibility') {
     return runMeioBElegibilidadeDecision(state);
+  }
+
+  if (state.current_stage === 'qualification_special') {
+    return runEspeciaisDecision(state);
   }
 
   // --- Caminho genérico (L03): demais stages ---
@@ -172,6 +179,28 @@ function runMeioBElegibilidadeDecision(state: LeadState): CoreDecision {
   });
 
   const meioBCriteria = evaluateMeioBElegibilidadeCriteria(meioBSignals);
+  if (meioBCriteria.can_advance) {
+    const especiaisSignals = extractEspeciaisSignals({
+      facts_current: state.facts,
+      facts_extracted: {},
+    });
+
+    if (especiaisSignals.active_track !== 'none') {
+      return {
+        stage_current: 'qualification_eligibility',
+        stage_after: 'qualification_special',
+        next_objective: especiaisSignals.active_track === 'p3'
+          ? 'validar_trilho_p3'
+          : 'validar_multi_proponente',
+        block_advance: false,
+        gates_activated: [],
+        speech_intent: 'transicao_stage',
+        decision_id: `core-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        evaluated_at: new Date().toISOString(),
+      };
+    }
+  }
+
   const blockAdvance = !meioBCriteria.can_advance;
   const stageAfter = meioBCriteria.authorized_next_step as LeadState['current_stage'];
 
@@ -181,6 +210,36 @@ function runMeioBElegibilidadeDecision(state: LeadState): CoreDecision {
     next_objective: meioBCriteria.next_objective,
     block_advance: blockAdvance,
     gates_activated: meioBCriteria.activated_gates,
+    speech_intent: blockAdvance
+      ? 'bloqueio'
+      : stageAfter !== state.current_stage
+        ? 'transicao_stage'
+        : 'coleta_dado',
+    decision_id: `core-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    evaluated_at: new Date().toISOString(),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Caminho de decisão dos Especiais — integra L15/L16 no Core principal
+// ---------------------------------------------------------------------------
+
+function runEspeciaisDecision(state: LeadState): CoreDecision {
+  const especiaisSignals = extractEspeciaisSignals({
+    facts_current: state.facts,
+    facts_extracted: {},
+  });
+
+  const especiaisCriteria = evaluateEspeciaisCriteria(especiaisSignals);
+  const blockAdvance = !especiaisCriteria.can_advance;
+  const stageAfter = especiaisCriteria.authorized_next_step as LeadState['current_stage'];
+
+  return {
+    stage_current: 'qualification_special',
+    stage_after: stageAfter,
+    next_objective: especiaisCriteria.next_objective,
+    block_advance: blockAdvance,
+    gates_activated: especiaisCriteria.activated_gates,
     speech_intent: blockAdvance
       ? 'bloqueio'
       : stageAfter !== state.current_stage

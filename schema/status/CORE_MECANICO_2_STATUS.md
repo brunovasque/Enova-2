@@ -5,21 +5,21 @@
 | Frente                                     | Core Mecânico 2 |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade |
-| Pendência contratual                       | L15–L17 em aberto; Especiais e Final permanecem pendentes |
+| Última PR executou qual recorte            | L15 + L16 — Especiais: trilhos P3 / multi e variantes |
+| Pendência contratual                       | L17 em aberto; Final operacional permanece pendente |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala |
-| Estado atual                               | em execução — Meio B inicial já roda no Core principal, ainda sem fala mecânica |
-| Classe da última tarefa                    | contratual — L11 + L12 + L13 + L14 do Core Mecânico 2, sem abrir Especiais ou Final |
-| Última PR relevante                        | PR de execução L11 + L12 + L13 + L14 — Meio B integrado ao `engine.ts` |
-| Último commit                              | `c587aa15540860dbc525e8f3fa92bcb7066d1c64` — `feat(core): integrar meio b inicial no engine` |
-| Pendência remanescente herdada             | O Meio A já estava fechado até L10, mas ainda faltava entrar em regime, renda, CTPS e elegibilidade mínima |
-| Próximo passo autorizado                   | Sexta PR contratual: L15 + L16 — Especiais: trilhos P3 / multi e variantes |
-| Legados aplicáveis                         | L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14 executados; L15–L17 pendentes |
+| Estado atual                               | em execução — Especiais já rodam no Core principal, ainda sem fala mecânica e sem abrir L17 |
+| Classe da última tarefa                    | contratual — L15 + L16 do Core Mecânico 2, sem abrir Final operacional |
+| Última PR relevante                        | PR de execução L15 + L16 — Especiais integrados ao `engine.ts` |
+| Último commit                              | `a3c27abec10af5222501e8dbcfae39705900af97` — `feat(core): integrar trilhos especiais no engine` |
+| Pendência remanescente herdada             | O Meio B já estava fechado até L14, mas ainda faltavam os trilhos especiais P3 / multi e suas variantes mínimas |
+| Próximo passo autorizado                   | Sétima PR contratual: L17 — Final operacional, docs, visita e handoff |
+| Legados aplicáveis                         | L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16 executados; L17 pendente |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-20T20:23:46.0353332-03:00 |
+| Última atualização                         | 2026-04-20T20:58:44.4419816-03:00 |
 
 ---
 
@@ -37,15 +37,15 @@ Core Mecânico 2
 
 ## 2b. Última PR executou qual recorte do contrato
 
-L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade:
-- parser/extrator mínimo de `regime_trabalho`, `renda_principal`, `autonomo_tem_ir`, `ctps_36`, `nacionalidade` e `rnm_status`
-- critérios/gates mínimos de renda e elegibilidade
-- integração real de `qualification_renda` e `qualification_eligibility` ao `engine.ts`
+L15 + L16 — Especiais: trilhos P3 / multi e variantes:
+- criação do stage estrutural `qualification_special`
+- parser/extrator mínimo de `p3_required`, `work_regime_p2`, `monthly_income_p2`, `autonomo_has_ir_p2`, `ctps_36m_p2` e `work_regime_p3`
+- critérios/gates mínimos de P3, multi-proponente e variante de co-participante autônomo
+- integração real dos Especiais ao `engine.ts` e ao `stage-map.ts`
 - smoke integrado do caminho real do Core
 
 ## 2c. Pendência contratual
 
-- L15 + L16 — Especiais
 - L17 — Final operacional / docs / visita
 
 ## 2d. Contrato encerrado?
@@ -62,25 +62,25 @@ L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade:
 
 **em execução**
 
-O Core Mecânico 2 continua desacoplado da fala e agora já cobre Meio A e Meio B iniciais:
-- `qualification_renda` e `qualification_eligibility` agora têm trilho próprio no `engine.ts`
-- o parser do Meio B lê regime, renda, IR, CTPS, nacionalidade e RNM
-- o Core diferencia ausência crítica, autônomo sem IR, trilho válido e bloqueio por RNM
+O Core Mecânico 2 continua desacoplado da fala e agora cobre Topo, Meio A, Meio B e Especiais:
+- `qualification_special` agora existe no funil real entre elegibilidade e docs
+- o Core roteia `p3_required` e multi-proponente sem abrir L17
+- P3 deixou de travar no Meio A e passou a ser resolvido no stage especial contratado
 - o Worker permanece apenas como entrada técnica estrutural, sem fala mecânica
 
 ## 5. Classe da última tarefa
 
 **contratual**
 
-Recorte contratual L11 + L12 + L13 + L14 do Core Mecânico 2, ainda sem abrir Especiais, Final, fala, Supabase, Meta/WhatsApp ou surface final.
+Recorte contratual L15 + L16 do Core Mecânico 2, ainda sem abrir L17, fala, Supabase, Meta/WhatsApp ou surface final.
 
 ## 6. Última PR relevante
 
-PR de integração mínima do Worker — Core exposto via `/__core__/run`.
+PR de execução L15 + L16 — Especiais integrados ao `engine.ts`.
 
 ## 7. Último commit
 
-`01da787578d2f2e22fb81bee854d87103ef819d8` — `feat(worker): expor rota minima do core`
+`a3c27abec10af5222501e8dbcfae39705900af97` — `feat(core): integrar trilhos especiais no engine`
 
 ## 8. Entregas concluídas
 
@@ -99,15 +99,16 @@ PR de integração mínima do Worker — Core exposto via `/__core__/run`.
 - [x] L12 — regime e renda (parte 2)
 - [x] L13 — CTPS e dependentes
 - [x] L14 — gates e restrições de elegibilidade
+- [x] L15 — trilhos especiais P3 / multi
+- [x] L16 — variantes estruturais dos especiais
 
 ## 9. Pendências
 
-- [ ] L15 + L16 — Especiais
 - [ ] L17 — Final operacional
 
 ## 10. Pendência remanescente herdada
 
-O Meio A já estava fechado até L10, mas `qualification_renda` e `qualification_eligibility` ainda dependiam apenas do caminho genérico de L03. Esta pendência foi fechada nesta PR sem abrir Especiais ou Final.
+O Meio B já estava fechado até L14, mas o Core ainda não tinha um stage próprio para P3 / multi nem roteamento estrutural dos casos especiais. Esta pendência foi fechada nesta PR sem abrir L17.
 
 ## 11. Bloqueios
 
@@ -115,18 +116,18 @@ Nenhum bloqueio ativo.
 
 ## 12. Próximo passo autorizado
 
-**Sexta PR contratual: L15 + L16 — Especiais: trilhos P3 / multi e variantes.**
+**Sétima PR contratual: L17 — Final operacional, docs, visita e handoff.**
 
-Este próximo passo segue a ordem contratual natural após o fechamento de L11 + L12 + L13 + L14.
+Este próximo passo segue a ordem contratual natural após o fechamento de L15 + L16.
 
 ## 13. Legados aplicáveis
 
-- **Executados**: L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14
-- **Pendentes**: L15–L17
+- **Executados**: L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16
+- **Pendentes**: L17
 
 ## 14. Última atualização
 
-2026-04-20T20:23:46.0353332-03:00
+2026-04-20T20:58:44.4419816-03:00
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -147,4 +148,4 @@ Fontes de verdade consultadas — última tarefa:
   Handoff da frente lido:      `schema/handoffs/CORE_MECANICO_2_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos L03–L17 identificados estruturalmente
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — taxonomias F1/F3/F4 e regras mínimas de IR, renda, CTPS e RNM consultadas diretamente para L11 + L12 + L13 + L14
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — E6.2, F2 e F4; p3_required, work_regime_p2, monthly_income_p2, autonomo_has_ir_p2, ctps_36m_p2 e work_regime_p3 consultados diretamente para L15 + L16
