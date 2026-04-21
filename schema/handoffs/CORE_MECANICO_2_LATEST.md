@@ -6,10 +6,10 @@
 | Data                                       | 2026-04-20T21:34:11.7830094-03:00 |
 | Estado da frente                           | em execução — Core completo até o handoff final, com Worker estrutural e sem fala mecânica |
 | Classificação da tarefa                    | contratual — L17 do Core Mecânico 2 |
-| Última PR relevante                        | PR de execução L15 + L16 — Especiais integrados ao Core Mecânico 2 |
+| Última PR relevante                        | PR 23 — L17: Final operacional, docs, visita e handoff |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` |
 | Recorte executado do contrato              | L17 — Final operacional, docs, visita e handoff |
-| Pendência contratual remanescente          | nenhuma |
+| Pendência contratual remanescente          | nenhuma técnica; closeout formal ainda pendente |
 | Houve desvio de contrato?                  | não |
 | Contrato encerrado nesta PR?               | não |
 | Item do A01 atendido                       | Fase 2 — Prioridade 1: Core Mecânico 2 desacoplado da fala, agora completo do topo ao handoff |
@@ -36,7 +36,7 @@ Como L03–L17 ficaram cobertos e o smoke topo → final passou, o contrato agor
 
 ## 3. Última PR relevante
 
-PR de execução L15 + L16 — Especiais integrados ao `engine.ts`.
+PR 23 — L17: Final operacional, docs, visita e handoff.
 
 ## 4. O que a PR anterior fechou
 
@@ -59,9 +59,9 @@ PR de execução L15 + L16 — Especiais integrados ao `engine.ts`.
 - `schema/CODEX_WORKFLOW.md` lido e seguido
 - contrato ativo, clause map, execution rules, status e handoff vivos lidos antes de editar
 - A00, A01 e A02 confirmam que o Core continua sendo a frente ativa e que fala/surface seguem fora do escopo desta PR
-- o PDF mestre foi consultado diretamente para as regras mínimas de L11 a L14
-- `qualification_renda` e `qualification_eligibility` ainda estavam no caminho genérico de L03
-- o recorte cabe no contrato sem drift porque implementa apenas o primeiro corte estrutural do Meio B
+- o PDF mestre foi consultado diretamente para as regras mínimas de L17
+- `qualification_special` já roteava para `docs_prep`, mas `docs_prep`, `docs_collection`, `visit` e `broker_handoff` ainda dependiam do caminho genérico de L03
+- o recorte cabe no contrato sem drift porque implementa apenas o bloco final operacional, sem abrir fala, canal ou persistência
 
 ## 7. O que foi feito
 
@@ -103,7 +103,7 @@ PR de execução L15 + L16 — Especiais integrados ao `engine.ts`.
 
 ## 10. O que continua pendente após esta PR
 
-nenhuma
+nenhuma técnica — closeout formal ainda pendente
 
 ## 11. Esta tarefa foi fora de contrato?
 
@@ -119,7 +119,7 @@ L17 — Final operacional, docs, visita e handoff.
 
 ## 11c. Pendência contratual remanescente
 
-nenhuma técnica.
+nenhuma técnica — closeout formal ainda pendente.
 
 ## 11d. Houve desvio de contrato?
 

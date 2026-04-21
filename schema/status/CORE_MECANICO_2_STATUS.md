@@ -6,7 +6,7 @@
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` |
 | Estado do contrato                         | em execução |
 | Última PR executou qual recorte            | L17 — Final operacional, docs, visita e handoff |
-| Pendência contratual                       | nenhuma |
+| Pendência contratual                       | nenhuma técnica; closeout formal do contrato ainda pendente |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala |
 | Estado atual                               | em execução — Core completo do topo ao handoff, com Worker técnico validado e reavaliação formal de encerramento pendente |
@@ -104,7 +104,7 @@ PR 23 — L17: Final operacional, docs, visita e handoff.
 
 ## 9. Pendências
 
-nenhuma
+nenhuma técnica — closeout formal ainda pendente
 
 ## 10. Pendência remanescente herdada
 
