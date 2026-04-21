@@ -4,22 +4,22 @@
 |--------------------------------------------|-------|
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
-| Estado do contrato                         | aberto |
-| Última PR executou qual recorte            | PR 25 — abertura contratual da frente sucessora do Core |
-| Pendência contratual                       | execução da PR1 textual mínima da atendente especialista MCMV |
+| Estado do contrato                         | em execução |
+| Última PR executou qual recorte            | PR1 textual mínima — política estrutural para IA soberana |
+| Pendência contratual                       | próximos recortes textuais da atendente especialista MCMV |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
-| Estado atual                               | contrato aberto |
-| Classe da última tarefa                    | governança |
-| Última PR relevante                        | PR 25 — abertura do contrato da frente sucessora do Core |
-| Último commit                              | governança documental da PR 25 na branch `feat/contrato-atendente-especialista-mcmv` |
-| Pendência remanescente herdada             | frente aguardava abertura contratual após encerramento do Core Mecânico 2 |
-| Próximo passo autorizado                   | PR1 de execução textual mínima da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
+| Estado atual                               | em execução |
+| Classe da última tarefa                    | contratual |
+| Última PR relevante                        | PR1 textual mínima — política de IA soberana sem fala mecânica |
+| Último commit                              | commit desta PR — ver resposta final |
+| Pendência remanescente herdada             | PR1 textual mínima estava pendente após a abertura contratual da PR 25 |
+| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-21T10:07:38.1335856-03:00 |
+| Última atualização                         | 2026-04-21T10:33:37.2046058-03:00 |
 
 ---
 
@@ -35,15 +35,15 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2a. Estado do contrato
 
-**aberto**
+**em execução**
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR 25 — abertura contratual da frente sucessora do Core. Nenhuma implementação técnica foi executada.
+PR1 textual mínima — política estrutural para IA soberana. O recorte criou um envelope de governança para a IA consumir, sem redigir fala final.
 
 ## 2c. Pendência contratual
 
-Executar a PR1 textual mínima da frente, preservando IA soberana e sem fala mecânica.
+Executar os próximos recortes textuais da atendente especialista MCMV, preservando IA soberana e sem fala mecânica.
 
 ## 2d. Contrato encerrado?
 
@@ -57,21 +57,21 @@ Executar a PR1 textual mínima da frente, preservando IA soberana e sem fala mec
 
 ## 4. Estado atual
 
-**contrato aberto**
+**em execução**
 
-A frente está autorizada documentalmente para execução futura. O contrato deixa explícito que o nome "Speech Engine e Surface Única" não autoriza fala mecânica, script rígido ou fallback dominante.
+A frente iniciou a execução textual mínima. O primeiro recorte entrega política estrutural para orientar a IA soberana, sem permitir que o mecânico escreva a resposta ao cliente.
 
 ## 5. Classe da última tarefa
 
-**governança**
+**contratual**
 
 ## 6. Última PR relevante
 
-PR 25 — abertura do contrato da frente sucessora do Core.
+PR1 textual mínima — política de IA soberana sem fala mecânica.
 
 ## 7. Último commit
 
-Governança documental da PR 25 na branch `feat/contrato-atendente-especialista-mcmv`.
+Commit desta PR — ver resposta final.
 
 ## 8. Entregas concluídas
 
@@ -80,15 +80,17 @@ Governança documental da PR 25 na branch `feat/contrato-atendente-especialista-
 - Status vivo inicial criado.
 - Handoff inicial criado.
 - Subordinação a A00-ADENDO-01 registrada.
+- Política textual mínima criada como envelope estrutural para a IA soberana.
+- Smoke textual mínimo criado e integrado ao `smoke:all`.
 
 ## 9. Pendências
 
-- PR1 de execução textual mínima da atendente especialista MCMV.
-- Provar em PR futura que a IA redige a surface final e que a governança apenas restringe/valida/informa.
+- Próximos recortes textuais da atendente especialista MCMV.
+- Provar em PR futura a surface final real escrita pela IA, ainda sem Supabase, Meta/WhatsApp, áudio ou telemetria.
 
 ## 10. Pendência remanescente herdada
 
-A frente estava aguardando abertura contratual após o encerramento formal do Core Mecânico 2.
+PR1 textual mínima estava pendente após a abertura contratual da PR 25.
 
 ## 11. Bloqueios
 
@@ -100,7 +102,7 @@ A frente estava aguardando abertura contratual após o encerramento formal do Co
 
 ## 12. Próximo passo autorizado
 
-PR1 de execução textual mínima da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+Próximo recorte textual da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
 
 ## 13. Legados aplicáveis
 
@@ -109,7 +111,7 @@ PR1 de execução textual mínima da atendente especialista MCMV, sem áudio/mul
 
 ## 14. Última atualização
 
-2026-04-21T10:07:38.1335856-03:00 — governança contratual da PR 25.
+2026-04-21T10:33:37.2046058-03:00 — PR1 textual mínima.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -123,9 +125,9 @@ Permissões Cloudflare necessárias: nenhuma adicional
 
 Fontes de verdade consultadas — última tarefa:
   Índice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         Nenhum — frente aguardava abertura contratual
-  Status da frente lido:       Nenhum — status criado nesta tarefa
-  Handoff da frente lido:      Nenhum — handoff criado nesta tarefa
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md`
+  Status da frente lido:       `schema/status/SPEECH_ENGINE_SURFACE_UNICA_STATUS.md`
+  Handoff da frente lido:      `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  N/A — abertura governança sem consumo de regra transcrita
   PDF mestre consultado:       não consultado — tarefa de governança contratual sem definição de regra de negócio nova
