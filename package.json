@@ -13,7 +13,8 @@
     "smoke:context": "tsx src/context/smoke.ts",
     "smoke:adapter": "tsx src/adapter/smoke.ts",
     "smoke:adapter:policy": "tsx src/adapter/policy-smoke.ts",
-    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy",
+    "smoke:adapter:runtime": "tsx src/adapter/runtime-smoke.ts",
+    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
