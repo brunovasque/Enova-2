@@ -13,7 +13,7 @@
 | Blocos legados complementares     | L01, L02, L19, famílias legadas do recorte ativo, C* quando confirmados |
 | Ordem mínima de leitura da frente | A00 → A01 → A00-ADENDO-01 → A02 → este contrato → L03 → blocos da família ativa → L19 quando houver conhecimento MCMV |
 | Status                            | Em execução |
-| Última atualização                | 2026-04-21T10:33:37.2046058-03:00 |
+| Última atualização                | 2026-04-21T10:44:29.3485721-03:00 |
 
 ---
 
@@ -108,7 +108,7 @@ Quando concluído, este contrato deve autorizar uma surface única por turno, na
 
 ## 11. Próximo passo autorizado
 
-Após a PR1 textual mínima, o próximo passo autorizado é executar o próximo recorte textual da atendente especialista MCMV, ainda sem abrir áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+Após a PR 26 — PR1 textual mínima, o próximo passo autorizado é executar o próximo recorte textual da atendente especialista MCMV, ainda sem abrir áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
 
 ## 12. Relação com o A01
 

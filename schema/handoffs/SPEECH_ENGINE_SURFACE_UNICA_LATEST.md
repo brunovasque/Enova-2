@@ -3,12 +3,12 @@
 | Campo                                      | Valor |
 |--------------------------------------------|-------|
 | Frente                                     | Speech Engine e Surface Única |
-| Data                                       | 2026-04-21T10:33:37.2046058-03:00 |
+| Data                                       | 2026-04-21T10:44:29.3485721-03:00 |
 | Estado da frente                           | em execução |
 | Classificação da tarefa                    | contratual |
-| Última PR relevante                        | PR1 textual mínima — política de IA soberana sem fala mecânica |
+| Última PR relevante                        | PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
-| Recorte executado do contrato              | PR1 textual mínima — envelope de política para IA soberana |
+| Recorte executado do contrato              | PR 26 — PR1 textual mínima: envelope de política para IA soberana |
 | Pendência contratual remanescente          | próximos recortes textuais da atendente especialista MCMV |
 | Houve desvio de contrato?                  | não |
 | Contrato encerrado nesta PR?               | não |
@@ -24,7 +24,7 @@
 
 ## 1. Contexto curto
 
-O Core Mecânico 2 foi encerrado formalmente e a PR 25 abriu o contrato sucessor. Esta tarefa executou a PR1 textual mínima da frente "Speech Engine e Surface Única", mantendo a interpretação obrigatória como Atendente Especialista MCMV com Governança Estrutural.
+O Core Mecânico 2 foi encerrado formalmente e a PR 25 abriu o contrato sucessor. A PR 26 executou a PR1 textual mínima da frente "Speech Engine e Surface Única", mantendo a interpretação obrigatória como Atendente Especialista MCMV com Governança Estrutural.
 
 A frente deve ser entendida como Atendente Especialista MCMV com Governança Estrutural: a IA é soberana em raciocínio e fala; o mecânico restringe, valida, informa e registra, mas jamais escreve a resposta ao cliente.
 
@@ -36,7 +36,7 @@ O recorte implementado não redige resposta ao cliente. Ele produz apenas um env
 
 ## 3. Última PR relevante
 
-PR1 textual mínima — política de IA soberana sem fala mecânica.
+PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica.
 
 ## 4. O que a PR anterior fechou
 
@@ -73,7 +73,7 @@ PR1 textual mínima — política de IA soberana sem fala mecânica.
 
 ## 9. O que esta PR fechou
 
-- PR1 textual mínima da frente.
+- PR 26 — PR1 textual mínima da frente.
 - Prova de que a política preserva `surface_owner=llm`.
 - Prova de que `mechanical_may_write_customer_text=false`.
 - Prova de que fallback é guardrail não dominante.
@@ -95,7 +95,7 @@ PR1 textual mínima — política de IA soberana sem fala mecânica.
 
 ## 11b. Recorte executado do contrato
 
-PR1 textual mínima — envelope de política para IA soberana.
+PR 26 — PR1 textual mínima: envelope de política para IA soberana.
 
 ## 11c. Pendência contratual remanescente
 

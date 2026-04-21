@@ -5,21 +5,21 @@
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | PR1 textual mínima — política estrutural para IA soberana |
+| Última PR executou qual recorte            | PR 26 — PR1 textual mínima: política estrutural para IA soberana |
 | Pendência contratual                       | próximos recortes textuais da atendente especialista MCMV |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
 | Estado atual                               | em execução |
 | Classe da última tarefa                    | contratual |
-| Última PR relevante                        | PR1 textual mínima — política de IA soberana sem fala mecânica |
-| Último commit                              | commit desta PR — ver resposta final |
+| Última PR relevante                        | PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica |
+| Último commit                              | `d780888f84f57a01bef980b13476788039edce04` — `feat(speech): criar politica textual minima` |
 | Pendência remanescente herdada             | PR1 textual mínima estava pendente após a abertura contratual da PR 25 |
 | Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-21T10:33:37.2046058-03:00 |
+| Última atualização                         | 2026-04-21T10:44:29.3485721-03:00 |
 
 ---
 
@@ -39,7 +39,7 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR1 textual mínima — política estrutural para IA soberana. O recorte criou um envelope de governança para a IA consumir, sem redigir fala final.
+PR 26 — PR1 textual mínima: política estrutural para IA soberana. O recorte criou um envelope de governança para a IA consumir, sem redigir fala final.
 
 ## 2c. Pendência contratual
 
@@ -67,11 +67,11 @@ A frente iniciou a execução textual mínima. O primeiro recorte entrega polít
 
 ## 6. Última PR relevante
 
-PR1 textual mínima — política de IA soberana sem fala mecânica.
+PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica.
 
 ## 7. Último commit
 
-Commit desta PR — ver resposta final.
+`d780888f84f57a01bef980b13476788039edce04` — `feat(speech): criar politica textual minima`.
 
 ## 8. Entregas concluídas
 
@@ -111,7 +111,7 @@ Próximo recorte textual da atendente especialista MCMV, sem áudio/multimodalid
 
 ## 14. Última atualização
 
-2026-04-21T10:33:37.2046058-03:00 — PR1 textual mínima.
+2026-04-21T10:44:29.3485721-03:00 — PR 26: PR1 textual mínima e correção de governança documental.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
