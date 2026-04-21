@@ -21,7 +21,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 |---|------------------------------------------------|----------------------------------------------|------------------|
 | 1 | Core Mecânico 2                                | `CORE_MECANICO_2_STATUS.md`                  | concluída        |
 | 2 | Speech Engine e Surface Única                  | `SPEECH_ENGINE_SURFACE_UNICA_STATUS.md`      | concluída        |
-| 3 | Contexto, Extração Estruturada e Memória Viva  | `CONTEXTO_EXTRACAO_MEMORIA_VIVA_STATUS.md`   | contrato aberto  |
+| 3 | Contexto, Extração Estruturada e Memória Viva  | `CONTEXTO_EXTRACAO_MEMORIA_VIVA_STATUS.md`   | concluída        |
 | 4 | Supabase Adapter e Persistência                | *(a criar)*                                  | não iniciada     |
 | 5 | Áudio e Multimodalidade                        | *(a criar)*                                  | não iniciada     |
 | 6 | Meta/WhatsApp                                  | *(a criar)*                                  | não iniciada     |
