@@ -6,7 +6,7 @@
 | Data                                       | 2026-04-21T10:07:38.1335856-03:00 |
 | Estado da frente                           | contrato aberto |
 | Classificação da tarefa                    | governança |
-| Última PR relevante                        | abertura do contrato da frente sucessora do Core |
+| Última PR relevante                        | PR 25 — abertura do contrato da frente sucessora do Core |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Recorte executado do contrato              | abertura contratual; nenhuma execução técnica |
 | Pendência contratual remanescente          | PR1 textual mínima da atendente especialista MCMV |
@@ -36,7 +36,7 @@ Nenhuma implementação funcional foi aberta nesta tarefa.
 
 ## 3. Última PR relevante
 
-Abertura do contrato da frente sucessora do Core.
+PR 25 — abertura do contrato da frente sucessora do Core.
 
 ## 4. O que a PR anterior fechou
 
@@ -129,7 +129,7 @@ Interpretação obrigatória: Atendente Especialista MCMV com IA soberana e gove
 
 ## 15. Próximo passo autorizado
 
-PR1 de execução textual mínima da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+PR 1 de execução textual mínima da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
 
 ## 16. Riscos
 
