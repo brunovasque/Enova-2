@@ -5,14 +5,14 @@
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Estado do contrato                         | aberto |
-| Última PR executou qual recorte            | abertura contratual da frente sucessora do Core |
+| Última PR executou qual recorte            | PR 25 — abertura contratual da frente sucessora do Core |
 | Pendência contratual                       | execução da PR1 textual mínima da atendente especialista MCMV |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
 | Estado atual                               | contrato aberto |
 | Classe da última tarefa                    | governança |
-| Última PR relevante                        | abertura do contrato da frente sucessora do Core |
-| Último commit                              | commit desta abertura contratual — ver resposta final |
+| Última PR relevante                        | PR 25 — abertura do contrato da frente sucessora do Core |
+| Último commit                              | governança documental da PR 25 na branch `feat/contrato-atendente-especialista-mcmv` |
 | Pendência remanescente herdada             | frente aguardava abertura contratual após encerramento do Core Mecânico 2 |
 | Próximo passo autorizado                   | PR1 de execução textual mínima da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
@@ -39,7 +39,7 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2b. Última PR executou qual recorte do contrato
 
-Abertura contratual da frente sucessora do Core. Nenhuma implementação técnica foi executada.
+PR 25 — abertura contratual da frente sucessora do Core. Nenhuma implementação técnica foi executada.
 
 ## 2c. Pendência contratual
 
@@ -67,11 +67,11 @@ A frente está autorizada documentalmente para execução futura. O contrato dei
 
 ## 6. Última PR relevante
 
-Abertura do contrato da frente sucessora do Core.
+PR 25 — abertura do contrato da frente sucessora do Core.
 
 ## 7. Último commit
 
-Commit desta abertura contratual — ver resposta final.
+Governança documental da PR 25 na branch `feat/contrato-atendente-especialista-mcmv`.
 
 ## 8. Entregas concluídas
 
@@ -109,7 +109,7 @@ PR1 de execução textual mínima da atendente especialista MCMV, sem áudio/mul
 
 ## 14. Última atualização
 
-2026-04-21T10:07:38.1335856-03:00 — Codex.
+2026-04-21T10:07:38.1335856-03:00 — governança contratual da PR 25.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
