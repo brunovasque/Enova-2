@@ -3,23 +3,23 @@
 | Campo                                      | Valor |
 |--------------------------------------------|-------|
 | Frente                                     | Core Mecânico 2 |
-| Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` |
-| Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | L17 — Final operacional, docs, visita e handoff |
-| Pendência contratual                       | nenhuma técnica; closeout formal do contrato ainda pendente |
-| Contrato encerrado?                        | não |
+| Contrato ativo                             | Nenhum — contrato anterior encerrado em 2026-04-21 |
+| Estado do contrato                         | encerrado |
+| Última PR executou qual recorte            | PR 23 — L17 — Final operacional, docs, visita e handoff |
+| Pendência contratual                       | nenhuma |
+| Contrato encerrado?                        | sim |
 | Item do A01                                | Fase 2 — Prioridade 1: modelar o Core Mecânico 2 com contratos por stage/objetivo, desacoplado da fala |
-| Estado atual                               | em execução — Core completo do topo ao handoff, com Worker técnico validado e reavaliação formal de encerramento pendente |
-| Classe da última tarefa                    | contratual — L17 do Core Mecânico 2, com prova ponta a ponta no Worker |
+| Estado atual                               | concluída — contrato do Core encerrado formalmente; frente técnica fechada do topo ao handoff |
+| Classe da última tarefa                    | governança — closeout formal do contrato do Core Mecânico 2 + endurecimento do PR Governance Gate |
 | Última PR relevante                        | PR 23 — L17: Final operacional, docs, visita e handoff |
-| Último commit                              | `18fef05f62a6ba9eec01cbef378607459dca4c1f` — `feat(core): integrar l17 final operacional` |
-| Pendência remanescente herdada             | O recorte L17 era a única pendência contratual remanescente; também faltava a prova topo → final para encerrar o contrato com segurança |
-| Próximo passo autorizado                   | reavaliar encerramento formal do contrato do Core Mecânico 2 |
+| Último commit                              | direto em `main` — closeout formal + endurecimento do workflow de governança |
+| Pendência remanescente herdada             | nenhuma técnica; faltava apenas o closeout formal do contrato |
+| Próximo passo autorizado                   | abrir o Contrato do Speech Engine e Surface Única |
 | Legados aplicáveis                         | L03–L17 executados |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
-| Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-20T21:34:11.7830094-03:00 |
+| Fontes consultadas — última tarefa         | contrato ativo, status, handoff, CONTRACT_CLOSEOUT_PROTOCOL, CODEX_WORKFLOW, PRs 17–23 |
+| Última atualização                         | 2026-04-21T01:10:53Z |
 
 ---
 
@@ -29,27 +29,28 @@ Core Mecânico 2
 
 ## 2. Contrato ativo
 
-`schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`
+Nenhum — contrato anterior encerrado em 2026-04-21
 
 ## 2a. Estado do contrato
 
-**em execução**
+**encerrado**
 
 ## 2b. Última PR executou qual recorte do contrato
 
-L17 — Final operacional, docs, visita e handoff:
-- parser/extrator mínimo de `docs_channel_choice`, `visit_interest`, `doc_identity_status`, `doc_income_status`, `doc_residence_status`, `doc_ctps_status` e `handoff_readiness`
-- critérios/gates mínimos de docs, visita e handoff
+PR 23 — L17 — Final operacional, docs, visita e handoff:
+- parser/extrator mínimo do recorte final
+- gates mínimos de docs, visita e handoff
 - integração real de `docs_prep`, `docs_collection`, `visit` e `broker_handoff` ao `engine.ts`
-- smoke integrado do caminho real do Core e prova ponta a ponta no Worker
+- prova ponta a ponta via Worker
+- correção do P1 de recusa explícita de visita
 
 ## 2c. Pendência contratual
 
-nenhuma técnica — encerramento formal ainda não aplicado
+nenhuma
 
 ## 2d. Contrato encerrado?
 
-**não**
+**sim**
 
 ## 3. Item do A01
 
@@ -59,18 +60,19 @@ nenhuma técnica — encerramento formal ainda não aplicado
 
 ## 4. Estado atual
 
-**em execução**
+**concluída**
 
-O Core Mecânico 2 continua desacoplado da fala e agora cobre Topo, Meio A, Meio B, Especiais e Final:
-- `docs_prep`, `docs_collection`, `visit` e `broker_handoff` agora têm decisão estrutural própria no `engine.ts`
-- o Core trata docs, visita e handoff como estado/gate/next step, sem phrasing
-- o Worker segue técnico e estrutural, agora com prova real do recorte final via `/__core__/run`
+O Core Mecânico 2 foi fechado formalmente com:
+- L03–L17 executados
+- smoke topo → final comprovado no Core e no Worker
+- desacoplamento da fala preservado
+- contrato arquivado conforme `CONTRACT_CLOSEOUT_PROTOCOL.md`
 
 ## 5. Classe da última tarefa
 
-**contratual**
+**governança**
 
-Recorte contratual L17 do Core Mecânico 2, sem abrir fala, Supabase, Meta/WhatsApp ou surface final.
+Fechamento formal do contrato do Core Mecânico 2 e endurecimento do PR Governance Gate para impedir PR com body incompleto/solto.
 
 ## 6. Última PR relevante
 
@@ -78,7 +80,7 @@ PR 23 — L17: Final operacional, docs, visita e handoff.
 
 ## 7. Último commit
 
-`18fef05f62a6ba9eec01cbef378607459dca4c1f` — `feat(core): integrar l17 final operacional`
+Direto em `main` — closeout formal do contrato do Core + endurecimento do workflow de governança.
 
 ## 8. Entregas concluídas
 
@@ -91,7 +93,7 @@ PR 23 — L17: Final operacional, docs, visita e handoff.
 - [x] Smoke real da rota do Worker
 - [x] L07 — estado civil
 - [x] L08 — composição familiar (parte 1)
-- [x] L09 — composição familiar (parte 1)
+- [x] L09 — composição familiar (parte 2)
 - [x] L10 — composição familiar (parte 2)
 - [x] L11 — regime e renda (parte 1)
 - [x] L12 — regime e renda (parte 2)
@@ -101,14 +103,16 @@ PR 23 — L17: Final operacional, docs, visita e handoff.
 - [x] L16 — variantes estruturais dos especiais
 - [x] L17 — final operacional / docs / visita / handoff
 - [x] Smoke de trilho completo topo → final
+- [x] Encerramento formal do contrato
+- [x] Workflow de governança endurecido para body de PR
 
 ## 9. Pendências
 
-nenhuma técnica — closeout formal ainda pendente
+nenhuma
 
 ## 10. Pendência remanescente herdada
 
-L17 era a última pendência contratual do Core. Também faltava a prova integrada topo → final para encerrar o contrato com segurança. Ambas foram fechadas nesta PR.
+O recorte técnico estava fechado após a PR 23. Restava apenas formalizar o encerramento do contrato e amarrar melhor a governança do body da PR no workflow.
 
 ## 11. Bloqueios
 
@@ -116,9 +120,7 @@ Nenhum bloqueio ativo.
 
 ## 12. Próximo passo autorizado
 
-**Reavaliar encerramento formal do contrato do Core Mecânico 2.**
-
-O recorte técnico foi fechado; a decisão de closeout formal fica pendente após esta PR.
+**Abrir o Contrato do Speech Engine e Surface Única.**
 
 ## 13. Legados aplicáveis
 
@@ -127,7 +129,7 @@ O recorte técnico foi fechado; a decisão de closeout formal fica pendente apó
 
 ## 14. Última atualização
 
-2026-04-20T21:34:11.7830094-03:00
+2026-04-21T01:10:53Z
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -140,12 +142,12 @@ Permissões Cloudflare necessárias: nenhuma adicional
 ## 17. Fontes consultadas — última tarefa
 
 Fontes de verdade consultadas — última tarefa:
-  Índice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md`
-  Clause map lido:             `schema/contracts/active/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP.md`
-  Execution rules lidas:       `schema/contracts/active/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES.md`
-  Status da frente lido:       `schema/status/CORE_MECANICO_2_STATUS.md`
-  Handoff da frente lido:      `schema/handoffs/CORE_MECANICO_2_LATEST.md`
-  Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos L03–L17 identificados estruturalmente
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — E7.3, F7, F8, handoff_readiness e 4.1 Fases macro consultados diretamente para L17
+- `schema/contracts/_INDEX.md`
+- `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
+- `schema/contracts/archive/CONTRATO_CORE_MECANICO_2_2026-04-21.md`
+- `schema/status/CORE_MECANICO_2_STATUS.md`
+- `schema/handoffs/CORE_MECANICO_2_LATEST.md`
+- `.github/PULL_REQUEST_TEMPLATE.md`
+- `.github/workflows/pr-governance-check.yml`
+- `scripts/validate_pr_governance.js`
+- PRs 17, 18, 19, 20, 21, 22 e 23
