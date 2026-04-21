@@ -397,7 +397,10 @@ function smokeScenario4_TTLMemoriaViva(): PolicySmokeResult {
   ));
 
   // Simulação de cálculo de TTL (sem Date real — apenas lógica)
-  const nowMs = 1745000000000; // timestamp fixo para smoke determinístico
+  // Timestamp fixo e arbitrário para smoke determinístico.
+  // O valor exato não importa — apenas que é um ponto no tempo estável para calcular
+  // offsets de TTL (default +48h, extended +72h) sem depender de Date.now() real.
+  const nowMs = 1745000000000; // 2025-04-18T21:33:20.000Z — fixo para smoke determinístico
   const defaultExpiresMs = nowMs + MEMORY_RUNTIME_TTL_POLICY.TTL_DEFAULT_HOURS * 3600 * 1000;
   const extendedExpiresMs = nowMs + MEMORY_RUNTIME_TTL_POLICY.TTL_EXTENDED_HOURS * 3600 * 1000;
 
