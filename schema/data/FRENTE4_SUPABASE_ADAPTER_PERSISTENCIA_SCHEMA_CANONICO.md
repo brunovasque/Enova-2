@@ -1,14 +1,20 @@
 # FRENTE 4 — SUPABASE ADAPTER E PERSISTENCIA — SCHEMA CANONICO DE DADOS (DESENHO)
 
+> **Versão:** 1.1.0 (refinado na PR 41)
+> **Versão anterior:** 1.0.0 (PR 40 — abertura contratual)
+> **Contrato de dados detalhado:** ver `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md` — criado na PR 41 como complemento canônico e autoritativo de entidades, campos, ownership, idempotência, versionamento e políticas de retenção.
+
 ## 1. Finalidade
 
 Este documento define o desenho canonico de persistencia da Frente 4.
 Ele e um **contrato de dados/documentacao** e nao implementacao runtime.
 
-Nesta PR40:
+Nesta PR40 (abertura) e PR41 (refinamento):
 
 - pode: definir entidades, tabelas previstas, colunas previstas, chaves, relacionamentos, ownership e governanca
 - nao pode: criar migration SQL real, tabela real, escrita runtime real, endpoint funcional real
+
+> **Nota de refinamento PR 41:** os campos, tipos, ownership, idempotência e políticas de retenção foram refinados e versionados em `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md`. Este documento mantém o desenho macro/visão geral. Em caso de divergência entre os dois, o `FRENTE4_PERSISTABLE_DATA_CONTRACT.md` prevalece (é o contrato autoritativo de PR 41+).
 
 ## 2. Principios canônicos
 
@@ -250,7 +256,7 @@ Colunas previstas:
 
 ## 10. Governanca de evolucao
 
-1. PR41 consolida e versiona este contrato de dados.
+1. PR41 consolida e versiona este contrato de dados — **concluído**: ver `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md`.
 2. PR42 cria casca de adapter de leitura/escrita conforme este desenho.
 3. PR43 define merge/update/consistencia por entidade.
 4. PR44 valida por smoke persistente e closeout formal.
@@ -262,4 +268,5 @@ Colunas previstas:
 - `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
 - `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 - `schema/contracts/active/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md`
+- `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md` ← **contrato autoritativo de PR 41 (detalha campos, ownership, idempotência, retenção)**
 - `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` (paginas 126-127)
