@@ -21,7 +21,7 @@ Este índice está subordinado ao A00, A01, A02 e ao HANDOFF_SCHEMA.
 |---|------------------------------------------------|-----------------------------------------------|------------------|
 | 1 | Core Mecânico 2                                | `CORE_MECANICO_2_LATEST.md`                   | 2026-04-21       |
 | 2 | Speech Engine e Surface Única                  | `SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`       | 2026-04-21       |
-| 3 | Contexto, Extração Estruturada e Memória Viva  | *(a criar)*                                   | —                |
+| 3 | Contexto, Extração Estruturada e Memória Viva  | `CONTEXTO_EXTRACAO_MEMORIA_VIVA_LATEST.md`    | 2026-04-21       |
 | 4 | Supabase Adapter e Persistência                | *(a criar)*                                   | —                |
 | 5 | Áudio e Multimodalidade                        | *(a criar)*                                   | —                |
 | 6 | Meta/WhatsApp                                  | *(a criar)*                                   | —                |
