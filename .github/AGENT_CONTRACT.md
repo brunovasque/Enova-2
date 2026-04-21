@@ -5,7 +5,7 @@ Atuar com escopo fechado, execução controlada e aderência total à precedênc
 Seguir o ritual definido em `schema/CODEX_WORKFLOW.md` em toda tarefa — **sem pular nenhuma etapa**.
 
 ## Precedência obrigatória
-**A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
+**A00 > A01 > A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
 
 ## Ritual obrigatório — 16 etapas (ver CODEX_WORKFLOW.md seção 3)
 Toda tarefa percorre as 16 etapas do CODEX_WORKFLOW em ordem.
@@ -24,6 +24,7 @@ Nenhuma etapa pode ser pulada. Pular etapa é não conformidade.
 10. Índice do legado mestre (`schema/legacy/INDEX_LEGADO_MESTRE.md`)
 11. Blocos aplicáveis do legado mestre (`schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`) — se transcrito; se não, ver PDF em `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`
 12. `schema/CONTRACT_SOURCE_MAP.md` — **mapa de fontes e ponte documental operacional**
+13. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo. Regra-mãe: IA soberana na fala — mecânico JAMAIS com prioridade de fala.**
 
 ## Declaração obrigatória de estado herdado (Etapa 8 do CODEX_WORKFLOW)
 Antes de executar qualquer tarefa, o agente deve declarar o bloco `ESTADO HERDADO`:
@@ -97,6 +98,9 @@ Tarefa não classificada = tarefa não conforme.
 22. **Nunca declarar "lido" um arquivo que não foi efetivamente consultado.** A declaração de fontes é rastreabilidade real, não formalidade.
 23. **Quando bloco legado necessário não estiver transcrito no markdown:** referenciar diretamente o PDF mestre em `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` e declarar explicitamente qual seção foi consultada.
 24. **O body da PR deve ser reflexo mínimo dos arquivos vivos.** Os campos `Contrato ativo` e `Próximo passo autorizado` devem ser transcritos dos arquivos vivos (`schema/contracts/_INDEX.md`, `schema/handoffs/<FRENTE>_LATEST.md`, `schema/status/<FRENTE>_STATUS.md`) — não inventados ou deixados com placeholder genérico. Placeholder genérico não é sincronização. Nenhuma PR é considerada entregue enquanto esses campos não estiverem sincronizados com os arquivos vivos ou tiverem justificativa real ("Nenhum contrato ativo").
+25. **[ADENDO CANÔNICO A00-ADENDO-01] A IA é soberana em raciocínio e fala.** O LLM redige e emite a surface final do turno. Nenhuma outra camada pode sobrescrever, substituir ou deslocar a resposta do LLM como fala final ao cliente. Ver `schema/ADENDO_CANONICO_SOBERANIA_IA.md`.
+26. **[ADENDO CANÔNICO A00-ADENDO-01] O mecânico JAMAIS pode ter prioridade de fala.** O mecânico valida, registra, bloqueia e preserva estado — não redige resposta ao cliente. Esta é uma regra proibida formal: JAMAIS MECÂNICO COM QUALQUER PRIORIDADE DE FALA.
+27. **[ADENDO CANÔNICO A00-ADENDO-01] Qualquer implementação que reintroduza fala mecânica, fallback rígido dominante ou surface engessada deve ser tratada como não conforme.** Parar imediatamente, reportar e exigir revisão antes de seguir. Ver `schema/ADENDO_CANONICO_SOBERANIA_IA.md` seção 4 para a lista completa de proibições formais.
 
 ## Atualização viva obrigatória ao final de qualquer tarefa
 Independente de ser tarefa contratual ou fora de contrato:

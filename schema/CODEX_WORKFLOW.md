@@ -40,17 +40,22 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 24. `.github/PULL_REQUEST_TEMPLATE.md`
 25. `.github/AGENT_CONTRACT.md`
 26. `scripts/validate_pr_governance.js`
+27. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo. Regra-mãe canônica: IA soberana na fala, mecânico jamais com prioridade de fala.**
   
 
 Nenhuma tarefa começa sem confirmar esta leitura.
+
+> **ATENÇÃO — ADENDO CANÔNICO ATIVO (A00-ADENDO-01):** `schema/ADENDO_CANONICO_SOBERANIA_IA.md` é leitura obrigatória antes de qualquer tarefa que toque conversa, LLM, speech, surface, fallback ou fluxo cognitivo. Nenhuma tarefa nessas áreas pode ser iniciada sem confirmar a leitura deste adendo. Ver seção 2 abaixo para posição na cadeia de precedência.
 
 ---
 
 ## 2. Precedência documental oficial
 
-**A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
+**A00 > A01 > A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
 
 Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas regras de negócio; o pacote canônico manda na arquitetura, na ordem executiva e na forma de implantação.
+
+> **Adendo canônico ativo (A00-ADENDO-01):** `schema/ADENDO_CANONICO_SOBERANIA_IA.md` fixa como regra permanente que a IA é soberana em raciocínio e fala, e que é proibido dar qualquer prioridade de fala ao mecânico. Este adendo é transversal a todas as frentes e vigora imediatamente. Nenhum contrato de frente pode ser aberto ou executado de forma que contradiga este adendo.
 
 ---
 

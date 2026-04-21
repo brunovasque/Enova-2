@@ -102,7 +102,13 @@ Próximo contrato autorizado:
 <!-- Se nenhum: "nenhuma atualização viva necessária" -->
 
 ## Referência de precedência
-<!-- Confirmar: A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis -->
+<!-- Confirmar: A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis -->
+
+## Adendo de soberania da IA (A00-ADENDO-01)
+<!-- OBRIGATÓRIO quando a tarefa tocar conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo -->
+<!-- Se não aplicável: "não aplicável — tarefa não toca conversa, LLM, speech, surface, fallback nem fluxo cognitivo" -->
+Adendo de soberania da IA lido (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`): <!-- sim | não aplicável -->
+Esta PR introduz fala mecânica, surface engessada ou fallback dominante?: <!-- não | sim — se sim, é não conforme: parar e revisar -->
 
 ## Testes / Validação
 <!-- OBRIGATÓRIO — comandos e resultado objetivo -->
