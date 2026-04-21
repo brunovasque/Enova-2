@@ -19,7 +19,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 
 | # | Frente                                         | Arquivo de status                            | Estado atual     |
 |---|------------------------------------------------|----------------------------------------------|------------------|
-| 1 | Core Mecânico 2                                | `CORE_MECANICO_2_STATUS.md`                  | em execução      |
+| 1 | Core Mecânico 2                                | `CORE_MECANICO_2_STATUS.md`                  | concluída        |
 | 2 | Speech Engine e Surface Única                  | *(a criar)*                                  | não iniciada     |
 | 3 | Contexto, Extração Estruturada e Memória Viva  | *(a criar)*                                  | não iniciada     |
 | 4 | Supabase Adapter e Persistência                | *(a criar)*                                  | não iniciada     |
