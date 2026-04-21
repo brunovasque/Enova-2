@@ -10,7 +10,8 @@
     "smoke": "tsx src/core/smoke.ts",
     "smoke:worker": "tsx src/worker-route-smoke.ts",
     "smoke:speech": "tsx src/speech/smoke.ts",
-    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:speech",
+    "smoke:context": "tsx src/context/smoke.ts",
+    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:speech && npm run smoke:context",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
