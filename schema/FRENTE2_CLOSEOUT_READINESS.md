@@ -1,8 +1,8 @@
 # FRENTE 2 — CLOSEOUT READINESS — Speech Engine e Surface Única — ENOVA 2
 
-> **Status:** em consolidação para closeout — PR 32 (critérios consolidados, prova final pendente)
+> **Status:** prova final executada — PR 33 acceptance smoke aprovado — aguardando closeout formal
 > **Contrato ativo:** `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md`
-> **Última atualização:** PR 32 — consolidação de critérios de fechamento e preparação de acceptance smoke
+> **Última atualização:** PR 33 — prova final / acceptance smoke executada — 15/15 cenários passando
 
 ---
 
@@ -27,9 +27,12 @@ Ele não encerra o contrato. Ele não abre nova feature. Ele consolida os crité
 | PR 29 | PR4 canônica — resposta livre governada | `src/speech/free-response.ts` | ✅ entregue |
 | PR 30 | Turno composto governado | `src/speech/composite-turn.ts` | ✅ entregue |
 | PR 31 | PR5 canônica — preparação multimodal mínima | `src/speech/multimodal-readiness.ts` | ✅ entregue |
-| PR 32 | Consolidação de critérios de fechamento | `schema/FRENTE2_CLOSEOUT_READINESS.md` + vivos | ✅ esta PR |
+| PR 32 | Consolidação de critérios de fechamento | `schema/FRENTE2_CLOSEOUT_READINESS.md` + vivos | ✅ entregue |
+| PR 33 | Prova final / acceptance smoke | `src/speech/smoke.ts` (Cenário 15 integrado) | ✅ esta PR |
 
 Smoke textual mínimo: **14/14 cenários passando** (validado na PR 32, executado em 2026-04-21T16:16:35Z).
+
+Prova final integrada: **15/15 cenários passando** (Cenário 15 adicionado na PR 33 — acceptance smoke executado).
 
 ---
 
@@ -49,11 +52,7 @@ Cada critério abaixo é explícito, verificável e rastreável a um artefato en
 | Autoria mecânica gera `final_surface_author_must_be_llm` e rejeita publicação | `src/speech/surface.ts` + smoke cenário 4 | ✅ coberto |
 | Prova em smoke | Cenários 3, 4 | ✅ coberto |
 
-**O que falta:** prova final integrada (PR 33).
-
----
-
-### 2.2 Mecânico sem prioridade de fala
+**✅ Prova integrada executada na PR 33 — Cenário 15, assertions [2.1].**
 
 > **Critério (A00-ADENDO-01 P1 + Contrato §8 + ADENDO §3.4):** O mecânico JAMAIS tem qualquer prioridade de fala. Ele informa e restringe, mas não redige resposta ao cliente.
 
@@ -67,7 +66,7 @@ Cada critério abaixo é explícito, verificável e rastreável a um artefato en
 | `governance_wrote_text = false` imutável em resposta e turno composto | `src/speech/free-response.ts`, `src/speech/composite-turn.ts` | ✅ coberto |
 | Prova em smoke | Cenários 1, 2, 4, 6, 10, 11, 12 | ✅ coberto |
 
-**O que falta:** prova final integrada (PR 33).
+**✅ Prova integrada executada na PR 33 — Cenário 15, assertions [2.2].**
 
 ---
 
@@ -84,7 +83,7 @@ Cada critério abaixo é explícito, verificável e rastreável a um artefato en
 | Resposta livre aceita sob governança | Smoke cenário 7 | ✅ coberto |
 | Resposta livre respeita bloqueio estrutural | Smoke cenário 8 | ✅ coberto |
 
-**O que falta:** prova final integrada (PR 33).
+**✅ Prova integrada executada na PR 33 — Cenário 15, assertions [2.3].**
 
 ---
 
@@ -103,7 +102,7 @@ Cada critério abaixo é explícito, verificável e rastreável a um artefato en
 | Turno composto respeita bloqueio estrutural | Smoke cenário 11 | ✅ coberto |
 | Turno composto não sobrescreve Core | Smoke cenário 12 | ✅ coberto |
 
-**O que falta:** prova final integrada (PR 33).
+**✅ Prova integrada executada na PR 33 — Cenário 15, assertions [2.4].**
 
 ---
 
@@ -121,7 +120,7 @@ Cada critério abaixo é explícito, verificável e rastreável a um artefato en
 | Resposta com promessa rejeitada na resposta livre | Smoke cenário 9 | ✅ coberto |
 | Turno composto com promessa rejeitado | Smoke cenário 13 | ✅ coberto |
 
-**O que falta:** prova final integrada (PR 33).
+**✅ Prova integrada executada na PR 33 — Cenário 15, assertions [2.5].**
 
 ---
 
@@ -138,7 +137,7 @@ Cada critério abaixo é explícito, verificável e rastreável a um artefato en
 | Runtime locks: `real_audio_enabled`, `stt_provider_enabled`, `tts_provider_enabled`, `external_channel_enabled`, `media_processing_enabled` — todos `false` | `src/speech/multimodal-readiness.ts` | ✅ coberto |
 | Preparação multimodal permanece contratual e não abre áudio real | Smoke cenário 14 | ✅ coberto |
 
-**O que falta:** prova final integrada (PR 33). Áudio real, STT/TTS real e multimodalidade plena permanecem bloqueados e são escopo da Frente 5.
+**✅ Prova integrada executada na PR 33 — Cenário 15, assertions [2.6].** Áudio real, STT/TTS real e multimodalidade plena permanecem bloqueados e são escopo da Frente 5.
 
 ---
 
@@ -156,7 +155,7 @@ Cada critério abaixo é explícito, verificável e rastreável a um artefato en
 | `fallback_dominante` em `forbidden_behaviors` (policy + cognitive + free-response) | `src/speech/policy.ts`, `src/speech/cognitive.ts`, `src/speech/free-response.ts` | ✅ coberto |
 | Contrato cognitivo proíbe script rígido e fallback dominante | Smoke cenário 5, 6 | ✅ coberto |
 
-**O que falta:** prova final integrada (PR 33).
+**✅ Prova integrada executada na PR 33 — Cenário 15, assertions [2.7].**
 
 ---
 
@@ -166,7 +165,7 @@ Cada critério abaixo é explícito, verificável e rastreável a um artefato en
 |--------------|--------------------------|--------|
 | Fase 2 — Prioridade 2: Speech Engine com surface única, política explícita e proibição de camadas concorrentes | ✅ sim | ✅ entregue (PRs 25–32) |
 | Gate 1: sem contrato da frente, não começa implementação | ✅ sim | ✅ satisfeito (PR 25) |
-| Gate 2: sem smoke da frente, não promove para frente seguinte | ✅ sim | 🟡 smoke 14/14 passando — prova final pendente (PR 33) |
+| Gate 2: sem smoke da frente, não promove para frente seguinte | ✅ sim | ✅ satisfeito — 15/15 cenários passando (PR 33 acceptance smoke) |
 | Gate 3: previsibilidade operacional em texto puro antes de áudio | ✅ sim | ✅ satisfeito (texto puro entregue) |
 | Gate 6: coerência entre A00, A01 e A02 | ✅ sim | ✅ satisfeito (todos os artefatos coerentes) |
 | Entregável mínimo: surface única + política de transição + fallback controlado | ✅ sim | ✅ entregue |
@@ -197,13 +196,15 @@ Qualquer PR que tente abrir estes itens dentro da Frente 2 é **não conforme** 
 
 A PR 33 é a **prova final / acceptance smoke** da Frente 2. Ela não abre nova feature. Ela prova que os critérios acima são satisfeitos em conjunto, de forma integrada e verificável.
 
-**O que a PR 33 deve demonstrar:**
+**✅ PR 33 executada — resultado: `all_passed = true` (15/15 cenários).**
 
-1. Todos os 14 cenários de smoke existentes passando (regressão zero).
-2. Cenário integrado cobrindo o fluxo completo: policy → cognitive → free-response → composite-turn → surface, com todas as camadas em sequência.
-3. Conformidade verificável de cada critério da seção 2 deste documento, em forma de smoke ou prova equivalente.
-4. Confirmação explícita de que nenhum dos itens da seção 4 (bloqueados) foi aberto.
-5. Resultado: `all_passed = true` sem exceção.
+**O que a PR 33 demonstrou:**
+
+1. ✅ Todos os 14 cenários de smoke existentes passando (regressão zero).
+2. ✅ Cenário 15 integrado cobrindo o fluxo completo: policy → cognitive → free-response → composite-turn → surface → multimodal-readiness, com todas as camadas em sequência.
+3. ✅ Conformidade verificável de cada critério da seção 2 deste documento (assertions [2.1] a [2.7] + [FINAL]).
+4. ✅ Confirmação explícita de que nenhum dos itens da seção 4 (bloqueados) foi aberto.
+5. ✅ Resultado: `all_passed = true` sem exceção.
 
 **O que a PR 33 NÃO faz:**
 - Não encerra o contrato formalmente.
@@ -228,7 +229,7 @@ A PR de closeout (posterior à PR 33) deve:
 
 ## 7. Declaração de conformidade negativa — o que não foi feito
 
-Esta PR 32 confirma que **nenhuma** das seguintes ações foi executada:
+Esta PR 33 confirma que **nenhuma** das seguintes ações foi executada:
 
 - ✅ Não foi criada nova feature de speech.
 - ✅ Não foi criada nova feature cognitiva.
