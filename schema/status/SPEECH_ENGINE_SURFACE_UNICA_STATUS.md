@@ -5,21 +5,21 @@
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | PR 28 — PR3 textual: contrato cognitivo mínimo da atendente especialista MCMV |
+| Última PR executou qual recorte            | PR 29 — PR4 textual: modelo mínimo de resposta livre governada |
 | Pendência contratual                       | próximos recortes textuais da atendente especialista MCMV; provedor LLM real e prompt final de produção completo ainda não abertos |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
 | Estado atual                               | em execução |
 | Classe da última tarefa                    | contratual |
-| Última PR relevante                        | PR 28 — PR3 textual: contrato cognitivo mínimo da atendente especialista MCMV |
-| Último commit funcional                    | `094b76aca3131d32dbb47f35e33ff6907faf87b8` — `feat(speech): criar contrato cognitivo mcmv minimo` |
-| Pendência remanescente herdada             | após a PR 27 ainda faltava definir COMO a IA deve agir como atendente especialista MCMV sem virar script |
-| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV após o contrato cognitivo mínimo, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
+| Última PR relevante                        | PR 29 — PR4 textual: modelo mínimo de resposta livre governada |
+| Último commit funcional                    | `3cbeba4d120748e62fa79497c5c470872d6a750b` — `feat(speech): criar resposta livre governada` |
+| Pendência remanescente herdada             | após a PR 28 ainda faltava explicitar como a resposta livre da IA permanece alinhada ao Core e ao contrato cognitivo sem virar script |
+| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV após resposta livre governada, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-21T11:28:21.7507270-03:00 |
+| Última atualização                         | 2026-04-21T11:46:39.4804111-03:00 |
 
 ---
 
@@ -39,9 +39,9 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR 28 — PR3 textual: contrato cognitivo mínimo da atendente especialista MCMV.
+PR 29 — PR4 textual: modelo mínimo de resposta livre governada.
 
-O recorte adicionou uma camada cognitiva mínima para orientar COMO a IA deve agir: postura consultiva humana, qualificação inteligente, uso responsável de conhecimento MCMV/CEF, exploração de possibilidades reais de conversão, respeito ao `next_objective` e aos bloqueios estruturais. A camada não escreve resposta final, não cria script por stage e não substitui a surface da IA.
+O recorte adicionou `src/speech/free-response.ts` para validar uma resposta livre autorada pela IA contra policy, surface e contrato cognitivo. A governança continua invisível e estrutural: preserva `next_objective`, bloqueios e limites MCMV/CEF, rejeita promessa de aprovação e não escreve texto alternativo.
 
 ## 2c. Pendência contratual
 
@@ -69,7 +69,8 @@ A frente agora possui:
 - primeira surface final mínima que publica somente texto autorado pela IA;
 - rejeição explícita de autoria mecânica para resposta final;
 - contrato cognitivo mínimo da atendente especialista MCMV;
-- smoke específico cobrindo fallback não dominante, ausência de texto final gerado pelo mecânico e proibição de script rígido dominante.
+- modelo mínimo de resposta livre governada;
+- smoke específico cobrindo fallback não dominante, ausência de texto final gerado pelo mecânico, proibição de script rígido dominante e rejeição de promessa de aprovação.
 
 ## 5. Classe da última tarefa
 
@@ -77,11 +78,11 @@ A frente agora possui:
 
 ## 6. Última PR relevante
 
-PR 28 — PR3 textual: contrato cognitivo mínimo da atendente especialista MCMV.
+PR 29 — PR4 textual: modelo mínimo de resposta livre governada.
 
 ## 7. Último commit funcional
 
-`094b76aca3131d32dbb47f35e33ff6907faf87b8` — `feat(speech): criar contrato cognitivo mcmv minimo`.
+`3cbeba4d120748e62fa79497c5c470872d6a750b` — `feat(speech): criar resposta livre governada`.
 
 ## 8. Entregas concluídas
 
@@ -96,6 +97,8 @@ PR 28 — PR3 textual: contrato cognitivo mínimo da atendente especialista MCMV
 - Smoke ampliado para provar que a surface aceita autoria `llm` e rejeita autoria `mechanical`.
 - Contrato cognitivo mínimo criado em `src/speech/cognitive.ts`.
 - Smoke ampliado para provar postura consultiva MCMV, autoridade cognitiva da IA, proibição de promessa de aprovação, proibição de script rígido e fallback dominante.
+- Modelo mínimo de resposta livre governada criado em `src/speech/free-response.ts`.
+- Smoke ampliado para provar resposta livre da IA, respeito a bloqueio/`next_objective`, ausência de texto escrito pela governança e rejeição de promessa de aprovação.
 
 ## 9. Pendências
 
@@ -105,7 +108,7 @@ PR 28 — PR3 textual: contrato cognitivo mínimo da atendente especialista MCMV
 
 ## 10. Pendência remanescente herdada
 
-Após a PR 27, o contrato cognitivo mínimo da atendente especialista MCMV ainda estava pendente. Este recorte define a camada mínima de orientação cognitiva da IA sem transformar essa orientação em script duro.
+Após a PR 28, ainda faltava explicitar o modelo mínimo de resposta livre sob governança estrutural. Este recorte prova que a IA pode adaptar tom e profundidade ao contexto sem contrariar o Core, sem ignorar bloqueios e sem promessa de aprovação.
 
 ## 11. Bloqueios
 
@@ -119,7 +122,7 @@ Após a PR 27, o contrato cognitivo mínimo da atendente especialista MCMV ainda
 
 ## 12. Próximo passo autorizado
 
-Próximo recorte textual da atendente especialista MCMV após o contrato cognitivo mínimo, ainda sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+Próximo recorte textual da atendente especialista MCMV após resposta livre governada, ainda sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
 
 Esse próximo recorte deve continuar provando que a IA escreve a resposta final, que a governança estrutural apenas restringe/valida/informa e que a postura consultiva MCMV não vira script rígido.
 
@@ -130,7 +133,7 @@ Esse próximo recorte deve continuar provando que a IA escreve a resposta final,
 
 ## 14. Última atualização
 
-2026-04-21T11:28:21.7507270-03:00 — PR 28: contrato cognitivo mínimo da atendente especialista MCMV.
+2026-04-21T11:46:39.4804111-03:00 — PR 29: modelo mínimo de resposta livre governada.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -149,4 +152,4 @@ Fontes de verdade consultadas — última tarefa:
   Handoff da frente lido:      `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — L03 identificado, conteúdo não transcrito
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — ancoragem L03/L19, fluxo LLM-first, contrato cognitivo, MCMV/CEF e não promessa de aprovação; sem regra nova de negócio nesta PR
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — ancoragem L03/L19, fluxo LLM-first, conversa livre sob governança, MCMV/CEF e não promessa de aprovação; sem regra nova de negócio nesta PR
