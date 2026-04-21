@@ -5,21 +5,21 @@
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | PR 30 — PR5 textual: múltiplas informações no mesmo turno |
-| Pendência contratual                       | próximos recortes textuais da atendente especialista MCMV; provedor LLM real e prompt final de produção completo ainda não abertos |
+| Última PR executou qual recorte            | PR 31 — PR5 canônica: preparação para multimodalidade/áudio |
+| Pendência contratual                       | próximos recortes textuais/preparatórios da atendente especialista MCMV; provedor LLM real, prompt final de produção, áudio real e multimodalidade plena ainda não abertos |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
 | Estado atual                               | em execução |
 | Classe da última tarefa                    | contratual |
-| Última PR relevante                        | PR 30 — PR5 textual: múltiplas informações no mesmo turno |
-| Último commit funcional                    | `5df32be9e7d1b5b33c44b034aad03aa02d5095be` — `feat(speech): tratar turno composto governado` |
-| Pendência remanescente herdada             | após a PR 29 ainda faltava tratar múltiplas informações no mesmo turno sem virar parser mecânico dominante |
-| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV após turno composto governado, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
+| Última PR relevante                        | PR 31 — PR5 canônica: preparação para multimodalidade/áudio |
+| Último commit funcional                    | `289e8a9` — `feat(speech): preparar fronteira multimodal` |
+| Pendência remanescente herdada             | após a PR 30 faltava preparar a fronteira futura de multimodalidade/áudio sem abrir áudio real, STT/TTS, canal, Worker ou integração externa |
+| Próximo passo autorizado                   | próximo recorte textual/preparatório da atendente especialista MCMV após fronteira multimodal mínima, sem áudio real, multimodalidade plena, Supabase, Meta/WhatsApp, Worker ou telemetria |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-21T12:03:16.1940591-03:00 |
+| Última atualização                         | 2026-04-21T12:24:16.7397546-03:00 |
 
 ---
 
@@ -39,15 +39,15 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR 30 — PR5 textual: múltiplas informações no mesmo turno.
+PR 31 — PR5 canônica: preparação para multimodalidade/áudio.
 
-O recorte adicionou `src/speech/composite-turn.ts` para organizar múltiplos sinais já interpretados como contexto da IA, sem parsear texto cru e sem dar prioridade ao mecânico. A camada preserva `next_objective`, bloqueios, limites MCMV/CEF e resposta livre governada.
+O recorte adicionou `src/speech/multimodal-readiness.ts` para declarar a fronteira preparatória de multimodalidade/áudio futuro. A camada não executa áudio real, STT, TTS, mídia, canal ou provedor externo; ela apenas fixa que modalidade futura será forma de entrada/saída sob a mesma governança, sem virar novo cérebro e sem dar prioridade de fala ao mecânico.
 
 ## 2c. Pendência contratual
 
-Executar os próximos recortes textuais da atendente especialista MCMV, preservando IA soberana e sem fala mecânica.
+Executar os próximos recortes textuais/preparatórios da atendente especialista MCMV, preservando IA soberana e sem fala mecânica.
 
-Ainda não foram abertos: provedor LLM real, prompt final de produção completo, áudio, multimodalidade plena, Supabase, Meta/WhatsApp e telemetria.
+Ainda não foram abertos: provedor LLM real, prompt final de produção completo, áudio real, STT/TTS real, multimodalidade plena, Supabase, Meta/WhatsApp, Worker e telemetria.
 
 ## 2d. Contrato encerrado?
 
@@ -71,7 +71,8 @@ A frente agora possui:
 - contrato cognitivo mínimo da atendente especialista MCMV;
 - modelo mínimo de resposta livre governada;
 - modelo mínimo de turno composto governado;
-- smoke específico cobrindo fallback não dominante, ausência de texto final gerado pelo mecânico, proibição de script rígido dominante, rejeição de promessa de aprovação e múltiplos sinais sem sobrescrever o Core.
+- fronteira preparatória mínima para multimodalidade/áudio futuro;
+- smoke específico cobrindo fallback não dominante, ausência de texto final gerado pelo mecânico, proibição de script rígido dominante, rejeição de promessa de aprovação, múltiplos sinais sem sobrescrever o Core e preparação multimodal sem áudio real.
 
 ## 5. Classe da última tarefa
 
@@ -79,11 +80,11 @@ A frente agora possui:
 
 ## 6. Última PR relevante
 
-PR 30 — PR5 textual: múltiplas informações no mesmo turno.
+PR 31 — PR5 canônica: preparação para multimodalidade/áudio.
 
 ## 7. Último commit funcional
 
-`5df32be9e7d1b5b33c44b034aad03aa02d5095be` — `feat(speech): tratar turno composto governado`.
+`289e8a9` — `feat(speech): preparar fronteira multimodal`.
 
 ## 8. Entregas concluídas
 
@@ -102,20 +103,22 @@ PR 30 — PR5 textual: múltiplas informações no mesmo turno.
 - Smoke ampliado para provar resposta livre da IA, respeito a bloqueio/`next_objective`, ausência de texto escrito pela governança e rejeição de promessa de aprovação.
 - Modelo mínimo de turno composto governado criado em `src/speech/composite-turn.ts`.
 - Smoke ampliado para provar que múltiplas informações informam a IA sem parser mecânico dominante, sem sobrescrever `next_objective`/bloqueios e sem promessa de aprovação.
+- Preparação multimodal mínima criada em `src/speech/multimodal-readiness.ts`.
+- Smoke ampliado para provar que áudio futuro é apenas modalidade/adaptador, não novo cérebro, e que áudio real, STT/TTS, canal externo e processamento de mídia continuam desligados.
 
 ## 9. Pendências
 
-- Próximos recortes textuais da atendente especialista MCMV.
+- Próximos recortes textuais/preparatórios da atendente especialista MCMV.
 - Integração futura com provedor LLM real e prompt final de produção completo, em recorte próprio.
 - Áudio, multimodalidade plena, Supabase, Meta/WhatsApp e telemetria seguem bloqueados nesta frente.
 
 ## 10. Pendência remanescente herdada
 
-Após a PR 29, ainda faltava tratar respostas compostas com múltiplas informações no mesmo turno. Este recorte prova que a IA pode receber vários sinais como contexto sem perder liberdade de fala e sem permitir que sinais extras sobrescrevam o Core.
+Após a PR 30, ainda faltava preparar a fronteira futura de multimodalidade/áudio sem abrir implementação real. Este recorte prova que áudio futuro será apenas forma de entrada/saída sob a mesma governança textual, sem mudar autoridade de decisão, sem mudar autoridade de fala e sem prioridade mecânica.
 
 ## 11. Bloqueios
 
-- Áudio/multimodalidade plena permanece bloqueado.
+- Áudio real, STT/TTS real e multimodalidade plena permanecem bloqueados.
 - Supabase permanece fora deste contrato inicial.
 - Meta/WhatsApp permanece fora deste contrato inicial.
 - Telemetria permanece fora deste contrato inicial.
@@ -125,7 +128,7 @@ Após a PR 29, ainda faltava tratar respostas compostas com múltiplas informaç
 
 ## 12. Próximo passo autorizado
 
-Próximo recorte textual da atendente especialista MCMV após turno composto governado, ainda sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+Próximo recorte textual/preparatório da atendente especialista MCMV após fronteira multimodal mínima, ainda sem áudio real, STT/TTS real, multimodalidade plena, Supabase, Meta/WhatsApp, Worker ou telemetria.
 
 Esse próximo recorte deve continuar provando que a IA escreve a resposta final, que a governança estrutural apenas restringe/valida/informa e que a postura consultiva MCMV não vira script rígido.
 
@@ -136,7 +139,7 @@ Esse próximo recorte deve continuar provando que a IA escreve a resposta final,
 
 ## 14. Última atualização
 
-2026-04-21T12:03:16.1940591-03:00 — PR 30: múltiplas informações no mesmo turno.
+2026-04-21T12:24:16.7397546-03:00 — PR 31: preparação para multimodalidade/áudio.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -155,4 +158,4 @@ Fontes de verdade consultadas — última tarefa:
   Handoff da frente lido:      `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — L03 identificado, conteúdo não transcrito
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — ancoragem L03/L19, LLM conversa livremente, múltiplas informações no mesmo turno, resposta natural + payload estruturado, MCMV/CEF e não promessa de aprovação; sem regra nova de negócio nesta PR
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — páginas 3, 8, 12, 13, 14, 124 e 125; conversa livre governada, multimodal sob mesma governança, áudio como apresentação e dependência futura de persistência; sem áudio real nesta PR
