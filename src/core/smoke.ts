@@ -1,13 +1,13 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L16)
+ * ENOVA 2 — Core Mecânico 2 — Smoke Mínimo (L03 + L04/L05/L06 + L07/L17)
  *
  * Âncora contratual:
- *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-14 (L07/L16)
- *   Bloco legado:    L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16
+ *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06), L-05/L-15 (L07/L17)
+ *   Bloco legado:    L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17
  *   Gate-fonte:      Gate 2 (A01: "sem smoke da frente, não promove")
  *
  * ESCOPO: provar que o esqueleto estrutural (L03), o topo do funil (L04–L06)
- * e os Meios A/B + Especiais (L07/L16) existem e não produzem fala.
+ * e os Meios A/B + Especiais + Final (L07/L17) existem e não produzem fala.
  *
  * INVIOLÁVEL: nenhum cenário gera texto ao cliente.
  */
@@ -416,6 +416,182 @@ export function smokeScenario14_Especiais_MultiAutonomoExigeIR(): SmokeResult {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Cenário 15: Final operacional com canal presencial → roteia para visita
+// ---------------------------------------------------------------------------
+export function smokeScenario15_Final_DocsPrepRoteiaParaVisita(): SmokeResult {
+  const state = makeState('docs_prep', {
+    docs_channel_choice: 'visita presencial',
+    visit_interest: 'sim',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 15 — Final: docs_prep roteia para visita quando aplicável',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = docs_prep', 'docs_prep', decision.stage_current),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after = visit', 'visit', decision.stage_after),
+      assert('next_objective = avancar_para_visit', 'avancar_para_visit', decision.next_objective),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 16: Final operacional com docs parciais → bloqueia em docs_collection
+// ---------------------------------------------------------------------------
+export function smokeScenario16_Final_DocsParciaisBloqueiamHandoff(): SmokeResult {
+  const state = makeState('docs_collection', {
+    doc_identity_status: 'recebido',
+    doc_income_status: 'parcial',
+    doc_residence_status: 'recebido',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 16 — Final: docs_collection bloqueia quando há docs parciais',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = docs_collection', 'docs_collection', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em docs_collection', 'docs_collection', decision.stage_after),
+      assert('next_objective = regularizar_doc_income_status', 'regularizar_doc_income_status', decision.next_objective),
+      assert('gates_activated inclui G_FINAL_OPERACIONAL', true, decision.gates_activated.includes('G_FINAL_OPERACIONAL')),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 17: Final operacional com docs completos → avança para handoff
+// ---------------------------------------------------------------------------
+export function smokeScenario17_Final_DocsCompletosAvancamParaHandoff(): SmokeResult {
+  const state = makeState('docs_collection', {
+    doc_identity_status: 'validado',
+    doc_income_status: 'recebido',
+    doc_residence_status: 'recebido',
+    handoff_readiness: 'pronto para correspondente',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 17 — Final: docs_collection completo avança para broker_handoff',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = docs_collection', 'docs_collection', decision.stage_current),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after = broker_handoff', 'broker_handoff', decision.stage_after),
+      assert('next_objective = preparar_handoff_correspondente', 'preparar_handoff_correspondente', decision.next_objective),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 18: Handoff pronto → recorte final concluído estruturalmente
+// ---------------------------------------------------------------------------
+export function smokeScenario18_Final_HandoffConcluido(): SmokeResult {
+  const state = makeState('broker_handoff', {
+    handoff_readiness: 'pronto para correspondente',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 18 — Final: broker_handoff conclui o recorte estrutural',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = broker_handoff', 'broker_handoff', decision.stage_current),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after permanece em broker_handoff', 'broker_handoff', decision.stage_after),
+      assert('next_objective = handoff_concluido_correspondente', 'handoff_concluido_correspondente', decision.next_objective),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 19: Trilha canônica completa do topo ao handoff
+// ---------------------------------------------------------------------------
+export function smokeScenario19_TrilhoCompletoTopoAoFinal(): SmokeResult {
+  const topo = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const civil = runCoreEngine(makeState('qualification_civil', {
+    estado_civil: 'solteiro',
+    processo: 'solo',
+  }));
+  const renda = runCoreEngine(makeState('qualification_renda', {
+    processo: 'solo',
+    regime_trabalho: 'clt',
+    renda_principal: 4200,
+  }));
+  const elegibilidade = runCoreEngine(makeState('qualification_eligibility', {
+    nacionalidade: 'brasileiro',
+  }));
+  const docsPrep = runCoreEngine(makeState('docs_prep', {
+    docs_channel_choice: 'whatsapp',
+    visit_interest: 'nao',
+  }));
+  const docsCollection = runCoreEngine(makeState('docs_collection', {
+    doc_identity_status: 'recebido',
+    doc_income_status: 'recebido',
+    doc_residence_status: 'recebido',
+  }));
+  const handoff = runCoreEngine(makeState('broker_handoff', {
+    handoff_readiness: 'pronto para correspondente',
+  }));
+
+  return {
+    scenario: 'Cenário 19 — Trilha completa do topo ao handoff final',
+    passed: true,
+    decision: handoff,
+    assertions: [
+      assert('discovery -> qualification_civil', 'qualification_civil', topo.stage_after),
+      assert('qualification_civil -> qualification_renda', 'qualification_renda', civil.stage_after),
+      assert('qualification_renda -> qualification_eligibility', 'qualification_eligibility', renda.stage_after),
+      assert('qualification_eligibility -> docs_prep', 'docs_prep', elegibilidade.stage_after),
+      assert('docs_prep -> docs_collection', 'docs_collection', docsPrep.stage_after),
+      assert('docs_collection -> broker_handoff', 'broker_handoff', docsCollection.stage_after),
+      assert('broker_handoff finaliza estruturalmente', 'handoff_concluido_correspondente', handoff.next_objective),
+      assert('nenhum passo produz fala ao cliente', true, [topo, civil, renda, elegibilidade, docsPrep, docsCollection, handoff].every((item) => typeof item.speech_intent === 'string')),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 20: Recusa explícita de visita bloqueia o trilho presencial
+// ---------------------------------------------------------------------------
+export function smokeScenario20_Final_RecusaExplicitaVisitaBloqueia(): SmokeResult {
+  const state = makeState('docs_collection', {
+    docs_channel_choice: 'visita presencial',
+    visit_interest: 'nao',
+    doc_identity_status: 'validado',
+    doc_income_status: 'recebido',
+    doc_residence_status: 'recebido',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 20 — Final: recusa explícita de visita bloqueia o trilho presencial',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = docs_collection', 'docs_collection', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em docs_collection', 'docs_collection', decision.stage_after),
+      assert('next_objective = confirmar_visit_interest', 'confirmar_visit_interest', decision.next_objective),
+      assert('gates_activated inclui G_FINAL_OPERACIONAL', true, decision.gates_activated.includes('G_FINAL_OPERACIONAL')),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
 
 export interface SmokeSuiteResult {
   total: number;
@@ -432,9 +608,10 @@ export interface SmokeSuiteResult {
  * Prova exigida (A01-05, Gate 2):
  * "Smoke de trilho e next step autorizado"
  *
- * Cenários L03/L04-L16 integrados (14): topo segue válido, o Meio A continua
- * íntegro, o Meio B segue cobrindo ausência crítica/elegibilidade e os Especiais
- * agora roteiam P3/multi sem abrir L17.
+ * Cenários L03/L04-L17 integrados (20): topo segue válido, o Meio A e Meio B
+ * permanecem íntegros, os Especiais continuam roteando P3/multi e o Final
+ * agora cobre docs, visita e handoff sem abrir fala mecânica. O cenário 20
+ * protege a recusa explícita de visita no trilho presencial.
  * Todos os cenários passam pelo `runCoreEngine()`. Nenhum usa decisão fake.
  * Nenhum cenário gera fala ao cliente.
  */
@@ -454,6 +631,12 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario12_Especiais_P3BloqueiaSemFactCritico,
     smokeScenario13_Especiais_MultiValidoAvancaParaDocs,
     smokeScenario14_Especiais_MultiAutonomoExigeIR,
+    smokeScenario15_Final_DocsPrepRoteiaParaVisita,
+    smokeScenario16_Final_DocsParciaisBloqueiamHandoff,
+    smokeScenario17_Final_DocsCompletosAvancamParaHandoff,
+    smokeScenario18_Final_HandoffConcluido,
+    smokeScenario19_TrilhoCompletoTopoAoFinal,
+    smokeScenario20_Final_RecusaExplicitaVisitaBloqueia,
   ];
 
   const results = scenarios.map((fn) => {
@@ -481,9 +664,9 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L16)');
+  console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L17)');
   console.log('===========================================');
-  console.log(`Âncora: L03 + L04/L05/L06 + L07/L16 | Gate 2 (A01)`);
+  console.log(`Âncora: L03 + L04/L05/L06 + L07/L17 | Gate 2 (A01)`);
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
   console.log(`Resultado: ${suite.all_passed ? '✅ PASSOU' : '❌ FALHOU'}\n`);

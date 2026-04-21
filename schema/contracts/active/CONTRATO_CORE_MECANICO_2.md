@@ -11,8 +11,8 @@
 | Blocos legados obrigatórios       | L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17               |
 | Blocos legados complementares     | L01, L02, L18, L19, C*                                                                    |
 | Ordem mínima de leitura da frente | L03 → L04→L06 (topo) → L07→L10 (Meio A) → L11→L14 (Meio B) → L15→L16 (Especiais) → L17 (Final) |
-| Status                            | Aberto                                                                                    |
-| Última atualização                | 2026-04-20T17:47:00Z                                                                      |
+| Status                            | Em execução                                                                               |
+| Última atualização                | 2026-04-20T21:34:11.7830094-03:00                                                         |
 
 ---
 

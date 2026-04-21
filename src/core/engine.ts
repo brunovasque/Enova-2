@@ -1,9 +1,9 @@
 /**
- * ENOVA 2 — Core Mecânico 2 — Motor de Decisão Estrutural (L03 + L04/L05/L06 + L07/L16)
+ * ENOVA 2 — Core Mecânico 2 — Motor de Decisão Estrutural (L03 + L04/L05/L06 + L07/L17)
  *
  * Âncora contratual:
  *   Cláusula-fonte:  L-01 (L03), L-02 (L04), L-03 (L05), L-04 (L06)
- *   Bloco legado:    L03 — Mapa Canônico do Funil; L04-L06 — Topo; L07-L10 — Meio A; L11-L14 — Meio B; L15-L16 — Especiais
+ *   Bloco legado:    L03 — Mapa Canônico do Funil; L04-L06 — Topo; L07-L10 — Meio A; L11-L14 — Meio B; L15-L16 — Especiais; L17 — Final
  *
  * MISSÃO: receber estado estrutural, avaliar gates, retornar decisão estrutural.
  *
@@ -12,6 +12,7 @@
  *   - Stage 'qualification_civil' (Meio A): usa L07/L10 — extractMeioASignals + evaluateMeioACriteria
  *   - Stage 'qualification_renda' e 'qualification_eligibility' (Meio B): usa L11/L14
  *   - Stage 'qualification_special' (Especiais): usa L15/L16
+ *   - Stages 'docs_prep', 'docs_collection', 'visit' e 'broker_handoff': usam L17
  *   - Demais stages: usa caminho genérico L03 — G_FATO_CRITICO_AUSENTE
  *
  * RESTRIÇÃO INVIOLÁVEL: esta função não retorna texto ao cliente.
@@ -32,6 +33,13 @@ import {
 } from './meio-b-gates.ts';
 import { extractEspeciaisSignals } from './especiais-parser.ts';
 import { evaluateEspeciaisCriteria } from './especiais-gates.ts';
+import { extractFinalSignals } from './final-parser.ts';
+import {
+  evaluateBrokerHandoffCriteria,
+  evaluateDocsCollectionCriteria,
+  evaluateDocsPrepCriteria,
+  evaluateVisitCriteria,
+} from './final-gates.ts';
 
 // ---------------------------------------------------------------------------
 // Ponto de entrada do motor
@@ -75,6 +83,22 @@ export function runCoreEngine(state: LeadState): CoreDecision {
 
   if (state.current_stage === 'qualification_special') {
     return runEspeciaisDecision(state);
+  }
+
+  if (state.current_stage === 'docs_prep') {
+    return runDocsPrepDecision(state);
+  }
+
+  if (state.current_stage === 'docs_collection') {
+    return runDocsCollectionDecision(state);
+  }
+
+  if (state.current_stage === 'visit') {
+    return runVisitDecision(state);
+  }
+
+  if (state.current_stage === 'broker_handoff') {
+    return runBrokerHandoffDecision(state);
   }
 
   // --- Caminho genérico (L03): demais stages ---
@@ -243,6 +267,80 @@ function runEspeciaisDecision(state: LeadState): CoreDecision {
     speech_intent: blockAdvance
       ? 'bloqueio'
       : stageAfter !== state.current_stage
+        ? 'transicao_stage'
+        : 'coleta_dado',
+    decision_id: `core-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    evaluated_at: new Date().toISOString(),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Caminhos de decisão do Final Operacional — integram L17 no Core principal
+// ---------------------------------------------------------------------------
+
+function runDocsPrepDecision(state: LeadState): CoreDecision {
+  const finalSignals = extractFinalSignals({
+    facts_current: state.facts,
+    facts_extracted: {},
+  });
+
+  const finalCriteria = evaluateDocsPrepCriteria(finalSignals);
+  return buildFinalDecision('docs_prep', state.current_stage, finalCriteria);
+}
+
+function runDocsCollectionDecision(state: LeadState): CoreDecision {
+  const finalSignals = extractFinalSignals({
+    facts_current: state.facts,
+    facts_extracted: {},
+  });
+
+  const finalCriteria = evaluateDocsCollectionCriteria(finalSignals);
+  return buildFinalDecision('docs_collection', state.current_stage, finalCriteria);
+}
+
+function runVisitDecision(state: LeadState): CoreDecision {
+  const finalSignals = extractFinalSignals({
+    facts_current: state.facts,
+    facts_extracted: {},
+  });
+
+  const finalCriteria = evaluateVisitCriteria(finalSignals);
+  return buildFinalDecision('visit', state.current_stage, finalCriteria);
+}
+
+function runBrokerHandoffDecision(state: LeadState): CoreDecision {
+  const finalSignals = extractFinalSignals({
+    facts_current: state.facts,
+    facts_extracted: {},
+  });
+
+  const finalCriteria = evaluateBrokerHandoffCriteria(finalSignals);
+  return buildFinalDecision('broker_handoff', state.current_stage, finalCriteria);
+}
+
+function buildFinalDecision(
+  stageCurrent: LeadState['current_stage'],
+  currentStage: LeadState['current_stage'],
+  criteria: {
+    can_advance: boolean;
+    authorized_next_step: string;
+    next_objective: string;
+    activated_gates: CoreDecision['gates_activated'];
+  },
+): CoreDecision {
+  const blockAdvance = !criteria.can_advance;
+  const stageAfter = criteria.authorized_next_step as LeadState['current_stage'];
+  const handoffCompleted = !blockAdvance && stageCurrent === 'broker_handoff';
+
+  return {
+    stage_current: stageCurrent,
+    stage_after: stageAfter,
+    next_objective: criteria.next_objective,
+    block_advance: blockAdvance,
+    gates_activated: criteria.activated_gates,
+    speech_intent: blockAdvance
+      ? 'bloqueio'
+      : handoffCompleted || stageAfter !== currentStage
         ? 'transicao_stage'
         : 'coleta_dado',
     decision_id: `core-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,

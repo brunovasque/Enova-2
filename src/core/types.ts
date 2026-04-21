@@ -41,6 +41,15 @@ export type {
 } from './especiais-rules.ts';
 export type { EspeciaisTurnExtract, EspeciaisSignals } from './especiais-parser.ts';
 export type { EspeciaisCriteriaResult } from './especiais-gates.ts';
+export type {
+  DocsChannelChoice,
+  VisitInterest,
+  DocStatus,
+  HandoffReadiness,
+  FinalParseStatus,
+} from './final-rules.ts';
+export type { FinalTurnExtract, FinalSignals } from './final-parser.ts';
+export type { FinalCriteriaResult } from './final-gates.ts';
 
 // ---------------------------------------------------------------------------
 // Stages canônicos do funil — derivados de L03
@@ -95,7 +104,8 @@ export type GateId =
   | 'G_COMPOSICAO_FAMILIAR'    // slot reservado → L04 (qualificação civil)
   | 'G_REGIME_RENDA'           // slot reservado → L05 (qualificação de renda)
   | 'G_ELEGIBILIDADE'          // slot reservado → L06 (elegibilidade documental)
-  | 'G_TRILHO_ESPECIAL';       // slot ativo em L15/L16 (P3, multi e variantes)
+  | 'G_TRILHO_ESPECIAL'        // slot ativo em L15/L16 (P3, multi e variantes)
+  | 'G_FINAL_OPERACIONAL';     // slot ativo em L17 (docs, visita e handoff)
 
 /**
  * Resultado da avaliação de um gate.

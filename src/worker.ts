@@ -26,6 +26,7 @@ const STAGE_IDS: StageId[] = [
   'qualification_civil',
   'qualification_renda',
   'qualification_eligibility',
+  'qualification_special',
   'docs_prep',
   'docs_collection',
   'broker_handoff',
