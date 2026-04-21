@@ -3,18 +3,18 @@
 | Campo                                      | Valor |
 |--------------------------------------------|-------|
 | Frente                                     | Speech Engine e Surface Única |
-| Data                                       | 2026-04-21T10:07:38.1335856-03:00 |
-| Estado da frente                           | contrato aberto |
-| Classificação da tarefa                    | governança |
-| Última PR relevante                        | PR 25 — abertura do contrato da frente sucessora do Core |
+| Data                                       | 2026-04-21T10:44:29.3485721-03:00 |
+| Estado da frente                           | em execução |
+| Classificação da tarefa                    | contratual |
+| Última PR relevante                        | PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
-| Recorte executado do contrato              | abertura contratual; nenhuma execução técnica |
-| Pendência contratual remanescente          | PR1 textual mínima da atendente especialista MCMV |
+| Recorte executado do contrato              | PR 26 — PR1 textual mínima: envelope de política para IA soberana |
+| Pendência contratual remanescente          | próximos recortes textuais da atendente especialista MCMV |
 | Houve desvio de contrato?                  | não |
 | Contrato encerrado nesta PR?               | não |
 | Item do A01 atendido                       | Fase 2 — Prioridade 2: Speech Engine e Surface Única reinterpretado por A00-ADENDO-01 |
-| Próximo passo autorizado                   | PR1 de execução textual mínima da atendente especialista MCMV |
-| Próximo passo foi alterado?                | sim — saiu de abertura contratual para PR1 de execução |
+| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV |
+| Próximo passo foi alterado?                | sim — saiu da PR1 textual mínima para o próximo recorte textual |
 | Tarefa fora de contrato?                   | não |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
@@ -24,69 +24,70 @@
 
 ## 1. Contexto curto
 
-O Core Mecânico 2 foi encerrado formalmente e o próximo passo autorizado era abrir o contrato sucessor. Esta tarefa abriu a frente "Speech Engine e Surface Única" mantendo compatibilidade documental com A00/A01/A02, mas subordinando sua interpretação ao A00-ADENDO-01.
+O Core Mecânico 2 foi encerrado formalmente e a PR 25 abriu o contrato sucessor. A PR 26 executou a PR1 textual mínima da frente "Speech Engine e Surface Única", mantendo a interpretação obrigatória como Atendente Especialista MCMV com Governança Estrutural.
 
 A frente deve ser entendida como Atendente Especialista MCMV com Governança Estrutural: a IA é soberana em raciocínio e fala; o mecânico restringe, valida, informa e registra, mas jamais escreve a resposta ao cliente.
 
-Nenhuma implementação funcional foi aberta nesta tarefa.
+O recorte implementado não redige resposta ao cliente. Ele produz apenas um envelope estrutural para a IA soberana consumir: proprietário da surface, restrições, padrões proibidos e decisão estrutural herdada do Core.
 
 ## 2. Classificação da tarefa
 
-**governança**
+**contratual**
 
 ## 3. Última PR relevante
 
-PR 25 — abertura do contrato da frente sucessora do Core.
+PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica.
 
 ## 4. O que a PR anterior fechou
 
-- Core Mecânico 2 encerrado formalmente.
-- Próximo passo autorizado passou a ser abertura do contrato sucessor.
+- Contrato ativo da frente aberto.
+- Status e handoff iniciais criados.
+- Próximo passo autorizado passou a ser PR1 textual mínima.
 
 ## 5. O que a PR anterior NÃO fechou
 
-- Contrato do Speech Engine e Surface Única ainda não existia.
-- Status e handoff da nova frente ainda não existiam.
+- Recorte textual mínimo ainda não existia.
+- Não havia smoke da frente Speech/Atendente MCMV.
 
 ## 6. Diagnóstico confirmado
 
-- `schema/contracts/_INDEX.md` marcava a frente Speech Engine e Surface Única como aguardando abertura.
-- `schema/status/_INDEX.md` e `schema/handoffs/_INDEX.md` marcavam os vivos da frente como a criar.
-- `schema/ADENDO_CANONICO_SOBERANIA_IA.md` exige que "Speech Engine" não seja interpretado como fala mecânica.
-- O A01 autoriza a Prioridade 2 após o Core, mas o adendo muda a interpretação: formar atendente especialista MCMV com IA soberana.
+- `schema/contracts/_INDEX.md` marcava a frente Speech Engine e Surface Única como aberta e aguardando PR1.
+- `schema/status/SPEECH_ENGINE_SURFACE_UNICA_STATUS.md` e `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md` apontavam PR1 textual mínima como próximo passo.
+- O código existente só possuía `speech_intent` estrutural no Core e resposta técnica do Worker; não havia surface conversacional final.
+- O recorte mínimo seguro é uma política estrutural para a IA soberana, não um gerador de fala.
 
 ## 7. O que foi feito
 
-- Criado contrato ativo da frente sucessora.
-- Atualizado índice de contratos.
-- Criado status vivo inicial da frente.
-- Criado handoff inicial da frente.
-- Atualizados índices de status e handoffs.
-- Registrada proibição formal de fala mecânica, fallback dominante e script rígido como motor principal da conversa.
+- Criado `src/speech/policy.ts` com envelope de política textual mínima.
+- Criado `src/speech/smoke.ts` para provar IA soberana, mecânico sem fala e fallback não dominante.
+- Adicionado script `smoke:speech`.
+- `smoke:all` passou a incluir o smoke textual mínimo.
+- Atualizados contrato, índice, status e handoff para estado em execução.
 
 ## 8. O que não foi feito
 
-- Não foi alterado código funcional do produto.
+- Não foi criada resposta final ao cliente.
 - Não foi criado prompt técnico final de produção.
-- Não foi implementada resposta final.
+- Não foi criada rota pública nova.
 - Não foi aberta multimodalidade, áudio, Supabase, Meta/WhatsApp ou telemetria.
 
 ## 9. O que esta PR fechou
 
-- Abertura contratual da frente sucessora do Core.
-- Subordinação explícita da frente ao A00-ADENDO-01.
-- Definição do próximo passo autorizado.
+- PR 26 — PR1 textual mínima da frente.
+- Prova de que a política preserva `surface_owner=llm`.
+- Prova de que `mechanical_may_write_customer_text=false`.
+- Prova de que fallback é guardrail não dominante.
 
 ## 10. O que continua pendente após esta PR
 
-- PR1 de execução textual mínima da atendente especialista MCMV.
-- Provas futuras de surface única com IA soberana e governança invisível.
+- Próximos recortes textuais da atendente especialista MCMV.
+- Surface final real escrita pela IA ainda fica para PR futura.
 
 ## 11. Esta tarefa foi fora de contrato?
 
 **não**
 
-É uma tarefa de governança para abertura do contrato da nova frente, autorizada pelo A01 e pelo estado vivo do Core encerrado.
+É uma PR de execução dentro do contrato ativo da frente.
 
 ## 11a. Contrato ativo
 
@@ -94,11 +95,11 @@ PR 25 — abertura do contrato da frente sucessora do Core.
 
 ## 11b. Recorte executado do contrato
 
-Abertura contratual; nenhuma execução técnica.
+PR 26 — PR1 textual mínima: envelope de política para IA soberana.
 
 ## 11c. Pendência contratual remanescente
 
-PR1 textual mínima da atendente especialista MCMV.
+Próximos recortes textuais da atendente especialista MCMV.
 
 ## 11d. Houve desvio de contrato?
 
@@ -116,6 +117,9 @@ PR1 textual mínima da atendente especialista MCMV.
 - `schema/status/_INDEX.md`
 - `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
 - `schema/handoffs/_INDEX.md`
+- `src/speech/policy.ts`
+- `src/speech/smoke.ts`
+- `package.json`
 
 ## 13. Item do A01 atendido
 
@@ -125,23 +129,24 @@ Interpretação obrigatória: Atendente Especialista MCMV com IA soberana e gove
 
 ## 14. Estado atual da frente
 
-**contrato aberto**
+**em execução**
 
 ## 15. Próximo passo autorizado
 
-PR 1 de execução textual mínima da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+Próximo recorte textual da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
 
 ## 16. Riscos
 
-- Regressão semântica do nome "Speech Engine" para fala mecânica; mitigada por cláusula explícita de A00-ADENDO-01.
-- PR futura tentar transformar fallback em cérebro; bloqueado pelo contrato.
-- PR futura abrir integração externa cedo demais; bloqueado como fora de escopo.
+- O recorte ainda não produz surface final real; isso é deliberado para evitar fala mecânica.
+- PR futura deve continuar provando que o LLM escreve a resposta final.
+- Supabase, Meta/WhatsApp, telemetria, áudio e multimodalidade seguem bloqueados.
 
 ## 17. Provas
 
-- Contrato ativo criado com cláusulas de soberania da IA.
-- Índices vivos atualizados.
-- Nenhum arquivo de código funcional foi modificado.
+- `npm run smoke:speech` passou com 2/2 cenários.
+- `npm run smoke:all` passou com Core, Worker e Speech.
+- `src/speech/policy.ts` não contém texto de atendimento ao cliente.
+- `src/speech/smoke.ts` prova `surface_owner=llm`, `mechanical_speech_priority=forbidden` e fallback não dominante.
 
 ## 18. Mudanças em dados persistidos (Supabase)
 
@@ -155,9 +160,9 @@ Permissões Cloudflare necessárias: nenhuma adicional
 
 Fontes de verdade consultadas:
   Índice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         Nenhum — frente aguardava abertura contratual
-  Status da frente lido:       Nenhum — status criado nesta tarefa
-  Handoff da frente lido:      Nenhum — handoff criado nesta tarefa
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md`
+  Status da frente lido:       `schema/status/SPEECH_ENGINE_SURFACE_UNICA_STATUS.md`
+  Handoff da frente lido:      `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  N/A — abertura governança sem consumo de regra transcrita
   PDF mestre consultado:       não consultado — tarefa de governança contratual sem definição de regra de negócio nova
