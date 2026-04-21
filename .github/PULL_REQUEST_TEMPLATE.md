@@ -1,30 +1,36 @@
 <!-- =====================================================================
      ENOVA 2 — PR TEMPLATE
-     Gate bloqueante (obrigatório no body): "Contrato ativo" + "Próximo passo autorizado"
-     Estes 2 campos são preenchidos automaticamente pelo auto-fix a partir dos arquivos vivos
-     quando estiverem ausentes ou vazios. Verifique se os valores refletem o estado atual.
-     Governança real: arquivos vivos em schema/status/, schema/handoffs/, schema/contracts/
+     Body da PR é gate real de governança.
+     Não abrir PR com template vazio, comentário HTML puro ou checklist solto.
+     Campos mínimos obrigatórios com valor real:
+       - Contrato ativo
+       - Próximo passo autorizado
+       - Objetivo
+       - Classificação da tarefa
+       - Escopo
+       - Fora de escopo
+       - Arquivos vivos atualizados
+       - Testes / Validação
+       - Plano de rollback
+     Se "Contrato encerrado nesta PR?" = sim, o bloco completo
+     --- ENCERRAMENTO DE CONTRATO ---
+     passa a ser obrigatório e bloqueante.
+     Fonte de verdade: arquivos vivos em schema/status/, schema/handoffs/, schema/contracts/
      ===================================================================== -->
 
 ## Contrato ativo
-<!-- ⚠️ CAMPO OBRIGATÓRIO — GATE BLOQUEANTE ⚠️ -->
-<!-- Copiar do arquivo vivo: schema/contracts/_INDEX.md → coluna "Contrato ativo" -->
-<!-- Exemplo: schema/contracts/active/CONTRATO_CORE_MECANICO_2.md -->
-<!-- Se nenhum contrato ativo: "Nenhum contrato ativo" -->
+<!-- OBRIGATÓRIO — valor real, não placeholder -->
+<!-- Copiar do arquivo vivo: schema/contracts/_INDEX.md -->
 
 ## Próximo passo autorizado
-<!-- ⚠️ CAMPO OBRIGATÓRIO — GATE BLOQUEANTE ⚠️ -->
-<!-- Copiar do último handoff: schema/handoffs/<FRENTE>_LATEST.md → campo "Próximo passo autorizado" -->
-<!-- Ou do status vivo: schema/status/<FRENTE>_STATUS.md → campo "Próximo passo autorizado" -->
-<!-- Este passo foi preservado ou alterado em relação ao que estava antes desta PR? -->
+<!-- OBRIGATÓRIO — valor real, não placeholder -->
+<!-- Copiar do handoff/status vivo da frente -->
 
 ## Objetivo
-<!-- Qual objetivo desta PR? -->
+<!-- OBRIGATÓRIO — objetivo claro e verificável desta PR -->
 
 ## Classificação da tarefa
-<!-- contratual | governança | fora_de_contrato | correcao_incidental | hotfix | diagnostico -->
-<!-- Ver definições completas em schema/TASK_CLASSIFICATION.md -->
-<!-- Se fora_de_contrato ou hotfix: incluir justificativa abaixo -->
+<!-- OBRIGATÓRIO — contratual | governança | fora_de_contrato | correcao_incidental | hotfix | diagnostico -->
 
 ## Última PR relevante
 <!-- Número e título da última PR que afetou esta frente -->
@@ -34,7 +40,7 @@
 
 ## Recorte executado nesta PR
 <!-- Qual parte do contrato ativo esta PR executa? -->
-<!-- Se esta PR não executa contrato (governança/infra): "N/A" -->
+<!-- Se esta PR não executa contrato: "N/A" -->
 
 ## O que esta PR fecha do contrato
 <!-- Lista objetiva dos itens do contrato concluídos por esta PR -->
@@ -44,83 +50,43 @@
 
 ## Houve desvio de contrato?
 <!-- não | sim -->
-<!-- Se sim: -->
-<!--   Tipo de desvio: <novo escopo | nova frente | entrega fora do objetivo | outro> -->
-<!--   Descrição: <o que aconteceu> -->
-<!--   Ação tomada: <parada | revisão formal | novo contrato> -->
-<!-- Ver schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md seção 6 -->
 
 ## Contrato encerrado nesta PR?
 <!-- não | sim -->
-<!-- Se sim: preencher o bloco de encerramento abaixo conforme CONTRACT_CLOSEOUT_PROTOCOL.md -->
-<!--
+<!-- Se sim, o bloco abaixo é obrigatório e bloqueante -->
+
 --- ENCERRAMENTO DE CONTRATO ---
-Contrato encerrado:                     <caminho do contrato>
-Contrato encerrado com sucesso?:        sim | não
-Objetivo do contrato cumprido?:         sim | não
-Critérios de aceite cumpridos?:         sim | não — <lista com status individual>
-Fora de escopo respeitado?:             sim | não
-Pendências remanescentes:               <lista ou "nenhuma">
-Evidências / provas do encerramento:    <lista>
-Data de encerramento:                   <data ISO 8601>
-PR que encerrou:                        <esta PR>
-Destino do contrato encerrado:          archive
-Próximo contrato autorizado:            <nome ou "nenhum">
--->
+Contrato encerrado:
+Contrato encerrado com sucesso?:
+Objetivo do contrato cumprido?:
+Critérios de aceite cumpridos?:
+Fora de escopo respeitado?:
+Pendências remanescentes:
+Evidências / provas do encerramento:
+Data de encerramento:
+PR que encerrou:
+Destino do contrato encerrado:
+Próximo contrato autorizado:
 
 ## Item do A01
 <!-- Qual fase/prioridade/item exato do A01 esta PR atende? -->
 
 ## Estado herdado
-<!-- O que você herdou da última PR? -->
-<!-- O que a última PR fechou: -->
-<!-- O que a última PR NÃO fechou: -->
-<!-- Por que esta PR existe (justificativa operacional): -->
-<!-- Esta tarefa está dentro ou fora do contrato ativo: -->
+<!-- O que a última PR fechou, o que não fechou, por que esta PR existe, se está dentro/fora do contrato -->
 
 ## Escopo
-<!-- O que está incluído exatamente nesta PR? -->
+<!-- OBRIGATÓRIO — o que está incluído exatamente nesta PR -->
 
 ## Fora de escopo
-<!-- O que NÃO está incluído nesta PR? -->
+<!-- OBRIGATÓRIO — o que NÃO está incluído nesta PR -->
 
 ## Mudanças em dados persistidos (Supabase)
 <!-- OBRIGATÓRIO em toda PR — inclusive quando não houver mudança -->
 <!-- Se não houver mudança: "Mudanças em dados persistidos (Supabase): nenhuma" -->
-<!-- Se houver mudança, preencher o bloco abaixo para CADA tabela afetada: -->
-<!--
-Mudanças em dados persistidos (Supabase): sim
-
-  Tabela afetada:
-  Tipo de mudança:          (create_table | alter_table | add_column | alter_column | drop_column | drop_table | add_index | drop_index | add_constraint | drop_constraint | alter_relationship | backfill | migration)
-  Coluna(s) afetada(s):
-  Motivo da mudança:
-  Impacto esperado:
-  Compatibilidade retroativa: (sim | não | parcial)
-  Necessidade de migração:
-  Necessidade de backfill:
-  Risco:                     (baixo | médio | alto)
-  Rollback:
--->
-<!-- Ver schema/DATA_CHANGE_PROTOCOL.md para referência completa -->
 
 ## Permissões Cloudflare necessárias
 <!-- OBRIGATÓRIO em toda PR — inclusive quando não houver necessidade nova -->
 <!-- Se não houver necessidade nova: "Permissões Cloudflare necessárias: nenhuma adicional" -->
-<!-- Se houver necessidade nova, preencher o bloco abaixo para CADA recurso afetado: -->
-<!--
-Permissões Cloudflare necessárias: sim
-
-  Recurso Cloudflare afetado:          (Workers Script | KV | R2 | D1 | Queues | Routes | Service Binding | Secrets | Vars | Observability | Outro)
-  Ação pretendida:
-  Permissões atuais suficientes?        (sim | não | incerto)
-  Permissões adicionais necessárias:
-  Motivo:
-  Impacto se não ampliar permissões:
-  Pode prosseguir sem ampliar?          (sim | não — justificativa)
-  Onde ajustar:                         (token Cloudflare | GitHub Secrets | wrangler.toml bindings | Cloudflare Dashboard | outro)
--->
-<!-- Ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md para referência completa -->
 
 ## O que esta PR fecha
 <!-- Lista objetiva do que foi concluído e fechado nesta PR -->
@@ -132,28 +98,25 @@ Permissões Cloudflare necessárias: sim
 <!-- Em que fase/estado a frente se encontra após esta entrega? -->
 
 ## Arquivos vivos atualizados
-<!-- Lista dos arquivos de status/handoff/contrato efetivamente atualizados nesta PR -->
-<!-- Ex: schema/status/CORE_MECANICO_2_STATUS.md, schema/handoffs/CORE_MECANICO_2_LATEST.md, schema/contracts/_INDEX.md -->
+<!-- OBRIGATÓRIO — listar os arquivos vivos realmente alterados no diff -->
+<!-- Se nenhum: "nenhuma atualização viva necessária" -->
 
 ## Referência de precedência
 <!-- Confirmar: A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis -->
 
 ## Testes / Validação
-<!-- Quais validações foram executadas? -->
+<!-- OBRIGATÓRIO — comandos e resultado objetivo -->
 
 ## Plano de rollback
-<!-- Como reverter com segurança em caso de problema? -->
-<!-- Se houve mudança em dados persistidos (Supabase), o plano de rollback de dados deve estar incluído aqui -->
+<!-- OBRIGATÓRIO — como reverter com segurança em caso de problema -->
 
 ## Riscos
 <!-- Riscos conhecidos e mitigação -->
 
 ## Evidências
-<!-- Links, capturas, logs, diffs, etc. -->
+<!-- Links, logs, diffs, capturas, PRs, commits, smoke etc. -->
 
 ## Disciplina de request e modelo
-<!-- Obrigatório em PRs que envolvam automação, modelo ou custo operacional relevante -->
 <!-- Complexidade da tarefa: baixa | média | alta -->
 <!-- Modelo utilizado: Sonnet | modelo mais caro (justificar se mais caro) -->
-<!-- Automação introduzida: nenhuma | sim — descrição e justificativa de custo -->
-<!-- Ver schema/REQUEST_ECONOMY_PROTOCOL.md -->
+<!-- Automação introduzida: nenhuma | sim — descrição e justificativa -->
