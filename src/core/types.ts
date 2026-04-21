@@ -35,6 +35,12 @@ export type {
   MeioBRendaCriteriaResult,
   MeioBElegibilidadeCriteriaResult,
 } from './meio-b-gates.ts';
+export type {
+  EspecialTrackKind,
+  EspeciaisParseStatus,
+} from './especiais-rules.ts';
+export type { EspeciaisTurnExtract, EspeciaisSignals } from './especiais-parser.ts';
+export type { EspeciaisCriteriaResult } from './especiais-gates.ts';
 
 // ---------------------------------------------------------------------------
 // Stages canônicos do funil — derivados de L03
@@ -52,6 +58,7 @@ export type StageId =
   | 'qualification_civil'    // meio A: estado civil, composição familiar, processo
   | 'qualification_renda'    // meio B: renda, regime de trabalho
   | 'qualification_eligibility' // gates formais: elegibilidade documental
+  | 'qualification_special'  // especiais: trilhos P3, multi e variantes mínimas
   | 'docs_prep'              // preparação: canal de envio, orientação de documentos
   | 'docs_collection'        // coleta: recebimento e consolidação documental
   | 'broker_handoff'         // handoff ao correspondente
@@ -87,7 +94,8 @@ export type GateId =
   | 'G_FATO_CRITICO_AUSENTE'   // fact obrigatório do stage ausente → não avançar (L03)
   | 'G_COMPOSICAO_FAMILIAR'    // slot reservado → L04 (qualificação civil)
   | 'G_REGIME_RENDA'           // slot reservado → L05 (qualificação de renda)
-  | 'G_ELEGIBILIDADE';         // slot reservado → L06 (elegibilidade documental)
+  | 'G_ELEGIBILIDADE'          // slot reservado → L06 (elegibilidade documental)
+  | 'G_TRILHO_ESPECIAL';       // slot ativo em L15/L16 (P3, multi e variantes)
 
 /**
  * Resultado da avaliação de um gate.

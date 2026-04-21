@@ -56,8 +56,16 @@ export const STAGE_MAP: Record<StageId, StageDefinition> = {
     id: 'qualification_eligibility',
     name: 'Meio B — Gates de Elegibilidade',
     required_facts: ['nacionalidade'],
-    next_stages: ['docs_prep'],
+    next_stages: ['qualification_special', 'docs_prep'],
     applicable_gates: ['G_FATO_CRITICO_AUSENTE', 'G_ELEGIBILIDADE'],
+  },
+
+  qualification_special: {
+    id: 'qualification_special',
+    name: 'Especiais — Trilhos P3 e Multi',
+    required_facts: [],
+    next_stages: ['docs_prep'],
+    applicable_gates: ['G_TRILHO_ESPECIAL'],
   },
 
   docs_prep: {
@@ -106,6 +114,7 @@ export const CANONICAL_STAGE_ORDER: StageId[] = [
   'qualification_civil',
   'qualification_renda',
   'qualification_eligibility',
+  'qualification_special',
   'docs_prep',
   'docs_collection',
   'broker_handoff',
