@@ -3,17 +3,17 @@
 | Campo                                      | Valor |
 |--------------------------------------------|-------|
 | Frente                                     | Core Mecânico 2 |
-| Data                                       | 2026-04-20T20:23:46.0353332-03:00 |
-| Estado da frente                           | em execução — Meio B inicial integrado ao Core principal, com Worker ainda estrutural e sem fala mecânica |
-| Classificação da tarefa                    | contratual — L11 + L12 + L13 + L14 do Core Mecânico 2 |
-| Última PR relevante                        | PR de execução L09 + L10 — Meio A expandido integrado ao Core Mecânico 2 |
+| Data                                       | 2026-04-20T20:58:44.4419816-03:00 |
+| Estado da frente                           | em execução — Especiais integrados ao Core principal, com Worker ainda estrutural e sem fala mecânica |
+| Classificação da tarefa                    | contratual — L15 + L16 do Core Mecânico 2 |
+| Última PR relevante                        | PR de execução L11 + L12 + L13 + L14 — Meio B inicial integrado ao Core Mecânico 2 |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_CORE_MECANICO_2.md` |
-| Recorte executado do contrato              | L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade |
-| Pendência contratual remanescente          | L15–L17 em aberto; Especiais e Final pendentes |
+| Recorte executado do contrato              | L15 + L16 — Especiais: trilhos P3 / multi e variantes |
+| Pendência contratual remanescente          | L17 em aberto; Final pendente |
 | Houve desvio de contrato?                  | não |
 | Contrato encerrado nesta PR?               | não |
-| Item do A01 atendido                       | Fase 2 — Prioridade 1: Core Mecânico 2 desacoplado da fala, agora com Meio B inicial plugado ao motor real |
-| Próximo passo autorizado                   | Sexta PR contratual: L15 + L16 — Especiais: trilhos P3 / multi e variantes |
+| Item do A01 atendido                       | Fase 2 — Prioridade 1: Core Mecânico 2 desacoplado da fala, agora com Especiais plugados ao motor real |
+| Próximo passo autorizado                   | Sétima PR contratual: L17 — Final operacional, docs, visita e handoff |
 | Próximo passo foi alterado?                | não |
 | Tarefa fora de contrato?                   | não |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
@@ -24,11 +24,11 @@
 
 ## 1. Contexto curto
 
-O Core Mecânico 2 já tinha L03, L04, L05, L06, L07, L08, L09 e L10 entregues, além de uma rota técnica mínima no Worker. O gap contratual seguinte era entrar no Meio B com regime, renda, CTPS e elegibilidade mínima sem abrir docs/final.
+O Core Mecânico 2 já tinha L03–L14 entregues, além de uma rota técnica mínima no Worker. O gap contratual seguinte era abrir os trilhos especiais P3 / multi sem misturar docs/final.
 
-Esta PR fecha exatamente L11 + L12 + L13 + L14 em recorte mínimo: parser de renda/elegibilidade, regra de autônomo com IR obrigatório, sugestão estrutural por renda solo baixa, CTPS como sinal complementar e bloqueio por RNM. O recorte continua dentro do contrato ativo e sem drift porque não abre Especiais, docs, surface final ou fala mecânica. O Core continua devolvendo apenas estrutura.
+Esta PR fecha exatamente L15 + L16 em recorte mínimo: stage `qualification_special`, parser de P3 / multi, gates mínimos de ausência crítica e IR do co-participante autônomo, além do roteamento real a partir da elegibilidade. O recorte continua dentro do contrato ativo e sem drift porque não abre L17, docs, surface final ou fala mecânica. O Core continua devolvendo apenas estrutura.
 
-O próximo passo autorizado muda de forma natural para L15 + L16, entrada nos trilhos especiais.
+O próximo passo autorizado muda de forma natural para L17, entrada na fase final operacional.
 
 ## 2. Classificação da tarefa
 
@@ -36,7 +36,7 @@ O próximo passo autorizado muda de forma natural para L15 + L16, entrada nos tr
 
 ## 3. Última PR relevante
 
-PR de execução L09 + L10 — Meio A expandido integrado ao `engine.ts`.
+PR de execução L11 + L12 + L13 + L14 — Meio B inicial integrado ao `engine.ts`.
 
 ## 4. O que a PR anterior fechou
 
@@ -50,10 +50,10 @@ PR de execução L09 + L10 — Meio A expandido integrado ao `engine.ts`.
 
 ## 5. O que a PR anterior NÃO fechou
 
-- trilho próprio de regime e renda
-- regras mínimas de IR, CTPS e elegibilidade
-- bloqueio estrutural por RNM
-- L11–L17
+- trilho próprio de especiais
+- roteamento real de P3 / multi
+- stage contratado entre elegibilidade e docs
+- L15–L17
 
 ## 6. Diagnóstico confirmado
 
@@ -66,24 +66,30 @@ PR de execução L09 + L10 — Meio A expandido integrado ao `engine.ts`.
 
 ## 7. O que foi feito
 
-- `src/core/meio-b-rules.ts`
-  - definiu facts, valores canônicos e políticas mínimas do Meio B
-- `src/core/meio-b-parser.ts`
-  - normalizou regime, renda, IR, CTPS, nacionalidade e RNM
-- `src/core/meio-b-gates.ts`
-  - adicionou gate para autônomo sem IR confirmado
-  - adicionou gate para renda solo baixa antes de avançar
-  - adicionou gate de elegibilidade para estrangeiro sem RNM válido
+- `src/core/especiais-rules.ts`
+  - definiu facts, trilhos e políticas mínimas dos Especiais
+- `src/core/especiais-parser.ts`
+  - normalizou sinais de P3, multi-proponente e variante do co-participante
+- `src/core/especiais-gates.ts`
+  - adicionou gate de ausência crítica para P3 e multi
+  - adicionou gate para co-participante autônomo sem IR confirmado
 - `src/core/engine.ts`
-  - plugou `qualification_renda` e `qualification_eligibility` no caminho real do Core
+  - plugou `qualification_special` no caminho real do Core
+  - fez `qualification_eligibility` rotear para o stage especial quando houver P3 ou multi
   - preservou a saída estritamente estrutural
+- `src/core/stage-map.ts`
+  - adicionou `qualification_special` entre elegibilidade e docs
+- `src/core/types.ts`
+  - adicionou o stage e gate estruturais dos Especiais
+- `src/core/meio-a-gates.ts`
+  - deixou o sinal de P3 seguir até o stage especial contratado
 - `src/core/smoke.ts`
-  - adicionou cenários integrados de ausência crítica, trilho válido, autônomo sem IR e elegibilidade
+  - adicionou cenários integrados de roteamento P3, bloqueio crítico e trilho multi válido
 
 ## 8. O que não foi feito
 
-- não abriu Especiais
-- não abriu Final operacional, docs ou visita
+- não abriu L17
+- não abriu docs, visita ou final operacional
 - não adicionou fala mecânica
 - não integrou Supabase
 - não integrou Meta/WhatsApp
@@ -91,17 +97,15 @@ PR de execução L09 + L10 — Meio A expandido integrado ao `engine.ts`.
 
 ## 9. O que esta PR fechou
 
-- L11 — regime e renda
-- L12 — continuação mínima de regime/renda
-- L13 — CTPS e dependentes do recorte mínimo
-- L14 — gates e restrições de elegibilidade do Meio B
-- `qualification_renda` e `qualification_eligibility` passaram a rodar no caminho real do `engine.ts`
-- smoke integrado do Core passou com cenários de ausência crítica, trilho válido, autônomo sem IR e RNM
+- L15 — trilhos especiais P3 / multi
+- L16 — variantes estruturais mínimas dos especiais
+- `qualification_special` passou a rodar no caminho real do `engine.ts`
+- `qualification_eligibility` agora decide entre `docs_prep` e `qualification_special`
+- smoke integrado do Core passou com cenários de P3, ausência crítica, multi válido e co-participante autônomo
 - Worker permaneceu sem fala mecânica
 
 ## 10. O que continua pendente após esta PR
 
-- L15 + L16 — Especiais
 - L17 — Final operacional
 
 ## 11. Esta tarefa foi fora de contrato?
@@ -114,11 +118,11 @@ PR de execução L09 + L10 — Meio A expandido integrado ao `engine.ts`.
 
 ## 11b. Recorte executado do contrato
 
-L11 + L12 + L13 + L14 — Meio B: regime, renda, CTPS e elegibilidade.
+L15 + L16 — Especiais: trilhos P3 / multi e variantes.
 
 ## 11c. Pendência contratual remanescente
 
-L15–L17 permanecem em aberto.
+L17 permanece em aberto.
 
 ## 11d. Houve desvio de contrato?
 
@@ -126,7 +130,7 @@ L15–L17 permanecem em aberto.
 
 Esta PR continua dentro do contrato e sem drift porque:
 - não muda o objetivo do contrato
-- implementa exatamente o próximo recorte autorizado do Meio A
+- implementa exatamente o próximo recorte autorizado dos Especiais
 - não abre Speech, Supabase, Áudio, Meta ou surface final
 - mantém o Core devolvendo apenas estrutura e preserva a soberania do LLM sobre a fala
 
@@ -140,9 +144,11 @@ Esta PR continua dentro do contrato e sem drift porque:
 - `src/core/meio-a-parser.ts`
 - `src/core/meio-a-gates.ts`
 - `src/core/engine.ts`
-- `src/core/meio-b-rules.ts`
-- `src/core/meio-b-parser.ts`
-- `src/core/meio-b-gates.ts`
+- `src/core/especiais-rules.ts`
+- `src/core/especiais-parser.ts`
+- `src/core/especiais-gates.ts`
+- `src/core/stage-map.ts`
+- `src/core/types.ts`
 - `src/core/smoke.ts`
 - `schema/status/CORE_MECANICO_2_STATUS.md`
 - `schema/handoffs/CORE_MECANICO_2_LATEST.md`
@@ -161,27 +167,27 @@ Esta PR continua dentro do contrato e sem drift porque:
 
 ## 15. Próximo passo autorizado
 
-**Sexta PR contratual: L15 + L16 — Especiais: trilhos P3 / multi e variantes.**
+**Sétima PR contratual: L17 — Final operacional, docs, visita e handoff.**
 
-Próximo passo **atualizado** pela sequência natural do contrato após o fechamento de L11 + L12 + L13 + L14.
+Próximo passo **atualizado** pela sequência natural do contrato após o fechamento de L15 + L16.
 
 ## 16. Riscos
 
-- o recorte de Meio B foi mantido mínimo de propósito; Especiais e Final continuam fechados
+- o recorte de Especiais foi mantido mínimo de propósito; L17 continua fechado
 - qualquer expansão para renda, elegibilidade, canal ou fala precisa de PR própria
-- os blocos L15–L17 continuam dependentes de execução contratual futura
+- o bloco L17 continua dependente de execução contratual futura
 
 ## 17. Provas
 
-- `npm run smoke` → 10/10 passando pelo `runCoreEngine()`
+- `npm run smoke` → 14/14 passando pelo `runCoreEngine()`
 - `npm run smoke:all` → Core + Worker passando
-- commit técnico: `c587aa15540860dbc525e8f3fa92bcb7066d1c64` — `feat(core): integrar meio b inicial no engine`
+- commit técnico: `a3c27abec10af5222501e8dbcfae39705900af97` — `feat(core): integrar trilhos especiais no engine`
+- cenário real de roteamento P3:
+  - `qualification_eligibility` com `{"nacionalidade":"brasileiro","processo":"composicao_familiar","p3_required":true}` -> `stage_after="qualification_special"`, `next_objective="validar_trilho_p3"`
 - cenário real de bloqueio crítico:
-  - `qualification_renda` com `{"renda_principal":3200}` -> `block_advance=true`, `next_objective="coletar_regime_trabalho"`
-- cenário real de trilho válido do Meio B:
-  - `qualification_renda` com `{"processo":"conjunto","regime_trabalho":"clt","renda_principal":4200,"ctps_36":false}` -> `stage_after="qualification_eligibility"`
-- cenário real em que a elegibilidade altera o next step:
-  - `qualification_eligibility` com `{"nacionalidade":"estrangeiro","rnm_status":"ausente"}` -> `stage_after="qualification_eligibility"`, `next_objective="validar_rnm"`
+  - `qualification_special` com `{"processo":"composicao_familiar","p3_required":true}` -> `block_advance=true`, `next_objective="coletar_work_regime_p3"`
+- cenário real de trilho especial válido:
+  - `qualification_special` com `{"processo":"conjunto","work_regime_p2":"clt","monthly_income_p2":3600,"ctps_36m_p2":true}` -> `stage_after="docs_prep"`
 
 ## 18. Mudanças em dados persistidos (Supabase)
 
@@ -202,4 +208,4 @@ Fontes de verdade consultadas:
   Handoff da frente lido:      `schema/handoffs/CORE_MECANICO_2_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos L03–L17 identificados estruturalmente
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — taxonomias F1/F3/F4 e regras mínimas de L11/L14 consultadas diretamente
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — E6.2, F2 e F4; p3_required, work_regime_p2, monthly_income_p2, autonomo_has_ir_p2, ctps_36m_p2 e work_regime_p3 consultados diretamente
