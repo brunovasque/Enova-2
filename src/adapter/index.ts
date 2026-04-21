@@ -1,26 +1,40 @@
 /**
- * ENOVA 2 — Supabase Adapter Base — Casca Canônica Centralizada (PR 42)
+ * ENOVA 2 — Supabase Adapter — Entrada Canônica Centralizada
  *
  * Âncora contratual:
  *   CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA.md (Frente 4)
  *   FRENTE4_PERSISTABLE_DATA_CONTRACT.md (PR 41 — shape autoritativo)
+ *   src/adapter/policy.ts (PR 43 — política canônica de consistência)
+ *   src/adapter/runtime.ts (PR 44 — runtime real mínimo)
  *
- * ESCOPO: classe-base do SupabaseAdapter com stubs de todas as operações de
- * leitura/escrita canônica. Esta é a casca técnica mínima da PR 42.
- * A implementação runtime real com cliente Supabase é para PR 44.
+ * ESCOPO ATUAL (após PR 44):
+ *   - `SupabaseAdapterBase` — classe-base histórica com stubs (PR 42).
+ *     Mantida para compatibilidade documental com a casca canônica original.
+ *   - `SupabaseAdapterRuntime` (re-export de `./runtime.ts`, PR 44) — runtime
+ *     real mínimo com backend pluggável. Esta é a entrada de uso real do
+ *     Adapter daqui em diante.
+ *   - `createInMemoryAdapterRuntime` — factory para o smoke persistente da PR 44
+ *     e para uso interno de testes; a porta `PersistenceBackend` permite plugar
+ *     um cliente Supabase de verdade em deployment futuro sem alterar o runtime.
  *
- * PLACEHOLDER: todas as operações retornam stubs com
- *   { success: false, record: null, error: 'not_implemented — placeholder PR42' }
- * Isso é intencional e documentado. A implementação runtime virá na PR 44.
- *
- * RESTRIÇÕES INVIOLÁVEIS:
- *   - Toda escrita nas tabelas enova2_* DEVE passar por esta classe.
+ * RESTRIÇÕES INVIOLÁVEIS (idênticas para base e runtime):
+ *   - Toda escrita nas tabelas enova2_* DEVE passar por uma implementação de
+ *     `ISupabaseAdapter` desta camada.
  *   - Context/Frente 3 não escreve direto.
  *   - Speech Engine não escreve direto.
  *   - O Adapter não decide regra de negócio, gate ou stage.
  *   - O Adapter não escreve resposta ao cliente.
  *   - Campos soberanos do Core são projetados — nunca calculados pelo Adapter.
  */
+
+// Re-export do runtime real mínimo da PR 44 — entrada operacional do Adapter.
+export {
+  type CanonicalTable,
+  type PersistenceBackend,
+  InMemoryPersistenceBackend,
+  SupabaseAdapterRuntime,
+  createInMemoryAdapterRuntime,
+} from './runtime.ts';
 
 import {
   ADAPTER_CANONICAL_CONSTRAINTS,

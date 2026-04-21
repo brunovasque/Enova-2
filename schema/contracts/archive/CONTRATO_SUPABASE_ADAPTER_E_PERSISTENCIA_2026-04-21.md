@@ -290,3 +290,49 @@ Regra-matriz aplicada:
 > Core soberano em regra de negocio.  
 > Supabase Adapter soberano apenas em persistencia estrutural auditavel.  
 > Nenhuma camada de persistencia tem permissao para escrever resposta final ao cliente.
+
+---
+
+## ENCERRAMENTO FORMAL DO CONTRATO (PR 44)
+
+```
+--- ENCERRAMENTO DE CONTRATO ---
+Contrato encerrado:                     schema/contracts/archive/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA_2026-04-21.md
+Contrato encerrado com sucesso?:        sim
+Objetivo do contrato cumprido?:         sim
+Critérios de aceite cumpridos?:         sim
+  - [x] C1 — Contrato de dados persistíveis definido e rastreável (PR 41)
+  - [x] C2 — Entidades/tabelas/colunas/chaves/relacionamentos canônicos definidos (PR 41)
+  - [x] C3 — Adapter base com boundaries claros, sem espalhar integração (PR 42; reforçado em PR 44 — runtime delega para `PersistenceBackend` único)
+  - [x] C4 — Política de merge/update/consistência formalizada e testável (PR 43; runtime importa e usa em PR 44)
+  - [x] C5 — Replay seguro sem corrupção de estado (PR 44 — Cenário 2 do `runtime-smoke.ts`)
+  - [x] C6 — Diferença entre estado soberano do Core e estado persistido explícita (PR 41/42; provada em PR 44 — Cenário 5)
+  - [x] C7 — IA segue soberana na fala; Adapter não ganha autoria de resposta (PR 41/42; provada em PR 44 — Cenário 5, `speech_contract_json` aceito apenas como metadado, sem `ai_response_text`)
+  - [x] C8 — Closeout formal concluído via PR 44 (este bloco)
+Fora de escopo respeitado?:             sim
+  — Nenhuma alteração em áudio, Meta/WhatsApp, telemetria ou rollout nesta frente.
+  — Nenhuma decisão de regra de negócio assumida pelo Adapter.
+  — Nenhuma escrita de resposta ao cliente em estado canônico.
+Pendências remanescentes:               nenhuma de Frente 4.
+  Nota técnica honesta: o backend Supabase remoto (cliente `@supabase/supabase-js`
+  conectado a credenciais reais e migration SQL aplicada) NÃO foi exercitado
+  nesta PR. O runtime expõe a porta `PersistenceBackend` exatamente para essa
+  plugagem futura — pertence ao trabalho de deployment/rollout (Frente 8) e
+  está fora do recorte arquitetural da Frente 4.
+Evidências / provas do encerramento:
+  - PR 40 — abertura contratual da Frente 4 (contrato + vivos + schema canônico)
+  - PR 41 — `schema/data/FRENTE4_PERSISTABLE_DATA_CONTRACT.md` (10 entidades, ownership)
+  - PR 42 — `src/adapter/types.ts`, `src/adapter/boundaries.ts`, `src/adapter/index.ts`, `src/adapter/smoke.ts` (4 cenários, 68 assertions, ✅)
+  - PR 43 — `src/adapter/policy.ts`, `src/adapter/policy-smoke.ts` (8 cenários, ✅)
+  - PR 44 — `src/adapter/runtime.ts`, `src/adapter/runtime-smoke.ts` (5 cenários, todos ✅):
+    • Cenário 1 — persistência real funcionando nas 10 tabelas
+    • Cenário 2 — replay seguro: idempotência por chave canônica
+    • Cenário 3 — TTL da memória viva (mínimo, máximo, expirada, refresh)
+    • Cenário 4 — projection_bridge bloqueia campos proibidos com auditoria
+    • Cenário 5 — soberania preservada (Core regra, IA fala, Adapter projeta sem calcular)
+  - `npm run smoke:all` ✅ (smoke + smoke:worker + smoke:speech + smoke:context + smoke:adapter + smoke:adapter:policy + smoke:adapter:runtime)
+Data de encerramento:                   2026-04-21
+PR que encerrou:                        PR 44 — runtime real mínimo + smoke persistente integrado + closeout formal da Frente 4
+Destino do contrato encerrado:          archive (schema/contracts/archive/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA_2026-04-21.md)
+Próximo contrato autorizado:            Contrato da Frente 5 — Áudio e Multimodalidade (autorizado a abrir; nenhuma execução iniciada nesta PR)
+```
