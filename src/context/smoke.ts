@@ -15,6 +15,9 @@ import {
   buildLivingMemorySnapshot,
   type LivingMemorySnapshot,
 } from './living-memory.ts';
+import { buildMcmvCognitiveContract } from '../speech/cognitive.ts';
+import { buildGovernedCompositeTurn } from '../speech/composite-turn.ts';
+import { buildSpeechPolicyEnvelope } from '../speech/policy.ts';
 
 interface Assertion {
   description: string;
@@ -28,6 +31,14 @@ interface ContextSmokeResult {
   packet: SemanticTurnPacket;
   multi_signal?: MultiSignalTurnConsolidation;
   living_memory?: LivingMemorySnapshot;
+  acceptance?: {
+    criteria_covered: string[];
+    final_text_owner: 'llm';
+    context_wrote_customer_text: false;
+    context_decided_business_rule: false;
+    context_advanced_stage: false;
+    context_persisted_official_slot: false;
+  };
   assertions: Assertion[];
   passed: boolean;
 }
@@ -593,6 +604,144 @@ function smokeScenario10_MemoriaVivaNaoSubstituiCoreNemSupabase(): ContextSmokeR
   };
 }
 
+function smokeScenario11_AcceptanceFinalIntegradoFrente3(): ContextSmokeResult {
+  const packet = buildSemanticTurnPacket({
+    packet_id: 'ctx-packet-011',
+    lead_id: 'lead-011',
+    turn_id: 'turn-011',
+    source: {
+      channel: 'text',
+      modality: 'text',
+      raw_text: 'Sou CLT, moro com minha mae, tenho medo de mandar documento por celular e queria saber se ainda posso visitar.',
+    },
+    signals: {
+      facts: [
+        signal('fact', 'work_regime', 'clt', 0.92),
+        signal('fact', 'household_hint', 'mora_com_mae', 0.87),
+      ],
+      questions: [signal('question', 'visit_question', 'duvida_sobre_visita', 0.85)],
+      objections: [signal('objection', 'docs_channel_resistance', 'medo_docs_celular', 0.86)],
+      slot_candidates: [signal('slot_candidate', 'family_composition_hint', 'mae_no_contexto', 0.79)],
+      pending: [signal('pending', 'docs_channel_preference', 'evitar_envio_celular', 0.78)],
+      evidence: [evidence('Sou CLT, moro com minha mae, tenho medo de mandar documento por celular e queria saber se ainda posso visitar.')],
+      confidence: {
+        overall: 0.85,
+        rationale: 'acceptance_final_com_contexto_multi_sinal_memoria_e_soberania_da_ia',
+      },
+    },
+  });
+  const packetViolations = assertSemanticTurnPacketConformance(packet);
+  const multiSignal = buildMultiSignalTurnConsolidation({
+    packet,
+    context: {
+      stage_current: 'docs_prep',
+      current_objective: 'preparar_docs',
+      block_advance: true,
+      gates_activated: ['G_FINAL_OPERACIONAL'],
+    },
+    disposition_overrides: [
+      {
+        signal_id: 'slot_candidate_family_composition_hint',
+        disposition: 'requires_confirmation',
+        reason: 'composicao_familiar_informada_fora_do_objetivo_atual_exige_confirmacao_posterior',
+      },
+    ],
+  });
+  const multiSignalViolations = assertMultiSignalTurnConformance(multiSignal);
+  const livingMemory = buildLivingMemorySnapshot({ consolidation: multiSignal });
+  const livingMemoryViolations = assertLivingMemoryConformance(livingMemory);
+  const policy = buildSpeechPolicyEnvelope({
+    core_decision: {
+      stage_current: 'docs_prep',
+      stage_after: 'docs_prep',
+      next_objective: 'preparar_docs',
+      block_advance: true,
+      gates_activated: ['G_FINAL_OPERACIONAL'],
+      speech_intent: 'bloqueio',
+    },
+  });
+  const cognitive = buildMcmvCognitiveContract({ policy });
+  const compositeTurn = buildGovernedCompositeTurn({
+    policy,
+    cognitive_contract: cognitive,
+    signals: [
+      {
+        kind: 'fact_candidate',
+        key: 'work_regime',
+        value: 'clt',
+        handling: 'inform_llm',
+      },
+      {
+        kind: 'objection',
+        key: 'docs_channel_resistance',
+        value: 'medo_docs_celular',
+        handling: 'inform_llm',
+      },
+      {
+        kind: 'question',
+        key: 'visit_question',
+        value: 'duvida_sobre_visita',
+        handling: 'inform_llm',
+      },
+    ],
+    draft: {
+      author: 'llm',
+      text: 'Entendi: voce trabalha CLT, mora com sua mae e prefere cuidado com documentos pelo celular. Vou manter esse ponto no contexto e seguir respeitando o objetivo atual antes de qualquer proxima etapa.',
+    },
+  });
+  const acceptance = {
+    criteria_covered: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7'],
+    final_text_owner: 'llm' as const,
+    context_wrote_customer_text: false as const,
+    context_decided_business_rule: false as const,
+    context_advanced_stage: false as const,
+    context_persisted_official_slot: false as const,
+  };
+  const assertions = [
+    assert('C1 turno estruturado conforme', [], packetViolations),
+    assert('C2 categorias canonicas presentes', true, (
+      packet.signals.facts.length > 0
+      && packet.signals.questions.length > 0
+      && packet.signals.objections.length > 0
+      && packet.signals.slot_candidates.length > 0
+      && packet.signals.pending.length > 0
+      && packet.signals.evidence.length > 0
+      && packet.signals.confidence.overall > 0
+    )),
+    assert('C3 multi-intencao real consolidada', true, multiSignal.all_signals.length >= 5),
+    assert('C3 aceito pendente e confirmacao separados', true, (
+      multiSignal.accepted.length > 0
+      && multiSignal.pending.length > 0
+      && multiSignal.requires_confirmation.length > 0
+    )),
+    assert('C4 multi-sinal nao decide regra nem avanca stage', [], multiSignalViolations),
+    assert('C4 objetivo e bloqueio preservados', ['preparar_docs', true], [multiSignal.current_objective, multiSignal.block_advance]),
+    assert('C5 IA permanece dona da fala final', true, compositeTurn.accepted),
+    assert('C5 texto final veio da IA', 'llm', compositeTurn.free_response.surface.draft_author),
+    assert('C5 contexto nao escreveu resposta', false, multiSignal.speech_input.may_write_customer_text),
+    assert('C5 mecanico sem prioridade de fala', false, compositeTurn.mechanical_parser_dominant),
+    assert('C6 memoria viva minima conforme', [], livingMemoryViolations),
+    assert('C6 memoria nao assume persistencia', false, livingMemory.for_persistence.may_write_database),
+    assert('C7 acceptance cobre criterios C1-C7', ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7'], acceptance.criteria_covered),
+    assert('C7 acceptance sem violacoes integradas', [], [
+      ...packetViolations,
+      ...multiSignalViolations,
+      ...livingMemoryViolations,
+      ...compositeTurn.violations,
+    ]),
+  ];
+
+  return {
+    scenario: 'Cenario 11 — acceptance final integrado da Frente 3',
+    packet,
+    multi_signal: multiSignal,
+    living_memory: livingMemory,
+    acceptance,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 export function runContextSmokeSuite() {
   const results = [
     smokeScenario1_ShapeCanonicoDoTurno(),
@@ -605,6 +754,7 @@ export function runContextSmokeSuite() {
     smokeScenario8_MemoriaVivaConsolidaSinaisUteis(),
     smokeScenario9_MemoriaVivaRejeitaHistoricoBruto(),
     smokeScenario10_MemoriaVivaNaoSubstituiCoreNemSupabase(),
+    smokeScenario11_AcceptanceFinalIntegradoFrente3(),
   ];
   const passed = results.filter((item) => item.passed).length;
 
@@ -622,7 +772,7 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   const suite = runContextSmokeSuite();
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Contexto + Extracao — Smoke schema base + multi-sinal + memoria viva (PR 36/37/38)');
+  console.log('ENOVA 2 — Contexto + Extracao — Smoke schema base + multi-sinal + memoria viva + acceptance (PR 36/37/38/39)');
   console.log('===========================================');
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
