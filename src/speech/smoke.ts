@@ -1,8 +1,8 @@
 /**
- * ENOVA 2 — Speech Engine e Surface Única — Smoke textual mínimo (PR1)
+ * ENOVA 2 — Speech Engine e Surface Única — Smoke textual mínimo
  *
- * Prova que a primeira camada da frente entrega política estrutural para a IA
- * soberana, sem redigir fala final e sem fallback dominante.
+ * Prova a política estrutural da PR 26 e a primeira surface final mínima
+ * autorada pela IA, sem texto de cliente gerado pelo mecânico.
  */
 
 import { runCoreEngine } from '../core/engine.ts';
@@ -12,6 +12,7 @@ import {
   buildSpeechPolicyEnvelope,
   type SpeechPolicyEnvelope,
 } from './policy.ts';
+import { buildAiFinalSurface, type FinalSurfaceResult } from './surface.ts';
 
 interface Assertion {
   description: string;
@@ -23,6 +24,7 @@ interface Assertion {
 interface SpeechSmokeResult {
   scenario: string;
   envelope: SpeechPolicyEnvelope;
+  surface?: FinalSurfaceResult;
   assertions: Assertion[];
   passed: boolean;
 }
@@ -91,10 +93,78 @@ function smokeScenario2_TransicaoPreservaIaSoberana(): SpeechSmokeResult {
   };
 }
 
+function smokeScenario3_SurfaceFinalDaIa(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const llmAuthoredFinalText = [
+    'Entendi que seu objetivo é comprar um imóvel pelo Minha Casa Minha Vida.',
+    'Vou seguir pela qualificação inicial e considerar apenas o próximo passo permitido para este momento.',
+  ].join(' ');
+  const surface = buildAiFinalSurface({
+    policy: envelope,
+    draft: {
+      author: 'llm',
+      text: llmAuthoredFinalText,
+    },
+  });
+
+  const assertions = [
+    assert('surface final aceita apenas autoria llm', true, surface.accepted),
+    assert('texto final é exatamente a saída da IA', llmAuthoredFinalText, surface.final_text),
+    assert('mecânico não gerou texto ao cliente', false, surface.mechanical_text_generated),
+    assert('surface preserva owner llm', 'llm', surface.surface_owner),
+    assert('governança preserva next_objective', envelope.next_objective, surface.governance_snapshot.next_objective),
+    assert('fallback segue não dominante', 'non_dominant_guardrail_only', surface.fallback_mode),
+    assert('sem violações na surface final da IA', [], surface.violations),
+  ];
+
+  return {
+    scenario: 'Cenário 3 — primeira surface final real é autorada pela IA',
+    envelope,
+    surface,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
+function smokeScenario4_MecanicoNaoPublicaSurfaceFinal(): SpeechSmokeResult {
+  const decision = runCoreEngine(makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+  }));
+  const envelope = buildSpeechPolicyEnvelope({ core_decision: decision });
+  const surface = buildAiFinalSurface({
+    policy: envelope,
+    draft: {
+      author: 'mechanical',
+      text: 'texto mecanico rejeitado pelo smoke',
+    },
+  });
+
+  const assertions = [
+    assert('surface mecanica é rejeitada', false, surface.accepted),
+    assert('texto mecanico não é publicado', null, surface.final_text),
+    assert('violação aponta autoria obrigatória da IA', true, surface.violations.includes('final_surface_author_must_be_llm')),
+    assert('mecânico segue sem gerar texto ao cliente', false, surface.mechanical_text_generated),
+    assert('fallback não assume a fala', 'non_dominant_guardrail_only', surface.fallback_mode),
+  ];
+
+  return {
+    scenario: 'Cenário 4 — mecânico não pode publicar surface final',
+    envelope,
+    surface,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 export function runSpeechSmokeSuite() {
   const results = [
     smokeScenario1_BlockPreservaSoberaniaDaIa(),
     smokeScenario2_TransicaoPreservaIaSoberana(),
+    smokeScenario3_SurfaceFinalDaIa(),
+    smokeScenario4_MecanicoNaoPublicaSurfaceFinal(),
   ];
   const passed = results.filter((item) => item.passed).length;
 

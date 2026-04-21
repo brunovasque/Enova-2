@@ -5,21 +5,21 @@
 | Frente                                     | Speech Engine e Surface Única |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Estado do contrato                         | em execução |
-| Última PR executou qual recorte            | PR 26 — PR1 textual mínima: política estrutural para IA soberana |
-| Pendência contratual                       | próximos recortes textuais da atendente especialista MCMV |
+| Última PR executou qual recorte            | PR 27 — PR2 textual: primeira surface final mínima autorada pela IA |
+| Pendência contratual                       | próximos recortes textuais da atendente especialista MCMV; provedor LLM real e prompt final de produção ainda não abertos |
 | Contrato encerrado?                        | não |
 | Item do A01                                | Fase 2 — Prioridade 2: modelar o Speech Engine com surface única, política explícita para transições e proibição de camadas concorrentes |
 | Estado atual                               | em execução |
 | Classe da última tarefa                    | contratual |
-| Última PR relevante                        | PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica |
-| Último commit                              | `d780888f84f57a01bef980b13476788039edce04` — `feat(speech): criar politica textual minima` |
-| Pendência remanescente herdada             | PR1 textual mínima estava pendente após a abertura contratual da PR 25 |
-| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
+| Última PR relevante                        | PR 27 — PR2 textual: primeira surface final mínima autorada pela IA |
+| Último commit funcional                    | `19c83aab7fd4b48d1a2ef54e23f18a49dcace24a` — `feat(speech): criar surface final minima da ia` |
+| Pendência remanescente herdada             | após a PR 26 ainda faltava provar surface final real escrita pela IA |
+| Próximo passo autorizado                   | próximo recorte textual da atendente especialista MCMV após a surface mínima, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria |
 | Legados aplicáveis                         | L03 obrigatório; L01/L02/L19 complementares; família legada do recorte ativo conforme PR |
 | Mudanças em dados persistidos (Supabase)   | nenhuma |
 | Permissões Cloudflare necessárias          | nenhuma adicional |
 | Fontes consultadas — última tarefa         | ver seção 17 |
-| Última atualização                         | 2026-04-21T10:44:29.3485721-03:00 |
+| Última atualização                         | 2026-04-21T10:58:44.7862454-03:00 |
 
 ---
 
@@ -39,11 +39,15 @@ Interpretação obrigatória: Atendente Especialista MCMV com Governança Estrut
 
 ## 2b. Última PR executou qual recorte do contrato
 
-PR 26 — PR1 textual mínima: política estrutural para IA soberana. O recorte criou um envelope de governança para a IA consumir, sem redigir fala final.
+PR 27 — PR2 textual: primeira surface final mínima autorada pela IA.
+
+O recorte saiu do envelope puramente estrutural da PR 26 e criou uma camada mínima de publicação de surface final: o texto final precisa chegar como draft autorado por `llm`; a camada de Speech apenas valida a política, preserva a governança estrutural e rejeita qualquer autoria mecânica.
 
 ## 2c. Pendência contratual
 
 Executar os próximos recortes textuais da atendente especialista MCMV, preservando IA soberana e sem fala mecânica.
+
+Ainda não foram abertos: provedor LLM real, prompt final de produção, áudio, multimodalidade plena, Supabase, Meta/WhatsApp e telemetria.
 
 ## 2d. Contrato encerrado?
 
@@ -59,7 +63,12 @@ Executar os próximos recortes textuais da atendente especialista MCMV, preserva
 
 **em execução**
 
-A frente iniciou a execução textual mínima. O primeiro recorte entrega política estrutural para orientar a IA soberana, sem permitir que o mecânico escreva a resposta ao cliente.
+A frente agora possui:
+
+- envelope estrutural de política para IA soberana;
+- primeira surface final mínima que publica somente texto autorado pela IA;
+- rejeição explícita de autoria mecânica para resposta final;
+- smoke específico cobrindo fallback não dominante e ausência de texto final gerado pelo mecânico.
 
 ## 5. Classe da última tarefa
 
@@ -67,11 +76,11 @@ A frente iniciou a execução textual mínima. O primeiro recorte entrega polít
 
 ## 6. Última PR relevante
 
-PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica.
+PR 27 — PR2 textual: primeira surface final mínima autorada pela IA.
 
-## 7. Último commit
+## 7. Último commit funcional
 
-`d780888f84f57a01bef980b13476788039edce04` — `feat(speech): criar politica textual minima`.
+`19c83aab7fd4b48d1a2ef54e23f18a49dcace24a` — `feat(speech): criar surface final minima da ia`.
 
 ## 8. Entregas concluídas
 
@@ -82,15 +91,18 @@ PR 26 — PR1 textual mínima: política de IA soberana sem fala mecânica.
 - Subordinação a A00-ADENDO-01 registrada.
 - Política textual mínima criada como envelope estrutural para a IA soberana.
 - Smoke textual mínimo criado e integrado ao `smoke:all`.
+- Primeira surface final mínima criada em `src/speech/surface.ts`.
+- Smoke ampliado para provar que a surface aceita autoria `llm` e rejeita autoria `mechanical`.
 
 ## 9. Pendências
 
 - Próximos recortes textuais da atendente especialista MCMV.
-- Provar em PR futura a surface final real escrita pela IA, ainda sem Supabase, Meta/WhatsApp, áudio ou telemetria.
+- Integração futura com provedor LLM real e prompt final de produção, em recorte próprio.
+- Áudio, multimodalidade plena, Supabase, Meta/WhatsApp e telemetria seguem bloqueados nesta frente.
 
 ## 10. Pendência remanescente herdada
 
-PR1 textual mínima estava pendente após a abertura contratual da PR 25.
+Após a PR 26, a surface final real escrita pela IA ainda estava pendente. Este recorte implementa a primeira camada mínima dessa surface sem transformar o mecânico em autor da fala.
 
 ## 11. Bloqueios
 
@@ -99,10 +111,13 @@ PR1 textual mínima estava pendente após a abertura contratual da PR 25.
 - Meta/WhatsApp permanece fora deste contrato inicial.
 - Telemetria permanece fora deste contrato inicial.
 - Qualquer fala mecânica é bloqueio por A00-ADENDO-01.
+- Fallback dominante continua proibido.
 
 ## 12. Próximo passo autorizado
 
-Próximo recorte textual da atendente especialista MCMV, sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+Próximo recorte textual da atendente especialista MCMV após a surface mínima, ainda sem áudio/multimodalidade plena, Supabase, Meta/WhatsApp ou telemetria.
+
+Esse próximo recorte deve continuar provando que a IA escreve a resposta final e que a governança estrutural apenas restringe, valida e informa.
 
 ## 13. Legados aplicáveis
 
@@ -111,7 +126,7 @@ Próximo recorte textual da atendente especialista MCMV, sem áudio/multimodalid
 
 ## 14. Última atualização
 
-2026-04-21T10:44:29.3485721-03:00 — PR 26: PR1 textual mínima e correção de governança documental.
+2026-04-21T10:58:44.7862454-03:00 — PR 27: primeira surface final mínima autorada pela IA.
 
 ## 15. Mudanças em dados persistidos (Supabase) — última tarefa
 
@@ -129,5 +144,5 @@ Fontes de verdade consultadas — última tarefa:
   Status da frente lido:       `schema/status/SPEECH_ENGINE_SURFACE_UNICA_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  Legado markdown consultado:  N/A — abertura governança sem consumo de regra transcrita
-  PDF mestre consultado:       não consultado — tarefa de governança contratual sem definição de regra de negócio nova
+  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — L03 identificado, conteúdo não transcrito
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — ancoragem L03/fluxo LLM-first; sem regra nova de negócio nesta PR
