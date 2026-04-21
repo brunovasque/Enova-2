@@ -6,7 +6,7 @@
 | Data                                       | 2026-04-21T10:58:44.7862454-03:00 |
 | Estado da frente                           | em execução |
 | Classificação da tarefa                    | contratual |
-| Última PR relevante                        | PR em preparação — PR2 textual: primeira surface final mínima autorada pela IA |
+| Última PR relevante                        | PR 27 — PR2 textual: primeira surface final mínima autorada pela IA |
 | Contrato ativo                             | `schema/contracts/active/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL.md` |
 | Recorte executado do contrato              | PR2 textual — primeira surface final mínima: IA autora, mecânico sem texto ao cliente |
 | Pendência contratual remanescente          | próximos recortes textuais da atendente especialista MCMV |
@@ -34,7 +34,7 @@ Este recorte executa o próximo passo autorizado: criar a primeira surface final
 
 ## 3. Última PR relevante
 
-PR em preparação — PR2 textual: primeira surface final mínima autorada pela IA.
+PR 27 — PR2 textual: primeira surface final mínima autorada pela IA.
 
 ## 4. O que a PR anterior fechou
 
