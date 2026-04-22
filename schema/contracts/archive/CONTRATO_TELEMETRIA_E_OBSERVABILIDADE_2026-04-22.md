@@ -312,3 +312,33 @@ A Frente 8 devera tratar rollout, shadow mode, canary e cutover, respeitando os 
 - Mudancas em dados persistidos (Supabase): **nenhuma**.
 - Permissoes Cloudflare necessarias: **nenhuma adicional**.
 - Proximo passo autorizado apos PR3: **PR4 — smoke integrado + closeout formal da Frente 7**.
+
+## 24. Estado apos execucao da PR4
+
+- Estado da frente apos PR4: **concluida**.
+- Estado do contrato: **encerrado e arquivado**.
+- Recorte executado nesta PR4: **smoke integrado final + closeout formal**.
+- Smoke integrado final da Frente 7 validado em `src/telemetry/smoke.ts`.
+- Closeout readiness: `schema/contracts/closeout/TELEMETRIA_E_OBSERVABILIDADE_CLOSEOUT_READINESS.md`.
+- Contrato arquivado em: `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`.
+- Integridade das rotas tecnicas preservada para `/`, `/__core__/run` e `/__meta__/ingest`.
+- Sem dashboard externo, sem ferramenta externa obrigatoria e sem telemetria profunda externa.
+- Sem Meta real, sem dispatch externo, sem persistencia nova obrigatoria e sem alteracao de soberania do Core/IA.
+- Mudancas em dados persistidos (Supabase): **nenhuma**.
+- Permissoes Cloudflare necessarias: **nenhuma adicional**.
+- Proximo contrato autorizado: **Frente 8 — Rollout (abertura contratual)**.
+
+## 25. Encerramento de contrato
+
+--- ENCERRAMENTO DE CONTRATO ---
+Contrato encerrado:                     schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md
+Contrato encerrado com sucesso?:        sim
+Objetivo do contrato cumprido?:         sim
+Critérios de aceite cumpridos?:         sim (C1-C11)
+Fora de escopo respeitado?:             sim
+Pendências remanescentes:               nenhuma
+Evidências / provas do encerramento:    PR1, PR2, PR3, PR4; `npm run smoke:telemetry`; `npm run smoke:worker`; `npm run smoke:meta`; `npm run smoke:all`; closeout readiness
+Data de encerramento:                   2026-04-22T17:05:00-03:00
+PR que encerrou:                        PR4 — smoke integrado + closeout formal da Frente 7
+Destino do contrato encerrado:          archive (schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md)
+Próximo contrato autorizado:            Frente 8 — Rollout

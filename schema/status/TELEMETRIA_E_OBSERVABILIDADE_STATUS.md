@@ -3,18 +3,18 @@
 | Campo | Valor |
 |---|---|
 | Frente | Telemetria e Observabilidade |
-| Contrato ativo | `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md` |
-| Estado do contrato | em execucao |
-| Ultima PR executou qual recorte | PR3 — runtime minimo de observabilidade no Worker/repo da Frente 7 |
-| Pendencia contratual | PR4 da Frente 7 |
-| Contrato encerrado? | nao |
+| Contrato ativo | Nenhum — contrato anterior encerrado e arquivado em `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md` |
+| Estado do contrato | encerrado |
+| Ultima PR executou qual recorte | PR4 — smoke integrado final + closeout formal da Frente 7 |
+| Pendencia contratual | nenhuma |
+| Contrato encerrado? | sim |
 | Item do A01 | Prioridade 7 — consolidar telemetria, admin, shadow mode, canary e cutover |
-| Estado atual | em execucao |
-| Classe da ultima tarefa | contratual |
-| Ultima PR relevante | PR3 — runtime minimo de observabilidade no Worker/repo da Frente 7 |
-| Ultimo commit | commit desta PR3 (runtime minimo da Frente 7) |
-| Pendencia remanescente herdada | PR2 deixou como pendencia contratual a execucao da PR3 |
-| Proximo passo autorizado | PR4 — smoke integrado + closeout formal da Frente 7 (alterado) |
+| Estado atual | concluida |
+| Classe da ultima tarefa | contratual + closeout |
+| Ultima PR relevante | PR4 — smoke integrado + closeout formal da Frente 7 |
+| Ultimo commit | commit desta PR4 (smoke integrado + closeout da Frente 7) |
+| Pendencia remanescente herdada | PR3 deixou como pendencia contratual a execucao da PR4 |
+| Proximo passo autorizado | abrir o contrato da Frente 8 — Rollout |
 | Legados aplicaveis | L18 obrigatorio; L03 e C* complementares quando confirmados |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
@@ -29,30 +29,30 @@ Telemetria e Observabilidade.
 
 ## 2. Contrato ativo
 
-`schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md`
+Nenhum — contrato encerrado e arquivado em `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`.
 
 ## 2a. Estado do contrato
 
-em execucao
+encerrado
 
 ## 2b. Ultima PR executou qual recorte do contrato
 
-PR3 — runtime minimo de observabilidade no Worker/repo da Frente 7:
+PR4 — smoke integrado final da frente + execucao do `CONTRACT_CLOSEOUT_PROTOCOL.md`:
 
-- emissao minima local de sinais tecnicos implementada;
-- correlacao basica (`trace_id`, `correlation_id`, `request_id`, `execution_id`) implementada no recorte minimo;
-- hooks minimos aplicados em `src/worker.ts` e `src/meta/ingest.ts`;
-- smoke dedicado da PR3 criado em `src/telemetry/smoke.ts`;
-- integridade das rotas `/`, `/__core__/run` e `/__meta__/ingest` preservada;
-- sem dashboard externo, sem ferramenta externa obrigatoria e sem telemetria profunda externa.
+- prova de observabilidade minima no runtime local;
+- prova de correlacao minima e evidencias tecnicas locais;
+- prova de integridade de `/`, `/__core__/run`, `/__meta__/ingest` e `not_found`;
+- prova de ausencia de regressao nas frentes anteriores;
+- prova de limites preservados (sem dashboard externo, sem ferramenta externa obrigatoria, sem telemetria profunda externa, sem Meta real, sem dispatch externo);
+- closeout readiness criado e contrato arquivado.
 
 ## 2c. Pendencia contratual
 
-- PR4 — smoke integrado + closeout formal da Frente 7.
+nenhuma
 
 ## 2d. Contrato encerrado?
 
-nao
+sim
 
 ## 3. Item do A01
 
@@ -60,80 +60,84 @@ Prioridade 7 — consolidar telemetria, admin, shadow mode, canary e cutover.
 
 ## 4. Estado atual
 
-em execucao
+concluida
 
-A Frente 7 agora ja possui runtime minimo de observabilidade no repo/Worker e aguarda PR4 para validacao integrada final e closeout formal.
+Frente 7 encerrada formalmente com escopo fechado no contrato:
+
+- sem dashboard externo;
+- sem ferramenta externa obrigatoria;
+- sem telemetria profunda externa;
+- sem Meta real;
+- sem dispatch externo;
+- sem secrets, bindings ou vars;
+- sem rollout real na PR4;
+- sem alteracao de soberania do Core/IA.
 
 ## 5. Classe da ultima tarefa
 
-contratual
+contratual + closeout
 
 ## 6. Ultima PR relevante
 
-PR3 — runtime minimo de observabilidade no Worker/repo da Frente 7.
+PR4 — smoke integrado + closeout formal da Frente 7.
 
 ## 7. Ultimo commit
 
-Commit desta PR3 (runtime minimo da Frente 7).
+Commit desta PR4 (smoke integrado + closeout da Frente 7).
 
 ## 8. Entregas concluidas
 
-- PR1 concluida:
-  - contrato ativo aberto;
-  - status vivo criado;
-  - handoff vivo criado;
-  - indices atualizados;
-  - ordem oficial PR1/PR2/PR3/PR4 persistida;
-  - loop obrigatorio persistido;
-  - mapa executivo de ativacao real das integracoes persistido.
-- PR2 concluida:
-  - contrato tecnico criado em `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`;
-  - taxonomia de eventos e envelope minimo de sinais definidos;
-  - camadas de observabilidade e correlacao/trace definidos;
-  - contrato de logs e regras de redaction definidos;
-  - contrato de sintomas/alertas/health/evidencias definido;
-  - limites da PR3 e criterios tecnicos de validacao da PR4 definidos.
-- PR3 concluida:
-  - runtime minimo implementado em `src/telemetry/types.ts`, `src/telemetry/emit.ts`, `src/worker.ts` e `src/meta/ingest.ts`;
-  - smoke dedicado da PR3 implementado em `src/telemetry/smoke.ts`;
-  - script `smoke:telemetry` incorporado ao `smoke:all`;
-  - emissao minima, correlacao basica e evidencias locais comprovadas sem abrir escopo externo.
+- PR1 concluida: abertura contratual forte da Frente 7.
+- PR2 concluida: contrato tecnico em `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`.
+- PR3 concluida: runtime minimo de observabilidade no Worker/repo.
+- PR4 concluida:
+  - smoke integrado final em `src/telemetry/smoke.ts`;
+  - `npm run smoke:telemetry` passou;
+  - `npm run smoke:worker` passou;
+  - `npm run smoke:meta` passou;
+  - `npm run smoke:all` passou;
+  - closeout readiness em `schema/contracts/closeout/TELEMETRIA_E_OBSERVABILIDADE_CLOSEOUT_READINESS.md`;
+  - contrato arquivado.
 
 ## 9. Pendencias
 
-- PR4 — executar smoke integrado e closeout formal da Frente 7.
+nenhuma da Frente 7.
 
 ## 10. Pendencia remanescente herdada
 
-A PR2 da Frente 7 deixou explicitamente PR3 como proxima pendencia contratual: implementar runtime minimo de observabilidade no Worker/repo antes do closeout.
+A PR3 deixou pendente apenas a PR4 (smoke integrado + closeout). Essa pendencia foi fechada integralmente.
 
 ## 11. Bloqueios
 
-Nenhum bloqueio ativo para iniciar a PR4, desde que o loop obrigatorio da Frente 7 seja cumprido.
-
-Bloqueios permanentes desta frente:
-
-- nao abrir Meta real;
-- nao abrir Supabase real remoto/produtivo;
-- nao abrir rollout real;
-- nao abrir secrets, bindings, vars ou deploy externo sem contrato/protocolo;
-- nao confundir observabilidade minima com telemetria profunda externa.
+Nenhum bloqueio ativo da Frente 7.
 
 ## 12. Proximo passo autorizado
 
-PR4 — smoke integrado + closeout formal da Frente 7.
-
-Este passo foi alterado em relacao ao estado anterior do repo: antes o proximo passo autorizado era PR3; apos a execucao tecnica da PR3, o proximo passo autorizado passa a ser PR4.
+Abrir o contrato da Frente 8 — Rollout.
 
 ## 13. Legados aplicaveis
 
-- L18 obrigatorio.
-- L03 complementar.
-- C* complementar quando confirmado por leitura direta do PDF mestre.
+- L18 (obrigatorio)
+- L03 e C* (complementares quando confirmados)
 
-## 14. Ultima atualizacao
+## 14. O que a Frente 7 entregou e o que nao entregou deliberadamente
 
-2026-04-22 — Codex.
+### Entregou
+
+- governanca da frente e ordem PR1-PR4;
+- contrato tecnico de observabilidade/telemetria;
+- runtime minimo local de observabilidade no Worker/repo;
+- smoke integrado final com integridade do runtime e limites preservados;
+- closeout formal.
+
+### Nao entregou (deliberadamente fora de escopo)
+
+- dashboard externo;
+- ferramenta externa obrigatoria;
+- telemetria profunda externa;
+- Meta real;
+- dispatch externo;
+- rollout real.
 
 ## 15. Mudancas em dados persistidos (Supabase) — ultima tarefa
 
@@ -146,12 +150,27 @@ Permissoes Cloudflare necessarias: nenhuma adicional
 ## 17. Fontes consultadas — ultima tarefa
 
 Fontes de verdade consultadas — ultima tarefa:
-  Indice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md`
-  Contrato tecnico lido:       `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`
+  Índice de contratos lido:    `schema/contracts/_INDEX.md`
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md` (antes do arquivamento)
+  Contrato técnico lido:       `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`
   Status da frente lido:       `schema/status/TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/TELEMETRIA_E_OBSERVABILIDADE_LATEST.md`
   Runtime audit lido:          `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`
   Entrypoint lido:             `src/worker.ts`
-  Canal tecnico lido:          `src/meta/ingest.ts`, `src/meta/validate.ts`, `src/meta/types.ts`
-  Smokes lidos:                `src/worker-route-smoke.ts`, `src/meta/smoke.ts`, `src/core/smoke.ts`
+  Canal técnico lido:          `src/meta/ingest.ts`
+  Smokes lidos:                `src/telemetry/smoke.ts`, `src/worker-route-smoke.ts`, `src/meta/smoke.ts`, `src/core/smoke.ts`
+
+## 18. Encerramento de contrato
+
+--- ENCERRAMENTO DE CONTRATO ---
+Contrato encerrado:                     schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md
+Contrato encerrado com sucesso?:        sim
+Objetivo do contrato cumprido?:         sim
+Critérios de aceite cumpridos?:         sim (C1-C11)
+Fora de escopo respeitado?:             sim
+Pendências remanescentes:               nenhuma
+Evidências / provas do encerramento:    PR1, PR2, PR3, PR4; `npm run smoke:telemetry`; `npm run smoke:worker`; `npm run smoke:meta`; `npm run smoke:all`; closeout readiness
+Data de encerramento:                   2026-04-22T17:05:00-03:00
+PR que encerrou:                        PR4 — smoke integrado + closeout formal da Frente 7
+Destino do contrato encerrado:          archive (schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md)
+Próximo contrato autorizado:            Frente 8 — Rollout
