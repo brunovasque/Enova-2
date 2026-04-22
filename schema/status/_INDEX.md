@@ -23,7 +23,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 | 2 | Speech Engine e Surface Única                  | `SPEECH_ENGINE_SURFACE_UNICA_STATUS.md`      | concluída        |
 | 3 | Contexto, Extração Estruturada e Memória Viva  | `CONTEXTO_EXTRACAO_MEMORIA_VIVA_STATUS.md`   | concluída        |
 | 4 | Supabase Adapter e Persistência                | `SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`  | encerrada        |
-| 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_STATUS.md`          | contrato aberto  |
+| 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_STATUS.md`          | concluída        |
 | 6 | Meta/WhatsApp                                  | *(a criar)*                                  | não iniciada     |
 | 7 | Telemetria e Observabilidade                   | *(a criar)*                                  | não iniciada     |
 | 8 | Rollout                                        | *(a criar)*                                  | não iniciada     |

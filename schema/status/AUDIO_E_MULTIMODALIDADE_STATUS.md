@@ -3,22 +3,22 @@
 | Campo | Valor |
 |---|---|
 | Frente | Audio e Multimodalidade |
-| Contrato ativo | `schema/contracts/active/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md` |
-| Estado do contrato | em execucao |
-| Ultima PR executou qual recorte | PR 48 — casca tecnica do pipeline multimodal + integracao com speech/persistencia |
-| Pendencia contratual | PR49 pendente |
-| Contrato encerrado? | nao |
-| Item do A01 | Prioridade 5 — adicionar audio end-to-end no mesmo cerebro conversacional da ENOVA 2 |
-| Estado atual | em execucao — pipeline multimodal base implementado em modo stub controlado |
-| Classe da ultima tarefa | contratual |
-| Ultima PR relevante | PR 48 — casca tecnica do pipeline multimodal + integracao com speech/persistencia |
-| Ultimo commit funcional | (commit da PR 48) |
-| Pendencia remanescente herdada | nenhuma herdada da Frente 4 |
-| Proximo passo autorizado | PR49 — smoke integrado de audio + closeout formal da Frente 5 |
-| Legados aplicaveis | L03 (obrigatorio) e L19 (obrigatorio) |
+| Contrato ativo | Nenhum — contrato anterior encerrado em 2026-04-21 |
+| Estado do contrato | encerrado |
+| Ultima PR executou qual recorte | PR 49 — smoke integrado de audio + closeout formal da Frente 5 |
+| Pendencia contratual | nenhuma |
+| Contrato encerrado? | sim — PR 49, contrato arquivado em `schema/contracts/archive/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md` |
+| Item do A01 | Prioridade 5 — Fase 4: adicionar audio end-to-end no mesmo cerebro conversacional |
+| Estado atual | concluída — frente encerrada com smoke integrado final aprovado |
+| Classe da ultima tarefa | contratual + closeout |
+| Ultima PR relevante | PR 49 — smoke integrado de audio + closeout formal da Frente 5 |
+| Ultimo commit funcional | commit da PR 49 (smoke integrado + closeout) |
+| Pendencia remanescente herdada | nenhuma |
+| Proximo passo autorizado | abrir o contrato da Frente 6 — Meta/WhatsApp |
+| Legados aplicaveis | L03 e L19 (consultados por PDF, blocos não transcritos no markdown) |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
-| Ultima atualizacao | 2026-04-22 |
+| Ultima atualizacao | 2026-04-21 |
 
 ---
 
@@ -28,126 +28,124 @@ Audio e Multimodalidade.
 
 ## 2. Contrato ativo
 
-`schema/contracts/active/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md`
+Nenhum — contrato encerrado e arquivado em `schema/contracts/archive/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md`.
 
 ## 2a. Estado do contrato
 
-em execucao
+encerrado
 
 ## 2b. Ultima PR executou qual recorte do contrato
 
-PR 48 — implementacao tecnica minima da casca multimodal:
+PR 49 — smoke integrado final da frente + execução do `CONTRACT_CLOSEOUT_PROTOCOL.md`:
 
-- entrada `audio_stub` produz `AudioInputEntry` real (`src/audio/stub.ts`)
-- `AudioInputEntry` converte para `SemanticPackage` real (`src/audio/semantic.ts`)
-- convergencia para o Extractor compartilhado da Frente 3 via `buildSemanticTurnPacket` + `buildMultiSignalTurnConsolidation`
-- integracao com o Adapter compartilhado da Frente 4 via `upsertLead`, `writeTurnEvent`, `writeSignals`, `appendHistoryEvent`
-- smoke tecnico real da PR 48 em `src/audio/smoke.ts`
+- validação ponta a ponta do recorte contratado `audio_stub -> AudioInputEntry -> SemanticPackage -> Extractor -> Core -> Speech -> Adapter`
+- prova de convergência estrutural áudio/texto no mesmo cérebro
+- prova de soberania preservada (IA fala, Core decide, pipeline não escreve fala e não decide regra)
+- closeout formal com contrato arquivado e vivos atualizados
 
 ## 2c. Pendencia contratual
 
-- PR49 — smoke integrado de audio + closeout formal da Frente 5
+nenhuma
 
 ## 2d. Contrato encerrado?
 
-nao
+sim
 
 ## 3. Item do A01
 
-Prioridade 5 — adicionar audio end-to-end no mesmo cerebro conversacional.  
-Fase 4 do A00/A01: audio transcrevendo, extraindo e persistindo no mesmo modelo do texto.
+Prioridade 5 — plugar áudio e multimodalidade no mesmo pipeline de extração e persistência.
 
 ## 4. Estado atual
 
-**em execucao** — PR48 concluida com runtime tecnico real minimo; PR49 autorizada para prova integrada e closeout.
+concluída
+
+Frente 5 encerrada formalmente com escopo fechado no contrato:
+
+- sem STT/TTS real
+- sem Meta/WhatsApp
+- sem rollout
+- sem telemetria profunda
+- sem trilho paralelo de decisão/fala
 
 ## 5. Classe da ultima tarefa
 
-contratual
+contratual + closeout
 
 ## 6. Ultima PR relevante
 
-PR 48 — casca tecnica do pipeline multimodal + integracao com speech/persistencia.
+PR 49 — smoke integrado de audio + closeout formal da Frente 5.
 
 ## 7. Ultimo commit
 
-(commit da PR 48)
+Commit da PR 49 (smoke integrado + closeout).
 
 ## 8. Entregas concluidas
 
-- PR45 concluida: abertura contratual da Frente 5 e vivos iniciais
-- PR46 concluida: `schema/audio/FRENTE5_AUDIO_INPUT_CONTRACT.md`
-- PR47 concluida: `schema/audio/FRENTE5_AUDIO_SEMANTIC_CONVERGENCE.md`
-- PR48 concluida:
-  - `src/audio/types.ts` criado (shapes canonicos de runtime da casca multimodal)
-  - `src/audio/stub.ts` criado (producao real de `AudioInputEntry` em modo stub)
-  - `src/audio/semantic.ts` criado (conversao `AudioInputEntry -> SemanticPackage` + ponte para Extractor compartilhado)
-  - `src/audio/pipeline.ts` criado (fluxo real `audio_stub -> AudioInputEntry -> SemanticPackage -> Extractor -> Adapter`)
-  - `src/audio/smoke.ts` criado (smoke tecnico da PR48)
-  - `package.json` atualizado com `smoke:audio` e inclusao em `smoke:all`
+- PR 45 concluída: abertura contratual da Frente 5.
+- PR 46 concluída: contrato de entrada de áudio/transcrição/evidência (`schema/audio/FRENTE5_AUDIO_INPUT_CONTRACT.md`).
+- PR 47 concluída: convergência semântica áudio -> pacote único -> extractor (`schema/audio/FRENTE5_AUDIO_SEMANTIC_CONVERGENCE.md`).
+- PR 48 concluída: runtime mínimo real em `src/audio/` (`types`, `stub`, `semantic`, `pipeline`, `smoke`).
+- PR 49 concluída:
+  - smoke integrado final em `src/audio/smoke.ts` cobrindo cenários (a)-(e)
+  - `npm run smoke:audio` ✅
+  - `npm run smoke:all` ✅
+  - closeout readiness em `schema/contracts/closeout/AUDIO_E_MULTIMODALIDADE_CLOSEOUT_READINESS.md`
+  - contrato arquivado
 
 ## 9. Pendencias
 
-- PR49 — smoke integrado de audio + closeout formal da Frente 5
+nenhuma
 
 ## 10. Pendencia remanescente herdada
 
-Nenhuma herdada da Frente 4 (encerrada integralmente na PR44).
+A PR 48 deixou pendente apenas a PR 49 (aceite integrado + closeout). Essa pendência foi fechada integralmente.
 
 ## 11. Bloqueios
 
-Nenhum.
+Nenhum bloqueio ativo da Frente 5.
 
 ## 12. Proximo passo autorizado
 
-**PR49 — smoke integrado de audio + closeout formal da Frente 5.**
-
-Recorte autorizado:
-
-- validar ponta a ponta integrada com os componentes compartilhados (Extractor/Core/Speech/Adapter)
-- comprovar convergencia audio-texto no mesmo cerebro
-- executar protocolo de closeout sem abrir escopo novo
+Abrir o contrato da Frente 6 — Meta/WhatsApp.
 
 ## 13. Legados aplicaveis
 
-- **L03** (obrigatorio) — mapa canonico do funil: stages, gates, transicoes
-- **L19** (obrigatorio) — analista MCMV, interpretacao de perfil, perguntas adicionais inteligentes
+- L03 (obrigatório)
+- L19 (obrigatório)
+- Fonte consultada no PDF mestre: páginas 124-125 (pipeline oficial de áudio/multimodalidade)
 
-## 14. O que ficou real na PR48 x o que ficou stub
+## 14. O que a Frente 5 entregou e o que nao entregou deliberadamente
 
-### Runtime real entregue na PR48
+### Entregou
 
-- montagem real de `AudioInputEntry` em `src/audio/stub.ts`
-- montagem real de `SemanticPackage` em `src/audio/semantic.ts`
-- chamada real do extractor compartilhado da Frente 3
-- persistencia real via Adapter compartilhado da Frente 4
-- smoke tecnico executavel e reproduzivel (`npm run smoke:audio`)
+- casca técnica multimodal integrada ao extractor/core/adapter compartilhados
+- convergência estrutural áudio/texto no mesmo fluxo
+- smoke integrado final com soberania preservada
 
-### Stub controlado que permanece para PR49+
+### Nao entregou (deliberadamente fora de escopo)
 
-- STT real (provedor externo): nao implementado
-- TTS real: nao implementado
-- canal externo (Meta/WhatsApp): nao implementado
-- rollout/shadow/canary: nao implementado
-- telemetria profunda: nao implementada
+- STT/TTS real
+- canal externo Meta/WhatsApp
+- rollout/shadow/canary
+- telemetria profunda
+
+Motivo do encerramento mesmo sem esses itens: todos pertencem a frentes posteriores no A01 e não são critérios de aceite da Frente 5.
 
 ## 15. Mudancas em dados persistidos (Supabase) — ultima tarefa
 
-Mudancas em dados persistidos (Supabase): nenhuma — PR48 usou runtime in-memory do Adapter para prova tecnica, sem migracao real e sem escrita remota.
+Mudancas em dados persistidos (Supabase): nenhuma
 
 ## 16. Permissoes Cloudflare necessarias — ultima tarefa
 
-Permissoes Cloudflare necessarias: nenhuma adicional.
+Permissoes Cloudflare necessarias: nenhuma adicional
 
 ## 17. Fontes consultadas — ultima tarefa
 
-Fontes de verdade consultadas — PR48:
-  Indice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         `schema/contracts/active/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md`
+Fontes de verdade consultadas — ultima tarefa:
+  Índice de contratos lido:    `schema/contracts/_INDEX.md`
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md` (lido antes do arquivamento)
   Status da frente lido:       `schema/status/AUDIO_E_MULTIMODALIDADE_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/AUDIO_E_MULTIMODALIDADE_LATEST.md`
-  Contrato de input audio:     `schema/audio/FRENTE5_AUDIO_INPUT_CONTRACT.md`
-  Contrato de convergencia:    `schema/audio/FRENTE5_AUDIO_SEMANTIC_CONVERGENCE.md`
-  Indice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — paginas 124-125 (pipeline oficial de audio)
-  Adendo soberania lido:       `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+  Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
+  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos L03/L19 (não transcritos)
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — páginas 124-125
