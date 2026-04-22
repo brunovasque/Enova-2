@@ -11,7 +11,7 @@
 | Legados aplicáveis | L03 (contexto/memória), L18 (rollout/ativação), C* (complementares confirmados por PDF) |
 | Referências obrigatórias | A00, A01, A02, CODEX_WORKFLOW, CONTRACT_EXECUTION_PROTOCOL, CONTRACT_CLOSEOUT_PROTOCOL, CONTRACT_SCHEMA, STATUS_SCHEMA, HANDOFF_SCHEMA, DATA_CHANGE_PROTOCOL, CLOUDFLARE_PERMISSION_PROTOCOL, REQUEST_ECONOMY_PROTOCOL, ADENDO_CANONICO_SOBERANIA_IA |
 | Ordem mínima de leitura | A00 → A01 → A02 → contracts/_INDEX → extraordinary/_INDEX → este contrato → status/handoff do módulo → L03 → C* (quando confirmados) |
-| Status | aberto |
+| Status | em execução |
 | Última atualização | 2026-04-22 |
 
 ---
@@ -338,24 +338,30 @@ O módulo **não pode** aprender:
 
 ---
 
-### PR2 — Contrato técnico do módulo
-**O que entrega:**
-- Definição técnica completa das 4 camadas
-- Shape de memória por lead
-- Shape de memória por atendimento
-- Shape de sinais preditivos
-- Shape de outcome registrado
-- Shape de memória manual/diretiva
-- Shape de item normativo/consulta
-- Shape de regra comercial operacional
-- Vínculo técnico com CRM (leitura/escrita via Supabase Adapter)
+### PR2 — Contrato técnico do módulo *(executada — 2026-04-22)*
+
+**Artefato técnico canônico:** `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md`
+
+**O que entregou:**
+- Definição técnica completa das 4 camadas com shapes TypeScript
+- Shape de memória por lead (`MemoriaPorLead`)
+- Shape de memória por atendimento (`MemoriaPorAtendimento`)
+- Shape de sinais preditivos (`Sinal`, `PadraoDetectado`, `ObjecaoProvavel`)
+- Shape de outcome real (`OutcomeReal`)
+- Shape de memória manual/diretiva (`DiretivaMannual`)
+- Shape de item normativo consultivo (`ItemNormativo`)
+- Shape de regra comercial operacional (`RegraComercial`)
+- Enums e regras obrigatórias de cada camada
+- Vínculo técnico com CRM (leitura/escrita via Supabase Adapter — Frente 4)
 - Vínculo técnico com camada cognitiva
-- Regras de evidência detalhadas
-- Regras de leitura/escrita por camada
+- Regras de evidência detalhadas (válida / insuficiente / aprendizado / hipótese / outcome / bloqueio)
+- Regras de leitura/escrita fechadas por camada
 - O que pode ser aprendido e o que não pode (detalhado)
 - O que pode ser consultado e o que não pode (detalhado)
+- O que PR3 poderá implementar (fechado)
+- O que continua proibido mesmo após PR3 (fechado)
 
-**O que NÃO entrega:**
+**O que NÃO entregou:**
 - Nenhuma implementação runtime
 - Nenhum código em `src/`
 
@@ -425,11 +431,29 @@ Esta PR1 só está completa se:
 
 ---
 
+## 16b. Critérios de aceite da PR2
+
+Esta PR2 está completa se:
+
+- [x] Contrato técnico criado em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md`
+- [x] Shapes das 4 camadas fechados com campos obrigatórios/opcionais e enums
+- [x] Regras de leitura/escrita fechadas por camada
+- [x] Regras de evidência fechadas
+- [x] Integração com CRM, atendimento e camada cognitiva tecnicamente definida
+- [x] O que PR3 pode implementar está fechado
+- [x] O que continua proibido mesmo após PR3 está fechado
+- [x] Nenhuma implementação de runtime criada
+- [x] Nenhum arquivo em `src/` alterado
+- [x] Vivos apontam PR3 como próximo passo autorizado
+
+---
+
 ## 17. Próximo passo autorizado
 
-**PR2 — Contrato técnico do módulo**
+**PR3 — Runtime mínimo do módulo**
 
-Antes de iniciar a PR2, obrigatoriamente executar o loop da seção 15 e confirmar que este contrato permanece aberto sem revisão.
+Conforme contrato técnico em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md` seção 11.
+Antes de iniciar a PR3, obrigatoriamente executar o loop da seção 15 e confirmar que este contrato permanece em execução.
 
 ---
 
