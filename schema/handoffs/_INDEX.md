@@ -24,7 +24,7 @@ Este índice está subordinado ao A00, A01, A02 e ao HANDOFF_SCHEMA.
 | 3 | Contexto, Extração Estruturada e Memória Viva  | `CONTEXTO_EXTRACAO_MEMORIA_VIVA_LATEST.md`    | 2026-04-21       |
 | 4 | Supabase Adapter e Persistência                | `SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md`   | 2026-04-21       |
 | 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_LATEST.md`           | 2026-04-21       |
-| 6 | Meta/WhatsApp                                  | *(a criar)*                                   | —                |
+| 6 | Meta/WhatsApp                                  | `META_WHATSAPP_LATEST.md`                     | 2026-04-22       |
 | 7 | Telemetria e Observabilidade                   | *(a criar)*                                   | —                |
 | 8 | Rollout                                        | *(a criar)*                                   | —                |
 
