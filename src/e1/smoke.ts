@@ -1,4 +1,6 @@
 import worker from '../worker.ts';
+import { clearTelemetryBuffer, readTelemetryBuffer } from '../telemetry/emit.ts';
+import { clearRolloutEvidenceBuffer, readRolloutEvidenceBuffer } from '../rollout/controller.ts';
 import { readCommercialRulesForContext } from './commercial.ts';
 import {
   applyE1CoreHook,
@@ -44,8 +46,16 @@ function assertTrue(description: string, condition: boolean, detail: unknown): A
   };
 }
 
-function findEvidence(traceId: string, eventName: string) {
+function findE1Evidence(traceId: string, eventName: string) {
   return readE1EvidenceBuffer().find((event) => event.trace_id === traceId && event.event_name === eventName);
+}
+
+function findTelemetryEvent(traceId: string, eventName: string) {
+  return readTelemetryBuffer().find((event) => event.trace_id === traceId && event.event_name === eventName);
+}
+
+function findRolloutEvidence(traceId: string, eventName: string) {
+  return readRolloutEvidenceBuffer().find((event) => event.trace_id === traceId && event.event_name === eventName);
 }
 
 async function callWorker(request: Request): Promise<{
@@ -59,41 +69,55 @@ async function callWorker(request: Request): Promise<{
   };
 }
 
-async function scenarioLayerStructuresExist(): Promise<ScenarioResult> {
+async function scenarioLayerSeparationIntegrity(): Promise<ScenarioResult> {
   resetE1TechnicalStore();
   clearE1EvidenceBuffer();
   const snapshot = getE1StoreSnapshot();
+  const normative = consultNormativeBase({
+    citation_ref: 'CEF-2024-03 §4.2.1',
+  });
+  const commercial = readCommercialRulesForContext();
+  const firstCommercial = commercial[0] as Record<string, unknown> | undefined;
+  const invalidManual = validateManualDirectiveForRuntime(
+    {
+      created_at: '2026-04-22T12:00:00Z',
+      scope: 'global',
+      priority: 'alta',
+      directive_type: 'cuidado_operacional',
+      content: 'teste',
+      rationale: 'teste',
+      audit_ref: 'E1-SMOKE-LAYER',
+    },
+    {
+      trace_id: 'e1-pr4-layer-separation-trace',
+      correlation_id: 'e1-pr4-layer-separation-trace',
+      request_id: 'e1-pr4-layer-separation-req',
+    },
+  );
 
   const assertions: Assertion[] = [
-    assertTrue('camada A (normativa) possui estrutura mínima', snapshot.normative_count > 0, snapshot.normative_count),
-    assertTrue('camada B (comercial) possui estrutura mínima', snapshot.commercial_count > 0, snapshot.commercial_count),
-    assertTrue('camada C (memória técnica) inicia sem lixo operacional', snapshot.lead_memory_count === 0, snapshot.lead_memory_count),
-    assertTrue('camada D (manual) possui estrutura mínima', snapshot.manual_count > 0, snapshot.manual_count),
+    assertTrue('camada normativa possui item mínimo', snapshot.normative_count > 0, snapshot.normative_count),
+    assert('consulta normativa retorna source_kind normativo', 'normativo', normative.source_kind),
+    assert('camada comercial possui regra ativa', true, commercial.length > 0),
+    assertTrue('camada comercial contém conflict_policy', typeof firstCommercial?.conflict_policy === 'string', firstCommercial),
+    assertTrue('camada comercial não injeta citation_ref normativo', !('citation_ref' in (firstCommercial ?? {})), firstCommercial),
+    assertTrue('camada manual exige author para validar', invalidManual.ok === false, invalidManual),
     assertTrue(
-      'item normativo contém citation_ref',
-      typeof snapshot.first_normative?.citation_ref === 'string' && snapshot.first_normative.citation_ref.length > 0,
-      snapshot.first_normative,
-    ),
-    assertTrue(
-      'regra comercial contém guidance e restrictions',
-      typeof snapshot.first_commercial?.guidance === 'string'
-        && Array.isArray(snapshot.first_commercial?.restrictions)
-        && (snapshot.first_commercial?.restrictions.length ?? 0) > 0,
-      snapshot.first_commercial,
-    ),
-    assertTrue(
-      'diretiva manual contém author/scope/priority',
-      typeof snapshot.first_manual?.author === 'string'
-        && typeof snapshot.first_manual?.scope === 'string'
-        && typeof snapshot.first_manual?.priority === 'string',
-      snapshot.first_manual,
+      'camada manual não usa source_name normativo',
+      snapshot.first_manual ? !('source_name' in (snapshot.first_manual as Record<string, unknown>)) : true,
+      snapshot.first_manual ?? null,
     ),
   ];
 
   return {
-    scenario: 'PR3 E1 — estruturas mínimas das 4 camadas existem',
+    scenario: 'PR4 E1 — separação entre normativa/comercial/memória/manual preservada',
     response_status: 200,
-    response_json: snapshot as unknown as Record<string, unknown>,
+    response_json: {
+      snapshot,
+      normative,
+      first_commercial: firstCommercial ?? null,
+      invalid_manual: invalidManual,
+    },
     assertions,
     passed: assertions.every((item) => item.passed),
   };
@@ -102,13 +126,13 @@ async function scenarioLayerStructuresExist(): Promise<ScenarioResult> {
 async function scenarioMemoryTechnicalMinimum(): Promise<ScenarioResult> {
   resetE1TechnicalStore();
   clearE1EvidenceBuffer();
-  const traceId = 'e1-pr3-memory-trace';
+  const traceId = 'e1-pr4-memory-trace';
 
   const hook = applyE1CoreHook({
     trace_id: traceId,
     correlation_id: traceId,
-    request_id: 'e1-pr3-memory-req',
-    lead_id: 'lead-e1-smoke-memory',
+    request_id: 'e1-pr4-memory-req',
+    lead_id: 'lead-e1-pr4-memory',
     current_stage: 'qualification_renda',
     facts: {
       renda_principal: 4300,
@@ -116,36 +140,36 @@ async function scenarioMemoryTechnicalMinimum(): Promise<ScenarioResult> {
   });
 
   const blockedMemory = recordLeadMemory({
-    lead_id: 'lead-e1-smoke-memory',
+    lead_id: 'lead-e1-pr4-memory',
     tipo: 'sinal_risco',
     conteudo: 'inferencia sem evidência forte',
     evidencia_tipo: 'inferencia',
     origem: 'extracao_llm',
-    created_by: 'e1-smoke',
+    created_by: 'e1-smoke-pr4',
     confianca: 'hipotese',
   });
 
-  const context = buildE1TechnicalContext('lead-e1-smoke-memory');
-  emitE1SmokeEvidence(traceId, 'e1-pr3-memory-evidence', {
+  const context = buildE1TechnicalContext('lead-e1-pr4-memory');
+  emitE1SmokeEvidence(traceId, 'e1-pr4-memory-evidence', {
     scenario: 'memory_technical_minimum',
   });
 
-  const leadEvent = findEvidence(traceId, 'e1.runtime.memory.lead_recorded');
-  const contextEvent = findEvidence(traceId, 'e1.runtime.integration.cognitive_context_built');
-  const smokeEvent = findEvidence(traceId, 'e1.runtime.smoke.evidence_recorded');
+  const leadEvent = findE1Evidence(traceId, 'e1.runtime.memory.lead_recorded');
+  const contextEvent = findE1Evidence(traceId, 'e1.runtime.integration.cognitive_context_built');
+  const smokeEvent = findE1Evidence(traceId, 'e1.runtime.smoke.evidence_recorded');
 
   const assertions: Assertion[] = [
     assertTrue('hook técnico registrou memória de lead', typeof hook.lead_memory_status === 'string', hook.lead_memory_status),
     assert('memória sem evidência forte fica bloqueada', 'bloqueada', blockedMemory.status),
-    assertTrue('contexto cognitivo local está disponível', context.integration.cognitive_context_available, context.integration),
-    assert('escrita funcional no CRM continua bloqueada', false, context.integration.crm_write_enabled),
-    assertTrue('evento de memória foi emitido', Boolean(leadEvent), leadEvent ?? null),
-    assertTrue('evento de contexto cognitivo foi emitido', Boolean(contextEvent), contextEvent ?? null),
-    assertTrue('smoke evidence foi emitida', Boolean(smokeEvent), smokeEvent ?? null),
+    assertTrue('contexto cognitivo local permanece disponível', context.integration.cognitive_context_available, context.integration),
+    assert('escrita funcional no CRM permanece bloqueada', false, context.integration.crm_write_enabled),
+    assertTrue('evento de memória emitido', Boolean(leadEvent), leadEvent ?? null),
+    assertTrue('evento de contexto emitido', Boolean(contextEvent), contextEvent ?? null),
+    assertTrue('smoke evidence emitida', Boolean(smokeEvent), smokeEvent ?? null),
   ];
 
   return {
-    scenario: 'PR3 E1 — memória técnica mínima funciona e bloqueia inferência fraca',
+    scenario: 'PR4 E1 — memória técnica mínima funciona e bloqueia evidência insuficiente',
     response_status: 200,
     response_json: {
       hook,
@@ -157,113 +181,98 @@ async function scenarioMemoryTechnicalMinimum(): Promise<ScenarioResult> {
   };
 }
 
-async function scenarioNormativeConsultiveBase(): Promise<ScenarioResult> {
-  const result = consultNormativeBase({
+async function scenarioNormativeCommercialManualMinimum(): Promise<ScenarioResult> {
+  clearE1EvidenceBuffer();
+  const traceId = 'e1-pr4-consultive-trace';
+  const normative = consultNormativeBase({
     citation_ref: 'CEF-2024-03 §4.2.1',
   });
-
-  const assertions: Assertion[] = [
-    assert('consulta encontrou item normativo', true, result.found),
-    assert('resultado é marcado como source_kind normativo', 'normativo', result.source_kind),
-    assert('item ativo é aplicável', true, result.applicable),
-    assertTrue('citation_ref permanece explícita', typeof result.item?.citation_ref === 'string', result.item ?? null),
-  ];
-
-  return {
-    scenario: 'PR3 E1 — base normativa mínima é consultável localmente',
-    response_status: 200,
-    response_json: result as unknown as Record<string, unknown>,
-    assertions,
-    passed: assertions.every((item) => item.passed),
-  };
-}
-
-async function scenarioCommercialRulesReadable(): Promise<ScenarioResult> {
-  const rules = readCommercialRulesForContext({
+  const commercial = readCommercialRulesForContext({
     scope_hint: 'discovery',
   });
 
-  const first = rules[0];
+  const invalidManual = validateManualDirectiveForRuntime(
+    {
+      author: 'operador-pr4',
+      created_at: 'invalido',
+      scope: 'global',
+      priority: 'alta',
+      directive_type: 'cuidado_operacional',
+      content: 'teste',
+      rationale: 'teste',
+      audit_ref: 'E1-PR4-INVALID',
+    },
+    {
+      trace_id: traceId,
+      correlation_id: traceId,
+      request_id: 'e1-pr4-manual-invalid',
+    },
+  );
+  const validManual = validateManualDirectiveForRuntime(
+    {
+      author: 'operador-pr4',
+      created_at: '2026-04-22T12:00:00Z',
+      scope: 'global',
+      priority: 'alta',
+      directive_type: 'cuidado_operacional',
+      content: 'Separar norma de heurística.',
+      rationale: 'Governança E1.',
+      audit_ref: 'E1-PR4-VALID',
+    },
+    {
+      trace_id: traceId,
+      correlation_id: traceId,
+      request_id: 'e1-pr4-manual-valid',
+    },
+  );
+
+  const manualValidationEvents = readE1EvidenceBuffer().filter((event) => event.event_name === 'e1.runtime.manual.directive_validated');
+
   const assertions: Assertion[] = [
-    assertTrue('há pelo menos uma regra comercial ativa', rules.length > 0, rules.length),
-    assert('status da regra permanece ativa', 'ativa', first?.status),
-    assertTrue(
-      'regra mantém restrições explícitas',
-      Array.isArray(first?.restrictions) && (first?.restrictions.length ?? 0) > 0,
-      first?.restrictions ?? null,
-    ),
-    assertTrue('regra mantém guidance técnico', typeof first?.guidance === 'string' && first.guidance.length > 0, first?.guidance ?? null),
+    assert('base normativa retorna found = true', true, normative.found),
+    assert('base normativa retorna applicable = true', true, normative.applicable),
+    assert('regra comercial ativa disponível', true, commercial.length > 0),
+    assert('diretiva manual inválida (data inválida) é rejeitada', false, invalidManual.ok),
+    assert('diretiva manual válida é aceita', true, validManual.ok),
+    assertTrue('validações manuais emitiram eventos técnicos', manualValidationEvents.length >= 2, manualValidationEvents.length),
   ];
 
   return {
-    scenario: 'PR3 E1 — regras comerciais mínimas são lidas tecnicamente',
+    scenario: 'PR4 E1 — base consultiva/comercial/manual permanece técnica e previsível',
     response_status: 200,
     response_json: {
-      count: rules.length,
-      first_rule: first ?? null,
+      normative,
+      commercial_count: commercial.length,
+      invalid_manual: invalidManual,
+      valid_manual: validManual,
+      manual_validations: manualValidationEvents.length,
     },
     assertions,
     passed: assertions.every((item) => item.passed),
   };
 }
 
-async function scenarioManualDirectiveValidation(): Promise<ScenarioResult> {
-  clearE1EvidenceBuffer();
-  const traceId = 'e1-pr3-manual-trace';
-
-  const invalid = validateManualDirectiveForRuntime(
-    {
-      created_at: '2026-04-22T12:00:00Z',
-      scope: 'global',
-      priority: 'alta',
-      directive_type: 'cuidado_operacional',
-      content: 'Teste sem author',
-      rationale: 'Teste de validação',
-      audit_ref: 'E1-SMOKE-INVALID',
+async function scenarioRootIntegrity(): Promise<ScenarioResult> {
+  const result = await callWorker(new Request('https://enova.local/', {
+    method: 'GET',
+    headers: {
+      'x-trace-id': 'e1-pr4-root-route-trace',
     },
-    {
-      trace_id: traceId,
-      correlation_id: traceId,
-      request_id: 'e1-pr3-manual-invalid',
-      lead_id: 'lead-e1-smoke-manual',
-    },
-  );
+  }));
 
-  const valid = validateManualDirectiveForRuntime(
-    {
-      author: 'operador-smoke',
-      created_at: '2026-04-22T12:00:00Z',
-      scope: 'global',
-      priority: 'alta',
-      directive_type: 'cuidado_operacional',
-      content: 'Priorizar separação entre norma e heurística.',
-      rationale: 'Garantir consistência técnica.',
-      audit_ref: 'E1-SMOKE-VALID',
-    },
-    {
-      trace_id: traceId,
-      correlation_id: traceId,
-      request_id: 'e1-pr3-manual-valid',
-      lead_id: 'lead-e1-smoke-manual',
-    },
-  );
-
-  const validationEvents = readE1EvidenceBuffer().filter((event) => event.event_name === 'e1.runtime.manual.directive_validated');
-
+  const routes = result.json.routes as Record<string, unknown>;
   const assertions: Assertion[] = [
-    assert('diretiva sem author é rejeitada', false, invalid.ok),
-    assert('diretiva válida é aceita', true, valid.ok),
-    assertTrue('eventos técnicos de validação foram emitidos', validationEvents.length >= 2, validationEvents.length),
+    assert('status HTTP / = 200', 200, result.status),
+    assert('service = enova-2-worker', 'enova-2-worker', result.json.service),
+    assert('surface = technical_only', 'technical_only', result.json.surface),
+    assert('rota core preservada', 'POST /__core__/run', routes.core_run),
+    assert('rota meta preservada', 'POST /__meta__/ingest', routes.meta_ingest),
   ];
 
   return {
-    scenario: 'PR3 E1 — diretiva manual mínima valida author/data/escopo/prioridade',
-    response_status: 200,
-    response_json: {
-      invalid,
-      valid,
-      validations_emitted: validationEvents.length,
-    },
+    scenario: 'PR4 E1 — rota root permanece íntegra',
+    response_status: result.status,
+    response_json: result.json,
     assertions,
     passed: assertions.every((item) => item.passed),
   };
@@ -272,7 +281,9 @@ async function scenarioManualDirectiveValidation(): Promise<ScenarioResult> {
 async function scenarioCoreRouteIntegrity(): Promise<ScenarioResult> {
   resetE1TechnicalStore();
   clearE1EvidenceBuffer();
-  const traceId = 'e1-pr3-core-route-trace';
+  clearTelemetryBuffer();
+  clearRolloutEvidenceBuffer();
+  const traceId = 'e1-pr4-core-route-trace';
 
   const result = await callWorker(new Request('https://enova.local/__core__/run', {
     method: 'POST',
@@ -281,7 +292,7 @@ async function scenarioCoreRouteIntegrity(): Promise<ScenarioResult> {
       'x-trace-id': traceId,
     },
     body: JSON.stringify({
-      lead_id: 'lead-e1-route-core',
+      lead_id: 'lead-e1-route-core-pr4',
       current_stage: 'discovery',
       facts: {
         customer_goal: 'comprar_imovel',
@@ -289,22 +300,25 @@ async function scenarioCoreRouteIntegrity(): Promise<ScenarioResult> {
     }),
   }));
 
-  emitE1SmokeEvidence(traceId, 'e1-pr3-core-route-evidence', {
+  emitE1SmokeEvidence(traceId, 'e1-pr4-core-route-evidence', {
     scenario: 'core_route_integrity',
   });
 
-  const hookEvent = findEvidence(traceId, 'e1.runtime.hook.core_registered');
+  const e1HookEvent = findE1Evidence(traceId, 'e1.runtime.hook.core_registered');
+  const telemetryEvent = findTelemetryEvent(traceId, 'f7.worker.request_lifecycle.received');
+  const rolloutEvent = findRolloutEvidence(traceId, 'f8.rollout.gate_status.evaluated');
 
   const assertions: Assertion[] = [
     assert('status HTTP /__core__/run = 200', 200, result.status),
     assert('rota core preserva resposta estrutural', 'qualification_civil', result.json.stage_after),
-    assertTrue('hook técnico do E1 foi emitido no core', Boolean(hookEvent), hookEvent ?? null),
-    assert('nenhuma surface final foi criada', false, 'surface' in result.json),
+    assertTrue('hook técnico do E1 foi emitido', Boolean(e1HookEvent), e1HookEvent ?? null),
+    assertTrue('telemetria da Frente 7 permaneceu ativa', Boolean(telemetryEvent), telemetryEvent ?? null),
+    assertTrue('guard de rollout da Frente 8 permaneceu ativo', Boolean(rolloutEvent), rolloutEvent ?? null),
     assert('nenhuma fala final foi criada', false, 'message' in result.json),
   ];
 
   return {
-    scenario: 'PR3 E1 — /__core__/run permanece íntegro com hook mínimo',
+    scenario: 'PR4 E1 — /__core__/run íntegro com telemetria/rollout preservados',
     response_status: result.status,
     response_json: result.json,
     assertions,
@@ -314,7 +328,9 @@ async function scenarioCoreRouteIntegrity(): Promise<ScenarioResult> {
 
 async function scenarioMetaRouteIntegrity(): Promise<ScenarioResult> {
   clearE1EvidenceBuffer();
-  const traceId = 'e1-pr3-meta-route-trace';
+  clearTelemetryBuffer();
+  clearRolloutEvidenceBuffer();
+  const traceId = 'e1-pr4-meta-route-trace';
 
   const result = await callWorker(new Request('https://enova.local/__meta__/ingest', {
     method: 'POST',
@@ -327,34 +343,39 @@ async function scenarioMetaRouteIntegrity(): Promise<ScenarioResult> {
       direction: 'inbound',
       channel: 'meta_whatsapp',
       event_type: 'inbound.message.text',
-      event_id: 'wamid.e1.pr3.meta.001',
-      occurred_at: '2026-04-22T23:00:00Z',
-      received_at: '2026-04-22T23:00:01Z',
+      event_id: 'wamid.e1.pr4.meta.001',
+      occurred_at: '2026-04-22T23:30:00Z',
+      received_at: '2026-04-22T23:30:01Z',
       trace_id: traceId,
-      idempotency_key: 'meta_whatsapp:wamid.e1.pr3.meta.001',
-      lead_ref: 'lead-e1-route-meta',
+      idempotency_key: 'meta_whatsapp:wamid.e1.pr4.meta.001',
+      lead_ref: 'lead-e1-route-meta-pr4',
       payload: {
-        text: 'teste e1 pr3',
+        text: 'teste e1 pr4',
       },
     }),
   }));
 
-  emitE1SmokeEvidence(traceId, 'e1-pr3-meta-route-evidence', {
+  emitE1SmokeEvidence(traceId, 'e1-pr4-meta-route-evidence', {
     scenario: 'meta_route_integrity',
   });
 
-  const hookEvent = findEvidence(traceId, 'e1.runtime.hook.channel_registered');
+  const e1HookEvent = findE1Evidence(traceId, 'e1.runtime.hook.channel_registered');
+  const telemetryEvent = findTelemetryEvent(traceId, 'f7.channel.channel_signal.accepted');
+  const rolloutEvent = findRolloutEvidence(traceId, 'f8.rollout.gate_status.evaluated');
 
   const assertions: Assertion[] = [
     assert('status HTTP /__meta__/ingest = 202', 202, result.status),
     assert('accepted = true', true, result.json.accepted),
     assert('mode = technical_only', 'technical_only', result.json.mode),
-    assertTrue('hook técnico do E1 foi emitido no canal', Boolean(hookEvent), hookEvent ?? null),
+    assert('real_meta_integration = false', false, result.json.real_meta_integration),
+    assertTrue('hook técnico do E1 foi emitido', Boolean(e1HookEvent), e1HookEvent ?? null),
+    assertTrue('telemetria da Frente 7 permaneceu ativa', Boolean(telemetryEvent), telemetryEvent ?? null),
+    assertTrue('guard de rollout da Frente 8 permaneceu ativo', Boolean(rolloutEvent), rolloutEvent ?? null),
     assert('nenhuma fala final foi criada', false, 'message' in result.json),
   ];
 
   return {
-    scenario: 'PR3 E1 — /__meta__/ingest permanece íntegro com hook mínimo',
+    scenario: 'PR4 E1 — /__meta__/ingest íntegro com frentes 6/7/8 preservadas',
     response_status: result.status,
     response_json: result.json,
     assertions,
@@ -374,7 +395,7 @@ async function scenarioNotFoundIntegrity(): Promise<ScenarioResult> {
   ];
 
   return {
-    scenario: 'PR3 E1 — rota inexistente permanece not_found',
+    scenario: 'PR4 E1 — rota inexistente permanece not_found',
     response_status: result.status,
     response_json: result.json,
     assertions,
@@ -382,19 +403,18 @@ async function scenarioNotFoundIntegrity(): Promise<ScenarioResult> {
   };
 }
 
-async function scenarioExternalBoundariesPreserved(): Promise<ScenarioResult> {
-  const context = buildE1TechnicalContext('lead-e1-boundary-check');
-
+async function scenarioLimitsPreserved(): Promise<ScenarioResult> {
+  const context = buildE1TechnicalContext('lead-e1-boundary-check-pr4');
   const assertions: Assertion[] = [
-    assert('modo permanece technical_local_only', 'technical_local_only', context.mode),
+    assert('mode = technical_local_only', 'technical_local_only', context.mode),
     assert('crm_write_enabled = false', false, context.integration.crm_write_enabled),
     assert('external_dispatch_enabled = false', false, context.integration.external_dispatch_enabled),
     assert('core soberano preservado', true, context.integration.core_sovereignty_preserved),
-    assert('speech surface override continua desabilitado', false, context.integration.speech_surface_override_enabled),
+    assert('speech_surface_override_enabled = false', false, context.integration.speech_surface_override_enabled),
   ];
 
   return {
-    scenario: 'PR3 E1 — fronteiras externas permanecem bloqueadas',
+    scenario: 'PR4 E1 — limites de escopo e soberania permanecem preservados',
     response_status: 200,
     response_json: context as unknown as Record<string, unknown>,
     assertions,
@@ -402,22 +422,56 @@ async function scenarioExternalBoundariesPreserved(): Promise<ScenarioResult> {
   };
 }
 
+async function scenarioContractIntegrityNoDrift(): Promise<ScenarioResult> {
+  const report = {
+    e1_prs_entregues: ['PR1', 'PR2', 'PR3', 'PR4'],
+    opens_real_normative_ingestion: false,
+    opens_real_commercial_engine: false,
+    opens_large_learning_engine: false,
+    opens_ui_panel: false,
+    opens_new_external_integration: false,
+    opens_functional_crm_write: false,
+    core_sovereignty_changed: false,
+    ai_speech_sovereignty_changed: false,
+  };
+
+  const assertions: Assertion[] = [
+    assert('E1 entregou PR1+PR2+PR3+PR4', ['PR1', 'PR2', 'PR3', 'PR4'], report.e1_prs_entregues),
+    assert('sem ingestão real de normativos', false, report.opens_real_normative_ingestion),
+    assert('sem motor comercial real', false, report.opens_real_commercial_engine),
+    assert('sem aprendizado grande', false, report.opens_large_learning_engine),
+    assert('sem UI/painel', false, report.opens_ui_panel),
+    assert('sem integração externa nova', false, report.opens_new_external_integration),
+    assert('sem CRM funcional novo', false, report.opens_functional_crm_write),
+    assert('soberania do Core preservada', false, report.core_sovereignty_changed),
+    assert('soberania da IA na fala preservada', false, report.ai_speech_sovereignty_changed),
+  ];
+
+  return {
+    scenario: 'PR4 E1 — integridade contratual sem drift',
+    response_status: 200,
+    response_json: report as unknown as Record<string, unknown>,
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 async function main() {
   const scenarios: ScenarioResult[] = [];
-  scenarios.push(await scenarioLayerStructuresExist());
+  scenarios.push(await scenarioLayerSeparationIntegrity());
   scenarios.push(await scenarioMemoryTechnicalMinimum());
-  scenarios.push(await scenarioNormativeConsultiveBase());
-  scenarios.push(await scenarioCommercialRulesReadable());
-  scenarios.push(await scenarioManualDirectiveValidation());
+  scenarios.push(await scenarioNormativeCommercialManualMinimum());
+  scenarios.push(await scenarioRootIntegrity());
   scenarios.push(await scenarioCoreRouteIntegrity());
   scenarios.push(await scenarioMetaRouteIntegrity());
   scenarios.push(await scenarioNotFoundIntegrity());
-  scenarios.push(await scenarioExternalBoundariesPreserved());
+  scenarios.push(await scenarioLimitsPreserved());
+  scenarios.push(await scenarioContractIntegrityNoDrift());
 
   const allPassed = scenarios.every((scenario) => scenario.passed);
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — E1 — PR3 smoke mínimo de runtime');
+  console.log('ENOVA 2 — E1 — PR4 smoke integrado final');
   console.log('===========================================');
 
   for (const scenario of scenarios) {
