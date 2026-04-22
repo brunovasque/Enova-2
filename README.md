@@ -1,11 +1,12 @@
 # ENOVA 2
 
-Este repositório é o **núcleo documental fundador** da ENOVA 2.
+Este repositório é a base canônica da ENOVA 2 com **governança viva + código técnico executável**.
 
-## Objetivo desta fase
-Estabelecer governança, ordem executiva, contratos de trabalho, memória operacional e incorporação dos legados para evolução segura do programa.
+## Objetivo atual do repositório
+Manter governança, ordem executiva, contratos, memória operacional e runtime técnico mínimo auditável (Core, Worker, Speech, Contexto, Adapter e Áudio em recortes contratuais já concluídos).
 
-> Esta fase não implementa aplicação, backend, integrações reais, worker, painel, Supabase, Meta ou áudio.
+> O repositório **não é mais somente documental**: já possui Worker técnico, pipeline de deploy Cloudflare e runtimes mínimos versionados por frente.
+> Integrações externas completas (Meta/WhatsApp, STT/TTS real, rollout, telemetria profunda e bindings adicionais de Cloudflare) continuam fora do escopo atual.
 
 ## Documentos canônicos
 - `schema/README_EXECUCAO.md`
@@ -51,7 +52,7 @@ Estabelecer governança, ordem executiva, contratos de trabalho, memória operac
 3. Consultar `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md` — seções 4 e 5.
 
 ## Precedência documental (obrigatória)
-**A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
+**A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
 
 ## Protocolo de execução
 Toda tarefa segue o fluxo obrigatório de 16 etapas definido em `schema/CODEX_WORKFLOW.md`:
@@ -132,6 +133,15 @@ O repositório inclui o bootstrap mínimo e o pipeline de deploy para Cloudflare
 > **`main` branch representa produção.**
 > Push/merge em `main` → deploy prod automático.
 > Deploy manual via GitHub Actions → aba Actions → **Deploy — Cloudflare Workers** → Run workflow.
+
+## Auditoria de runtime Cloudflare
+
+Para separar com precisão o que é:
+- governança/documentação,
+- código versionado no repo,
+- e o que é verificável como publicação no Worker,
+
+consulte `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`.
 
 ## Regra dos legados
 Os **19 legados** e **9 complementares** são fonte de verdade de negócio herdada, consolidados em um **legado mestre único**.

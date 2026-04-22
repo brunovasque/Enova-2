@@ -6,6 +6,12 @@ O `CODEX_WORKFLOW.md` define o fluxo obrigatório de 16 etapas: leitura canônic
 
 **O CODEX_WORKFLOW é a lei operacional única entre PRs. Nenhuma etapa pode ser pulada.**
 
+## Estado operacional do repositório (referência rápida)
+
+- A ENOVA 2 já possui código técnico executável no repositório (`src/`), incluindo Worker técnico e pipeline de deploy Cloudflare.
+- Governança/documentação em `schema/` continua fonte de verdade de execução, mas **não** implica publicação automática no Worker.
+- Para auditoria de limite entre documentação, código versionado e publicação Cloudflare, consultar `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`.
+
 ## Ordem de leitura obrigatória
 1. `A00_PLANO_CANONICO_MACRO.md`
 2. `A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`

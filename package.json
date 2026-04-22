@@ -1,7 +1,7 @@
 {
   "name": "enova-2",
   "version": "1.0.0",
-  "description": "Este repositório é o **núcleo documental fundador** da ENOVA 2.",
+  "description": "Base canônica com governança viva e runtime técnico mínimo da ENOVA 2.",
   "main": "index.js",
   "directories": {
     "doc": "docs"
