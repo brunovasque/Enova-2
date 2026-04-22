@@ -4,17 +4,17 @@
 |---|---|
 | Frente | Meta/WhatsApp |
 | Contrato ativo | `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md` |
-| Estado do contrato | aberto |
-| Ultima PR executou qual recorte | PR 1 — abertura do micro contrato da Frente 6 |
-| Pendencia contratual | PR2 (contrato tecnico), PR3 (runtime minimo no Worker), PR4 (smoke integrado + closeout) |
+| Estado do contrato | em execucao |
+| Ultima PR executou qual recorte | PR 2 — contrato tecnico do canal / envelope de integracao |
+| Pendencia contratual | PR3 (runtime minimo no Worker), PR4 (smoke integrado + closeout) |
 | Contrato encerrado? | nao |
 | Item do A01 | Prioridade 6 — plugar canal Meta/WhatsApp e operacionalizar entrada/saida real |
-| Estado atual | contrato aberto |
-| Classe da ultima tarefa | governanca |
-| Ultima PR relevante | PR 1 — abertura do micro contrato da Frente 6 |
-| Ultimo commit funcional | commit desta PR de abertura contratual da Frente 6 |
-| Pendencia remanescente herdada | nenhuma da Frente 5; frente aberta aguardando PR2 |
-| Proximo passo autorizado | PR 2 — contrato tecnico do canal / envelope de integracao (sem Meta real ainda) |
+| Estado atual | em execucao |
+| Classe da ultima tarefa | contratual |
+| Ultima PR relevante | PR 2 — contrato tecnico do canal / envelope de integracao |
+| Ultimo commit funcional | commit desta PR2 documental da Frente 6 |
+| Pendencia remanescente herdada | PR2 era pendencia da PR1 e foi fechada nesta entrega |
+| Proximo passo autorizado | PR 3 — runtime minimo do canal no Worker (sem rollout e sem telemetria profunda) |
 | Legados aplicaveis | L18 (obrigatorio), C* (complementar quando confirmado) |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
@@ -32,20 +32,20 @@ Meta/WhatsApp.
 
 ## 2a. Estado do contrato
 
-aberto
+em execucao
 
 ## 2b. Ultima PR executou qual recorte do contrato
 
-PR 1 executou abertura de governanca:
+PR 2 executou recorte contratual documental:
 
-- contrato ativo da Frente 6;
-- ordem oficial PR1/PR2/PR3/PR4;
-- loop obrigatorio de consulta antes de cada tarefa;
-- criacao dos vivos e atualizacao de indices.
+- contrato tecnico de envelope criado em `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`;
+- shape canonico inbound/outbound definido;
+- eventos aceitos definidos;
+- limites entre canal, Core, Speech e Adapter definidos;
+- regras minimas de idempotencia, retry, ack, erro e logs definidas.
 
 ## 2c. Pendencia contratual
 
-- PR2 — contrato tecnico do canal / envelope de integracao
 - PR3 — runtime minimo do canal no Worker
 - PR4 — smoke integrado + closeout formal
 
@@ -59,35 +59,36 @@ Prioridade 6 — Meta/WhatsApp.
 
 ## 4. Estado atual
 
-contrato aberto
+em execucao
 
 ## 5. Classe da ultima tarefa
 
-governanca
+contratual
 
 ## 6. Ultima PR relevante
 
-PR 1 — abertura do micro contrato da Frente 6.
+PR 2 — contrato tecnico do canal / envelope de integracao.
 
 ## 7. Ultimo commit
 
-Commit da PR 1 de abertura contratual da Frente 6.
+Commit desta PR2 documental da Frente 6.
 
 ## 8. Entregas concluidas
 
-- contrato da Frente 6 aberto;
-- ordem oficial PR1/PR2/PR3/PR4 persistida no contrato;
-- loop obrigatorio de consulta registrado de forma canonica;
-- status e handoff vivos da frente criados.
+- PR1 concluida: contrato ativo da Frente 6 aberto e vivos criados;
+- PR2 concluida: contrato tecnico de envelope em `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`;
+- contrato ativo, status e handoff sincronizados para estado `em execucao`;
+- indices de contratos/status atualizados com o novo estado da frente.
 
 ## 9. Pendencias
 
-- executar PR2 no recorte contratual;
-- manter escopo fechado sem abrir runtime real de canal antes da PR3.
+- executar PR3 no recorte contratual (runtime minimo no Worker);
+- executar PR4 (smoke integrado + closeout formal);
+- manter escopo fechado sem abrir rollout ou telemetria profunda antes da hora.
 
 ## 10. Pendencia remanescente herdada
 
-Nenhuma pendencia herdada da Frente 5.
+A PR1 deixou PR2/PR3/PR4 como pendencias. A PR2 foi fechada nesta entrega; permanecem PR3 e PR4.
 
 ## 11. Bloqueios
 
@@ -98,7 +99,7 @@ Bloqueio de governanca ativo:
 
 ## 12. Proximo passo autorizado
 
-PR 2 — contrato tecnico do canal / envelope de integracao (preservado).
+PR 3 — runtime minimo do canal no Worker (preservado).
 
 ## 13. Legados aplicaveis
 
@@ -121,10 +122,10 @@ Permissoes Cloudflare necessarias: nenhuma adicional
 
 Fontes de verdade consultadas — ultima tarefa:
   Índice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         `Nenhum — ausência declarada` (antes da abertura) e `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md` (após abertura)
-  Status da frente lido:       `schema/status/AUDIO_E_MULTIMODALIDADE_STATUS.md`
-  Handoff da frente lido:      `schema/handoffs/AUDIO_E_MULTIMODALIDADE_LATEST.md`
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md`
+  Status da frente lido:       `schema/status/META_WHATSAPP_STATUS.md`
+  Handoff da frente lido:      `schema/handoffs/META_WHATSAPP_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — bloco L18 (não transcrito)
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — páginas 4, 7 e 8 (referências de canal/WhatsApp e arquitetura de canal)
+  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — bloco L18 (nao transcrito)
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — paginas 4, 7 e 8
 

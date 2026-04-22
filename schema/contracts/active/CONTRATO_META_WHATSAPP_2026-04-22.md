@@ -7,11 +7,11 @@
 | Prioridade do A01                 | Prioridade 6 |
 | Dependencias                      | Frentes 1, 2, 3, 4 e 5 encerradas |
 | Legados aplicaveis                | L18 (obrigatorio), C* (complementar, quando confirmado por PDF) |
-| Referencias obrigatorias          | A00, A01, A02, CODEX_WORKFLOW, CONTRACT_EXECUTION_PROTOCOL, CONTRACT_CLOSEOUT_PROTOCOL, CONTRACT_SCHEMA, STATUS_SCHEMA, HANDOFF_SCHEMA, CLOUDFLARE_PERMISSION_PROTOCOL, REQUEST_ECONOMY_PROTOCOL, CLOUDFLARE_RUNTIME_AUDIT_2026-04-22 |
+| Referencias obrigatorias          | A00, A01, A02, CODEX_WORKFLOW, CONTRACT_EXECUTION_PROTOCOL, CONTRACT_CLOSEOUT_PROTOCOL, CONTRACT_SCHEMA, STATUS_SCHEMA, HANDOFF_SCHEMA, CLOUDFLARE_PERMISSION_PROTOCOL, REQUEST_ECONOMY_PROTOCOL, CLOUDFLARE_RUNTIME_AUDIT_2026-04-22, schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md |
 | Blocos legados obrigatorios       | L18 |
 | Blocos legados complementares     | C* (pendente de confirmacao por leitura direta do PDF) |
 | Ordem minima de leitura da frente | A00 -> A01 -> A02 -> contracts/_INDEX -> este contrato -> status/handoff da frente -> L18 (PDF) |
-| Status                            | Aberto |
+| Status                            | Em execucao |
 | Ultima atualizacao                | 2026-04-22 |
 
 ---
@@ -62,27 +62,29 @@ Abrir e executar, em recortes curtos e seguros, a Frente 6 de canal Meta/WhatsAp
 - contrato ativo da Frente 6 aberto e versionado no repo;
 - ordem oficial PR1/PR2/PR3/PR4 persistida no contrato e nos vivos;
 - loop obrigatorio de consulta antes de cada tarefa da frente, persistido no repo;
-- status e handoff vivos da Frente 6 criados;
-- proxima acao autorizada explicitada: PR2.
+- status e handoff vivos da Frente 6 criados e atualizados para PR2;
+- contrato tecnico de envelope da PR2 persistido em `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`;
+- proxima acao autorizada explicitada: PR3.
 
 ## 7. Criterios de aceite
 
 C1. Contrato ativo da Frente 6 aberto em `schema/contracts/active/`.  
 C2. Ordem PR1/PR2/PR3/PR4 registrada explicitamente no repo.  
 C3. Loop obrigatorio de consulta registrado explicitamente no repo.  
-C4. `schema/contracts/_INDEX.md` atualizado com Frente 6 em `aberto`.  
-C5. `schema/status/META_WHATSAPP_STATUS.md` criado.  
-C6. `schema/handoffs/META_WHATSAPP_LATEST.md` criado.  
+C4. `schema/contracts/_INDEX.md` atualizado com estado contratual corrente da Frente 6.  
+C5. `schema/status/META_WHATSAPP_STATUS.md` criado e atualizado conforme o recorte executado.  
+C6. `schema/handoffs/META_WHATSAPP_LATEST.md` criado e atualizado conforme o recorte executado.  
 C7. `schema/status/_INDEX.md` e `schema/handoffs/_INDEX.md` atualizados.  
-C8. Nenhuma implementacao real de canal nesta PR1.  
-C9. Proximo passo autorizado claro e sem ambiguidade: PR2.
+C8. Nenhuma implementacao real de canal nas PR1/PR2.  
+C9. Proximo passo autorizado claro e sem ambiguidade, conforme estado atual da frente.
 
 ## 8. Provas obrigatorias
 
 - diff dos arquivos vivos e do contrato ativo;
+- diff do documento da PR2: `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`;
 - `git status`, branch, SHA e push no mesmo branch;
 - `git remote -v` e link de commit nao-404;
-- validacao de que nenhum arquivo de runtime funcional de canal foi alterado nesta PR1.
+- validacao de que nenhum arquivo de runtime funcional de canal foi alterado nesta PR1/PR2.
 
 ## 9. Bloqueios
 
@@ -93,12 +95,13 @@ C9. Proximo passo autorizado claro e sem ambiguidade: PR2.
 
 ## 10. Proximo passo autorizado
 
-**PR2 — contrato tecnico do canal/envelope de integracao (sem Meta real ainda).**
+**PR3 — runtime minimo do canal no Worker (sem rollout e sem telemetria profunda).**
 
 ## 11. Relacao com o A01
 
 - Item atendido: **Prioridade 6** (Meta/WhatsApp).
-- Esta PR1 abre governanca e recorte de execucao da frente sem abrir implementacao de canal.
+- PR1 abriu governanca da frente sem runtime.
+- PR2 executa recorte contratual documental de envelope sem runtime.
 
 ## 12. Relacao com legados aplicaveis
 
@@ -119,6 +122,7 @@ C9. Proximo passo autorizado claro e sem ambiguidade: PR2.
 - `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
 - `schema/REQUEST_ECONOMY_PROTOCOL.md`
 - `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`
+- `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`
 - `schema/legacy/INDEX_LEGADO_MESTRE.md`
 - `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`
 
@@ -150,6 +154,7 @@ C9. Proximo passo autorizado claro e sem ambiguidade: PR2.
 - eventos aceitos;
 - limites entre canal, Core, Speech e Adapter;
 - idempotencia, retry, ack, erro e logs minimos;
+- persistencia do contrato tecnico em `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`;
 - sem Meta real ainda.
 
 ### PR3 — runtime minimo do canal no Worker
@@ -184,7 +189,7 @@ Regras:
 - proibido misturar recortes de PRs diferentes;
 - proibido abrir escopo fora do contrato sem revisao explicita.
 
-## 18. Riscos e dependencias Cloudflare (sem implementacao nesta PR1)
+## 18. Riscos e dependencias Cloudflare (sem implementacao em PR1/PR2)
 
 R1. Falso senso de integracao real sem prova externa de runtime publicado.  
 Mitigacao: seguir limites da auditoria `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`.
@@ -200,4 +205,12 @@ Mitigacao: declaracao obrigatoria via `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
 - Estado da frente ao abrir: **contrato aberto**
 - Mudancas em dados persistidos (Supabase): **nenhuma**
 - Permissoes Cloudflare necessarias: **nenhuma adicional nesta PR1**
+
+## 20. Estado apos execucao da PR2
+
+- Estado da frente: **em execucao**
+- Recorte executado nesta PR2: **contrato tecnico do canal/envelope de integracao**
+- Artefato documental da PR2: `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`
+- Mudancas em dados persistidos (Supabase): **nenhuma**
+- Permissoes Cloudflare necessarias: **nenhuma adicional**
 
