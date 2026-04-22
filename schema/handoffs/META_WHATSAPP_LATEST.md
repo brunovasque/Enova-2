@@ -4,17 +4,17 @@
 |---|---|
 | Frente | Meta/WhatsApp |
 | Data | 2026-04-22 |
-| Estado da frente | contrato aberto |
-| Classificacao da tarefa | governanca |
-| Ultima PR relevante | PR 49 — smoke integrado de audio + closeout formal da Frente 5 |
+| Estado da frente | em execucao |
+| Classificacao da tarefa | contratual |
+| Ultima PR relevante | PR 1 — abertura do micro contrato da Frente 6 |
 | Contrato ativo | `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md` |
-| Recorte executado do contrato | PR 1 — abertura do micro contrato da Frente 6 |
-| Pendencia contratual remanescente | PR2, PR3, PR4 |
+| Recorte executado do contrato | PR 2 — contrato tecnico do canal / envelope de integracao |
+| Pendencia contratual remanescente | PR3, PR4 |
 | Houve desvio de contrato? | nao |
 | Contrato encerrado nesta PR? | nao |
-| Item do A01 atendido | Prioridade 6 — abertura da frente Meta/WhatsApp em escopo de governanca |
-| Proximo passo autorizado | PR 2 — contrato tecnico do canal / envelope de integracao |
-| Proximo passo foi alterado? | nao |
+| Item do A01 atendido | Prioridade 6 — contrato tecnico do canal/envelope de integracao |
+| Proximo passo autorizado | PR 3 — runtime minimo do canal no Worker |
+| Proximo passo foi alterado? | sim — saiu de PR2 para PR3 |
 | Tarefa fora de contrato? | nao |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
@@ -23,69 +23,70 @@
 
 ## 1. Contexto curto
 
-A Frente 5 foi encerrada formalmente na PR 49 e o proximo passo autorizado no estado vivo era abrir a Frente 6.
+A PR 1 abriu a Frente 6 em governanca, criou contrato/vivos e travou a ordem imutavel PR1->PR2->PR3->PR4.
 
-Esta PR 1 abriu somente a camada contratual/governanca da Frente 6, sem implementacao funcional de Meta/WhatsApp, sem runtime de webhook e sem alteracao de deploy.
+Esta PR 2 executou exatamente o recorte contratado de envelope tecnico do canal, sem runtime real, sem webhook Meta real e sem alteracao de deploy.
 
-O contrato da frente ja nasce com ordem oficial PR1->PR2->PR3->PR4 e com loop obrigatorio de consulta antes de qualquer tarefa futura.
+O proximo passo autorizado agora e PR3 (runtime minimo no Worker), mantendo escopo fechado.
 
 ## 2. Classificacao da tarefa
 
-governanca
+contratual
 
 ## 3. Ultima PR relevante
 
-PR 49 — smoke integrado de audio + closeout formal da Frente 5.
+PR 1 — abertura do micro contrato da Frente 6.
 
 ## 4. O que a PR anterior fechou
 
-- encerrou a Frente 5 com smoke integrado aprovado;
-- arquivou contrato da Frente 5;
-- deixou como proximo passo autorizado a abertura da Frente 6.
+- abriu contrato ativo da Frente 6;
+- criou `schema/status/META_WHATSAPP_STATUS.md` e `schema/handoffs/META_WHATSAPP_LATEST.md`;
+- registrou ordem oficial PR1/PR2/PR3/PR4;
+- deixou PR2 como proximo passo autorizado.
 
 ## 5. O que a PR anterior NAO fechou
 
-- nao abriu contrato da Frente 6;
-- nao criou status/handoff da Frente 6;
-- nao definiu ordem oficial de PRs da Frente 6 no repo.
+- nao definiu o contrato tecnico de envelope;
+- nao definiu shape inbound/outbound;
+- nao definiu regras minimas de idempotencia/retry/ack/erro/logs;
+- nao iniciou runtime no Worker (escopo da PR3).
 
 ## 6. Diagnostico confirmado
 
-- Frente 6 estava como `aguardando abertura` em `schema/contracts/_INDEX.md`.
-- Nao existia contrato ativo da Frente 6 em `schema/contracts/active/`.
-- `schema/status/_INDEX.md` e `schema/handoffs/_INDEX.md` ainda marcavam Frente 6 como `(a criar)`.
-- Frente 5 estava encerrada sem pendencia em status/handoff.
-- A PR 0 (`schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`) foi de saneamento/auditoria, sem abrir integracao real de canal.
+- Frente 6 estava com contrato ativo `aberto` e PR2 autorizada como proximo recorte.
+- Nao existia artefato documental dedicado ao envelope tecnico da Frente 6.
+- Estado vivo ainda apontava pendencia PR2/PR3/PR4.
+- L18 segue nao transcrito no markdown, exigindo referencia ao PDF mestre.
+- Limite de escopo do contrato permanece: sem runtime antes da PR3.
 
 ## 7. O que foi feito
 
-- criado contrato ativo: `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md`
-- atualizacao de `schema/contracts/_INDEX.md` para Frente 6 em `aberto`
-- criado status vivo: `schema/status/META_WHATSAPP_STATUS.md`
-- criado handoff vivo: `schema/handoffs/META_WHATSAPP_LATEST.md`
-- atualizados indices vivos de status e handoff
-- registrada ordem oficial PR1/PR2/PR3/PR4
-- registrado loop obrigatorio de consulta antes de cada tarefa da frente
+- criado `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md` com contrato tecnico de envelope (inbound/outbound, eventos, idempotencia, retry, ack, erro, logs e limites de camada);
+- atualizado `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md` para refletir PR2 executada e proximo passo PR3;
+- atualizado `schema/contracts/_INDEX.md` com Frente 6 em `em execução` e ultima PR executora = PR2;
+- atualizado `schema/status/META_WHATSAPP_STATUS.md` para estado `em execucao` com pendencia PR3/PR4;
+- atualizado `schema/handoffs/META_WHATSAPP_LATEST.md` para continuidade da PR2;
+- atualizado `schema/status/_INDEX.md` para estado da Frente 6 em `em execução`.
 
 ## 8. O que nao foi feito
 
-- nenhuma implementacao real de webhook/canal
-- nenhuma alteracao de `wrangler.toml`
-- nenhuma alteracao de workflow de deploy
-- nenhum binding/secret/var novo
-- nenhuma alteracao em Worker/Core/Speech/Context/Audio/Adapter funcional
+- nenhuma implementacao real de webhook/canal;
+- nenhuma alteracao em `src/`;
+- nenhuma alteracao em `scripts/`;
+- nenhuma alteracao em `package.json`;
+- nenhuma alteracao em `wrangler.toml`;
+- nenhum binding/secret/var/route novo;
+- nenhum runtime da PR3.
 
 ## 9. O que esta PR fechou
 
-- abertura formal da Frente 6 em governanca canônica;
-- persistencia da ordem executiva da frente no repo;
-- persistencia da regra de loop obrigatorio no contrato e nos vivos.
+- recorte PR2 do contrato ativo (envelope tecnico de integracao) com artefato documental dedicado;
+- sincronizacao contratual/status/handoff/indices para estado pos-PR2.
 
 ## 10. O que continua pendente apos esta PR
 
-- PR2 (contrato tecnico do canal/envelope);
-- PR3 (runtime minimo no Worker);
-- PR4 (smoke integrado e closeout).
+- PR3 (runtime minimo do canal no Worker);
+- PR4 (smoke integrado + closeout formal).
 
 ## 11. Esta tarefa foi fora de contrato?
 
@@ -97,11 +98,11 @@ nao
 
 ## 11b. Recorte executado do contrato
 
-PR 1 — abertura do micro contrato e base viva da Frente 6.
+PR 2 — contrato tecnico do canal / envelope de integracao.
 
 ## 11c. Pendencia contratual remanescente
 
-PR2, PR3 e PR4.
+PR3 e PR4.
 
 ## 11d. Houve desvio de contrato?
 
@@ -113,36 +114,37 @@ nao
 
 ## 12. Arquivos relevantes
 
+- `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`
 - `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md`
 - `schema/contracts/_INDEX.md`
 - `schema/status/META_WHATSAPP_STATUS.md`
 - `schema/handoffs/META_WHATSAPP_LATEST.md`
 - `schema/status/_INDEX.md`
-- `schema/handoffs/_INDEX.md`
 
 ## 13. Item do A01 atendido
 
-Prioridade 6 — abertura da frente Meta/WhatsApp por contrato antes de implementacao.
+Prioridade 6 — contrato tecnico do canal/envelope de integracao antes de runtime real.
 
 ## 14. Estado atual da frente
 
-contrato aberto
+em execucao
 
 ## 15. Proximo passo autorizado
 
-PR 2 — contrato tecnico do canal / envelope de integracao (sem Meta real ainda).
+PR 3 — runtime minimo do canal no Worker (sem rollout e sem telemetria profunda).
 
 ## 16. Riscos
 
-- risco de tentar pular direto para runtime sem passar pela PR2;
+- risco de tentar abrir escopo de PR4 durante a PR3;
 - risco de misturar telemetria/rollout antes da hora;
-- risco de declarar integracao Cloudflare sem prova externa de runtime publicado.
+- risco de declarar integracao Cloudflare real sem prova externa de runtime publicado.
 
 ## 17. Provas
 
-- diff dos arquivos vivos e contrato ativo da Frente 6;
-- indice de contratos atualizado para status `aberto`;
-- indices de status/handoff atualizados com a nova frente criada.
+- diff documental com artefato novo da PR2 e vivos sincronizados;
+- indice de contratos atualizado para status `em execução` na Frente 6;
+- indice de status atualizado para estado `em execução` na Frente 6;
+- validacao de que nao houve alteracao em runtime (`src/`, `scripts/`, `package.json`, `wrangler.toml`).
 
 ## 18. Mudancas em dados persistidos (Supabase)
 
@@ -156,10 +158,10 @@ Permissoes Cloudflare necessarias: nenhuma adicional
 
 Fontes de verdade consultadas:
   Índice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         `Nenhum — ausência declarada` (antes da abertura) e `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md` (após abertura)
-  Status da frente lido:       `schema/status/AUDIO_E_MULTIMODALIDADE_STATUS.md`
-  Handoff da frente lido:      `schema/handoffs/AUDIO_E_MULTIMODALIDADE_LATEST.md`
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md`
+  Status da frente lido:       `schema/status/META_WHATSAPP_STATUS.md`
+  Handoff da frente lido:      `schema/handoffs/META_WHATSAPP_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — bloco L18 (não transcrito)
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — páginas 4, 7 e 8
+  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — bloco L18 (nao transcrito)
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — paginas 4, 7 e 8
 
