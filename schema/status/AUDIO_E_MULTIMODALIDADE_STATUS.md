@@ -4,21 +4,21 @@
 |---|---|
 | Frente | Audio e Multimodalidade |
 | Contrato ativo | `schema/contracts/active/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md` |
-| Estado do contrato | aberto |
-| Ultima PR executou qual recorte | PR 45 — abertura contratual da Frente 5 (governanca) |
-| Pendencia contratual | PR46, PR47, PR48 e PR49 pendentes |
+| Estado do contrato | em execucao |
+| Ultima PR executou qual recorte | PR 46 — contrato de audio, transcricao e evidencia de entrada |
+| Pendencia contratual | PR47, PR48 e PR49 pendentes |
 | Contrato encerrado? | nao |
 | Item do A01 | Prioridade 5 — adicionar audio end-to-end no mesmo cerebro conversacional da ENOVA 2 |
-| Estado atual | contrato aberto |
-| Classe da ultima tarefa | governanca |
-| Ultima PR relevante | PR 45 — abertura contratual da Frente 5 |
-| Ultimo commit funcional | (commit desta PR 45 — abertura contratual) |
+| Estado atual | em execucao — contrato de entrada de audio definido |
+| Classe da ultima tarefa | contratual |
+| Ultima PR relevante | PR 46 — contrato de audio, transcricao e evidencia de entrada |
+| Ultimo commit funcional | (commit da PR 46) |
 | Pendencia remanescente herdada | nenhuma herdada da Frente 4 — frente nova |
-| Proximo passo autorizado | PR46 — contrato de audio, transcricao e evidencia de entrada (preservado) |
+| Proximo passo autorizado | PR47 — convergencia audio → pacote semantico → extracao estruturada |
 | Legados aplicaveis | L03 (obrigatorio) e L19 (obrigatorio) |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
-| Ultima atualizacao | 2026-04-21 |
+| Ultima atualizacao | 2026-04-22 |
 
 ---
 
@@ -32,15 +32,14 @@ Audio e Multimodalidade.
 
 ## 2a. Estado do contrato
 
-aberto
+em execucao
 
 ## 2b. Ultima PR executou qual recorte do contrato
 
-PR 45 — abertura contratual da Frente 5. Nenhuma implementacao funcional.
+PR 46 — contrato de audio, transcricao e evidencia de entrada. Definicao do objeto canonico `AudioInputEntry`, metadados, confianca, evidencia, normalizacao e boundaries da Frente 5.
 
 ## 2c. Pendencia contratual
 
-- PR46 — contrato de audio, transcricao e evidencia de entrada
 - PR47 — convergencia audio → pacote semantico → extracao estruturada
 - PR48 — pipeline base multimodal + integracao com speech/persistencia
 - PR49 — smoke integrado de audio + closeout formal da Frente 5
@@ -56,19 +55,19 @@ Fase 4 do A00/A01: audio transcrevendo, extraindo e persistindo no mesmo modelo 
 
 ## 4. Estado atual
 
-**contrato aberto** — contrato aprovado, execucao tecnica ainda nao iniciada.
+**em execucao** — PR46 concluida; contrato de entrada de audio definido; PR47 autorizada.
 
 ## 5. Classe da ultima tarefa
 
-governanca
+contratual
 
 ## 6. Ultima PR relevante
 
-PR 45 — abertura contratual da Frente 5 (criou contrato, status, handoff e atualizou indices).
+PR 46 — contrato de audio, transcricao e evidencia de entrada (definiu objeto canonico `AudioInputEntry`, metadados, confianca, evidencia, normalizacao, boundaries).
 
 ## 7. Ultimo commit
 
-(commit desta PR 45)
+(commit da PR 46)
 
 ## 8. Entregas concluidas
 
@@ -77,10 +76,16 @@ PR 45 — abertura contratual da Frente 5 (criou contrato, status, handoff e atu
 - status vivo da Frente 5 criado (PR 45)
 - handoff vivo da Frente 5 criado (PR 45)
 - quebra oficial definida em PR45, PR46, PR47, PR48 e PR49 (PR 45)
+- `schema/audio/FRENTE5_AUDIO_INPUT_CONTRACT.md` criado — contrato canonico de entrada de audio (PR 46)
+- objeto `AudioInputEntry` definido com campos obrigatorios, opcionais, enums e regras (PR 46)
+- boundaries entre audio bruto, transcricao, evidencia, normalizacao e pacote semantico definidos (PR 46)
+- regras de confianca e confirmacao definidas — limiar 0.85, politica de requires_confirmation (PR 46)
+- o que persiste e o que nao persiste definido explicitamente (PR 46)
+- smoke documental/estrutural do contrato concluido (PR 46)
+- `schema/contracts/_INDEX.md` atualizado: Frente 5 = em execucao (PR 46)
 
 ## 9. Pendencias
 
-- PR46 — definir objeto canonico de audio, metadados, confianca, evidencia e normalizacao
 - PR47 — definir convergencia audio → pacote semantico → Extractor estruturado
 - PR48 — criar casca tecnica do pipeline multimodal e integrar com speech/persistencia
 - PR49 — smoke integrado de audio + closeout formal
@@ -91,13 +96,12 @@ Nenhuma herdada da Frente 4 (encerrada integralmente na PR44).
 
 ## 11. Bloqueios
 
-Nenhum. Frente 4 encerrada formalmente. Contrato da Frente 5 aberto. PR46 autorizada.
+Nenhum. PR46 concluida. PR47 autorizada.
 
 ## 12. Proximo passo autorizado
 
-**PR46 — contrato de audio, transcricao e evidencia de entrada da Frente 5.**  
-Sem implementacao funcional real de STT/TTS. Sem canal externo. Sem rollout.  
-Estado: **preservado** (definido no contrato de abertura desta frente).
+**PR47 — convergencia audio → pacote semantico → extracao estruturada.**  
+Sem implementacao funcional real de STT/TTS. Sem canal externo. Sem rollout.
 
 ## 13. Legados aplicaveis
 
@@ -106,11 +110,11 @@ Estado: **preservado** (definido no contrato de abertura desta frente).
 
 ## 14. Ultima atualizacao
 
-2026-04-21 — agente Copilot (PR 45 — abertura contratual da Frente 5)
+2026-04-22 — agente Copilot (PR 46 — contrato de audio, transcricao e evidencia de entrada)
 
 ## 15. Mudancas em dados persistidos (Supabase) — ultima tarefa
 
-Mudancas em dados persistidos (Supabase): nenhuma — esta PR e exclusivamente de governanca/abertura contratual; nenhuma escrita em Supabase foi realizada.
+Mudancas em dados persistidos (Supabase): nenhuma — esta PR e exclusivamente contratual/documental; nenhuma escrita em Supabase foi realizada.
 
 ## 16. Permissoes Cloudflare necessarias — ultima tarefa
 
@@ -118,11 +122,11 @@ Permissoes Cloudflare necessarias: nenhuma adicional.
 
 ## 17. Fontes consultadas — ultima tarefa
 
-Fontes de verdade consultadas — ultima tarefa:
+Fontes de verdade consultadas — ultima tarefa (PR 46):
   Indice de contratos lido:    `schema/contracts/_INDEX.md`
-  Contrato ativo lido:         Nenhum — ausencia confirmada antes da abertura desta frente
-  Status da frente lido:       `schema/status/SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md` (frente predecessora)
-  Handoff da frente lido:      `schema/handoffs/SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md` (frente predecessora)
+  Contrato ativo lido:         `schema/contracts/active/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md`
+  Status da frente lido:       `schema/status/AUDIO_E_MULTIMODALIDADE_STATUS.md`
+  Handoff da frente lido:      `schema/handoffs/AUDIO_E_MULTIMODALIDADE_LATEST.md`
   Indice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  N/A — blocos L03 e L19 identificados; nao transcritos no markdown; PDF disponivel
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — nao consultado nesta PR de governanca; blocos identificados estruturalmente via INDEX_LEGADO_MESTRE
+  Adendo soberania lido:       `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
