@@ -215,7 +215,7 @@ PR2 deve definir, sem implementacao:
 Antes de qualquer tarefa da Frente 7:
 
 1. `schema/contracts/_INDEX.md`
-2. `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`
+2. `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md`
 3. `schema/status/TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`
 4. `schema/handoffs/TELEMETRIA_E_OBSERVABILIDADE_LATEST.md`
 5. Ordem oficial PR1/PR2/PR3/PR4 deste contrato
