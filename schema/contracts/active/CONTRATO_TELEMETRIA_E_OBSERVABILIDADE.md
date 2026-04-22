@@ -79,7 +79,7 @@ Esta frente existe para impedir diagnostico por adivinhacao. Ao final dela, o si
 - ordem oficial PR1/PR2/PR3/PR4 registrada;
 - loop obrigatorio da Frente 7 registrado;
 - mapa executivo de ativacao real das integracoes registrado;
-- proximo passo autorizado: PR3 da Frente 7.
+- proximo passo autorizado: PR4 da Frente 7.
 
 ## 7. Mapa executivo de ativacao real das integracoes
 
@@ -136,7 +136,7 @@ C7. Loop obrigatorio de consulta persistido no repo.
 C8. Mapa executivo de ativacao real das integracoes presente, objetivo e sem ambiguidade.  
 C9. Nenhum codigo funcional novo nesta PR1.  
 C10. Nenhuma integracao externa, secret, binding, var, dashboard, deploy ou rollout aberto nesta PR1.  
-C11. Proximo passo autorizado declarado conforme o estado atual do contrato (apos PR2: PR3 — runtime minimo de observabilidade no Worker/repo).
+C11. Proximo passo autorizado declarado conforme o estado atual do contrato (apos PR3: PR4 — smoke integrado + closeout formal da Frente 7).
 
 ## 10. Provas obrigatorias
 
@@ -160,15 +160,15 @@ C11. Proximo passo autorizado declarado conforme o estado atual do contrato (apo
 
 ## 12. Proximo passo autorizado
 
-**PR3 — runtime minimo de observabilidade no Worker/repo.**
+**PR4 — smoke integrado + closeout formal da Frente 7.**
 
-PR3 deve implementar, no recorte minimo:
+PR4 deve validar, no recorte minimo:
 
-- hooks minimos;
-- emissao minima conforme `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`;
-- smoke minimo de observabilidade;
-- bloqueio tecnico de fronteiras externas proibidas;
-- sem dashboard externo, sem ferramenta externa obrigatoria e sem telemetria profunda externa.
+- aderencia dos sinais emitidos na PR3 ao contrato tecnico da PR2;
+- integridade de `/`, `/__core__/run` e `/__meta__/ingest` sem regressao;
+- limites preservados (sem dashboard externo, sem ferramenta externa obrigatoria e sem telemetria profunda externa);
+- ausencia de integracao externa real;
+- closeout readiness e encerramento formal do contrato da Frente 7, se todos os criterios forem cumpridos.
 
 ## 13. Relacao com o A01
 
@@ -297,3 +297,18 @@ A Frente 8 devera tratar rollout, shadow mode, canary e cutover, respeitando os 
 - Mudancas em dados persistidos (Supabase): **nenhuma**.
 - Permissoes Cloudflare necessarias: **nenhuma adicional**.
 - Proximo passo autorizado apos PR2: **PR3 — runtime minimo de observabilidade no Worker/repo**.
+
+## 23. Estado apos execucao da PR3
+
+- Estado da frente apos PR3: **em execucao**.
+- Runtime minimo de observabilidade implementado em:
+  - `src/telemetry/types.ts`
+  - `src/telemetry/emit.ts`
+  - `src/worker.ts`
+  - `src/meta/ingest.ts`
+- Smoke especifico da PR3 implementado em `src/telemetry/smoke.ts`.
+- Integridade das rotas tecnicas preservada para `/`, `/__core__/run` e `/__meta__/ingest`.
+- Dashboard externo/ferramenta externa obrigatoria/telemetria profunda externa: **nao**.
+- Mudancas em dados persistidos (Supabase): **nenhuma**.
+- Permissoes Cloudflare necessarias: **nenhuma adicional**.
+- Proximo passo autorizado apos PR3: **PR4 — smoke integrado + closeout formal da Frente 7**.
