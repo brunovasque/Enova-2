@@ -7,7 +7,7 @@
 | Estado da frente | contrato aberto |
 | Classificacao da tarefa | governanca |
 | Ultima PR relevante | PR1 — abertura contratual forte da Frente 7 |
-| Contrato ativo | `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md` |
+| Contrato ativo | `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md` |
 | Recorte executado do contrato | PR1 — abertura contratual forte da Frente 7 |
 | Pendencia contratual remanescente | PR2, PR3 e PR4 |
 | Houve desvio de contrato? | nao |
@@ -105,7 +105,7 @@ nao
 
 ## 11a. Contrato ativo
 
-`schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`
+`schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md`
 
 ## 11b. Recorte executado do contrato
 
@@ -125,7 +125,7 @@ nao
 
 ## 12. Arquivos relevantes
 
-- `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`
+- `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md`
 - `schema/status/TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`
 - `schema/handoffs/TELEMETRIA_E_OBSERVABILIDADE_LATEST.md`
 - `schema/contracts/_INDEX.md`

@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | Frente | Telemetria e Observabilidade |
-| Contrato ativo | `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md` |
+| Contrato ativo | `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md` |
 | Estado do contrato | aberto |
 | Ultima PR executou qual recorte | PR1 — abertura contratual forte da Frente 7 |
 | Pendencia contratual | PR2, PR3 e PR4 da Frente 7 |
@@ -29,7 +29,7 @@ Telemetria e Observabilidade.
 
 ## 2. Contrato ativo
 
-`schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`
+`schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md`
 
 ## 2a. Estado do contrato
 
