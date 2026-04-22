@@ -4,7 +4,8 @@
 
 Prepara o repositório para deploy na plataforma Cloudflare Workers, com dois ambientes canônicos, entrypoint técnico mínimo e pipeline de deploy via GitHub Actions.
 
-**Nenhuma lógica de negócio, binding, secret, integração real ou arquitetura técnica foi aberta nesta etapa.**
+**Na etapa original de bootstrap não foram abertos bindings, secrets, canais externos nem integrações de produção.**
+O repositório evoluiu depois do bootstrap e hoje já possui runtime técnico adicional versionado; este documento continua focado no que o pipeline Cloudflare realmente publica.
 
 ---
 
@@ -195,6 +196,15 @@ Esta integração continua restrita:
 - sem Supabase, canal ou WhatsApp
 
 A saída da rota do Core é exclusivamente estrutural e serve como entrada técnica viva para validar o Core real dentro do Worker.
+
+---
+
+## Limite explícito: repo vs Worker publicado
+
+- O workflow de deploy publica o **entrypoint definido em `wrangler.toml` (`main = "src/worker.ts"`)**.
+- Código que não está conectado ao entrypoint/rota ativa do Worker pode existir no repositório sem estar exposto no runtime publicado.
+- Governança contratual e documentos em `schema/` **não** são publicados automaticamente no Worker.
+- Smokes locais comprovam comportamento de código versionado; não substituem validação direta de runtime em dashboard/logs do Cloudflare.
 
 ---
 
