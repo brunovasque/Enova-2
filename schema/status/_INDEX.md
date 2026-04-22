@@ -24,7 +24,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 | 3 | Contexto, Extração Estruturada e Memória Viva  | `CONTEXTO_EXTRACAO_MEMORIA_VIVA_STATUS.md`   | concluída        |
 | 4 | Supabase Adapter e Persistência                | `SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`  | encerrada        |
 | 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_STATUS.md`          | concluída        |
-| 6 | Meta/WhatsApp                                  | `META_WHATSAPP_STATUS.md`                    | em execução      |
+| 6 | Meta/WhatsApp                                  | `META_WHATSAPP_STATUS.md`                    | concluída        |
 | 7 | Telemetria e Observabilidade                   | *(a criar)*                                  | não iniciada     |
 | 8 | Rollout                                        | *(a criar)*                                  | não iniciada     |
 
@@ -39,4 +39,4 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 
 ## Ultima sincronizacao
 
-- 2026-04-22 — Frente 6 Meta/WhatsApp permanece em execucao apos PR3, com runtime minimo tecnico concluido e PR4 como proximo passo autorizado nos vivos da frente.
+- 2026-04-22 — Frente 6 Meta/WhatsApp encerrada formalmente apos PR4, com smoke integrado final aprovado e contrato arquivado. Proxima frente autorizada: Frente 7 — Telemetria e Observabilidade.

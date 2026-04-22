@@ -11,7 +11,7 @@
 | Blocos legados obrigatorios       | L18 |
 | Blocos legados complementares     | C* (pendente de confirmacao por leitura direta do PDF) |
 | Ordem minima de leitura da frente | A00 -> A01 -> A02 -> contracts/_INDEX -> este contrato -> status/handoff da frente -> L18 (PDF) |
-| Status                            | Em execucao |
+| Status                            | Encerrado |
 | Ultima atualizacao                | 2026-04-22 |
 
 ---
@@ -96,7 +96,7 @@ C9. Proximo passo autorizado claro e sem ambiguidade, conforme estado atual da f
 
 ## 10. Proximo passo autorizado
 
-**PR4 — smoke integrado + closeout formal da Frente 6.**
+**Frente 7 — Telemetria e Observabilidade (abrir contrato antes de qualquer implementacao).**
 
 ## 11. Relacao com o A01
 
@@ -233,4 +233,32 @@ Mitigacao: declaracao obrigatoria via `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
 - Proximo passo autorizado: **PR4 — smoke integrado + closeout formal da Frente 6**.
 - Mudancas em dados persistidos (Supabase): **nenhuma**
 - Permissoes Cloudflare necessarias: **nenhuma adicional**
+
+## 22. Estado apos execucao da PR4
+
+- Estado da frente: **concluida**
+- Estado do contrato: **encerrado e arquivado**
+- Recorte executado nesta PR4: **smoke integrado final + closeout formal**
+- Closeout readiness: `schema/contracts/closeout/META_WHATSAPP_CLOSEOUT_READINESS.md`
+- Contrato arquivado em: `schema/contracts/archive/CONTRATO_META_WHATSAPP_2026-04-22.md`
+- Smoke final: `npm run smoke:meta` (14/14 cenarios) e `npm run smoke:all` passando.
+- Sem Meta real, sem chamada externa, sem persistencia nova, sem binding/secret/var, sem rollout e sem telemetria profunda.
+- Proximo contrato autorizado: **Frente 7 — Telemetria e Observabilidade**.
+- Mudancas em dados persistidos (Supabase): **nenhuma**
+- Permissoes Cloudflare necessarias: **nenhuma adicional**
+
+## 23. Encerramento de contrato
+
+--- ENCERRAMENTO DE CONTRATO ---
+Contrato encerrado:                     schema/contracts/archive/CONTRATO_META_WHATSAPP_2026-04-22.md
+Contrato encerrado com sucesso?:        sim
+Objetivo do contrato cumprido?:         sim
+Criterios de aceite cumpridos?:         sim (C1-C9)
+Fora de escopo respeitado?:             sim
+Pendencias remanescentes:               nenhuma
+Evidencias / provas do encerramento:    PR1, PR2, PR3, PR4; `npm run smoke:meta`; `npm run smoke:worker`; `npm run smoke:all`; closeout readiness
+Data de encerramento:                   2026-04-22T13:33:10-03:00
+PR que encerrou:                        PR 4 — smoke integrado + closeout formal da Frente 6
+Destino do contrato encerrado:          archive (schema/contracts/archive/CONTRATO_META_WHATSAPP_2026-04-22.md)
+Proximo contrato autorizado:            Frente 7 — Telemetria e Observabilidade
 
