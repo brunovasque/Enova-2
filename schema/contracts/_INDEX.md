@@ -27,7 +27,7 @@ Este índice está subordinado ao A00, A01, ao A00-ADENDO-01, ao A02 e ao `CONTR
 | 5 | Áudio e Multimodalidade | *(nenhum — contrato encerrado em 2026-04-21)* | arquivado | 2026-04-21 | PR 45 — abertura contratual da Frente 5 | PR 49 — smoke integrado de áudio + closeout formal da Frente 5 | `schema/contracts/archive/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md` | Contrato da Frente 6 — Meta/WhatsApp |
 | 6 | Meta/WhatsApp | *(nenhum — contrato encerrado em 2026-04-22)* | arquivado | 2026-04-22 | PR 1 — abertura do micro contrato da Frente 6 | PR 4 — smoke integrado + closeout formal da Frente 6 | `schema/contracts/archive/CONTRATO_META_WHATSAPP_2026-04-22.md` | Contrato da Frente 7 — Telemetria e Observabilidade |
 | 7 | Telemetria e Observabilidade | *(nenhum — contrato encerrado em 2026-04-22)* | arquivado | 2026-04-22 | PR 1 — abertura contratual forte da Frente 7 | PR 4 — smoke integrado + closeout formal da Frente 7 | `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md` | Contrato da Frente 8 — Rollout |
-| 8 | Rollout | *(nenhum — aguardando abertura)* | aguardando abertura | — | — | — | — | PR 1 — abertura contratual da Frente 8 |
+| 8 | Rollout | `schema/contracts/active/CONTRATO_ROLLOUT.md` | aberto | 2026-04-22 | PR 1 — abertura contratual forte da Frente 8 | PR 1 — abertura contratual forte da Frente 8 | — | PR 2 — contrato tecnico de rollout |
 
 ---
 
@@ -82,3 +82,4 @@ schema/contracts/
 - 2026-04-22 — Frente 7 executou PR2 (contrato tecnico de observabilidade/telemetria) e permanece com contrato ativo em execucao. Proximo passo autorizado: PR 3 — runtime minimo de observabilidade no Worker/repo.
 - 2026-04-22 — Frente 7 executou PR3 (runtime minimo de observabilidade no Worker/repo) e permanece com contrato ativo em execucao. Proximo passo autorizado: PR 4 — smoke integrado + closeout formal da Frente 7.
 - 2026-04-22 — Frente 7 executou PR4 (smoke integrado + closeout formal), encerrou e arquivou o contrato em `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`. Proximo contrato autorizado: Frente 8 — Rollout.
+- 2026-04-22 — Frente 8 Rollout aberta formalmente com contrato ativo em `schema/contracts/active/CONTRATO_ROLLOUT.md`. Proximo passo autorizado: PR 2 — contrato tecnico de rollout.
