@@ -5,17 +5,17 @@
 | Módulo | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional |
 | Identificador canônico | E1 (Contrato Extraordinário) |
 | Contrato ativo | `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md` |
-| Estado do contrato | aberto |
-| Última PR executou qual recorte | PR1 — abertura do contrato extraordinário |
-| Pendência contratual | PR2, PR3, PR4 (conforme ordem oficial do contrato) |
+| Estado do contrato | em execução |
+| Última PR executou qual recorte | PR2 — contrato técnico do módulo |
+| Pendência contratual | PR3, PR4 (conforme ordem oficial do contrato) |
 | Contrato encerrado? | não |
 | Item do A01 | Pós-macro — contrato extraordinário explícito (fora do macro de 8 frentes) |
-| Estado atual | contrato aberto |
-| Classe da última tarefa | governança |
-| Última PR relevante | PR1 — abertura do contrato extraordinário |
-| Último commit | commit desta PR1 (abertura do contrato extraordinário E1) |
-| Pendência remanescente herdada | nenhuma — este é o estado inicial do contrato extraordinário |
-| Próximo passo autorizado | PR2 — contrato técnico do módulo (preservado) |
+| Estado atual | contrato em execução |
+| Classe da última tarefa | governança / contrato técnico |
+| Última PR relevante | PR2 — contrato técnico do módulo |
+| Último commit | commit desta PR2 (contrato técnico do E1) |
+| Pendência remanescente herdada | nenhuma — PR2 encerrou o contrato técnico conforme escopo |
+| Próximo passo autorizado | PR3 — runtime mínimo do módulo |
 | Legados aplicáveis | L03 (obrigatório), L18 e C* (complementares quando confirmados) |
 | Mudanças em dados persistidos (Supabase) | nenhuma |
 | Permissões Cloudflare necessárias | nenhuma adicional |
@@ -86,48 +86,44 @@ O A01 deve ser atualizado na PR2 para registrar formalmente este contrato extrao
 
 ## 4. Estado atual
 
-contrato aberto
+contrato em execução
 
-O macro ENOVA 2 encerrou formalmente na Frente 8. Este módulo nasce como contrato extraordinário E1, com contrato aberto, status e handoff vivos, aguardando PR2 para contrato técnico.
+O macro ENOVA 2 encerrou formalmente na Frente 8. Este módulo nasceu como contrato extraordinário E1, com contrato aberto na PR1 e contrato técnico completo na PR2. Aguardando PR3 para runtime mínimo.
 
 ---
 
 ## 5. Classe da última tarefa
 
-governança
+governança / contrato técnico
 
 ---
 
 ## 6. Última PR relevante
 
-PR1 — abertura do contrato extraordinário E1 (Módulo de Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional).
+PR2 — contrato técnico do módulo E1 (shapes das 4 camadas, regras de leitura/escrita, regras de evidência, vínculos técnicos).
 
 ---
 
 ## 7. Último commit
 
-Commit da PR1 (abertura do contrato extraordinário E1).
+Commit da PR2 (contrato técnico do módulo E1).
 
 ---
 
 ## 8. Entregas concluídas
 
 - PR1: contrato ativo, status vivo, handoff vivo, índice extraordinário, índices gerais atualizados, ordem oficial PR1/PR2/PR3/PR4, loop obrigatório, 4 camadas definidas, limites de soberania, regras de evidência/normativa/comercial/aprendizado/memória manual, critérios de aceite da PR1.
+- PR2: contrato técnico canônico criado em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md` com shapes completos das 4 camadas, enums, regras de leitura/escrita, regras de evidência e vínculos técnicos com CRM/atendimento/camada cognitiva.
 
 ---
 
 ## 9. Pendências
 
-- PR2 — contrato técnico do módulo:
-  - shapes das 4 camadas
-  - vínculos técnicos com CRM/atendimento/camada cognitiva
-  - regras detalhadas de leitura/escrita
-  - definição completa de o que pode ser aprendido e consultado
-
 - PR3 — runtime mínimo do módulo:
   - estruturas mínimas em `src/`
   - hooks mínimos
   - smoke mínimo
+  - conforme autorizado em seção 11 do contrato técnico
 
 - PR4 — smoke integrado + closeout:
   - prova do recorte contratado
@@ -137,7 +133,7 @@ Commit da PR1 (abertura do contrato extraordinário E1).
 
 ## 10. Pendência remanescente herdada
 
-Nenhuma — este é o estado inicial do contrato extraordinário E1. PR2 é o próximo passo autorizado.
+Nenhuma — PR2 entregou o contrato técnico completo conforme escopo. PR3 é o próximo passo autorizado.
 
 ---
 
@@ -154,9 +150,9 @@ Nenhum bloqueio operacional. Próximo passo (PR2) pode ser iniciado imediatament
 
 ## 12. Próximo passo autorizado
 
-**PR2 — Contrato técnico do módulo** (preservado — estado inicial do contrato E1)
+**PR3 — Runtime mínimo do módulo** (preservado — contrato técnico PR2 concluído)
 
-Antes de iniciar PR2, executar obrigatoriamente o loop da seção 15 do contrato ativo.
+Antes de iniciar PR3, executar obrigatoriamente o loop da seção 15 do contrato ativo e consultar seção 11 do contrato técnico em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md`.
 
 ---
 
@@ -170,7 +166,7 @@ Antes de iniciar PR2, executar obrigatoriamente o loop da seção 15 do contrato
 
 ## 14. Última atualização
 
-2026-04-22 — Codex (PR1 — abertura do contrato extraordinário E1).
+2026-04-22 — Codex (PR2 — contrato técnico do módulo E1).
 
 ---
 
@@ -190,12 +186,13 @@ Permissões Cloudflare necessárias: nenhuma adicional
 
 Fontes de verdade consultadas — última tarefa:
   Índice de contratos lido:    `schema/contracts/_INDEX.md`
-  Índice extraordinário lido:  `schema/contracts/extraordinary/_INDEX.md` (criado nesta PR)
-  Contrato ativo lido:         `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md` (criado nesta PR)
-  Status da frente lido:       `schema/status/ROLLOUT_STATUS.md` (estado herdado do macro)
-  Handoff da frente lido:      `schema/handoffs/ROLLOUT_LATEST.md` (estado herdado do macro)
+  Índice extraordinário lido:  `schema/contracts/extraordinary/_INDEX.md`
+  Contrato ativo lido:         `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md`
+  Status da frente lido:       `schema/status/EXTRA_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_STATUS.md`
+  Handoff da frente lido:      `schema/handoffs/EXTRA_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_LATEST.md`
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  Legado markdown consultado:  N/A — PR1 é de governança/contrato puro, sem consumo de legado técnico
-  PDF mestre consultado:       não consultado — PR1 é de governança/contrato puro
+  Legado markdown consultado:  N/A — PR2 é contrato técnico puro sem consumo de legado técnico
+  PDF mestre consultado:       não consultado — PR2 é contrato técnico documental
   Protocolos lidos:            `schema/CODEX_WORKFLOW.md`, `schema/CONTRACT_SCHEMA.md`, `schema/STATUS_SCHEMA.md`, `schema/HANDOFF_SCHEMA.md`, `schema/DATA_CHANGE_PROTOCOL.md`, `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
-  Schemas de status/handoff:   `schema/status/_INDEX.md`, `schema/handoffs/_INDEX.md`
+  A00 lido:                    `schema/A00_PLANO_CANONICO_MACRO.md`
+  A01 lido:                    `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`

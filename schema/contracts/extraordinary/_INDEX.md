@@ -21,7 +21,7 @@ Este índice está subordinado ao A00, A01, ao A00-ADENDO-01, ao A02 e ao `CONTR
 
 | # | Módulo | Contrato ativo | Status | Data de abertura | PR que abriu | Última PR executou | Próximo passo autorizado |
 |---|--------|----------------|--------|-----------------|-------------|-------------------|--------------------------|
-| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional | `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md` | aberto | 2026-04-22 | PR1 — abertura do contrato extraordinário | PR1 — abertura do contrato extraordinário | PR2 — contrato técnico do módulo |
+| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional | `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md` | em execução | 2026-04-22 | PR1 — abertura do contrato extraordinário | PR2 — contrato técnico do módulo | PR3 — runtime mínimo do módulo |
 
 ---
 
@@ -38,6 +38,8 @@ schema/contracts/extraordinary/
 ├── _INDEX.md                          ← este arquivo (índice canônico de extraordinários)
 ├── active/                            ← contratos extraordinários ativos
 │   └── CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md
+├── technical/                         ← artefatos técnicos canônicos dos contratos extraordinários
+│   └── E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md
 └── archive/                           ← contratos extraordinários encerrados e arquivados
 ```
 
@@ -74,3 +76,4 @@ Antes de qualquer execução em contrato extraordinário, obrigatoriamente ler:
 ## Última sincronização
 
 - 2026-04-22 — Contrato extraordinário E1 aberto formalmente: Módulo de Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional da ENOVA 2. Próximo passo autorizado: PR2 — contrato técnico do módulo.
+- 2026-04-22 — PR2 executada: contrato técnico canônico criado em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md`. Status → `em execução`. Próximo passo autorizado: PR3 — runtime mínimo do módulo.
