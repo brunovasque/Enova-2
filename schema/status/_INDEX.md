@@ -25,7 +25,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 | 4 | Supabase Adapter e Persistência                | `SUPABASE_ADAPTER_E_PERSISTENCIA_STATUS.md`  | encerrada        |
 | 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_STATUS.md`          | concluída        |
 | 6 | Meta/WhatsApp                                  | `META_WHATSAPP_STATUS.md`                    | concluída        |
-| 7 | Telemetria e Observabilidade                   | `TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`     | em execução      |
+| 7 | Telemetria e Observabilidade                   | `TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`     | concluída        |
 | 8 | Rollout                                        | *(a criar)*                                  | não iniciada     |
 
 ---
@@ -43,3 +43,4 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 - 2026-04-22 — Frente 7 Telemetria e Observabilidade aberta formalmente. Proximo passo autorizado: PR2 — contrato tecnico de observabilidade/telemetria.
 - 2026-04-22 — Frente 7 executou PR2 (contrato tecnico de observabilidade/telemetria). Proximo passo autorizado: PR3 — runtime minimo de observabilidade no Worker/repo.
 - 2026-04-22 — Frente 7 executou PR3 (runtime minimo de observabilidade no Worker/repo). Proximo passo autorizado: PR4 — smoke integrado + closeout formal da Frente 7.
+- 2026-04-22 — Frente 7 executou PR4 (smoke integrado + closeout formal), encerrou e arquivou contrato. Proximo contrato autorizado: Frente 8 — Rollout.
