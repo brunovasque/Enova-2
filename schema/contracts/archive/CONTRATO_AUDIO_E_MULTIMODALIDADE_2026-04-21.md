@@ -11,7 +11,7 @@
 | Blocos legados obrigatorios       | L03, L19 |
 | Blocos legados complementares     | C* quando confirmados por PDF |
 | Ordem minima de leitura da frente | A00 -> A01 -> A00-ADENDO-01 -> A02 -> este contrato -> L03 -> L19 |
-| Status                            | Aberto |
+| Status                            | Encerrado |
 | Ultima atualizacao                | 2026-04-21 |
 
 ---
@@ -314,3 +314,27 @@ Regra-matriz aplicada:
 > Extractor soberano apenas na transformacao do pacote semantico em sinais estruturados.  
 > Supabase Adapter soberano apenas em persistencia estrutural auditavel.  
 > Nenhuma camada de audio ou transcricao tem permissao para escrever resposta final ao cliente ou decidir regra de negocio.
+
+## 23. Encerramento formal do contrato (PR 49)
+
+--- ENCERRAMENTO DE CONTRATO ---
+Contrato encerrado:                     schema/contracts/archive/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md
+Contrato encerrado com sucesso?:        sim
+Objetivo do contrato cumprido?:         sim
+Critérios de aceite cumpridos?:         sim
+  - [x] C1 — Audio entra no mesmo cerebro conversacional do texto
+  - [x] C2 — Transcricao produz evidencia de entrada rastreavel com confianca
+  - [x] C3 — Convergencia audio/texto no mesmo modelo semantico
+  - [x] C4 — Extractor estruturado unico preservado
+  - [x] C5 — Persistencia coerente via Adapter unico da Frente 4
+  - [x] C6 — IA soberana na fala; pipeline multimodal nao escreve resposta
+  - [x] C7 — Core soberano em regra; pipeline multimodal nao decide negocio
+  - [x] C8 — Surface unica preservada sem camada concorrente
+  - [x] C9 — Smoke integrado final aprovado antes do closeout
+Fora de escopo respeitado?:             sim
+Pendências remanescentes:               nenhuma
+Evidências / provas do encerramento:    PR 45, PR 46, PR 47, PR 48, PR 49; `npm run smoke:audio`; `npm run smoke:all`; `schema/contracts/closeout/AUDIO_E_MULTIMODALIDADE_CLOSEOUT_READINESS.md`
+Data de encerramento:                   2026-04-21T22:31:52-03:00
+PR que encerrou:                        PR 49 — smoke integrado de audio + closeout formal da Frente 5
+Destino do contrato encerrado:          archive (schema/contracts/archive/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md)
+Próximo contrato autorizado:            Frente 6 — Meta/WhatsApp
