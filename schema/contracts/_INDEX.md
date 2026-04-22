@@ -31,6 +31,18 @@ Este índice está subordinado ao A00, A01, ao A00-ADENDO-01, ao A02 e ao `CONTR
 
 ---
 
+## Contratos Extraordinários
+
+Contratos abertos **fora do macro de 8 frentes formais**, para módulos estratégicos que nascem após o encerramento do macro.
+
+Índice canônico: `schema/contracts/extraordinary/_INDEX.md`
+
+| # | Módulo | Contrato ativo | Status | Data de abertura | PR que abriu | Próximo passo autorizado |
+|---|--------|----------------|--------|-----------------|-------------|--------------------------|
+| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional | `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md` | aberto | 2026-04-22 | PR1 — abertura do contrato extraordinário | PR2 — contrato técnico do módulo |
+
+---
+
 ## Status canônicos de contrato
 
 | Status | Significado |
@@ -85,3 +97,4 @@ schema/contracts/
 - 2026-04-22 — Frente 8 Rollout aberta formalmente com contrato ativo em `schema/contracts/active/CONTRATO_ROLLOUT.md`. Proximo passo autorizado: PR 2 — contrato tecnico de rollout.
 - 2026-04-22 — Frente 8 executou PR2 (contrato tecnico de rollout), com artefato tecnico em `schema/rollout/FRENTE8_ROLLOUT_TECHNICAL_CONTRACT.md`. Proximo passo autorizado: PR 3 — runtime minimo/controladores de rollout.
 - 2026-04-22 — Frente 8 executou PR4 (smoke integrado final + closeout formal), encerrou e arquivou o contrato em `schema/contracts/archive/CONTRATO_ROLLOUT_2026-04-22.md`. Frente 8 é a última frente formal do macro ENOVA 2. Ativação real requer contrato extraordinário explícito quando autorizado.
+- 2026-04-22 — Contrato Extraordinário E1 aberto formalmente: Módulo de Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional. Índice extraordinário criado em `schema/contracts/extraordinary/_INDEX.md`. Contrato ativo em `schema/contracts/extraordinary/active/`. Próximo passo autorizado: PR2 — contrato técnico do módulo.
