@@ -26,7 +26,7 @@ Este índice está subordinado ao A00, A01, ao A00-ADENDO-01, ao A02 e ao `CONTR
 | 4 | Supabase Adapter e Persistência | *(nenhum — contrato encerrado em 2026-04-21)* | arquivado | 2026-04-21 | PR 40 — abertura contratual da Frente 4 | PR 44 — runtime real mínimo + smoke persistente integrado + closeout formal da Frente 4 | `schema/contracts/archive/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA_2026-04-21.md` | Contrato da Frente 5 — Áudio e Multimodalidade |
 | 5 | Áudio e Multimodalidade | *(nenhum — contrato encerrado em 2026-04-21)* | arquivado | 2026-04-21 | PR 45 — abertura contratual da Frente 5 | PR 49 — smoke integrado de áudio + closeout formal da Frente 5 | `schema/contracts/archive/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md` | Contrato da Frente 6 — Meta/WhatsApp |
 | 6 | Meta/WhatsApp | *(nenhum — contrato encerrado em 2026-04-22)* | arquivado | 2026-04-22 | PR 1 — abertura do micro contrato da Frente 6 | PR 4 — smoke integrado + closeout formal da Frente 6 | `schema/contracts/archive/CONTRATO_META_WHATSAPP_2026-04-22.md` | Contrato da Frente 7 — Telemetria e Observabilidade |
-| 7 | Telemetria e Observabilidade | *(nenhum — aguardando abertura)* | aguardando abertura | — | — | — | — | — |
+| 7 | Telemetria e Observabilidade | `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md` | aberto | 2026-04-22 | PR 1 — abertura contratual forte da Frente 7 | PR 1 — abertura contratual forte da Frente 7 | — | PR 2 — contrato tecnico de observabilidade/telemetria |
 | 8 | Rollout | *(nenhum — aguardando abertura)* | aguardando abertura | — | — | — | — | — |
 
 ---
@@ -75,3 +75,7 @@ schema/contracts/
 - `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — como uma PR executa um recorte do contrato ativo
 - `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — como um contrato encerra formalmente
 - `schema/CONTRACT_SCHEMA.md` — formato obrigatório de qualquer contrato novo
+
+## Ultima sincronizacao
+
+- 2026-04-22 — Frente 7 Telemetria e Observabilidade aberta formalmente. Proximo passo autorizado: PR 2 — contrato tecnico de observabilidade/telemetria.
