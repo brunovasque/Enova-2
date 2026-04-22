@@ -70,7 +70,7 @@ CAMADA C — Memória e Aprendizado Operacional
   └─ OutcomeReal           (somente via CRM/Supabase — não inferido)
 
 CAMADA D — Memória Manual / Diretiva Operacional
-  └─ DiretivaMannual       (append+versão + autor + auditoria)
+  └─ DiretivaManual       (append+versão + autor + auditoria)
 ```
 
 ---
@@ -559,17 +559,17 @@ type MemoriaOrigem =
 ### 7.1 Shape completo
 
 ```typescript
-interface DiretivaMannual {
+interface DiretivaManual {
   // === CAMPOS OBRIGATÓRIOS ===
   id: string;                           // UUID único da diretiva
   author: string;                       // ID do autor (operador/diretor) — obrigatório
   created_at: string;                   // timestamp de criação (ISO 8601)
-  scope: DiretivaMannualScope;          // ver 7.2
-  priority: DiretivaMannualPriority;    // ver 7.3
-  directive_type: DiretivaMannualType;  // ver 7.4
+  scope: DiretivaManualScope;          // ver 7.2
+  priority: DiretivaManualPriority;    // ver 7.3
+  directive_type: DiretivaManualType;  // ver 7.4
   content: string;                      // texto da diretiva — claro e direto
   rationale: string;                    // justificativa da diretiva (por que foi criada)
-  status: DiretivaMannualStatus;        // ver 7.5
+  status: DiretivaManualStatus;        // ver 7.5
   audit_ref: string;                    // referência de auditoria — log ou ticket de origem
   version: number;                      // versão (começa em 1, incrementa a cada atualização)
 
@@ -588,10 +588,10 @@ interface DiretivaMannual {
 }
 ```
 
-### 7.2 Enum: `DiretivaMannualScope`
+### 7.2 Enum: `DiretivaManualScope`
 
 ```typescript
-type DiretivaMannualScope =
+type DiretivaManualScope =
   | 'global'        // aplica a todos os atendimentos
   | 'por_frente'    // aplica a uma frente específica do funil
   | 'por_stage'     // aplica a um stage específico
@@ -600,20 +600,20 @@ type DiretivaMannualScope =
   | 'temporaria';   // aplica por período definido (exige `expiry_date`)
 ```
 
-### 7.3 Enum: `DiretivaMannualPriority`
+### 7.3 Enum: `DiretivaManualPriority`
 
 ```typescript
-type DiretivaMannualPriority =
+type DiretivaManualPriority =
   | 'critica'  // deve ser sempre observada dentro do escopo
   | 'alta'
   | 'media'
   | 'baixa';   // sugestiva
 ```
 
-### 7.4 Enum: `DiretivaMannualType`
+### 7.4 Enum: `DiretivaManualType`
 
 ```typescript
-type DiretivaMannualType =
+type DiretivaManualType =
   | 'ajuste_abordagem'     // ajuste na forma de conduzir
   | 'excecao_operacional'  // exceção explícita a uma regra padrão
   | 'observacao_estrategica' // contexto estratégico que a atendente deve ter em mente
@@ -622,10 +622,10 @@ type DiretivaMannualType =
   | 'restricao_temporaria'; // restrição com prazo definido
 ```
 
-### 7.5 Enum: `DiretivaMannualStatus`
+### 7.5 Enum: `DiretivaManualStatus`
 
 ```typescript
-type DiretivaMannualStatus =
+type DiretivaManualStatus =
   | 'ativa'     // em uso
   | 'suspensa'  // conflito com norma detectado — aguarda revisão humana
   | 'obsoleta'  // substituída por versão mais recente
@@ -822,7 +822,7 @@ MemoriaStatus = 'bloqueada' quando:
 | Regras comerciais mínimas (Camada B) | Estrutura de dados + função de leitura de `RegraComercial` ativa |
 | Memória por lead mínima (Camada C) | Estrutura de dados + leitura/escrita básica de `MemoriaPorLead` |
 | Memória por atendimento mínima (Camada C) | Append-only de `MemoriaPorAtendimento` durante atendimento |
-| Memória manual mínima (Camada D) | Estrutura de dados + leitura de `DiretivaMannual` ativa |
+| Memória manual mínima (Camada D) | Estrutura de dados + leitura de `DiretivaManual` ativa |
 | Smoke mínimo da PR3 | Testes que provam funcionamento básico de cada camada sem violação de regras |
 | Integração mínima com Supabase Adapter | Leitura de `lead_id` do CRM para vincular memórias |
 
@@ -891,7 +891,7 @@ Esta PR2 só está completa se:
 - [x] Camada A: `ItemNormativo` com todos os campos obrigatórios/opcionais e enums definidos
 - [x] Camada B: `RegraComercial` com todos os campos obrigatórios/opcionais e enums definidos
 - [x] Camada C: `MemoriaPorLead`, `MemoriaPorAtendimento`, `Sinal`, `PadraoDetectado`, `ObjecaoProvavel`, `OutcomeReal` definidos
-- [x] Camada D: `DiretivaMannual` com todos os campos obrigatórios/opcionais e enums definidos
+- [x] Camada D: `DiretivaManual` com todos os campos obrigatórios/opcionais e enums definidos
 - [x] Regras de leitura/escrita fechadas por camada
 - [x] Regras de evidência fechadas (válida / insuficiente / aprendizado / hipótese / outcome / bloqueio)
 - [x] Integração com CRM tecnicamente definida (leitura, escrita, fonte de verdade)
