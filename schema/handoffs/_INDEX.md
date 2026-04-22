@@ -37,3 +37,7 @@ Este índice está subordinado ao A00, A01, A02 e ao HANDOFF_SCHEMA.
 3. O handoff é atualizado ao final de cada tarefa, conforme o CODEX_WORKFLOW.
 4. A data nesta tabela deve refletir sempre a data do último handoff registrado.
 5. Novas frentes devem ser adicionadas a esta tabela quando seu primeiro handoff for criado.
+
+## Ultima sincronizacao
+
+- 2026-04-22 — Frente 6 Meta/WhatsApp encerrada formalmente apos PR4. Proximo contrato autorizado: Frente 7 — Telemetria e Observabilidade.
