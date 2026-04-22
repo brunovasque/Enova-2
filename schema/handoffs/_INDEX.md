@@ -25,7 +25,7 @@ Este índice está subordinado ao A00, A01, A02 e ao HANDOFF_SCHEMA.
 | 4 | Supabase Adapter e Persistência                | `SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md`   | 2026-04-21       |
 | 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_LATEST.md`           | 2026-04-21       |
 | 6 | Meta/WhatsApp                                  | `META_WHATSAPP_LATEST.md`                     | 2026-04-22       |
-| 7 | Telemetria e Observabilidade                   | *(a criar)*                                   | —                |
+| 7 | Telemetria e Observabilidade                   | `TELEMETRIA_E_OBSERVABILIDADE_LATEST.md`      | 2026-04-22       |
 | 8 | Rollout                                        | *(a criar)*                                   | —                |
 
 ---
@@ -41,3 +41,4 @@ Este índice está subordinado ao A00, A01, A02 e ao HANDOFF_SCHEMA.
 ## Ultima sincronizacao
 
 - 2026-04-22 — Frente 6 Meta/WhatsApp encerrada formalmente apos PR4. Proximo contrato autorizado: Frente 7 — Telemetria e Observabilidade.
+- 2026-04-22 — Frente 7 Telemetria e Observabilidade aberta formalmente. Proximo passo autorizado: PR2 — contrato tecnico de observabilidade/telemetria.
