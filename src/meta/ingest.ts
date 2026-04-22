@@ -1,6 +1,7 @@
 import { validateMetaInboundEnvelope } from './validate.ts';
 import { META_INGEST_ROUTE, type MetaInboundEnvelope, type MetaValidationError } from './types.ts';
 import { emitRuntimeGuard, emitTelemetry, emitValidationFailure } from '../telemetry/emit.ts';
+import { applyE1ChannelHook } from '../e1/memory.ts';
 import type { TelemetryRequestContext } from '../telemetry/types.ts';
 
 const JSON_HEADERS = {
@@ -99,6 +100,34 @@ export async function handleMetaIngest(
     });
 
     return technicalError(400, validation.error);
+  }
+  try {
+    applyE1ChannelHook({
+      trace_id: validation.envelope.trace_id,
+      correlation_id: validation.envelope.idempotency_key,
+      request_id: context.request_id,
+      lead_ref: validation.envelope.lead_ref,
+      event_id: validation.envelope.event_id,
+      event_type: validation.envelope.event_type,
+    });
+  } catch (hookError) {
+    emitTelemetry({
+      layer: 'governance',
+      category: 'contract_symptom',
+      action: 'raised',
+      source: 'src/meta/ingest.ts',
+      severity: 'warn',
+      outcome: 'observed',
+      trace_id: validation.envelope.trace_id,
+      correlation_id: validation.envelope.idempotency_key,
+      request_id: context.request_id,
+      lead_ref: validation.envelope.lead_ref,
+      symptom_code: 'e1_channel_hook_non_blocking_failure',
+      details: {
+        route: META_INGEST_ROUTE,
+        detail: hookError instanceof Error ? hookError.message : 'unknown_error',
+      },
+    });
   }
 
   emitTelemetry({

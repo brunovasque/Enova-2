@@ -18,6 +18,7 @@ import { runCoreEngine } from './core/engine.ts';
 import type { CoreDecision, LeadState, StageId } from './core/types.ts';
 import { handleMetaIngest } from './meta/ingest.ts';
 import { applyRolloutGuard } from './rollout/controller.ts';
+import { applyE1CoreHook } from './e1/memory.ts';
 import {
   createExecutionId,
   createRequestTelemetryContext,
@@ -144,6 +145,34 @@ async function handleCoreRun(request: Request, telemetryContext: TelemetryReques
     const state = parseCoreRunPayload(payload);
     const decision = runCoreEngine(state);
     const execution_id = createExecutionId();
+    try {
+      applyE1CoreHook({
+        trace_id: telemetryContext.trace_id,
+        correlation_id: telemetryContext.correlation_id,
+        request_id: telemetryContext.request_id,
+        lead_id: state.lead_id,
+        current_stage: state.current_stage,
+        facts: state.facts,
+      });
+    } catch (hookError) {
+      emitTelemetry({
+        layer: 'governance',
+        category: 'contract_symptom',
+        action: 'raised',
+        source: 'src/worker.ts',
+        severity: 'warn',
+        outcome: 'observed',
+        trace_id: telemetryContext.trace_id,
+        correlation_id: telemetryContext.correlation_id,
+        request_id: telemetryContext.request_id,
+        lead_ref: state.lead_id,
+        symptom_code: 'e1_core_hook_non_blocking_failure',
+        details: {
+          route: '/__core__/run',
+          detail: hookError instanceof Error ? hookError.message : 'unknown_error',
+        },
+      });
+    }
 
     emitTelemetry({
       layer: 'core',

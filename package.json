@@ -11,6 +11,7 @@
     "smoke:worker": "tsx src/worker-route-smoke.ts",
     "smoke:telemetry": "tsx src/telemetry/smoke.ts",
     "smoke:rollout": "tsx src/rollout/smoke.ts",
+    "smoke:e1": "tsx src/e1/smoke.ts",
     "smoke:meta": "tsx src/meta/smoke.ts",
     "smoke:speech": "tsx src/speech/smoke.ts",
     "smoke:context": "tsx src/context/smoke.ts",
@@ -18,7 +19,7 @@
     "smoke:adapter:policy": "tsx src/adapter/policy-smoke.ts",
     "smoke:adapter:runtime": "tsx src/adapter/runtime-smoke.ts",
     "smoke:audio": "tsx src/audio/smoke.ts",
-    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:meta && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio",
+    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
