@@ -5,7 +5,7 @@
 | Tipo | Artefato técnico canônico — PR2 do Contrato Extraordinário E1 |
 | Módulo | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional |
 | Identificador canônico | E1 |
-| Contrato extraordinário de origem | `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md` |
+| Contrato extraordinário de origem | `schema/contracts/extraordinary/archive/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_2026-04-22.md` |
 | Fase | PR2 — contrato técnico (sem runtime) |
 | Status | fechado — contrato técnico completo |
 | Criado em | 2026-04-22 |

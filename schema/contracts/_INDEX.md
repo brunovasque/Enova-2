@@ -39,7 +39,7 @@ Contratos abertos **fora do macro de 8 frentes formais**, para módulos estraté
 
 | # | Módulo | Contrato ativo | Status | Data de abertura | PR que abriu | Próximo passo autorizado |
 |---|--------|----------------|--------|-----------------|-------------|--------------------------|
-| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional | `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md` | em execução | 2026-04-22 | PR1 — abertura do contrato extraordinário | PR4 — smoke integrado + closeout formal do contrato extraordinário E1 |
+| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional | *(nenhum — contrato encerrado em 2026-04-22)* | arquivado | 2026-04-22 | PR1 — abertura do contrato extraordinário | nenhum contrato extraordinário ativo — aguardando decisão estratégica |
 
 ---
 
@@ -100,3 +100,4 @@ schema/contracts/
 - 2026-04-22 — Contrato Extraordinário E1 aberto formalmente: Módulo de Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional. Índice extraordinário criado em `schema/contracts/extraordinary/_INDEX.md`. Contrato ativo em `schema/contracts/extraordinary/active/`. Próximo passo autorizado: PR2 — contrato técnico do módulo.
 - 2026-04-22 — PR2 do Contrato Extraordinário E1 executada: contrato técnico canônico criado em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md`. Status → `em execução`. Próximo passo autorizado: PR3 — runtime mínimo do módulo.
 - 2026-04-22 — PR3 do Contrato Extraordinário E1 executada: runtime mínimo técnico/local implementado em `src/e1/` com hooks mínimos no Worker/canal e smoke específico (`smoke:e1`). Próximo passo autorizado: PR4 — smoke integrado + closeout formal do contrato extraordinário E1.
+- 2026-04-22 — PR4 do Contrato Extraordinário E1 executada: smoke integrado final aprovado, closeout readiness criado em `schema/contracts/extraordinary/closeout/E1_CLOSEOUT_READINESS.md`, contrato encerrado e arquivado em `schema/contracts/extraordinary/archive/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_2026-04-22.md`. Próximo passo autorizado: nenhum contrato extraordinário ativo — aguardando decisão estratégica.

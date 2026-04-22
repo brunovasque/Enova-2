@@ -21,13 +21,15 @@ Este índice está subordinado ao A00, A01, ao A00-ADENDO-01, ao A02 e ao `CONTR
 
 | # | Módulo | Contrato ativo | Status | Data de abertura | PR que abriu | Última PR executou | Próximo passo autorizado |
 |---|--------|----------------|--------|-----------------|-------------|-------------------|--------------------------|
-| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional | `schema/contracts/extraordinary/active/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md` | em execução | 2026-04-22 | PR1 — abertura do contrato extraordinário | PR3 — runtime mínimo do módulo | PR4 — smoke integrado + closeout formal do contrato extraordinário |
+| *(nenhum)* | - | - | - | - | - | - | - |
 
 ---
 
 ## Contratos extraordinários arquivados
 
-*(nenhum ainda)*
+| # | Módulo | Contrato arquivado | Status | Data de encerramento | PR que encerrou | Próximo passo autorizado |
+|---|--------|--------------------|--------|----------------------|-----------------|--------------------------|
+| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional | `schema/contracts/extraordinary/archive/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_2026-04-22.md` | encerrado e arquivado | 2026-04-22 | PR4 — smoke integrado + closeout formal do contrato extraordinário E1 | nenhum contrato extraordinário ativo — aguardando decisão estratégica |
 
 ---
 
@@ -37,10 +39,12 @@ Este índice está subordinado ao A00, A01, ao A00-ADENDO-01, ao A02 e ao `CONTR
 schema/contracts/extraordinary/
 ├── _INDEX.md                          ← este arquivo (índice canônico de extraordinários)
 ├── active/                            ← contratos extraordinários ativos
-│   └── CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL.md
+├── closeout/                          ← artefatos formais de readiness para encerramento
+│   └── E1_CLOSEOUT_READINESS.md
 ├── technical/                         ← artefatos técnicos canônicos dos contratos extraordinários
 │   └── E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md
 └── archive/                           ← contratos extraordinários encerrados e arquivados
+    └── CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_2026-04-22.md
 ```
 
 ---
@@ -78,3 +82,4 @@ Antes de qualquer execução em contrato extraordinário, obrigatoriamente ler:
 - 2026-04-22 — Contrato extraordinário E1 aberto formalmente: Módulo de Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional da ENOVA 2. Próximo passo autorizado: PR2 — contrato técnico do módulo.
 - 2026-04-22 — PR2 executada: contrato técnico canônico criado em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md`. Status → `em execução`. Próximo passo autorizado: PR3 — runtime mínimo do módulo.
 - 2026-04-22 — PR3 executada: runtime mínimo técnico/local do E1 implementado em `src/e1/`, hooks mínimos ligados ao Worker/canal e smoke específico criado (`src/e1/smoke.ts`). Próximo passo autorizado: PR4 — smoke integrado + closeout formal do contrato extraordinário E1.
+- 2026-04-22 — PR4 executada: smoke integrado final aprovado, closeout readiness criado em `schema/contracts/extraordinary/closeout/E1_CLOSEOUT_READINESS.md`, contrato E1 encerrado e arquivado em `schema/contracts/extraordinary/archive/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_2026-04-22.md`. Próximo passo autorizado: nenhum contrato extraordinário ativo — aguardando decisão estratégica.
