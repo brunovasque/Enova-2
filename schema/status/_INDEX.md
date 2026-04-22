@@ -26,7 +26,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 | 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_STATUS.md`          | concluída        |
 | 6 | Meta/WhatsApp                                  | `META_WHATSAPP_STATUS.md`                    | concluída        |
 | 7 | Telemetria e Observabilidade                   | `TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`     | concluída        |
-| 8 | Rollout                                        | `ROLLOUT_STATUS.md`                          | contrato aberto  |
+| 8 | Rollout                                        | `ROLLOUT_STATUS.md`                          | em execucao      |
 
 ---
 
@@ -45,3 +45,4 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 - 2026-04-22 — Frente 7 executou PR3 (runtime minimo de observabilidade no Worker/repo). Proximo passo autorizado: PR4 — smoke integrado + closeout formal da Frente 7.
 - 2026-04-22 — Frente 7 executou PR4 (smoke integrado + closeout formal), encerrou e arquivou contrato. Proximo contrato autorizado: Frente 8 — Rollout.
 - 2026-04-22 — Frente 8 Rollout aberta formalmente com contrato ativo e estado `contrato aberto`. Proximo passo autorizado: PR2 — contrato tecnico de rollout.
+- 2026-04-22 — Frente 8 executou PR2 (contrato tecnico de rollout) e permanece em `em execucao`. Proximo passo autorizado: PR3 — runtime minimo/controladores de rollout.

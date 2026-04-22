@@ -4,17 +4,17 @@
 |---|---|
 | Frente | Rollout |
 | Data | 2026-04-22 |
-| Estado da frente | contrato aberto |
+| Estado da frente | em execucao |
 | Classificacao da tarefa | contratual |
-| Ultima PR relevante | PR1 — abertura contratual forte da Frente 8 |
+| Ultima PR relevante | PR2 — contrato tecnico de rollout |
 | Contrato ativo | `schema/contracts/active/CONTRATO_ROLLOUT.md` |
-| Recorte executado do contrato | PR1 — abertura contratual forte |
-| Pendencia contratual remanescente | PR2, PR3 e PR4 |
+| Recorte executado do contrato | PR2 — contrato tecnico de rollout |
+| Pendencia contratual remanescente | PR3 e PR4 |
 | Houve desvio de contrato? | nao |
 | Contrato encerrado nesta PR? | nao |
 | Item do A01 atendido | Prioridade 7 — Rollout |
-| Proximo passo autorizado | PR2 — contrato tecnico de rollout |
-| Proximo passo foi alterado? | nao |
+| Proximo passo autorizado | PR3 — runtime minimo/controladores de rollout |
+| Proximo passo foi alterado? | sim |
 | Tarefa fora de contrato? | nao |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
@@ -24,9 +24,9 @@
 
 ## 1. Contexto curto
 
-A Frente 7 foi encerrada formalmente e arquivada, deixando a Frente 8 — Rollout como proximo contrato autorizado.
+A PR1 da Frente 8 abriu formalmente o contrato com gates executivos e limites de ativacao real.
 
-Esta PR1 abre a Frente 8 em modo contratual/governanca forte para evitar retrabalho: define ordem oficial, loop obrigatorio, gates operacionais, mapa de ativacao real, criterios go/no-go e rollback/cutover antes de qualquer runtime.
+Esta PR2 fecha o contrato tecnico de rollout antes de qualquer runtime, para evitar implementacao no escuro e travar criterios de promocao/bloqueio, observacao, evidencias e fronteiras de ativacao.
 
 ## 2. Classificacao da tarefa
 
@@ -34,65 +34,59 @@ contratual
 
 ## 3. Ultima PR relevante
 
-PR4 da Frente 7 — smoke integrado + closeout formal.
+PR1 da Frente 8 — abertura contratual forte.
 
 ## 4. O que a PR anterior fechou
 
-- smoke integrado final da Frente 7;
-- closeout readiness da Frente 7;
-- encerramento e arquivamento formal do contrato da Frente 7;
-- autorizacao do proximo contrato: Frente 8 — Rollout.
+- abriu contrato ativo da Frente 8;
+- registrou ordem oficial PR1/PR2/PR3/PR4;
+- registrou loop obrigatorio;
+- registrou gates operacionais, go/no-go e rollback/cutover;
+- fixou PR2 como proximo passo autorizado.
 
 ## 5. O que a PR anterior NAO fechou
 
-- abertura contratual da Frente 8;
-- contrato tecnico de rollout (PR2);
-- runtime minimo/controladores de rollout (PR3);
-- smoke integrado + closeout da Frente 8 (PR4).
+- contrato tecnico detalhado de rollout;
+- runtime minimo/controladores (PR3);
+- smoke integrado final + closeout (PR4).
 
 ## 6. Diagnostico confirmado
 
-- Frente 7 realmente encerrada e arquivada.
-- Frente 8 confirmada como proximo contrato autorizado.
-- Nao existiam contrato ativo, status vivo nem handoff vivo da Frente 8.
-- Rollout exigia abertura com gates fortes para evitar ativacao no escuro.
-- Esta PR1 foi executada sem codigo funcional.
+- Frente 8 estava aberta corretamente.
+- Proximo passo autorizado era exatamente PR2.
+- Ainda nao havia artefato tecnico canonico especifico de rollout.
+- O recorte correto desta PR era tecnico-documental, sem runtime.
+- Nenhuma ativacao externa real poderia ser presumida.
 
 ## 7. O que foi feito
 
-- criado contrato ativo `schema/contracts/active/CONTRATO_ROLLOUT.md`;
-- registrada ordem oficial PR1/PR2/PR3/PR4 no contrato;
-- registrado loop obrigatorio antes de cada tarefa da Frente 8;
-- registrada secao de gates operacionais e ativacao real sem ambiguidade;
-- registrada secao de criterios go/no-go;
-- registrada secao de rollback e cutover;
-- criado status vivo `schema/status/ROLLOUT_STATUS.md`;
-- criado handoff vivo `schema/handoffs/ROLLOUT_LATEST.md`;
-- atualizado `schema/contracts/_INDEX.md`;
-- atualizado `schema/status/_INDEX.md`;
-- atualizado `schema/handoffs/_INDEX.md`.
+- criado `schema/rollout/FRENTE8_ROLLOUT_TECHNICAL_CONTRACT.md`;
+- fechado tecnicamente: shadow, canary, cutover, rollback;
+- fechados criterios de promocao/bloqueio e janelas de observacao;
+- fechadas evidencias minimas por estagio;
+- fechadas fronteiras de ativacao real;
+- fechados limites da PR3;
+- atualizado contrato ativo da Frente 8 para estado em execucao e proximo passo PR3;
+- atualizado status vivo e handoff vivo da Frente 8;
+- atualizado `schema/contracts/_INDEX.md` e indices vivos de status/handoff.
 
 ## 8. O que nao foi feito
 
-- nenhuma implementacao de runtime em `src/`;
+- nenhuma implementacao em `src/`;
 - nenhum rollout real;
 - nenhum deploy externo/manual;
 - nenhum dashboard externo;
 - nenhuma ferramenta externa obrigatoria;
-- nenhuma ativacao automatica de Meta real;
-- nenhuma ativacao automatica de Supabase real novo/produtivo;
-- nenhuma abertura de secrets, bindings ou vars;
-- nenhuma refatoracao ampla.
+- nenhuma ativacao de Meta real;
+- nenhuma ativacao de Supabase real novo/produtivo;
+- nenhuma abertura de secrets, bindings ou vars.
 
 ## 9. O que esta PR fechou
 
-- abertura formal da Frente 8;
-- governanca anti-retrabalho da frente persistida no repo;
-- proximo passo autorizado fixado como PR2 da Frente 8.
+- PR2 da Frente 8 (contrato tecnico de rollout) no escopo documental completo.
 
 ## 10. O que continua pendente apos esta PR
 
-- PR2 — contrato tecnico de rollout.
 - PR3 — runtime minimo/controladores de rollout.
 - PR4 — smoke integrado + closeout formal da Frente 8.
 
@@ -106,11 +100,11 @@ nao
 
 ## 11b. Recorte executado do contrato
 
-PR1 — abertura contratual forte da Frente 8.
+PR2 — contrato tecnico de rollout.
 
 ## 11c. Pendencia contratual remanescente
 
-PR2, PR3 e PR4.
+PR3 e PR4.
 
 ## 11d. Houve desvio de contrato?
 
@@ -122,6 +116,7 @@ nao
 
 ## 12. Arquivos relevantes
 
+- `schema/rollout/FRENTE8_ROLLOUT_TECHNICAL_CONTRACT.md`
 - `schema/contracts/active/CONTRATO_ROLLOUT.md`
 - `schema/contracts/_INDEX.md`
 - `schema/status/ROLLOUT_STATUS.md`
@@ -131,28 +126,28 @@ nao
 
 ## 13. Item do A01 atendido
 
-Prioridade 7 — Rollout, no recorte PR1 de abertura contratual forte.
+Prioridade 7 — Rollout, no recorte PR2 de contrato tecnico.
 
 ## 14. Estado atual da frente
 
-contrato aberto
+em execucao
 
 ## 15. Proximo passo autorizado
 
-PR2 — contrato tecnico de rollout.
+PR3 — runtime minimo/controladores de rollout.
 
 ## 16. Riscos
 
-- risco de antecipar rollout real sem gates completos. Mitigacao: contrato bloqueia ativacao real nesta PR1.
-- risco de presumir ativacao automatica de integracoes externas. Mitigacao: secao de ativacao real com bloqueios explicitos.
-- risco de pular go/no-go e rollback. Mitigacao: secoes obrigatorias persistidas no contrato.
+- risco de antecipar rollout real na PR3 sem guardar escopo minimo. Mitigacao: limites da PR3 explicitados no contrato tecnico.
+- risco de ativacao externa automatica por inferencia. Mitigacao: fronteiras de ativacao real fechadas.
+- risco de promocao sem evidencia minima. Mitigacao: matriz de promocao/bloqueio e janelas de observacao definidas.
 
 ## 17. Provas
 
-- contrato ativo da Frente 8 criado;
-- status e handoff vivos da Frente 8 criados;
-- indices atualizados com Frente 8 aberta;
-- validacao documental executada (`git diff --check`).
+- artefato tecnico de rollout criado e versionado;
+- contrato ativo/status/handoff/indexes sincronizados para PR2 concluida;
+- sem alteracao funcional;
+- validacao documental (`git diff --check`).
 
 ## 18. Mudancas em dados persistidos (Supabase)
 
@@ -169,9 +164,9 @@ Fontes de verdade consultadas:
   Contrato ativo lido:         `schema/contracts/active/CONTRATO_ROLLOUT.md`
   Status da frente lido:       `schema/status/ROLLOUT_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/ROLLOUT_LATEST.md`
-  Contrato anterior lido:      `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`
-  Closeout anterior lido:      `schema/contracts/closeout/TELEMETRIA_E_OBSERVABILIDADE_CLOSEOUT_READINESS.md`
+  Protocolos lidos:            `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md`, `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
+  Schemas lidos:               `schema/CONTRACT_SCHEMA.md`, `schema/STATUS_SCHEMA.md`, `schema/HANDOFF_SCHEMA.md`
+  Protocolos operacionais:     `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`, `schema/REQUEST_ECONOMY_PROTOCOL.md`, `schema/DATA_CHANGE_PROTOCOL.md`
   Runtime audit lido:          `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`
   Indice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — L18, L03 e C* (estrutura)
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — trechos de rollout, shadow mode, canary, cutover, rollback, runner e QA
+  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — termos de rollout, shadow, canary, cutover, rollback, go/no-go, evidencias, runner, QA
