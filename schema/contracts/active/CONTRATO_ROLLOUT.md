@@ -201,14 +201,14 @@ C12. Proximo passo autorizado explicito: **PR2 da Frente 8**.
 
 ## 12. Proximo passo autorizado
 
-**PR3 — runtime minimo/controladores de rollout (escopo tecnico local).**
+**PR4 — smoke integrado final + closeout formal da Frente 8.**
 
-PR3 podera executar, sem abrir rollout real:
+PR4 devera executar, sem abrir rollout real completo:
 
-- hooks/guards minimos;
-- flags/controles minimos se estritamente necessarios;
-- smoke minimo de rollout;
-- evidencia tecnica local de gates e rollback.
+- smoke integrado do recorte contratado da Frente 8;
+- prova de integridade das frentes anteriores e das rotas tecnicas existentes;
+- prova de gates/go-no-go e representacao tecnica de rollback/cutover;
+- closeout readiness e encerramento formal do contrato, se criterios forem cumpridos.
 
 ## 13. Relacao com o A01
 
@@ -332,3 +332,18 @@ Nenhuma tarefa da Frente 8 pode iniciar sem cumprir este loop:
 - Mudancas em dados persistidos (Supabase): **nenhuma**.
 - Permissoes Cloudflare necessarias: **nenhuma adicional**.
 - Proximo passo autorizado: **PR3 — runtime minimo/controladores de rollout**.
+
+## 22. Estado apos PR3 (runtime minimo/controladores locais concluido)
+
+- Runtime minimo local implementado em:
+  - `src/rollout/types.ts`
+  - `src/rollout/guards.ts`
+  - `src/rollout/controller.ts`
+  - ajuste minimo em `src/worker.ts` para hook de guard
+- Smoke especifico da PR3 criado em `src/rollout/smoke.ts`.
+- Script `smoke:rollout` adicionado e integrado ao `smoke:all`.
+- PR3 fechou: hooks/guards minimos, flags/controles locais, avaliacao tecnica de promocao/bloqueio, representacao tecnica de rollback_ready e evidencias locais de gate/boundary.
+- Limites preservados: sem rollout real completo, sem dashboard externo, sem ferramenta externa obrigatoria, sem Meta real automatica, sem Supabase real novo automatico, sem deploy externo/manual.
+- Mudancas em dados persistidos (Supabase): **nenhuma**.
+- Permissoes Cloudflare necessarias: **nenhuma adicional**.
+- Proximo passo autorizado: **PR4 — smoke integrado final + closeout formal da Frente 8**.

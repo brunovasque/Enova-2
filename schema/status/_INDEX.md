@@ -46,3 +46,4 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 - 2026-04-22 — Frente 7 executou PR4 (smoke integrado + closeout formal), encerrou e arquivou contrato. Proximo contrato autorizado: Frente 8 — Rollout.
 - 2026-04-22 — Frente 8 Rollout aberta formalmente com contrato ativo e estado `contrato aberto`. Proximo passo autorizado: PR2 — contrato tecnico de rollout.
 - 2026-04-22 — Frente 8 executou PR2 (contrato tecnico de rollout) e permanece em `em execucao`. Proximo passo autorizado: PR3 — runtime minimo/controladores de rollout.
+- 2026-04-22 — Frente 8 executou PR3 (runtime minimo/controladores locais) e permanece em `em execucao`. Proximo passo autorizado: PR4 — smoke integrado final + closeout formal da Frente 8.

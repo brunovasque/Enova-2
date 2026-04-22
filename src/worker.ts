@@ -17,6 +17,7 @@
 import { runCoreEngine } from './core/engine.ts';
 import type { CoreDecision, LeadState, StageId } from './core/types.ts';
 import { handleMetaIngest } from './meta/ingest.ts';
+import { applyRolloutGuard } from './rollout/controller.ts';
 import {
   createExecutionId,
   createRequestTelemetryContext,
@@ -237,6 +238,13 @@ export default {
     const telemetryContext = createRequestTelemetryContext(request, url.pathname);
 
     emitRequestLifecycleReceived(telemetryContext, 'src/worker.ts');
+    applyRolloutGuard({
+      trace_id: telemetryContext.trace_id,
+      correlation_id: telemetryContext.correlation_id,
+      request_id: telemetryContext.request_id,
+      route: url.pathname,
+      method: request.method,
+    });
 
     let response: Response;
     if (url.pathname === '/') {
