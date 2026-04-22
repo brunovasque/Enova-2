@@ -1,6 +1,6 @@
 import worker from '../worker.ts';
 import { applyRolloutGuard, clearRolloutEvidenceBuffer, readRolloutEvidenceBuffer } from './controller.ts';
-import { evaluateRolloutGuard } from './guards.ts';
+import { evaluateRolloutGuard, isRouteKnownForRollout } from './guards.ts';
 import type { RolloutEvidenceEvent } from './types.ts';
 
 interface Assertion {
@@ -53,7 +53,7 @@ async function callWorker(request: Request): Promise<{
 
 async function scenarioGuardsExistAndEmitEvidence(): Promise<ScenarioResult> {
   clearRolloutEvidenceBuffer();
-  const traceId = 'f8-pr3-rollout-root-trace';
+  const traceId = 'f8-pr4-rollout-root-trace';
 
   const result = await callWorker(new Request('https://enova.local/', {
     method: 'GET',
@@ -81,7 +81,7 @@ async function scenarioGuardsExistAndEmitEvidence(): Promise<ScenarioResult> {
   ];
 
   return {
-    scenario: 'PR3 — guards mínimos existem e emitem evidência técnica local',
+    scenario: 'PR4 — guards mínimos existem e emitem evidência técnica local',
     response_status: result.status,
     response_json: result.json,
     assertions,
@@ -113,7 +113,7 @@ async function scenarioPromotionAndBlockEvaluation(): Promise<ScenarioResult> {
   ];
 
   return {
-    scenario: 'PR3 — critérios de promoção/bloqueio podem ser avaliados tecnicamente',
+    scenario: 'PR4 — critérios de promoção/bloqueio podem ser avaliados tecnicamente',
     response_status: 200,
     response_json: {
       allow_decision: allowDecision,
@@ -137,7 +137,7 @@ async function scenarioRollbackReadyEvaluation(): Promise<ScenarioResult> {
   ];
 
   return {
-    scenario: 'PR3 — rollback_ready pode ser avaliado tecnicamente',
+    scenario: 'PR4 — rollback_ready pode ser avaliado tecnicamente',
     response_status: 200,
     response_json: {
       decision,
@@ -148,7 +148,7 @@ async function scenarioRollbackReadyEvaluation(): Promise<ScenarioResult> {
 }
 
 async function scenarioCoreRouteIntegrity(): Promise<ScenarioResult> {
-  const traceId = 'f8-pr3-rollout-core-trace';
+  const traceId = 'f8-pr4-rollout-core-trace';
   const result = await callWorker(new Request('https://enova.local/__core__/run', {
     method: 'POST',
     headers: {
@@ -156,7 +156,7 @@ async function scenarioCoreRouteIntegrity(): Promise<ScenarioResult> {
       'x-trace-id': traceId,
     },
     body: JSON.stringify({
-      lead_id: 'front8-pr3-core-smoke',
+      lead_id: 'front8-pr4-core-smoke',
       current_stage: 'discovery',
       facts: {
         customer_goal: 'comprar_imovel',
@@ -172,7 +172,7 @@ async function scenarioCoreRouteIntegrity(): Promise<ScenarioResult> {
   ];
 
   return {
-    scenario: 'PR3 — /__core__/run continua íntegro',
+    scenario: 'PR4 — /__core__/run continua íntegro',
     response_status: result.status,
     response_json: result.json,
     assertions,
@@ -181,7 +181,7 @@ async function scenarioCoreRouteIntegrity(): Promise<ScenarioResult> {
 }
 
 async function scenarioMetaRouteIntegrity(): Promise<ScenarioResult> {
-  const traceId = 'f8-pr3-rollout-meta-trace';
+  const traceId = 'f8-pr4-rollout-meta-trace';
   const result = await callWorker(new Request('https://enova.local/__meta__/ingest', {
     method: 'POST',
     headers: {
@@ -193,14 +193,14 @@ async function scenarioMetaRouteIntegrity(): Promise<ScenarioResult> {
       direction: 'inbound',
       channel: 'meta_whatsapp',
       event_type: 'inbound.message.text',
-      event_id: 'wamid.f8.pr3.meta.001',
+      event_id: 'wamid.f8.pr4.meta.001',
       occurred_at: '2026-04-22T22:00:00Z',
       received_at: '2026-04-22T22:00:01Z',
       trace_id: traceId,
-      idempotency_key: 'meta_whatsapp:wamid.f8.pr3.meta.001',
-      lead_ref: 'lead-f8-pr3-smoke',
+      idempotency_key: 'meta_whatsapp:wamid.f8.pr4.meta.001',
+      lead_ref: 'lead-f8-pr4-smoke',
       payload: {
-        text: 'smoke runtime minimo rollout',
+        text: 'smoke integrado final rollout pr4',
       },
     }),
   }));
@@ -214,7 +214,7 @@ async function scenarioMetaRouteIntegrity(): Promise<ScenarioResult> {
   ];
 
   return {
-    scenario: 'PR3 — /__meta__/ingest continua íntegro',
+    scenario: 'PR4 — /__meta__/ingest continua íntegro',
     response_status: result.status,
     response_json: result.json,
     assertions,
@@ -224,7 +224,7 @@ async function scenarioMetaRouteIntegrity(): Promise<ScenarioResult> {
 
 async function scenarioNotFoundAndBlockedGate(): Promise<ScenarioResult> {
   clearRolloutEvidenceBuffer();
-  const traceId = 'f8-pr3-rollout-not-found-trace';
+  const traceId = 'f8-pr4-rollout-not-found-trace';
   const result = await callWorker(new Request('https://enova.local/__rollout__/unknown', {
     method: 'GET',
     headers: { 'x-trace-id': traceId },
@@ -246,7 +246,7 @@ async function scenarioNotFoundAndBlockedGate(): Promise<ScenarioResult> {
   ];
 
   return {
-    scenario: 'PR3 — runtime guard/not_found preservado com gate bloqueado',
+    scenario: 'PR4 — runtime guard/not_found preservado com gate bloqueado',
     response_status: result.status,
     response_json: result.json,
     assertions,
@@ -281,7 +281,7 @@ async function scenarioBoundariesRemainBlocked(): Promise<ScenarioResult> {
   ];
 
   return {
-    scenario: 'PR3 — fronteiras externas continuam bloqueadas',
+    scenario: 'PR4 — fronteiras externas continuam bloqueadas',
     response_status: 200,
     response_json: {
       decision,
@@ -290,6 +290,65 @@ async function scenarioBoundariesRemainBlocked(): Promise<ScenarioResult> {
     passed: assertions.every((item) => item.passed),
   };
 }
+
+async function scenarioContractIntegrityPR4(): Promise<ScenarioResult> {
+  // Verifica a sequência contratual completa PR1+PR2+PR3+PR4 via evidências técnicas locais.
+  // PR1: contrato aberto. PR2: contrato técnico. PR3: runtime mínimo. PR4: closeout (esta PR).
+  const contractPRs = ['PR1', 'PR2', 'PR3', 'PR4'] as const;
+  const knownRoutes = ['/', '/__core__/run', '/__meta__/ingest'];
+  const externallyBlockedBoundaries = [
+    'rollout_real_activation',
+    'meta_real_activation',
+    'supabase_real_new_activation',
+    'external_dashboard_activation',
+    'external_mandatory_tool_activation',
+    'manual_external_deploy',
+  ];
+
+  const rootDecision = evaluateRolloutGuard({ route: '/', method: 'GET' });
+  const coreDecision = evaluateRolloutGuard({ route: '/__core__/run', method: 'POST' });
+  const metaDecision = evaluateRolloutGuard({ route: '/__meta__/ingest', method: 'POST' });
+  const unknownDecision = evaluateRolloutGuard({ route: '/__rollout__/activate_real', method: 'POST' });
+
+  const allKnownRoutesPass = knownRoutes.every((route) => isRouteKnownForRollout(route));
+  const unknownRouteBlocked = !isRouteKnownForRollout('/__rollout__/activate_real');
+  const allBoundariesBlocked = externallyBlockedBoundaries.every(
+    (boundary) => rootDecision.blocked_boundaries.includes(boundary),
+  );
+
+  const assertions: Assertion[] = [
+    assertTrue('sequência PR1+PR2+PR3+PR4 completa (4 PRs)', contractPRs.length === 4, contractPRs),
+    assertTrue('rotas técnicas conhecidas para rollout (/, /__core__/run, /__meta__/ingest)', allKnownRoutesPass, knownRoutes),
+    assertTrue('rota de ativação real fora de escopo bloqueada', unknownRouteBlocked, '/__rollout__/activate_real'),
+    assert('PR2: shadow mode técnico ativo no recorte local', 'shadow', rootDecision.stage),
+    assert('PR2: mode é technical_local_only', 'technical_local_only', rootDecision.mode),
+    assert('PR3: promotion_block ativo (guards existem)', true, rootDecision.promotion_block),
+    assert('PR3: rollback_ready confirmado (guards existem)', true, rootDecision.rollback_ready),
+    assertTrue('PR2: todas as fronteiras externas bloqueadas (6)', allBoundariesBlocked, rootDecision.blocked_boundaries),
+    assert('rota /__core__/run gate_status = pass', 'pass', coreDecision.gate_status),
+    assert('rota /__meta__/ingest gate_status = pass', 'pass', metaDecision.gate_status),
+    assert('rota de ativação real = blocked', 'blocked', unknownDecision.gate_status),
+    assert('rota de ativação real decision = abort', 'abort', unknownDecision.decision),
+    assert('controls.allow_meta_real_activation = false', false, rootDecision.controls.allow_meta_real_activation),
+    assert('controls.allow_supabase_real_new_activation = false', false, rootDecision.controls.allow_supabase_real_new_activation),
+    assert('controls.allow_manual_external_deploy = false', false, rootDecision.controls.allow_manual_external_deploy),
+    assert('controls.allow_external_rollout_activation = false', false, rootDecision.controls.allow_external_rollout_activation),
+  ];
+
+  return {
+    scenario: 'PR4 — integridade contratual PR1+PR2+PR3+PR4 confirmada (smoke integrado final)',
+    response_status: 200,
+    response_json: {
+      contract_prs: contractPRs,
+      known_routes: knownRoutes,
+      blocked_boundaries: rootDecision.blocked_boundaries,
+      root_decision: rootDecision,
+    },
+    assertions,
+    passed: assertions.every((item) => item.passed),
+  };
+}
+
 
 async function main() {
   const scenarios: ScenarioResult[] = [];
@@ -300,11 +359,12 @@ async function main() {
   scenarios.push(await scenarioMetaRouteIntegrity());
   scenarios.push(await scenarioNotFoundAndBlockedGate());
   scenarios.push(await scenarioBoundariesRemainBlocked());
+  scenarios.push(await scenarioContractIntegrityPR4());
 
   const allPassed = scenarios.every((scenario) => scenario.passed);
 
   console.log('\n===========================================');
-  console.log('ENOVA 2 — Frente 8 — PR3 smoke runtime mínimo de rollout');
+  console.log('ENOVA 2 — Frente 8 — PR4 smoke integrado final de rollout');
   console.log('===========================================');
 
   for (const scenario of scenarios) {

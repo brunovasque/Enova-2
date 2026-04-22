@@ -26,7 +26,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 | 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_STATUS.md`          | concluída        |
 | 6 | Meta/WhatsApp                                  | `META_WHATSAPP_STATUS.md`                    | concluída        |
 | 7 | Telemetria e Observabilidade                   | `TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`     | concluída        |
-| 8 | Rollout                                        | `ROLLOUT_STATUS.md`                          | em execucao      |
+| 8 | Rollout                                        | `ROLLOUT_STATUS.md`                          | encerrada        |
 
 ---
 
@@ -46,4 +46,4 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 - 2026-04-22 — Frente 7 executou PR4 (smoke integrado + closeout formal), encerrou e arquivou contrato. Proximo contrato autorizado: Frente 8 — Rollout.
 - 2026-04-22 — Frente 8 Rollout aberta formalmente com contrato ativo e estado `contrato aberto`. Proximo passo autorizado: PR2 — contrato tecnico de rollout.
 - 2026-04-22 — Frente 8 executou PR2 (contrato tecnico de rollout) e permanece em `em execucao`. Proximo passo autorizado: PR3 — runtime minimo/controladores de rollout.
-- 2026-04-22 — Frente 8 executou PR3 (runtime minimo/controladores locais) e permanece em `em execucao`. Proximo passo autorizado: PR4 — smoke integrado final + closeout formal da Frente 8.
+- 2026-04-22 — Frente 8 executou PR4 (smoke integrado final + closeout formal), encerrou e arquivou contrato em `schema/contracts/archive/CONTRATO_ROLLOUT_2026-04-22.md`. Frente 8 é a última frente formal do macro ENOVA 2. Ativação real requer contrato extraordinário explícito quando autorizado.
