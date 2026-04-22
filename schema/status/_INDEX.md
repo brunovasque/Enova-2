@@ -32,7 +32,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 
 | # | Módulo                                                                              | Arquivo de status                                                                              | Estado atual    |
 |---|--------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|-----------------|
-| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional                | `EXTRA_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_STATUS.md`          | contrato aberto |
+| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional                | `EXTRA_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_STATUS.md`          | em execução |
 
 ---
 
@@ -54,3 +54,4 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 - 2026-04-22 — Frente 8 executou PR2 (contrato tecnico de rollout) e permanece em `em execucao`. Proximo passo autorizado: PR3 — runtime minimo/controladores de rollout.
 - 2026-04-22 — Frente 8 executou PR4 (smoke integrado final + closeout formal), encerrou e arquivou contrato em `schema/contracts/archive/CONTRATO_ROLLOUT_2026-04-22.md`. Frente 8 é a última frente formal do macro ENOVA 2. Ativação real requer contrato extraordinário explícito quando autorizado.
 - 2026-04-22 — Contrato Extraordinário E1 aberto: Módulo de Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional. Status vivo criado em `EXTRA_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_STATUS.md`. Próximo passo autorizado: PR2 — contrato técnico do módulo.
+- 2026-04-22 — Contrato Extraordinário E1 executou PR3 (runtime mínimo técnico/local em `src/e1/` com hooks mínimos no Worker/canal e smoke dedicado). Estado permanece `em execução`. Próximo passo autorizado: PR4 — smoke integrado + closeout formal do contrato extraordinário E1.

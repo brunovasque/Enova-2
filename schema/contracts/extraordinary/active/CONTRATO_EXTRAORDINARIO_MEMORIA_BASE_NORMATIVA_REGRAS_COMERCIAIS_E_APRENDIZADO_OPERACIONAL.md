@@ -49,7 +49,7 @@ O que está incluído neste contrato extraordinário:
 11. Ordem oficial PR1/PR2/PR3/PR4 persistida no repositório.
 12. Loop obrigatório antes de cada tarefa do módulo.
 13. Critérios de aceite desta PR1.
-14. Próximo passo autorizado: PR2 — contrato técnico do módulo.
+14. Próximo passo autorizado após a PR3: PR4 — smoke integrado + closeout formal do contrato extraordinário E1.
 
 ---
 
@@ -367,19 +367,24 @@ O módulo **não pode** aprender:
 
 ---
 
-### PR3 — Runtime mínimo do módulo
-**O que entrega:**
-- Estruturas mínimas de dados em `src/memory/` (ou equivalente)
-- Hooks mínimos de integração com atendimento/CRM/camada cognitiva
-- Base consultiva mínima operacional (Camada A mínima)
-- Regras comerciais mínimas operacionais (Camada B mínima)
-- Memória manual mínima funcional (Camada D mínima)
-- Smoke mínimo da PR3 passando
+### PR3 — Runtime mínimo do módulo *(executada — 2026-04-22)*
+**O que entregou:**
+- Estruturas mínimas técnicas do E1 em `src/e1/` para as 4 camadas
+- Hooks mínimos de integração local com atendimento/CRM/camada cognitiva
+- Base consultiva mínima operacional (Camada A)
+- Leitura técnica mínima de regras comerciais (Camada B)
+- Memória técnica mínima por lead e por atendimento (Camada C)
+- Validação técnica mínima de diretiva manual (Camada D)
+- Smoke específico da PR3 em `src/e1/smoke.ts`
+- Integração da validação em `smoke:all` via `smoke:e1`
 
-**O que NÃO entrega:**
-- Aprendizado automático completo (Camada C plena)
-- Automação perigosa
-- Integração com normativos externos reais
+**O que NÃO entregou:**
+- Ingestão real de normativos
+- Motor comercial real
+- Aprendizado automático completo
+- UI/painel
+- Integração externa nova
+- Escrita funcional real em CRM
 
 ---
 
@@ -448,12 +453,28 @@ Esta PR2 está completa se:
 
 ---
 
+## 16c. Critérios de aceite da PR3
+
+Esta PR3 está completa se:
+
+- [x] Estruturas mínimas das 4 camadas existirem em `src/e1/`
+- [x] Hooks mínimos técnicos existirem e não quebrarem `/__core__/run` e `/__meta__/ingest`
+- [x] Memória sem evidência forte continuar bloqueada tecnicamente
+- [x] Base normativa mínima for consultável localmente
+- [x] Regras comerciais mínimas forem lidas localmente
+- [x] Memória manual mínima validar `author/data/escopo/prioridade`
+- [x] Smoke da PR3 existir em `src/e1/smoke.ts` e passar
+- [x] `smoke:all` incluir `smoke:e1` sem regressão de frentes anteriores
+- [x] Nenhum recurso externo novo for aberto
+- [x] Vivos apontarem PR4 como próximo passo autorizado
+
+---
+
 ## 17. Próximo passo autorizado
 
-**PR3 — Runtime mínimo do módulo**
+**PR4 — Smoke integrado + closeout formal do contrato extraordinário E1**
 
-Conforme contrato técnico em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md` seção 11.
-Antes de iniciar a PR3, obrigatoriamente executar o loop da seção 15 e confirmar que este contrato permanece em execução.
+A PR4 deve provar o recorte contratado (PR1+PR2+PR3+PR4), validar integridade com Frentes 6/7/8 e executar o closeout formal conforme `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`.
 
 ---
 
