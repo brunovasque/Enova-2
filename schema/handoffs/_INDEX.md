@@ -47,4 +47,4 @@ Este índice está subordinado ao A00, A01, A02 e ao HANDOFF_SCHEMA.
 - 2026-04-22 — Frente 7 executou PR4 (smoke integrado + closeout formal), encerrou e arquivou contrato. Proximo contrato autorizado: Frente 8 — Rollout.
 - 2026-04-22 — Frente 8 Rollout aberta formalmente com handoff vivo criado. Proximo passo autorizado: PR2 — contrato tecnico de rollout.
 - 2026-04-22 — Frente 8 executou PR2 (contrato tecnico de rollout) e atualizou handoff vivo. Proximo passo autorizado: PR3 — runtime minimo/controladores de rollout.
-- 2026-04-22 — Frente 8 executou PR3 (runtime minimo/controladores locais) e atualizou handoff vivo. Proximo passo autorizado: PR4 — smoke integrado final + closeout formal da Frente 8.
+- 2026-04-22 — Frente 8 executou PR4 (smoke integrado final + closeout formal) e encerrou formalmente. Frente 8 é a última frente formal do macro ENOVA 2. Ativação real requer contrato extraordinário explícito quando autorizado.
