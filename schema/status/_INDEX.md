@@ -42,3 +42,4 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 - 2026-04-22 — Frente 6 Meta/WhatsApp encerrada formalmente apos PR4, com smoke integrado final aprovado e contrato arquivado. Proxima frente autorizada: Frente 7 — Telemetria e Observabilidade.
 - 2026-04-22 — Frente 7 Telemetria e Observabilidade aberta formalmente. Proximo passo autorizado: PR2 — contrato tecnico de observabilidade/telemetria.
 - 2026-04-22 — Frente 7 executou PR2 (contrato tecnico de observabilidade/telemetria). Proximo passo autorizado: PR3 — runtime minimo de observabilidade no Worker/repo.
+- 2026-04-22 — Frente 7 executou PR3 (runtime minimo de observabilidade no Worker/repo). Proximo passo autorizado: PR4 — smoke integrado + closeout formal da Frente 7.

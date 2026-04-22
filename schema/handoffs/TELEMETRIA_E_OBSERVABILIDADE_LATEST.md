@@ -6,15 +6,15 @@
 | Data | 2026-04-22 |
 | Estado da frente | em execucao |
 | Classificacao da tarefa | contratual |
-| Ultima PR relevante | PR2 — contrato tecnico de observabilidade/telemetria da Frente 7 |
+| Ultima PR relevante | PR3 — runtime minimo de observabilidade no Worker/repo da Frente 7 |
 | Contrato ativo | `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md` |
-| Recorte executado do contrato | PR2 — contrato tecnico de observabilidade/telemetria |
-| Pendencia contratual remanescente | PR3 e PR4 |
+| Recorte executado do contrato | PR3 — runtime minimo de observabilidade no Worker/repo |
+| Pendencia contratual remanescente | PR4 |
 | Houve desvio de contrato? | nao |
 | Contrato encerrado nesta PR? | nao |
 | Item do A01 atendido | Prioridade 7 — Telemetria e Observabilidade |
-| Proximo passo autorizado | PR3 — runtime minimo de observabilidade no Worker/repo |
-| Proximo passo foi alterado? | sim — saiu de PR2 para PR3 |
+| Proximo passo autorizado | PR4 — smoke integrado + closeout formal da Frente 7 |
+| Proximo passo foi alterado? | sim — saiu de PR3 para PR4 |
 | Tarefa fora de contrato? | nao |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
@@ -24,11 +24,9 @@
 
 ## 1. Contexto curto
 
-A PR1 da Frente 7 abriu o contrato ativo, status/handoff e indices, com foco de governanca e mapa executivo de ativacao real.
+A PR2 da Frente 7 fechou o contrato tecnico de observabilidade/telemetria sem runtime.
 
-Esta PR2 executa o proximo recorte autorizado do contrato: fechar o contrato tecnico de observabilidade/telemetria antes de qualquer runtime.
-
-O estado da frente passa para `em execucao`, mantendo escopo totalmente documental e sem drift para dashboard externo, ferramenta externa obrigatoria, integracao real ou alteracao de runtime.
+Esta PR3 executa o proximo recorte autorizado: implementar runtime minimo de observabilidade no repo/Worker, com hooks minimos, emissao minima, correlacao basica e smoke dedicado, sem abrir qualquer integracao externa real.
 
 ## 2. Classificacao da tarefa
 
@@ -36,67 +34,68 @@ contratual
 
 ## 3. Ultima PR relevante
 
-PR1 — abertura contratual forte da Frente 7.
+PR2 — contrato tecnico de observabilidade/telemetria da Frente 7.
 
 ## 4. O que a PR anterior fechou
 
-- abertura formal da Frente 7;
-- contrato ativo, status vivo e handoff vivo criados;
-- ordem PR1/PR2/PR3/PR4 e loop obrigatorio persistidos;
-- mapa executivo de ativacao real das integracoes persistido.
+- contrato tecnico canonico em `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`;
+- taxonomia de eventos, sinais obrigatorios, camadas e correlacao/trace;
+- contrato de logs, sintomas/alertas/health/evidencias;
+- limites explicitos para PR3 (runtime minimo) e PR4 (closeout).
 
 ## 5. O que a PR anterior NAO fechou
 
-- contrato tecnico de observabilidade/telemetria (PR2);
-- runtime minimo de observabilidade (PR3);
-- smoke integrado final e closeout formal (PR4).
+- runtime minimo de observabilidade no Worker/repo (PR3);
+- smoke integrado final e closeout formal da Frente 7 (PR4).
 
 ## 6. Diagnostico confirmado
 
-- Frente 7 aberta corretamente em `schema/contracts/_INDEX.md`.
-- Correcao pos-PR54 alinhou a front key da Frente 7 com o autofix de governanca.
-- Proximo passo autorizado antes desta entrega era exatamente PR2.
-- Nao existia artefato tecnico canonico dedicado para observabilidade/telemetria da Frente 7.
-- Passo correto para esta PR era tecnico-documental, sem runtime.
+- Frente 7 aberta corretamente e front key alinhada com autofix de governanca.
+- Proximo passo autorizado antes desta entrega era exatamente PR3.
+- Runtime minimo ainda nao existia.
+- Worker ja possuia entrypoint/rotas tecnicas; o patch correto era incremental.
+- Integridade de `/`, `/__core__/run` e `/__meta__/ingest` precisava ser preservada.
 
 ## 7. O que foi feito
 
-- criado `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`;
-- definida taxonomia canonica de eventos;
-- definido envelope minimo de sinais obrigatorios e condicionais;
-- definidas camadas de observabilidade e responsabilidades minimas;
-- definida regra minima de correlacao/trace e propagacao de ids;
-- definido contrato de logs (permitidos, proibidos e redaction minima);
-- definido contrato de sintomas, alertas, health e evidencias;
-- definido limite minimo vs profundo e fronteira repo x ambiente externo;
-- definidos limites de implementacao para PR3 e criterios de validacao para PR4;
-- sincronizados contrato ativo, status, handoff e indices.
+- criado `src/telemetry/types.ts` com shape minimo canonicamente versionado (`f7.v1`);
+- criado `src/telemetry/emit.ts` com emissor local em memoria, correlacao basica e buffer de evidencias tecnicas;
+- instrumentado `src/worker.ts` com hooks minimos de:
+  - `request_lifecycle`;
+  - `decision_transition` (core);
+  - `validation_failure`;
+  - `runtime_guard`;
+  - `health_signal`;
+- instrumentado `src/meta/ingest.ts` com emissao minima para:
+  - `validation_failure`;
+  - `channel_signal`;
+  - `external_boundary_blocked` (`boundary_ref = meta_real`);
+- criado smoke dedicado `src/telemetry/smoke.ts`;
+- adicionado `smoke:telemetry` em `package.json` e encaixado no `smoke:all`;
+- executado smoke completo local comprovando integridade e limites.
 
 ## 8. O que nao foi feito
 
-- nenhuma alteracao em `src/`;
-- nenhuma alteracao em `package.json`;
-- nenhuma alteracao em `wrangler.toml`;
-- nenhuma implementacao de runtime funcional;
-- nenhum deploy externo/manual;
-- nenhum dashboard externo;
+- nenhuma abertura de dashboard externo;
 - nenhuma ferramenta externa obrigatoria;
-- nenhum secret, binding, var;
-- nenhuma integracao externa real;
 - nenhuma telemetria profunda externa;
-- nenhum rollout real.
+- nenhuma integracao real Meta;
+- nenhuma persistencia nova obrigatoria;
+- nenhum secret, binding, var ou deploy manual externo;
+- nenhuma alteracao de soberania do Core/IA;
+- nenhuma refatoracao ampla.
 
 ## 9. O que esta PR fechou
 
-- recorte PR2 da Frente 7 concluido;
-- contrato tecnico de observabilidade/telemetria persistido no repo;
-- limite tecnico para PR3 e checklist tecnico para PR4 formalizados;
-- vivos sincronizados com proximo passo autorizado em PR3.
+- recorte PR3 da Frente 7 concluido;
+- runtime minimo de observabilidade ativo no repo/Worker;
+- correlacao basica e evidencias locais comprovadas por smoke;
+- integridade das frentes anteriores preservada;
+- vivos sincronizados com PR4 como proximo passo autorizado.
 
 ## 10. O que continua pendente apos esta PR
 
-- PR3 — runtime minimo de observabilidade no Worker/repo;
-- PR4 — smoke integrado + closeout formal da Frente 7.
+- PR4 — smoke integrado final + closeout formal da Frente 7.
 
 ## 11. Esta tarefa foi fora de contrato?
 
@@ -108,11 +107,11 @@ nao
 
 ## 11b. Recorte executado do contrato
 
-PR2 — contrato tecnico de observabilidade/telemetria.
+PR3 — runtime minimo de observabilidade no Worker/repo.
 
 ## 11c. Pendencia contratual remanescente
 
-PR3 e PR4.
+PR4.
 
 ## 11d. Houve desvio de contrato?
 
@@ -124,17 +123,22 @@ nao
 
 ## 12. Arquivos relevantes
 
-- `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`
+- `src/telemetry/types.ts`
+- `src/telemetry/emit.ts`
+- `src/telemetry/smoke.ts`
+- `src/worker.ts`
+- `src/meta/ingest.ts`
+- `package.json`
 - `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md`
+- `schema/contracts/_INDEX.md`
 - `schema/status/TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`
 - `schema/handoffs/TELEMETRIA_E_OBSERVABILIDADE_LATEST.md`
-- `schema/contracts/_INDEX.md`
 - `schema/status/_INDEX.md`
 - `schema/handoffs/_INDEX.md`
 
 ## 13. Item do A01 atendido
 
-Prioridade 7 — Telemetria e Observabilidade, no recorte PR2 de contrato tecnico (sem runtime).
+Prioridade 7 — Telemetria e Observabilidade, no recorte PR3 de runtime minimo.
 
 ## 14. Estado atual da frente
 
@@ -142,22 +146,23 @@ em execucao
 
 ## 15. Proximo passo autorizado
 
-PR3 — runtime minimo de observabilidade no Worker/repo.
+PR4 — smoke integrado + closeout formal da Frente 7.
 
-Este proximo passo foi alterado em relacao ao estado anterior: antes era PR2; apos esta entrega, passa a ser PR3.
+Este proximo passo foi alterado em relacao ao estado anterior: antes era PR3; apos esta entrega, passa a ser PR4.
 
 ## 16. Riscos
 
-- risco de confundir alerta interno com dispatch externo. Mitigacao: contrato tecnico proibe ferramenta externa obrigatoria nesta fase.
-- risco de pular para telemetria profunda externa cedo demais. Mitigacao: secao de minimo vs profundo e limites explicitos da PR3.
-- risco de abrir integracao real por "atalho" de observabilidade. Mitigacao: bloqueios de fronteira e mapa executivo mantidos no contrato ativo.
+- risco de expandir PR4 para escopo de integracao externa. Mitigacao: manter closeout estritamente no recorte contratado.
+- risco de confundir observabilidade minima com telemetria profunda externa. Mitigacao: limites do contrato ativo e do contrato tecnico permanecem explicitos.
+- risco de drift documental entre contrato/status/handoff. Mitigacao: vivos e indices sincronizados nesta PR.
 
 ## 17. Provas
 
-- novo contrato tecnico em `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`;
-- vivos sincronizados com PR3 como proximo passo;
-- validacao documental `git diff --check`;
-- prova de ausencia de alteracao funcional em `src/`, `package.json`, `wrangler.toml`.
+- `npm run smoke:telemetry` — PASSOU;
+- `npm run smoke:worker` — PASSOU;
+- `npm run smoke:meta` — PASSOU;
+- `npm run smoke:all` — PASSOU;
+- runtime existente preservado com novos hooks minimos sem alterar surface funcional final.
 
 ## 18. Mudancas em dados persistidos (Supabase)
 
@@ -172,8 +177,10 @@ Permissoes Cloudflare necessarias: nenhuma adicional
 Fontes de verdade consultadas:
   Indice de contratos lido:    `schema/contracts/_INDEX.md`
   Contrato ativo lido:         `schema/contracts/active/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE.md`
+  Contrato tecnico lido:       `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`
   Status da frente lido:       `schema/status/TELEMETRIA_E_OBSERVABILIDADE_STATUS.md`
   Handoff da frente lido:      `schema/handoffs/TELEMETRIA_E_OBSERVABILIDADE_LATEST.md`
-  Indice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
-  Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — L18, L03 e C* nao transcritos integralmente
-  PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — trechos de runner, QA, telemetria, observabilidade, rollback, shadow/canary/cutover e alertas
+  Runtime audit lido:          `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`
+  Entrypoint lido:             `src/worker.ts`
+  Canal tecnico lido:          `src/meta/ingest.ts`, `src/meta/validate.ts`, `src/meta/types.ts`
+  Smokes lidos:                `src/worker-route-smoke.ts`, `src/meta/smoke.ts`, `src/core/smoke.ts`

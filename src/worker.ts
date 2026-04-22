@@ -17,6 +17,18 @@
 import { runCoreEngine } from './core/engine.ts';
 import type { CoreDecision, LeadState, StageId } from './core/types.ts';
 import { handleMetaIngest } from './meta/ingest.ts';
+import {
+  createExecutionId,
+  createRequestTelemetryContext,
+  emitHealthSignal,
+  emitRequestLifecycleCompleted,
+  emitRequestLifecycleReceived,
+  emitRuntimeGuard,
+  emitTelemetry,
+  emitValidationFailure,
+  statusToOutcome,
+} from './telemetry/emit.ts';
+import type { TelemetryRequestContext } from './telemetry/types.ts';
 
 const JSON_HEADERS = {
   'content-type': 'application/json; charset=utf-8',
@@ -90,8 +102,14 @@ function toStructuralResponse(decision: CoreDecision) {
   };
 }
 
-async function handleCoreRun(request: Request): Promise<Response> {
+async function handleCoreRun(request: Request, telemetryContext: TelemetryRequestContext): Promise<Response> {
   if (request.method !== 'POST') {
+    emitRuntimeGuard(telemetryContext, 'src/worker.ts', 'worker', 'core_route_method_not_allowed', {
+      route: '/__core__/run',
+      method: request.method,
+      allowed_method: 'POST',
+    });
+
     return jsonResponse(
       {
         error: 'method_not_allowed',
@@ -107,6 +125,11 @@ async function handleCoreRun(request: Request): Promise<Response> {
   try {
     payload = await request.json();
   } catch {
+    emitValidationFailure(telemetryContext, 'src/worker.ts', 'worker', 'core_route_invalid_json', {
+      route: '/__core__/run',
+      method: request.method,
+    });
+
     return jsonResponse(
       {
         error: 'invalid_json',
@@ -119,10 +142,36 @@ async function handleCoreRun(request: Request): Promise<Response> {
   try {
     const state = parseCoreRunPayload(payload);
     const decision = runCoreEngine(state);
+    const execution_id = createExecutionId();
+
+    emitTelemetry({
+      layer: 'core',
+      category: 'decision_transition',
+      action: 'evaluated',
+      source: 'src/worker.ts',
+      severity: 'info',
+      outcome: 'completed',
+      trace_id: telemetryContext.trace_id,
+      correlation_id: telemetryContext.correlation_id,
+      request_id: telemetryContext.request_id,
+      execution_id,
+      lead_ref: state.lead_id,
+      details: {
+        route: '/__core__/run',
+        stage_current: decision.stage_current,
+        stage_after: decision.stage_after,
+        block_advance: decision.block_advance,
+      },
+    });
 
     return jsonResponse(toStructuralResponse(decision), 200);
   } catch (error) {
     if (error instanceof WorkerInputError) {
+      emitValidationFailure(telemetryContext, 'src/worker.ts', 'core', 'core_input_invalid', {
+        route: '/__core__/run',
+        detail: error.message,
+      });
+
       return jsonResponse(
         {
           error: 'invalid_core_input',
@@ -135,6 +184,23 @@ async function handleCoreRun(request: Request): Promise<Response> {
 
     const detail = error instanceof Error ? error.message : 'Erro inesperado ao executar o Core.';
 
+    emitTelemetry({
+      layer: 'core',
+      category: 'contract_symptom',
+      action: 'raised',
+      source: 'src/worker.ts',
+      severity: 'error',
+      outcome: 'failed',
+      trace_id: telemetryContext.trace_id,
+      correlation_id: telemetryContext.correlation_id,
+      request_id: telemetryContext.request_id,
+      symptom_code: 'core_execution_failed',
+      details: {
+        route: '/__core__/run',
+        detail,
+      },
+    });
+
     return jsonResponse(
       {
         error: 'core_execution_failed',
@@ -146,7 +212,13 @@ async function handleCoreRun(request: Request): Promise<Response> {
   }
 }
 
-function handleRoot(): Response {
+function handleRoot(telemetryContext: TelemetryRequestContext): Response {
+  emitHealthSignal(telemetryContext, 'src/worker.ts', 'healthy', {
+    service: 'enova-2-worker',
+    route: '/',
+    surface: 'technical_only',
+  });
+
   return jsonResponse({
     service: 'enova-2-worker',
     status: 'ok',
@@ -162,25 +234,59 @@ function handleRoot(): Response {
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
+    const telemetryContext = createRequestTelemetryContext(request, url.pathname);
 
+    emitRequestLifecycleReceived(telemetryContext, 'src/worker.ts');
+
+    let response: Response;
     if (url.pathname === '/') {
-      return handleRoot();
+      response = handleRoot(telemetryContext);
+      emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
+      return response;
     }
 
     if (url.pathname === '/__core__/run') {
-      return handleCoreRun(request);
+      response = await handleCoreRun(request, telemetryContext);
+      emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
+      return response;
     }
 
     if (url.pathname === '/__meta__/ingest') {
-      return handleMetaIngest(request);
+      response = await handleMetaIngest(request, telemetryContext);
+      emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
+      return response;
     }
 
-    return jsonResponse(
+    emitRuntimeGuard(telemetryContext, 'src/worker.ts', 'worker', 'route_not_found', {
+      route: url.pathname,
+      method: request.method,
+    });
+
+    response = jsonResponse(
       {
         error: 'not_found',
         route: url.pathname,
       },
       404,
     );
+
+    emitTelemetry({
+      layer: 'worker',
+      category: 'health_signal',
+      action: 'reported',
+      source: 'src/worker.ts',
+      severity: response.status >= 500 ? 'error' : 'info',
+      outcome: statusToOutcome(response.status),
+      trace_id: telemetryContext.trace_id,
+      correlation_id: telemetryContext.correlation_id,
+      request_id: telemetryContext.request_id,
+      health_status: 'healthy',
+      details: {
+        route: url.pathname,
+        status: response.status,
+      },
+    });
+    emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
+    return response;
   },
 } satisfies ExportedHandler;
