@@ -9,7 +9,7 @@
 | Legados aplicaveis | L18 (obrigatorio), L03 e C* (complementares quando confirmados) |
 | Referencias obrigatorias | A00, A01, A02, CODEX_WORKFLOW, CONTRACT_EXECUTION_PROTOCOL, CONTRACT_CLOSEOUT_PROTOCOL, CONTRACT_SCHEMA, STATUS_SCHEMA, HANDOFF_SCHEMA, CLOUDFLARE_PERMISSION_PROTOCOL, REQUEST_ECONOMY_PROTOCOL, DATA_CHANGE_PROTOCOL, CLOUDFLARE_RUNTIME_AUDIT_2026-04-22 |
 | Ordem minima de leitura da frente | A00 -> A01 -> A02 -> contracts/_INDEX -> este contrato -> status/handoff da Frente 8 -> L18 (PDF, enquanto nao transcrito) |
-| Status | aberto |
+| Status | em execucao |
 | Ultima atualizacao | 2026-04-22 |
 
 ---
@@ -201,15 +201,14 @@ C12. Proximo passo autorizado explicito: **PR2 da Frente 8**.
 
 ## 12. Proximo passo autorizado
 
-**PR2 — contrato tecnico de rollout.**
+**PR3 — runtime minimo/controladores de rollout (escopo tecnico local).**
 
-PR2 deve fechar, sem implementacao de runtime:
+PR3 podera executar, sem abrir rollout real:
 
-- definicao tecnica de shadow/canary/cutover/rollback;
-- criterios de promocao e bloqueio;
-- janelas de observacao;
-- evidencias minimas;
-- fronteiras de ativacao real.
+- hooks/guards minimos;
+- flags/controles minimos se estritamente necessarios;
+- smoke minimo de rollout;
+- evidencia tecnica local de gates e rollback.
 
 ## 13. Relacao com o A01
 
@@ -240,6 +239,7 @@ PR2 deve fechar, sem implementacao de runtime:
 - `schema/REQUEST_ECONOMY_PROTOCOL.md`
 - `schema/DATA_CHANGE_PROTOCOL.md`
 - `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`
+- `schema/rollout/FRENTE8_ROLLOUT_TECHNICAL_CONTRACT.md`
 - `schema/legacy/INDEX_LEGADO_MESTRE.md`
 - `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
 - `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`
@@ -323,3 +323,12 @@ Nenhuma tarefa da Frente 8 pode iniciar sem cumprir este loop:
 - Permissoes Cloudflare necessarias: **nenhuma adicional**.
 - Codigo funcional novo nesta PR1: **nenhum**.
 - Proximo passo autorizado: **PR2 — contrato tecnico de rollout**.
+
+## 21. Estado apos PR2 (contrato tecnico concluido)
+
+- Artefato tecnico criado: `schema/rollout/FRENTE8_ROLLOUT_TECHNICAL_CONTRACT.md`.
+- PR2 fechou: definicoes tecnicas de shadow/canary/cutover/rollback, criterios de promocao/bloqueio, janelas de observacao, evidencias minimas, fronteiras de ativacao real e limites da PR3.
+- Nenhuma implementacao de runtime foi feita nesta PR2.
+- Mudancas em dados persistidos (Supabase): **nenhuma**.
+- Permissoes Cloudflare necessarias: **nenhuma adicional**.
+- Proximo passo autorizado: **PR3 — runtime minimo/controladores de rollout**.
