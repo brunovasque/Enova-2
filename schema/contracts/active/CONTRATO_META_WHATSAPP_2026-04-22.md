@@ -62,9 +62,10 @@ Abrir e executar, em recortes curtos e seguros, a Frente 6 de canal Meta/WhatsAp
 - contrato ativo da Frente 6 aberto e versionado no repo;
 - ordem oficial PR1/PR2/PR3/PR4 persistida no contrato e nos vivos;
 - loop obrigatorio de consulta antes de cada tarefa da frente, persistido no repo;
-- status e handoff vivos da Frente 6 criados e atualizados para PR2;
+- status e handoff vivos da Frente 6 criados e atualizados para PR3;
 - contrato tecnico de envelope da PR2 persistido em `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`;
-- proxima acao autorizada explicitada: PR3.
+- runtime minimo da PR3 persistido no Worker com rota tecnica `/__meta__/ingest`;
+- proxima acao autorizada explicitada: PR4.
 
 ## 7. Criterios de aceite
 
@@ -95,7 +96,7 @@ C9. Proximo passo autorizado claro e sem ambiguidade, conforme estado atual da f
 
 ## 10. Proximo passo autorizado
 
-**PR3 — runtime minimo do canal no Worker (sem rollout e sem telemetria profunda).**
+**PR4 — smoke integrado + closeout formal da Frente 6.**
 
 ## 11. Relacao com o A01
 
@@ -211,6 +212,25 @@ Mitigacao: declaracao obrigatoria via `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
 - Estado da frente: **em execucao**
 - Recorte executado nesta PR2: **contrato tecnico do canal/envelope de integracao**
 - Artefato documental da PR2: `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`
+- Mudancas em dados persistidos (Supabase): **nenhuma**
+- Permissoes Cloudflare necessarias: **nenhuma adicional**
+
+## 21. Estado apos execucao da PR3
+
+- Estado da frente: **em execucao**
+- Recorte executado nesta PR3: **runtime minimo do canal no Worker**
+- Runtime tecnico criado: `POST /__meta__/ingest`
+- Artefatos de runtime da PR3:
+  - `src/meta/types.ts`
+  - `src/meta/validate.ts`
+  - `src/meta/ingest.ts`
+  - `src/meta/smoke.ts`
+  - `src/worker.ts`
+  - `package.json`
+- Validacoes implementadas: metodo, path dedicado, JSON obrigatorio, shape inbound do envelope, campos obrigatorios, timestamps ISO, evento inbound aceito pelo contrato da PR2.
+- Resposta tecnica: aceite `202` com `accepted: true`, `mode: technical_only`, correlacao (`trace_id`, `idempotency_key`, `event_id`, `lead_ref`) e declaracao explicita de ausencia de integracao real Meta.
+- Sem Meta real, sem chamada externa, sem persistencia nova, sem binding/secret/var/route externo, sem rollout e sem telemetria profunda.
+- Proximo passo autorizado: **PR4 — smoke integrado + closeout formal da Frente 6**.
 - Mudancas em dados persistidos (Supabase): **nenhuma**
 - Permissoes Cloudflare necessarias: **nenhuma adicional**
 

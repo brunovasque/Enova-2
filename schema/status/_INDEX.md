@@ -36,3 +36,7 @@ Este índice está subordinado ao A00, A01, A02 e ao STATUS_SCHEMA.
 2. O status é atualizado ao final de cada tarefa, conforme o CODEX_WORKFLOW.
 3. O estado nesta tabela deve refletir sempre o estado mais recente do arquivo de status correspondente.
 4. Novas frentes devem ser adicionadas a esta tabela antes da abertura de contrato.
+
+## Ultima sincronizacao
+
+- 2026-04-22 — Frente 6 Meta/WhatsApp permanece em execucao apos PR3, com runtime minimo tecnico concluido e PR4 como proximo passo autorizado nos vivos da frente.
