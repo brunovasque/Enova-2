@@ -6,15 +6,15 @@
 | Data | 2026-04-22 |
 | Estado da frente | em execucao |
 | Classificacao da tarefa | contratual |
-| Ultima PR relevante | PR 1 — abertura do micro contrato da Frente 6 |
+| Ultima PR relevante | PR 3 — runtime minimo do canal no Worker |
 | Contrato ativo | `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md` |
-| Recorte executado do contrato | PR 2 — contrato tecnico do canal / envelope de integracao |
-| Pendencia contratual remanescente | PR3, PR4 |
+| Recorte executado do contrato | PR 3 — runtime minimo do canal no Worker |
+| Pendencia contratual remanescente | PR4 |
 | Houve desvio de contrato? | nao |
 | Contrato encerrado nesta PR? | nao |
-| Item do A01 atendido | Prioridade 6 — contrato tecnico do canal/envelope de integracao |
-| Proximo passo autorizado | PR 3 — runtime minimo do canal no Worker |
-| Proximo passo foi alterado? | sim — saiu de PR2 para PR3 |
+| Item do A01 atendido | Prioridade 6 — runtime minimo do canal Meta/WhatsApp no Worker |
+| Proximo passo autorizado | PR 4 — smoke integrado + closeout formal da Frente 6 |
+| Proximo passo foi alterado? | sim — saiu de PR3 para PR4 |
 | Tarefa fora de contrato? | nao |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
@@ -23,11 +23,13 @@
 
 ## 1. Contexto curto
 
-A PR 1 abriu a Frente 6 em governanca, criou contrato/vivos e travou a ordem imutavel PR1->PR2->PR3->PR4.
+A PR1 abriu a Frente 6 em governanca, criou contrato/vivos e travou a ordem imutavel PR1->PR2->PR3->PR4.
 
-Esta PR 2 executou exatamente o recorte contratado de envelope tecnico do canal, sem runtime real, sem webhook Meta real e sem alteracao de deploy.
+A PR2 criou o contrato tecnico do envelope em `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`, sem runtime real.
 
-O proximo passo autorizado agora e PR3 (runtime minimo no Worker), mantendo escopo fechado.
+Esta PR3 executou o primeiro runtime minimo tecnico da Frente 6 no Worker, criando a rota `POST /__meta__/ingest` para validar e aceitar/rejeitar envelopes inbound conforme o contrato tecnico da PR2.
+
+O proximo passo autorizado agora e PR4 (smoke integrado + closeout formal), mantendo escopo fechado.
 
 ## 2. Classificacao da tarefa
 
@@ -35,58 +37,70 @@ contratual
 
 ## 3. Ultima PR relevante
 
-PR 1 — abertura do micro contrato da Frente 6.
+PR 3 — runtime minimo do canal no Worker.
 
 ## 4. O que a PR anterior fechou
 
-- abriu contrato ativo da Frente 6;
-- criou `schema/status/META_WHATSAPP_STATUS.md` e `schema/handoffs/META_WHATSAPP_LATEST.md`;
-- registrou ordem oficial PR1/PR2/PR3/PR4;
-- deixou PR2 como proximo passo autorizado.
+- contrato tecnico de envelope criado em `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`;
+- shape canonico inbound/outbound definido;
+- eventos aceitos definidos;
+- limites entre canal, Core, Speech e Adapter definidos;
+- regras minimas de idempotencia, retry, ack, erro e logs definidas;
+- PR3 ficou como proximo passo autorizado.
 
 ## 5. O que a PR anterior NAO fechou
 
-- nao definiu o contrato tecnico de envelope;
-- nao definiu shape inbound/outbound;
-- nao definiu regras minimas de idempotencia/retry/ack/erro/logs;
-- nao iniciou runtime no Worker (escopo da PR3).
+- runtime minimo no Worker;
+- smoke especifico da PR3;
+- smoke integrado + closeout formal da Frente 6;
+- Meta real, webhook real, secrets, rollout e telemetria profunda.
 
 ## 6. Diagnostico confirmado
 
-- Frente 6 estava com contrato ativo `aberto` e PR2 autorizada como proximo recorte.
-- Nao existia artefato documental dedicado ao envelope tecnico da Frente 6.
-- Estado vivo ainda apontava pendencia PR2/PR3/PR4.
-- L18 segue nao transcrito no markdown, exigindo referencia ao PDF mestre.
-- Limite de escopo do contrato permanece: sem runtime antes da PR3.
+- PR1 abriu a frente e PR2 criou o contrato tecnico do envelope.
+- O proximo passo autorizado atual era exatamente a PR3.
+- Nao existia runtime minimo do canal antes desta PR3.
+- O Worker ja possuia entrypoint ativo e rota tecnica `POST /__core__/run`.
+- O caminho correto era adicionar rota tecnica nova sem quebrar `/` e `/__core__/run`.
+- Nao houve necessidade de bindings, secrets, vars, routes externas ou permissoes Cloudflare adicionais.
 
 ## 7. O que foi feito
 
-- criado `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md` com contrato tecnico de envelope (inbound/outbound, eventos, idempotencia, retry, ack, erro, logs e limites de camada);
-- atualizado `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md` para refletir PR2 executada e proximo passo PR3;
-- atualizado `schema/contracts/_INDEX.md` com Frente 6 em `em execução` e ultima PR executora = PR2;
-- atualizado `schema/status/META_WHATSAPP_STATUS.md` para estado `em execucao` com pendencia PR3/PR4;
-- atualizado `schema/handoffs/META_WHATSAPP_LATEST.md` para continuidade da PR2;
-- atualizado `schema/status/_INDEX.md` para estado da Frente 6 em `em execução`.
+- criada rota tecnica `POST /__meta__/ingest` no Worker;
+- criado modulo `src/meta/types.ts` com constantes e tipos do envelope inbound aceito;
+- criado modulo `src/meta/validate.ts` com validacao estrutural do envelope baseado na PR2;
+- criado modulo `src/meta/ingest.ts` com handler tecnico de aceite/rejeicao;
+- criado smoke `src/meta/smoke.ts` cobrindo method invalido, JSON invalido, envelope incompleto, envelope valido e preservacao do carater tecnico;
+- adicionado script `npm run smoke:meta`;
+- incluido `smoke:meta` em `npm run smoke:all`;
+- vivos e contrato ativo sincronizados para PR3 concluida e PR4 autorizada.
 
 ## 8. O que nao foi feito
 
-- nenhuma implementacao real de webhook/canal;
-- nenhuma alteracao em `src/`;
-- nenhuma alteracao em `scripts/`;
-- nenhuma alteracao em `package.json`;
-- nenhuma alteracao em `wrangler.toml`;
-- nenhum binding/secret/var/route novo;
-- nenhum runtime da PR3.
+- nenhuma integracao real com Meta;
+- nenhuma chamada HTTP externa;
+- nenhuma persistencia real nova;
+- nenhum binding, secret, var ou rota externa de Cloudflare;
+- nenhuma assinatura real de webhook;
+- nenhuma callback verification real;
+- nenhum dashboard/deploy manual;
+- nenhum rollout;
+- nenhuma telemetria profunda;
+- nenhuma surface final ao cliente;
+- nenhuma fala mecanica dominante.
 
 ## 9. O que esta PR fechou
 
-- recorte PR2 do contrato ativo (envelope tecnico de integracao) com artefato documental dedicado;
-- sincronizacao contratual/status/handoff/indices para estado pos-PR2.
+- recorte PR3 do contrato ativo: runtime minimo tecnico do canal no Worker;
+- validacao minima de method/path/body/envelope inbound;
+- resposta tecnica previsivel para aceite e rejeicao;
+- smoke local/contratual da PR3.
 
 ## 10. O que continua pendente apos esta PR
 
-- PR3 (runtime minimo do canal no Worker);
-- PR4 (smoke integrado + closeout formal).
+- PR4 — smoke integrado + closeout formal da Frente 6;
+- prova integrada final de ack/erro/limites;
+- encerramento formal apenas se os criterios de PR4 forem cumpridos.
 
 ## 11. Esta tarefa foi fora de contrato?
 
@@ -98,11 +112,11 @@ nao
 
 ## 11b. Recorte executado do contrato
 
-PR 2 — contrato tecnico do canal / envelope de integracao.
+PR 3 — runtime minimo do canal no Worker.
 
 ## 11c. Pendencia contratual remanescente
 
-PR3 e PR4.
+PR4 — smoke integrado + closeout formal da Frente 6.
 
 ## 11d. Houve desvio de contrato?
 
@@ -114,7 +128,12 @@ nao
 
 ## 12. Arquivos relevantes
 
-- `schema/meta/FRENTE6_CHANNEL_ENVELOPE_CONTRACT.md`
+- `src/meta/types.ts`
+- `src/meta/validate.ts`
+- `src/meta/ingest.ts`
+- `src/meta/smoke.ts`
+- `src/worker.ts`
+- `package.json`
 - `schema/contracts/active/CONTRATO_META_WHATSAPP_2026-04-22.md`
 - `schema/contracts/_INDEX.md`
 - `schema/status/META_WHATSAPP_STATUS.md`
@@ -123,7 +142,7 @@ nao
 
 ## 13. Item do A01 atendido
 
-Prioridade 6 — contrato tecnico do canal/envelope de integracao antes de runtime real.
+Prioridade 6 — plugar canal Meta/WhatsApp e operacionalizar entrada/saida real, no recorte minimo tecnico autorizado pela PR3.
 
 ## 14. Estado atual da frente
 
@@ -131,20 +150,22 @@ em execucao
 
 ## 15. Proximo passo autorizado
 
-PR 3 — runtime minimo do canal no Worker (sem rollout e sem telemetria profunda).
+PR 4 — smoke integrado + closeout formal da Frente 6.
 
 ## 16. Riscos
 
-- risco de tentar abrir escopo de PR4 durante a PR3;
-- risco de misturar telemetria/rollout antes da hora;
-- risco de declarar integracao Cloudflare real sem prova externa de runtime publicado.
+- risco de tentar transformar PR4 em Meta real; isso continua fora de escopo;
+- risco de confundir rota tecnica local com runtime Cloudflare publicado; publicacao real segue nao verificada sem prova externa;
+- risco de abrir telemetria profunda/rollout antes do contrato da Frente 7/8.
 
 ## 17. Provas
 
-- diff documental com artefato novo da PR2 e vivos sincronizados;
-- indice de contratos atualizado para status `em execução` na Frente 6;
-- indice de status atualizado para estado `em execução` na Frente 6;
-- validacao de que nao houve alteracao em runtime (`src/`, `scripts/`, `package.json`, `wrangler.toml`).
+- `npm run smoke:meta` passou;
+- `npm run smoke:worker` passou;
+- `npm run smoke:all` passou;
+- rota `/__core__/run` preservada;
+- rota inexistente continua retornando `not_found`;
+- resposta da PR3 declara `mode: technical_only`, `external_dispatch: false` e `real_meta_integration: false`.
 
 ## 18. Mudancas em dados persistidos (Supabase)
 
@@ -164,4 +185,3 @@ Fontes de verdade consultadas:
   Índice legado consultado:    `schema/legacy/INDEX_LEGADO_MESTRE.md`
   Legado markdown consultado:  `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — bloco L18 (nao transcrito)
   PDF mestre consultado:       `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — paginas 4, 7 e 8
-

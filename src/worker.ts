@@ -16,6 +16,7 @@
 
 import { runCoreEngine } from './core/engine.ts';
 import type { CoreDecision, LeadState, StageId } from './core/types.ts';
+import { handleMetaIngest } from './meta/ingest.ts';
 
 const JSON_HEADERS = {
   'content-type': 'application/json; charset=utf-8',
@@ -152,6 +153,7 @@ function handleRoot(): Response {
     routes: {
       health: 'GET /',
       core_run: 'POST /__core__/run',
+      meta_ingest: 'POST /__meta__/ingest',
     },
     surface: 'technical_only',
   });
@@ -167,6 +169,10 @@ export default {
 
     if (url.pathname === '/__core__/run') {
       return handleCoreRun(request);
+    }
+
+    if (url.pathname === '/__meta__/ingest') {
+      return handleMetaIngest(request);
     }
 
     return jsonResponse(
