@@ -11,7 +11,7 @@
 | Blocos legados obrigatorios       | L18 |
 | Blocos legados complementares     | L03, C* |
 | Ordem minima de leitura da frente | A00 -> A01 -> A02 -> contracts/_INDEX -> este contrato -> status/handoff da Frente 7 -> L18 (PDF, enquanto nao transcrito) |
-| Status                            | Aberto |
+| Status                            | Em execucao |
 | Ultima atualizacao                | 2026-04-22 |
 
 ---
@@ -75,10 +75,11 @@ Esta frente existe para impedir diagnostico por adivinhacao. Ao final dela, o si
 - status vivo da Frente 7 criado;
 - handoff vivo da Frente 7 criado;
 - indices vivos atualizados;
+- contrato tecnico de observabilidade/telemetria da PR2 persistido em `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`;
 - ordem oficial PR1/PR2/PR3/PR4 registrada;
 - loop obrigatorio da Frente 7 registrado;
 - mapa executivo de ativacao real das integracoes registrado;
-- proximo passo autorizado: PR2 da Frente 7.
+- proximo passo autorizado: PR3 da Frente 7.
 
 ## 7. Mapa executivo de ativacao real das integracoes
 
@@ -135,11 +136,12 @@ C7. Loop obrigatorio de consulta persistido no repo.
 C8. Mapa executivo de ativacao real das integracoes presente, objetivo e sem ambiguidade.  
 C9. Nenhum codigo funcional novo nesta PR1.  
 C10. Nenhuma integracao externa, secret, binding, var, dashboard, deploy ou rollout aberto nesta PR1.  
-C11. Proximo passo autorizado declarado: PR2 — contrato tecnico de observabilidade/telemetria.
+C11. Proximo passo autorizado declarado conforme o estado atual do contrato (apos PR2: PR3 — runtime minimo de observabilidade no Worker/repo).
 
 ## 10. Provas obrigatorias
 
 - diff dos arquivos criados/alterados;
+- diff do contrato tecnico da PR2 (`schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`);
 - prova de ausencia de alteracao funcional em `src/`, `package.json`, `wrangler.toml` ou runtime;
 - validacao documental (`git diff --check`);
 - smoke geral somente se executado sem exigir ambiente externo;
@@ -158,18 +160,15 @@ C11. Proximo passo autorizado declarado: PR2 — contrato tecnico de observabili
 
 ## 12. Proximo passo autorizado
 
-**PR2 — contrato tecnico de observabilidade/telemetria da Frente 7.**
+**PR3 — runtime minimo de observabilidade no Worker/repo.**
 
-PR2 deve definir, sem implementacao:
+PR3 deve implementar, no recorte minimo:
 
-- taxonomia de eventos;
-- sinais obrigatorios;
-- camadas de observabilidade;
-- correlacao/trace;
-- contrato de logs;
-- contrato de sintomas, alertas, health e evidencias;
-- minimo vs profundo;
-- provas esperadas para PR3 e PR4.
+- hooks minimos;
+- emissao minima conforme `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`;
+- smoke minimo de observabilidade;
+- bloqueio tecnico de fronteiras externas proibidas;
+- sem dashboard externo, sem ferramenta externa obrigatoria e sem telemetria profunda externa.
 
 ## 13. Relacao com o A01
 
@@ -201,6 +200,7 @@ PR2 deve definir, sem implementacao:
 - `schema/REQUEST_ECONOMY_PROTOCOL.md`
 - `schema/DATA_CHANGE_PROTOCOL.md`
 - `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`
+- `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`
 - `schema/legacy/INDEX_LEGADO_MESTRE.md`
 - `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
 - `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`
@@ -287,3 +287,13 @@ A Frente 8 devera tratar rollout, shadow mode, canary e cutover, respeitando os 
 - Permissoes Cloudflare necessarias: **nenhuma adicional**.
 - Codigo funcional novo nesta PR1: **nenhum**.
 - Proximo passo autorizado: **PR2 — contrato tecnico de observabilidade/telemetria**.
+
+## 22. Estado apos execucao da PR2
+
+- Estado da frente apos PR2: **em execucao**.
+- Artefato tecnico entregue na PR2: `schema/telemetry/FRENTE7_OBSERVABILITY_TELEMETRY_CONTRACT.md`.
+- Runtime funcional implementado na PR2: **nao**.
+- Dashboard externo/ferramenta externa obrigatoria: **nao**.
+- Mudancas em dados persistidos (Supabase): **nenhuma**.
+- Permissoes Cloudflare necessarias: **nenhuma adicional**.
+- Proximo passo autorizado apos PR2: **PR3 — runtime minimo de observabilidade no Worker/repo**.
