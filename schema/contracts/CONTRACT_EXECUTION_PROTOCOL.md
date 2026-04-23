@@ -223,3 +223,58 @@ Se qualquer das condições abaixo for identificada, parar e reportar:
 - PR misturando execução contratual com revisão contratual
 
 **Regra de parada não é falha — é conformidade.**
+
+---
+
+## 12. Cláusula de bloqueio por prova insuficiente (A00-ADENDO-03)
+
+> **Esta cláusula é derivada do adendo canônico `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03) e tem força de protocolo vinculante.**
+
+### 12.1 Regra de bloqueio
+
+Toda PR que claim fechar etapa, avançar próxima PR autorizada, encerrar contrato ou fechar gate **deve** apresentar evidência completa do documento-base.
+
+**É proibido declarar fechamento quando o documento-base da evidência ainda contiver:**
+- Item parcial ou inconclusivo
+- Lacuna remanescente
+- Pendência de prova
+- Smoke não executado
+- Critério de aceite com status `parcial` ou `não cumprido`
+- Qualquer equivalente semântico de insuficiência de prova
+
+### 12.2 Melhora parcial não autoriza avanço de estado
+
+Melhora incremental ou parcial de evidência **não** autoriza:
+- Declarar PR encerrada
+- Avançar "Próxima PR autorizada"
+- Fechar gate
+- Atualizar contrato/status/handoff como encerrado
+
+Apenas evidência completa, sem lacuna remanescente no documento-base, autoriza avanço de estado.
+
+### 12.3 Declaração obrigatória em todo claim de fechamento
+
+Toda PR que tente fechar etapa, gate, contrato ou avançar próxima PR deve declarar explicitamente:
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           <caminho do arquivo com a prova>
+Estado da evidência:                   completa | parcial | incompleta | ausente
+Há lacuna remanescente?:               não | sim — <descrição>
+Há item parcial/inconclusivo bloqueante?: não | sim — <descrição>
+Fechamento permitido nesta PR?:        sim | NÃO — BLOQUEADO por insuficiência de evidência
+Estado permitido após esta PR:         encerrada | em execução (continua aberta)
+Próxima PR autorizada:                 <ID lógico> | continuação desta etapa
+```
+
+**Ausência do Bloco E em PR que tenta fechar etapa = não conformidade.**
+**`Fechamento permitido nesta PR?: NÃO` = PR permanece aberta, gate permanece aberto.**
+
+### 12.4 Condição de parada adicional
+
+Acrescentar à lista da seção 11:
+
+- PR tentando fechar etapa sem Bloco E preenchido
+- Bloco E com `Fechamento permitido nesta PR?: NÃO` mas PR declarada encerrada
+- Documento-base da evidência com lacuna remanescente declarada e PR avançando estado
+

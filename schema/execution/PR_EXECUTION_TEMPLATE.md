@@ -76,6 +76,27 @@
   `schema/handoffs/<FASE>_LATEST.md` conforme `schema/handoffs/PR_HANDOFF_TEMPLATE.md`,
   declarando a **Próxima PR autorizada** segundo a Bíblia.
 
+## Fechamento por prova — Bloco E (obrigatório se esta PR tenta fechar etapa, gate ou contrato)
+
+> **Este bloco é obrigatório** em toda PR que tente fechar etapa, gate, contrato, ou avançar
+> a "Próxima PR autorizada" para uma fase diferente.
+> Ver `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03) e
+> `schema/CODEX_WORKFLOW.md` §21 para o protocolo completo.
+>
+> **Regra:** Se `Fechamento permitido nesta PR?` for `NÃO`, esta PR **não pode** ser declarada
+> encerrada, o gate permanece aberto e a próxima PR = continuidade desta etapa.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           <caminho do arquivo que contém a prova da entrega>
+Estado da evidência:                   completa | parcial | incompleta | ausente
+Há lacuna remanescente?:               não | sim — <descrição da lacuna>
+Há item parcial/inconclusivo bloqueante?: não | sim — <descrição do item>
+Fechamento permitido nesta PR?:        sim | NÃO — BLOQUEADO por insuficiência de evidência
+Estado permitido após esta PR:         encerrada | em execução (continua aberta)
+Próxima PR autorizada:                 <ID lógico da próxima PR> | continuação desta etapa
+```
+
 ---
 
 ## Campos mínimos exigidos pelo PR Governance Gate

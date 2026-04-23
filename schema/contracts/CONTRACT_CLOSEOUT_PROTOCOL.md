@@ -38,6 +38,8 @@ Um contrato só pode ser encerrado quando **todas** as condições abaixo forem 
 4. Evidências mínimas de entrega foram apresentadas
 5. Status e handoff da frente foram atualizados para refletir o encerramento
 6. O checklist obrigatório de encerramento (seção 4) foi preenchido integralmente
+7. **O documento-base da evidência não contém insuficiência declarada** — nenhum critério de aceite com status `parcial`, nenhuma lacuna remanescente, nenhum item inconclusivo (ver A00-ADENDO-03 e seção 4 abaixo)
+8. **O Bloco E (`--- BLOCO E — FECHAMENTO POR PROVA ---`) foi preenchido com `Fechamento permitido nesta PR?: sim`** (ver `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`)
 
 Se qualquer condição acima não for verdadeira, o contrato **não pode** ser encerrado.
 
@@ -60,9 +62,20 @@ Data de encerramento:                   <data ISO 8601>
 PR que encerrou:                        <número e título da PR>
 Destino do contrato encerrado:          archive (mover para schema/contracts/archive/)
 Próximo contrato autorizado:            <nome do próximo contrato ou "nenhum — aguardando definição">
+
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           <caminho do arquivo que contém a prova da entrega>
+Estado da evidência:                   completa | parcial | incompleta | ausente
+Há lacuna remanescente?:               não | sim — <descrição da lacuna>
+Há item parcial/inconclusivo bloqueante?: não | sim — <descrição do item>
+Fechamento permitido nesta PR?:        sim | NÃO — BLOQUEADO por insuficiência de evidência
+Estado permitido após esta PR:         encerrada | em execução (continua aberta)
+Próxima PR autorizada:                 <ID lógico da próxima PR> | continuação desta etapa
 ```
 
 **Checklist sem todos os campos preenchidos = encerramento não aceito.**
+**Bloco E com `Fechamento permitido nesta PR?: NÃO` = encerramento bloqueado — contrato permanece ativo.**
+**`Critérios de aceite cumpridos?: sim` só é válido se cada critério tiver evidência completa (não parcial).**
 
 ---
 
@@ -137,8 +150,12 @@ As seguintes situações são **proibidas** e constituem não conformidade:
 - Mover contrato para `archive/` sem encerramento formal
 - Abrir próximo contrato sem encerrar o anterior formalmente
 - Alterar status do contrato para `encerrado` sem cumprir este protocolo
+- **Encerrar contrato com documento-base da evidência contendo lacuna remanescente, item parcial ou inconclusivo** (ver A00-ADENDO-03)
+- **Preencher `Critérios de aceite cumpridos?: sim` quando qualquer critério tem evidência parcial** (ver A00-ADENDO-03)
+- **Omitir ou deixar incompleto o Bloco E no checklist de encerramento** (ver A00-ADENDO-03)
 
 **Encerramento implícito = não conformidade grave.**
+**Encerramento com evidência insuficiente = não conformidade grave (A00-ADENDO-03).**
 
 ---
 
@@ -210,5 +227,8 @@ Se qualquer das condições abaixo for identificada ao tentar encerrar um contra
 - Fora de escopo violado durante a execução
 - Pendências remanescentes não declaradas
 - Tentativa de mover contrato para archive sem encerramento formal
+- **Bloco E ausente ou com `Fechamento permitido nesta PR?: NÃO`** (A00-ADENDO-03)
+- **Documento-base da evidência com lacuna remanescente, item parcial ou inconclusivo** (A00-ADENDO-03)
+- **Critério de aceite com evidência parcial sendo declarado como `cumprido`** (A00-ADENDO-03)
 
 **Regra de parada não é falha — é conformidade.**

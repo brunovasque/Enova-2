@@ -12,13 +12,14 @@ Em conflito de macro, ordem ou gate, o mestre em `schema/source/` prevalece.
 
 ## Precedencia
 
-`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 > A00-ADENDO-02 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicaveis
+`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 > A00-ADENDO-02 > A00-ADENDO-03 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis
 
 Adendos canônicos ativos:
 - `schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01) — IA soberana na fala, mecânico jamais com prioridade de fala.
 - `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02) — identidade da Enova 2 como atendente especialista MCMV; guia de leitura das fases T1/T3/T4/T5/T6 com travas contra má interpretação.
+- `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03) — "Evidência manda no estado." Prova parcial/inconclusiva/lacunosa bloqueia fechamento de etapa, gate, contrato e avanço de próxima PR. Bloco E obrigatório em toda PR que tente fechar etapa.
 
-Toda abertura de contrato de frente deve declarar conformidade com ambos os adendos.
+Toda abertura de contrato de frente deve declarar conformidade com os três adendos.
 
 ---
 
@@ -42,6 +43,7 @@ Toda tarefa futura deve ler:
 6. Abrir a PR conforme `schema/execution/PR_EXECUTION_TEMPLATE.md`
 7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01) — em toda PR que toque conversa, LLM, speech ou fluxo cognitivo
 8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02) — obrigatório em toda PR de T1, T3, T4, T5 ou T6
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03) — obrigatório em toda PR que tente fechar etapa, gate, contrato ou avançar próxima PR autorizada
 
 ---
 
@@ -127,3 +129,4 @@ schema/contracts/
 - 2026-04-23 — Adicionado A00-ADENDO-02 (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) na cadeia de precedência. Toda abertura de contrato de frente deve declarar conformidade com A00-ADENDO-01 e A00-ADENDO-02.
 - 2026-04-23 — Evidencia documental de continuidade de `PR-T0.1` internalizada em `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`; contrato T0 permanece aberto em G0.
 - 2026-04-23 — Evidencia documental adicional de continuidade de `PR-T0.1` internalizada em `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`; contrato T0 permanece aberto em G0.
+- 2026-04-23 — Adicionado A00-ADENDO-03 (`schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`) na cadeia de precedência. Regra canônica: "Evidência manda no estado." Prova insuficiente bloqueia fechamento de etapa/gate/contrato. Toda abertura de contrato de frente deve declarar conformidade com A00-ADENDO-01, A00-ADENDO-02 e A00-ADENDO-03.
