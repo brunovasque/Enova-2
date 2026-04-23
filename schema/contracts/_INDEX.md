@@ -29,9 +29,11 @@ Em conflito de macro, ordem ou gate, o mestre em `schema/source/` prevalece.
 Toda tarefa futura deve ler:
 
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-2. `schema/contracts/_INDEX.md`
-3. O contrato/fase/PR ativa do recorte atual
-4. Status e handoff vivos do recorte atual
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` — Bíblia Canônica de PRs (sequência inviolável)
+3. `schema/contracts/_INDEX.md`
+4. O contrato/fase/PR ativa do recorte atual
+5. Status e handoff vivos do recorte atual (handoffs no formato `schema/handoffs/PR_HANDOFF_TEMPLATE.md`)
+6. Abrir a PR conforme `schema/execution/PR_EXECUTION_TEMPLATE.md`
 
 ---
 

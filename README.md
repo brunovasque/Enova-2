@@ -20,6 +20,9 @@ Manter governança, ordem executiva, contratos, memória operacional e runtime t
 
 ## Documentos canônicos
 - `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — **tronco macro soberano obrigatório em toda tarefa**
+- `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` — **Bíblia Canônica de Execução por PRs (T0..T7 + pós) derivada fielmente do mestre — leitura obrigatória em toda PR**
+- `schema/execution/PR_EXECUTION_TEMPLATE.md` — **template canônico obrigatório de abertura de PR**
+- `schema/handoffs/PR_HANDOFF_TEMPLATE.md` — **template canônico obrigatório de handoff por PR (continuidade zero-escuro)**
 - `schema/implantation/REBASE_CANONICO_IMPLANTACAO_2026-04-22.md` — rebase canônico da implantação
 - `schema/implantation/PLANO_EXECUTIVO_T0_T7.md` — plano executivo derivado do macro T0-T7
 - `schema/README_EXECUCAO.md`
@@ -57,10 +60,11 @@ Manter governança, ordem executiva, contratos, memória operacional e runtime t
 
 ## Como saber o estado de qualquer frente
 1. Ler `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` para confirmar o macro soberano.
-2. Consultar `schema/contracts/_INDEX.md` para saber qual contrato está ativo.
-3. Consultar `schema/status/_INDEX.md` para localizar o status macro e os status históricos por frente.
-4. Ler o status vivo macro (`schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`).
-5. Ler o último handoff macro (`schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`).
+2. Ler `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` para localizar a PR correta na sequência.
+3. Consultar `schema/contracts/_INDEX.md` para saber qual contrato está ativo.
+4. Consultar `schema/status/_INDEX.md` para localizar o status macro e os status históricos por frente.
+5. Ler o status vivo macro (`schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`).
+6. Ler o último handoff macro (`schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`) — formato obrigatório em `schema/handoffs/PR_HANDOFF_TEMPLATE.md`.
 
 ## Como saber quais legados ler
 1. Consultar primeiro `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
@@ -70,6 +74,16 @@ Manter governança, ordem executiva, contratos, memória operacional e runtime t
 
 ## Precedência documental (obrigatória)
 **schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
+
+## Bíblia Canônica de Execução por PRs
+
+A sequência inviolável de PRs de implantação macro (preparatórias + T0..T7 + pós-go-live) está em
+`schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`. Esta Bíblia é a tradução fiel do mestre
+em plano operacional de PRs e é **leitura obrigatória em toda PR**. Nenhuma PR futura pode nascer
+fora dessa ordem.
+
+Toda PR deve abrir-se conforme `schema/execution/PR_EXECUTION_TEMPLATE.md` e encerrar com handoff
+conforme `schema/handoffs/PR_HANDOFF_TEMPLATE.md` — handoff obrigatório, nunca opcional.
 
 ## Protocolo de execução
 Toda tarefa segue o fluxo obrigatório de 16 etapas definido em `schema/CODEX_WORKFLOW.md`:

@@ -39,9 +39,10 @@ macro como concluida.
 ## Regras
 
 1. Toda tarefa futura deve consultar primeiro `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
-2. O status macro ativo e a fonte primaria de estado de implantacao.
-3. Status historicos por frente continuam uteis como memoria tecnica, mas nao promovem gate macro.
-4. T1 permanece bloqueada ate G0 aprovado.
+2. Toda tarefa futura deve consultar `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` para localizar a PR correta na sequencia inviolavel.
+3. O status macro ativo e a fonte primaria de estado de implantacao.
+4. Status historicos por frente continuam uteis como memoria tecnica, mas nao promovem gate macro.
+5. T1 permanece bloqueada ate G0 aprovado.
 
 ## Ultima sincronizacao
 

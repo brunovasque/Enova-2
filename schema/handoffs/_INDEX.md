@@ -40,7 +40,9 @@ Os handoffs abaixo preservam continuidade tecnica, mas nao equivalem a implantac
 1. Toda tarefa futura deve ler o handoff macro ativo.
 2. Toda tarefa futura deve ler tambem o handoff especifico do recorte ativo, quando houver.
 3. Handoffs historicos nao autorizam abertura de fase macro sem gate correspondente.
-4. O proximo passo unico autorizado e T0-PR2.
+4. O proximo passo unico autorizado e T0-PR2 (equivalente a `PR-T0.1` na Bíblia Canônica de PRs).
+5. **Todo handoff novo deve seguir `schema/handoffs/PR_HANDOFF_TEMPLATE.md`** — formato obrigatorio.
+6. **A sequencia inviolavel de PRs esta em `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`** — leitura obrigatoria antes de qualquer handoff novo.
 
 ## Ultima sincronizacao
 
