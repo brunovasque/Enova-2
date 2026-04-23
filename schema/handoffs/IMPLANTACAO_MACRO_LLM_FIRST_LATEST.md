@@ -46,3 +46,28 @@ T0-PR2 — inventario legado vivo.
 - Nao abrir STT/TTS real.
 - Nao abrir shadow, canary, cutover ou rollout real.
 - Nao tratar runtime tecnico local como prova de implantacao macro.
+
+## Atualizacao 2026-04-23 — Bíblia canônica de PRs publicada
+
+- Publicada `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (sequência inviolável de PRs derivada do mestre).
+- Publicado `schema/execution/PR_EXECUTION_TEMPLATE.md` (template canônico obrigatório de abertura de PR).
+- Publicado `schema/handoffs/PR_HANDOFF_TEMPLATE.md` (template canônico obrigatório de handoff por PR).
+- Atualizados `README.md`, `schema/contracts/_INDEX.md`, `schema/handoffs/_INDEX.md`, `schema/status/_INDEX.md`.
+
+### Regra canônica de exceção contratual (Bíblia §S — soberana)
+
+- **Regra padrão:** seguir o contrato literalmente. Nenhuma quebra, flexibilização, "atalho útil" ou "quebra benéfica" pode ser feita por interpretação do executor.
+- **Somente o Vasques pode autorizar manualmente uma exceção contratual**, de forma explícita, específica, temporária e registrada (motivo, benefício esperado, escopo exato, duração/PRs afetadas, condição de retorno).
+- Encerrada a causa específica, o projeto **retorna automaticamente à normalidade do contrato**.
+- Limites duros nunca exceptuáveis: soberania da IA na fala (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`), regras de negócio MCMV, gates G0..G7, mudanças Supabase silenciosas, encerramento implícito de contrato.
+- Aplicação obrigatória nos templates de abertura e handoff (campos explícitos).
+
+### Estado atual da exceção contratual
+
+- **Exceção contratual ativa?:** não.
+- A próxima PR (`PR-T0.1`) **deve declarar explicitamente** `Exceção contratual autorizada pelo Vasques?: não` no body (conforme `PR_EXECUTION_TEMPLATE.md`) e operar literalmente conforme o contrato T0.
+
+### Próximo passo (reafirmado)
+
+- `PR-T0.1 — Inventário de fluxos e estados vivos` (equivalente a `T0-PR2 — inventario legado vivo`).
+- Leituras obrigatórias adicionais: Bíblia §G + §S, `PR_EXECUTION_TEMPLATE.md`, `PR_HANDOFF_TEMPLATE.md`.
