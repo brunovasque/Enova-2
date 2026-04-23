@@ -42,8 +42,8 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 | T0-PR2 / PR-T0.2 | Inventario de regras e classificacao por familia | Listar e classificar regras em 7 familias canonicas com bloco legado de origem | **concluida** — 48 regras catalogadas em 7 familias (38 ativas, 6 condicionais, 4 mortas); ver `schema/implantation/INVENTARIO_REGRAS_T0.md` |
 | T0-PR3 | Inventario de parsers, regex, fallbacks e heuristicas | Mapear pontos de decisao mecanica | **concluida** — 27 pontos catalogados (17 ativos, 5 condicionais, 3 residuais, 2 mortos); ver `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md` |
 | T0-PR4 | Inventario de canais, superficies e telemetria | Mapear superficies de entrada/saida e endpoints | **concluida** — 28 itens catalogados (7 canais, 7 superficies, 3 endpoints, 13 telemetria); bifurcacao E1/E2 aplicada; SF-03 fala mecanica classificada morta; ver `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md` |
-| T0-PR5 | Matriz de risco e desligamento futuro | Classificar riscos, compatibilidades, pontos de rollback | **desbloqueada** — PR-T0.4 encerrada |
-| T0-PR6 | Inventario de desligamento futuro e convivencia | O que sai primeiro, o que convive, o que permanece | bloqueada ate PR-T0.5 |
+| T0-PR5 | Matriz de risco e desligamento futuro | Classificar riscos, compatibilidades, pontos de rollback | **concluida** — 26 riscos catalogados em 5 categorias (elegibilidade, tom, docs, telemetria, estrutural); 3 criticos, 14 altos, 9 medios; 7 bloqueantes para G0 declarados; ver `schema/implantation/MATRIZ_RISCO_T0.md` |
+| T0-PR6 | Inventario de desligamento futuro e convivencia | O que sai primeiro, o que convive, o que permanece | **desbloqueada** — PR-T0.5 encerrada |
 | T0-PR7 / PR-T0.R | Readiness G0 e closeout T0 | Provar completude do inventario e fechar G0 se aprovado | bloqueada ate PR-T0.6 |
 
 ## Criterios de aceite de T0
@@ -57,7 +57,7 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 
 ## Proximo passo autorizado
 
-PR-T0.4 — Inventario de canais, superficies e telemetria (desbloqueada apos encerramento de PR-T0.3).
+PR-T0.6 — Inventario de desligamento futuro e convivencia (desbloqueada apos encerramento de PR-T0.5).
 
 ## Atualizacao 2026-04-23 — evidencia documental de T0
 
@@ -233,6 +233,37 @@ Estado de fechamento:
 
 Proximo passo autorizado:
 - PR-T0.5 — Matriz de risco operacional do legado vivo.
+
+Limites reafirmados:
+- sem runtime funcional;
+- sem alteracoes em `src/`, `package.json` ou `wrangler.toml`;
+- sem abertura de T1 antes de closeout formal de G0.
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.5 (matriz de risco operacional do legado vivo)
+
+Recorte executado nesta atualizacao:
+- `PR-T0.5` — produzir matriz de risco cruzando fluxos (PR-T0.1), regras (PR-T0.2),
+  parsers/heuristicas (PR-T0.3) e canais/superficies/telemetria (PR-T0.4), classificando
+  o impacto operacional de cada risco com severidade, probabilidade e evidencia auditavel.
+
+Evidencia adicionada:
+- `schema/implantation/MATRIZ_RISCO_T0.md` com:
+  - 26 riscos catalogados em 5 categorias (elegibilidade, tom/fala, docs, telemetria, estrutural);
+  - 3 criticos, 14 altos, 9 medios;
+  - referencia cruzada com todos os inventarios anteriores (PR-T0.1 a PR-T0.4) por item;
+  - 7 riscos bloqueantes para G0 declarados explicitamente;
+  - RZ-TM-01 (casca mecanica de fala) classificado como critico — proibido por A00-ADENDO-01/02;
+  - RZ-TE-02/RZ-TE-03 (schema E1 e CRM E1 desconhecidos) classificados como criticos/bloqueantes;
+  - RZ-ES-04 (abertura de T1 sem G0) classificado como critico;
+  - 7 categorias de inconclusivos declaradas (L-blocks nao transcritos; nao bloqueiam PR-T0.5).
+
+Estado de fechamento:
+- `PR-T0.5` encerrada.
+- G0 permanece aberto.
+- `PR-T0.6` desbloqueada.
+
+Proximo passo autorizado:
+- PR-T0.6 — Inventario de desligamento futuro e convivencia.
 
 Limites reafirmados:
 - sem runtime funcional;

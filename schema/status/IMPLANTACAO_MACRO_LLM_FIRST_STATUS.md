@@ -12,38 +12,37 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T0.4` — inventario de canais, superficies e telemetria encerrado: 28 itens catalogados em 4 tipos
-(canal, superficie, endpoint, telemetria); bifurcacao E1/E2 aplicada; SF-03 fala mecanica classificada
-morta; fluxo de dados por canal consolidado; 7 inconclusivos de L-blocks declarados (nao bloqueantes).
+`PR-T0.5` — matriz de risco operacional do legado vivo encerrada: 26 riscos catalogados em 5 categorias
+(elegibilidade, tom/fala, docs, telemetria, estrutural/governanca); 3 criticos, 14 altos, 9 medios;
+7 bloqueantes para G0 declarados; referencia cruzada com PR-T0.1 a PR-T0.4.
 
 ## O que esta PR fechou
 
-- Criou `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md` com:
-  - 28 itens (7 canais, 7 superficies, 3 endpoints, 13 telemetria);
-  - 4 tipos: canal (7), superficie (7), endpoint (3), telemetria (13);
-  - origem E1 por item com bifurcacao explicita E1 (runtime) vs E2 (design-alvo);
-  - fonte LEGADO_MESTRE (linha ou secao) por item;
-  - relacao com regras PR-T0.2 e parsers/heuristicas PR-T0.3 por item;
-  - fluxo de dados por canal (tabela consolidada);
-  - SF-03 (superficie fala mecanica E1) classificada morta (proibida A00-ADENDO-01/02);
-  - 7 categorias de inconclusivos declaradas (nao bloqueiam PR-T0.4).
+- Criou `schema/implantation/MATRIZ_RISCO_T0.md` com:
+  - 26 riscos em 5 categorias (elegibilidade, tom, docs, telemetria, estrutural);
+  - 3 criticos (RZ-TM-01, RZ-TE-02, RZ-ES-04), 14 altos, 9 medios;
+  - referencia cruzada com todos os inventarios anteriores por item;
+  - 7 bloqueantes para G0 declarados na secao de sintese;
+  - soberania LLM-first verificada: RZ-TM-01 classificado critico/proibido;
+  - bifurcacao E1/E2 aplicada na categoria de telemetria;
+  - 7 categorias de inconclusivos declaradas (nao bloqueiam PR-T0.5).
 - Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
-  - PR-T0.4 marcada como concluida; PR-T0.5 desbloqueada.
+  - PR-T0.5 marcada como concluida; PR-T0.6 desbloqueada.
 
 ## O que esta PR nao fechou
 
-- Nao aprovou G0 (requer PR-T0.R apos PR-T0.4 a PR-T0.6).
+- Nao aprovou G0 (requer PR-T0.R apos PR-T0.5 e PR-T0.6).
 - Nao abriu T1.
-- Nao implementou LLM real, Supabase real, Meta real, STT/TTS real, shadow real, canary real ou cutover real.
+- Nao implementou mitigacao de nenhum risco.
 - Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
 
 ## Proximo passo autorizado
 
-PR-T0.5 — Matriz de risco operacional do legado vivo.
+PR-T0.6 — Inventario de desligamento futuro e convivencia.
 
-Leituras obrigatorias para PR-T0.5:
+Leituras obrigatorias para PR-T0.6:
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.5)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.6)
 3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
 4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
 5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
@@ -51,10 +50,11 @@ Leituras obrigatorias para PR-T0.5:
 7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
 8. `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md`
 9. `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-13. `schema/CODEX_WORKFLOW.md`
+10. `schema/implantation/MATRIZ_RISCO_T0.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+12. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+13. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+14. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
@@ -83,6 +83,23 @@ O que esta PR nao fechou:
 
 Proximo passo autorizado (atualizado):
 - PR-T0.4 — Inventario de canais, superficies e telemetria.
+
+---
+
+## Atualizacao 2026-04-23 — Encerramento de PR-T0.5 (matriz de risco operacional do legado vivo)
+
+Ultima tarefa relevante:
+- `PR-T0.5` — 26 riscos em 5 categorias; 7 bloqueantes para G0; referencia cruzada PR-T0.1 a PR-T0.4.
+
+O que esta PR fechou:
+- Criou `schema/implantation/MATRIZ_RISCO_T0.md`.
+- Atualizou contrato: PR-T0.5 concluida; PR-T0.6 desbloqueada.
+
+O que esta PR nao fechou:
+- Nao aprovou G0. Nao abriu T1. Nao implementou mitigacao. Nao alterou runtime.
+
+Proximo passo autorizado (atualizado):
+- PR-T0.6 — Inventario de desligamento futuro e convivencia.
 
 ---
 
