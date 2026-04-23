@@ -26,7 +26,7 @@ Toda abertura de contrato de frente deve declarar conformidade com ambos os aden
 
 | Fase | Contrato ativo | Status | Gate aberto | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|-------------|------------------|----------|--------------------------|
-| T0 — Congelamento, inventario e mapa do legado vivo | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md` | aberto | G0 — inventario legado | 2026-04-22 | T0-PR1 — rebase canonico da implantacao | T0-PR2 — inventario legado vivo |
+| T0 — Congelamento, inventario e mapa do legado vivo | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md` | aberto | G0 — inventario legado | 2026-04-22 | PR-T0.1 — inventario legado vivo (continuidade documental) | T0-PR2 — inventario legado vivo |
 
 ---
 
@@ -125,3 +125,4 @@ schema/contracts/
 - 2026-04-22 — Repo reposicionado em T0/G0. Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`.
 - 2026-04-22 — Proximo passo autorizado: T0-PR2 — inventario legado vivo.
 - 2026-04-23 — Adicionado A00-ADENDO-02 (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) na cadeia de precedência. Toda abertura de contrato de frente deve declarar conformidade com A00-ADENDO-01 e A00-ADENDO-02.
+- 2026-04-23 — Evidencia documental de continuidade de `PR-T0.1` internalizada em `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`; contrato T0 permanece aberto em G0.

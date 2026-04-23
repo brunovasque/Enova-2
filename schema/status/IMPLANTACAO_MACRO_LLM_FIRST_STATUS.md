@@ -90,3 +90,30 @@ O que esta PR nao fechou:
 
 Proximo passo autorizado (inalterado):
 - T0-PR2 — inventario legado vivo e mapa de aproveitamento do repo contra o mestre `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+
+---
+
+## Atualizacao 2026-04-23 — Internalizacao canonica do reaproveitamento ENOVA 1 (continuidade documental de PR-T0.1)
+
+Ultima tarefa relevante:
+- T0 (continuacao documental de `PR-T0.1`) — internalizar no proprio repo a classificacao executiva da base da ENOVA 1 para orientar reaproveitamento sem dependencia externa.
+
+O que esta PR fechou:
+- Criou `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md` com consolidacao canônica interna de:
+  - cognitivo util reaproveitavel;
+  - mecanico estrutural util reaproveitavel;
+  - mecanico de fala explicitamente proibido;
+  - riscos de copia sem filtro;
+  - blocos prioritarios da ENOVA 1 para absorcao futura.
+- Atualizou referencia de evidencia em:
+  - `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`;
+  - `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (PR-T0.1).
+- Reforcou diretriz de uso da E1 como materia-prima futura, sem refatoracao funcional agora.
+
+O que esta PR nao fechou:
+- Nao implementou memoria real, telemetria nova funcional nem migracao funcional da E1.
+- Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
+- Nao fechou G0.
+
+Proximo passo autorizado:
+- Permanece em T0: continuidade de `PR-T0.1` / `T0-PR2` (inventario legado vivo).

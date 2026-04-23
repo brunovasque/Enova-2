@@ -47,3 +47,4 @@ macro como concluida.
 ## Ultima sincronizacao
 
 - 2026-04-22 — Rebase canonico aplicado. Fase real: T0. Gate aberto: G0. Proximo passo autorizado: T0-PR2 — inventario legado vivo.
+- 2026-04-23 — Continuidade documental de `PR-T0.1` registrada com internalizacao canonica da classificacao ENOVA 1 em `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`. G0 permanece aberto.

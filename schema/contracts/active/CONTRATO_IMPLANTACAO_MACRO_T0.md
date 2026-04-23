@@ -54,3 +54,20 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 ## Proximo passo autorizado
 
 T0-PR2 — inventario legado vivo e mapa de aproveitamento do repo contra o mestre.
+
+## Atualizacao 2026-04-23 — evidencia documental de T0
+
+Recorte executado nesta atualizacao:
+- Continuidade documental de `PR-T0.1` com internalizacao canônica, no proprio repo, da classificacao executiva de reaproveitamento da ENOVA 1.
+
+Evidencia adicionada:
+- `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`
+
+Regra consolidada nesta evidencia:
+- Reaproveitamento permitido: conhecimento cognitivo util + mecanico estrutural util.
+- Reaproveitamento proibido: casca mecanica de fala, fallback dominante e scripts de fala roteirizados.
+
+Limites reafirmados:
+- Sem implementacao funcional nesta PR.
+- Sem mudanca em runtime.
+- Sem fechamento de G0 nesta etapa.
