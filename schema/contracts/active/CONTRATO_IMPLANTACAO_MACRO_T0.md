@@ -43,8 +43,8 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 | T0-PR3 | Inventario de parsers, regex, fallbacks e heuristicas | Mapear pontos de decisao mecanica | **concluida** — 27 pontos catalogados (17 ativos, 5 condicionais, 3 residuais, 2 mortos); ver `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md` |
 | T0-PR4 | Inventario de canais, superficies e telemetria | Mapear superficies de entrada/saida e endpoints | **concluida** — 28 itens catalogados (7 canais, 7 superficies, 3 endpoints, 13 telemetria); bifurcacao E1/E2 aplicada; SF-03 fala mecanica classificada morta; ver `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md` |
 | T0-PR5 | Matriz de risco e desligamento futuro | Classificar riscos, compatibilidades, pontos de rollback | **concluida** — 26 riscos catalogados em 5 categorias (elegibilidade, tom, docs, telemetria, estrutural); 3 criticos, 14 altos, 9 medios; 7 bloqueantes para G0 declarados; ver `schema/implantation/MATRIZ_RISCO_T0.md` |
-| T0-PR6 | Inventario de desligamento futuro e convivencia | O que sai primeiro, o que convive, o que permanece | **desbloqueada** — PR-T0.5 encerrada |
-| T0-PR7 / PR-T0.R | Readiness G0 e closeout T0 | Provar completude do inventario e fechar G0 se aprovado | bloqueada ate PR-T0.6 |
+| T0-PR6 | Inventario de desligamento futuro e convivencia | O que sai primeiro, o que convive, o que permanece | **concluida** — 39 itens em 5 classificacoes (DI/RD/CT/MD/RC); 7 mortos/imediatos declarados; 14 migrar-e-desligar com criterio CDC; mapa de dependencias de fallback publicado; ver `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md` |
+| T0-PR7 / PR-T0.R | Readiness G0 e closeout T0 | Provar completude do inventario e fechar G0 se aprovado | **desbloqueada** — PR-T0.6 encerrada |
 
 ## Criterios de aceite de T0
 
@@ -57,7 +57,7 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 
 ## Proximo passo autorizado
 
-PR-T0.6 — Inventario de desligamento futuro e convivencia (desbloqueada apos encerramento de PR-T0.5).
+PR-T0.R — Readiness e closeout do gate G0 (desbloqueada apos encerramento de PR-T0.6).
 
 ## Atualizacao 2026-04-23 — evidencia documental de T0
 
@@ -264,6 +264,37 @@ Estado de fechamento:
 
 Proximo passo autorizado:
 - PR-T0.6 — Inventario de desligamento futuro e convivencia.
+
+Limites reafirmados:
+- sem runtime funcional;
+- sem alteracoes em `src/`, `package.json` ou `wrangler.toml`;
+- sem abertura de T1 antes de closeout formal de G0.
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.6 (inventario de desligamento futuro e convivencia)
+
+Recorte executado nesta atualizacao:
+- `PR-T0.6` — classificar cada peca do legado E1 em ordem de desligamento futuro: o que sai
+  primeiro, o que convive durante migracao, o que precisa ser redesenhado e o que se transforma
+  em conhecimento/politica na E2.
+
+Evidencia adicionada:
+- `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md` com:
+  - 39 itens em 5 classificacoes: DI (7 — desligar imediato), RO (5 — redesenho obrigatorio),
+    CT (6 — convivencia temporaria), MD (14 — migrar e desligar), RC (7 grupos — reaproveitamento);
+  - 7 itens mortos/proibidos (DS-DI-01 a DS-DI-07): SF-03, PH-F05, RM-01, RM-02, fim_inelegivel,
+    yesNoStages-stubs, RU-06 — eliminacao obrigatoria pre-T1;
+  - 7 criterios de desligamento canonicos (CDC-01 a CDC-07) para itens de convivencia e migracao;
+  - mapa de dependencias de fallback (ordem de desligamento: EP/CT-01 → SF-02 → SF-01 → PH-F03);
+  - referencia cruzada com MATRIZ_RISCO (RZ-xx) por item onde aplicavel;
+  - 7 categorias de inconclusivos declaradas (L17/L18 nao transcritos; nao bloqueiam PR-T0.6).
+
+Estado de fechamento:
+- `PR-T0.6` encerrada.
+- G0 permanece aberto.
+- `PR-T0.R` desbloqueada.
+
+Proximo passo autorizado:
+- PR-T0.R — Readiness e closeout do gate G0.
 
 Limites reafirmados:
 - sem runtime funcional;
