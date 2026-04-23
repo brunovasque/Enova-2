@@ -126,3 +126,4 @@ schema/contracts/
 - 2026-04-22 — Proximo passo autorizado: T0-PR2 — inventario legado vivo.
 - 2026-04-23 — Adicionado A00-ADENDO-02 (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) na cadeia de precedência. Toda abertura de contrato de frente deve declarar conformidade com A00-ADENDO-01 e A00-ADENDO-02.
 - 2026-04-23 — Evidencia documental de continuidade de `PR-T0.1` internalizada em `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`; contrato T0 permanece aberto em G0.
+- 2026-04-23 — Evidencia documental adicional de continuidade de `PR-T0.1` internalizada em `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`; contrato T0 permanece aberto em G0.

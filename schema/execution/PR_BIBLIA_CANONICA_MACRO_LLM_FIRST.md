@@ -217,7 +217,7 @@ Estas microetapas são quebradas em PRs T0.1..T0.6.
 | Gate de saída esperado | Pré-readiness G0 — fluxos+estados mapeados |
 | Escopo incluído | Documento(s) de inventário em `schema/implantation/` ou `schema/legacy/inventory/`: fluxos do início ao pós-envio_docs, estados persistidos, campos usados, resíduos |
 | Escopo proibido | Classificar regras (PR-T0.2), parsers/heurísticas (PR-T0.3), canais/superfícies (PR-T0.4), matriz de risco (PR-T0.5), inventário de desligamento (PR-T0.6); tocar runtime; mexer em Supabase |
-| Entregáveis obrigatórios | Mapa de fluxos + inventário de estados, com referência cruzada aos blocos legados, incluindo internalização canônica do reaproveitamento da ENOVA 1 em `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md` |
+| Entregáveis obrigatórios | Mapa de fluxos + inventário de estados, com referência cruzada aos blocos legados, incluindo internalização canônica do reaproveitamento da ENOVA 1 em `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md` e do inventário vivo real em `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` |
 | Testes/evidências mínimas | Smoke read-only documental: cada fluxo cita arquivo legado fonte; cada estado cita coluna/origem |
 | Regra de rollback | Reverter o(s) documento(s) de inventário se houver divergência grosseira com comportamento real |
 | Critérios de pronto | Inventário cobre topo → pós-envio_docs e enumera todos os estados persistidos efetivamente usados |

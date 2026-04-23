@@ -71,3 +71,21 @@ Limites reafirmados:
 - Sem implementacao funcional nesta PR.
 - Sem mudanca em runtime.
 - Sem fechamento de G0 nesta etapa.
+
+## Atualizacao 2026-04-23 — evidencia de inventario vivo real da ENOVA 1
+
+Recorte executado nesta atualizacao:
+- Continuidade documental de `PR-T0.1` com internalizacao, no proprio repo ENOVA 2, do inventario do legado vivo real da ENOVA 1.
+
+Evidencia adicionada:
+- `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+
+Amarracao desta evidencia com T0:
+- T0.1 passa a contar com duas bases complementares internas:
+  - classificacao de reaproveitamento (`T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`);
+  - inventario do legado vivo real (`T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`).
+
+Limites reafirmados:
+- E1 permanece materia-prima futura; sem refatoracao funcional nesta etapa.
+- Sem implementacao funcional e sem mudanca de runtime.
+- G0 permanece aberto ate readiness formal.

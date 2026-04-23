@@ -245,3 +245,72 @@ Internalizar no repositorio ENOVA 2, de forma canônica e sem dependencia extern
 7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 9. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — Internalizacao canonica do inventario vivo real da ENOVA 1 (continuidade documental de PR-T0.1)
+
+### Objetivo executado
+
+Internalizar no repositorio ENOVA 2, sem dependencia externa, o inventario do legado vivo real da ENOVA 1 para fortalecer T0.1 e preparar fechamento futuro de G0 com evidencia documental mais robusta.
+
+### O que foi feito
+
+- Criado `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` com consolidacao canônica interna de:
+  - objetivo do inventario e criterio de evidencia;
+  - fluxos vivos reais;
+  - stages/estados/gates vivos reais;
+  - transicoes reais e dinamicas relevantes;
+  - blocos inconclusivos;
+  - blocos com padrao de residuo/stub/legado morto;
+  - divergencias entre documentacao e runtime;
+  - implicacoes para ENOVA 2 e conclusao objetiva.
+- Atualizado `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md` para registrar a nova evidencia documental de continuidade de `PR-T0.1`.
+- Atualizado `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` em `PR-T0.1` para explicitar o inventario vivo real como entregavel canônico interno adicional.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` com o estado desta entrega.
+
+### O que nao foi feito
+
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- Nenhuma implementacao funcional.
+- Nenhuma refatoracao funcional da E1.
+- Nenhum fechamento automatico de gate G0.
+
+### Regra consolidada para as proximas PRs
+
+- T0.1 agora possui:
+  - classificacao de reaproveitamento da ENOVA 1;
+  - inventario vivo real da ENOVA 1.
+- Reaproveitamento permitido mantido:
+  - conhecimento cognitivo util;
+  - mecanico estrutural util.
+- Reaproveitamento proibido mantido:
+  - casca mecanica de fala.
+
+### Tratamento da E1
+
+- E1 segue como materia-prima futura de memoria/conhecimento.
+- E1 nao entra em refatoracao nesta etapa.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Proximo passo autorizado (mantido em T0)
+
+- Continuidade de `PR-T0.1` / `T0-PR2` — inventario legado vivo e consolidacao para readiness de G0, sem abrir implementacao funcional.
+
+### Leituras obrigatorias da proxima PR (reafirmadas)
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`
+7. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/CODEX_WORKFLOW.md`

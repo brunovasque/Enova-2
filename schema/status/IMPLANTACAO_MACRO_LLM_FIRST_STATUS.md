@@ -117,3 +117,32 @@ O que esta PR nao fechou:
 
 Proximo passo autorizado:
 - Permanece em T0: continuidade de `PR-T0.1` / `T0-PR2` (inventario legado vivo).
+
+---
+
+## Atualizacao 2026-04-23 — Internalizacao canonica do inventario do legado vivo real da ENOVA 1 (continuidade documental de PR-T0.1)
+
+Ultima tarefa relevante:
+- T0 (continuacao documental de `PR-T0.1`) — internalizar no repositorio ENOVA 2 o inventario do legado vivo real da ENOVA 1, sem dependencia externa.
+
+O que esta PR fechou:
+- Criou `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` com:
+  - objetivo e criterio de evidencia do inventario;
+  - fluxos vivos reais;
+  - stages/estados vivos reais;
+  - gates vivos reais;
+  - transicoes reais e ativas;
+  - blocos inconclusivos;
+  - blocos com padrao de residuo/stub/legado morto;
+  - divergencias entre documentacao e runtime;
+  - implicacoes para T0.1 e conclusao objetiva.
+- Reforcou no recorte T0.1 que a internalizacao anterior de reaproveitamento e o novo inventario vivo real sao complementares.
+- Atualizou referencias minimas em contrato ativo e Biblia para consolidacao de evidencia T0.1.
+
+O que esta PR nao fechou:
+- Nao implementou memoria real, telemetria nova funcional ou migracao funcional da E1.
+- Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
+- Nao fechou G0 automaticamente.
+
+Proximo passo autorizado:
+- Permanece em T0: continuidade de `PR-T0.1` / `T0-PR2` (inventario legado vivo), com foco na preparacao de readiness de G0 sem abrir escopo funcional.
