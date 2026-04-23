@@ -2,21 +2,41 @@
 
 ## Estado atual
 
-Fase macro ativa: T0 — Congelamento, inventario e mapa do legado vivo.
+Fase macro ativa: T1 — Motor cognitivo LLM-first e contrato de fala soberano (skeleton autorizado).
 
-Gate aberto: G0 — Inventario legado.
+Gate anterior: G0 — APROVADO em 2026-04-23 via PR-T0.R.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`.
+Gate aberto: G1 — Motor cognitivo LLM-first operacional.
+
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (skeleton — aguardando PR-T1.0).
 
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T0.6` — inventario de desligamento futuro e convivencia encerrado: 39 itens em 5 classificacoes
-(DI/RO/CT/MD/RC); 7 mortos/imediatos (pre-T1), 7 criterios CDC canonicos, mapa de dependencias de
-fallback publicado; referencia cruzada com PR-T0.1 a PR-T0.5.
+`PR-T0.R` — readiness e closeout do gate G0: smoke documental de 6 inventarios (PR-T0.1 a PR-T0.6),
+todos encerrados com Bloco E; 6/6 criterios de aceite T0 cumpridos; 7 bloqueantes G0 analisados
+(2 satisfeitos, 5 declarados com escopo T1+); G0 APROVADO; contrato T0 encerrado; T1 autorizada.
 
 ## O que esta PR fechou
+
+- Criou `schema/implantation/READINESS_G0.md` com:
+  - smoke documental de PR-T0.1 a PR-T0.6: todos encerrados com Bloco E;
+  - 6/6 criterios de aceite T0 cumpridos;
+  - analise dos 7 bloqueantes G0: RZ-TM-01 e RZ-ES-04 satisfeitos; RZ-EL-01, RZ-EL-04,
+    RZ-DC-02, RZ-TE-02, RZ-TE-03 declarados com escopo T1+;
+  - verificacao de coerencia entre todos os inventarios;
+  - 5 limitacoes residuais estruturais declaradas;
+  - decisao formal G0 APROVADO COM LIMITACOES RESIDUAIS FORMALMENTE DECLARADAS;
+  - encerramento de contrato conforme CONTRACT_CLOSEOUT_PROTOCOL.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
+  - status `encerrado`; PR-T0.R marcada como concluida; T1 autorizada.
+- Copiou contrato T0 para `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`.
+- Criou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (skeleton — sem corpo).
+- Atualizou `schema/contracts/_INDEX.md`:
+  - T0 encerrado/arquivado; T1 skeleton como proximo contrato ativo.
+
+## O que a PR-T0.6 fechou (historico)
 
 - Criou `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md` com:
   - 39 itens em 5 classificacoes: 7 DI (desligar imediato pre-T1), 5 RO (redesenho obrigatorio),
@@ -29,33 +49,30 @@ fallback publicado; referencia cruzada com PR-T0.1 a PR-T0.5.
 - Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
   - PR-T0.6 marcada como concluida; PR-T0.R desbloqueada.
 
-## O que esta PR nao fechou
+## O que a PR-T0.R nao fechou
 
-- Nao aprovou G0 (requer PR-T0.R).
-- Nao abriu T1.
-- Nao implementou nenhum desligamento real.
+- Nao abriu T1 com corpo (skeleton apenas).
+- Nao implementou nenhum item de desligamento real.
 - Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
 
 ## Proximo passo autorizado
 
-PR-T0.R — Readiness e closeout do gate G0.
+PR-T1.0 — Abertura formal da fase T1 (preenchimento do corpo do contrato T1).
 
-Leituras obrigatorias para PR-T0.R:
+Leituras obrigatorias para PR-T1.0:
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.R)
-3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
-4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-6. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
-7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
-8. `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md`
-9. `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md`
-10. `schema/implantation/MATRIZ_RISCO_T0.md`
-11. `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md`
-12. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-13. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-14. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-15. `schema/CODEX_WORKFLOW.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T1.0)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`
+5. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+6. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+7. `schema/implantation/READINESS_G0.md`
+8. `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md`
+9. `schema/implantation/MATRIZ_RISCO_T0.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+13. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
@@ -67,8 +84,27 @@ Nenhuma adicional.
 
 ## Bloqueios
 
-- T1 permanece bloqueada ate G0 aprovado.
+- T1 skeleton aberto. Execucao de T1 bloqueada ate PR-T1.0 preencher o corpo do contrato.
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
+
+## Atualizacao 2026-04-23 — Encerramento de PR-T0.R (readiness e closeout do gate G0)
+
+Ultima tarefa relevante:
+- `PR-T0.R` — smoke documental de PR-T0.1 a PR-T0.6; G0 APROVADO; contrato T0 encerrado; T1 skeleton criado.
+
+O que esta PR fechou:
+- Criou `schema/implantation/READINESS_G0.md`.
+- Encerrou contrato T0; arquivou em `archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`.
+- Criou skeleton `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`.
+- Atualizou `schema/contracts/_INDEX.md`: T0 encerrado, T1 skeleton ativo.
+
+O que esta PR nao fechou:
+- Nao abriu T1 com corpo. Nao implementou desligamento. Nao alterou runtime.
+
+Proximo passo autorizado (atualizado):
+- PR-T1.0 — Abertura formal da fase T1.
+
+---
 
 ## Atualizacao 2026-04-23 — Encerramento de PR-T0.2 (inventario de regras por familia)
 
