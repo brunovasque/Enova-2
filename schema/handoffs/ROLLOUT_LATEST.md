@@ -1,5 +1,10 @@
 # HANDOFF — Rollout — ENOVA 2
 
+## Aviso de rebase canonico — 2026-04-22
+
+Este arquivo preserva o historico tecnico/local do recorte anterior. Apos o rebase canonico, ele nao deve ser lido como prova de implantacao macro concluida. A base macro soberana passou a ser `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`; a fase real atual e T0/G0, conforme `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+
 | Campo | Valor |
 |---|---|
 | Frente | Rollout |
@@ -13,7 +18,7 @@
 | Houve desvio de contrato? | nao |
 | Contrato encerrado nesta PR? | sim |
 | Item do A01 atendido | Prioridade 7 — Rollout |
-| Proximo passo autorizado | Frente 8 é a última frente formal do macro ENOVA 2 — ativação real requer contrato extraordinário explícito quando autorizado |
+| Proximo passo autorizado | Historico preservado. Proximo passo macro real: T0-PR2 — inventario legado vivo |
 | Proximo passo foi alterado? | sim |
 | Tarefa fora de contrato? | nao |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
@@ -136,7 +141,7 @@ encerrada
 
 ## 15. Proximo passo autorizado
 
-Frente 8 é a última frente formal do macro ENOVA 2. Ativação real (rollout operacional real, canary com tráfego real, cutover) requer contrato extraordinário explícito quando autorizado.
+Historico preservado. Proximo passo macro real: T0-PR2 — inventario legado vivo. Ativacao real continua bloqueada ate fase/gate/contrato correspondente no macro T0-T7.
 
 ## 16. Riscos
 

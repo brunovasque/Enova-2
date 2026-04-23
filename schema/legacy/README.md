@@ -1,4 +1,11 @@
-# LEGADOS — Camada de Base de Negócio Herdada (Modelo Unificado)
+# LEGADOS — Camada Auxiliar de Base de Negócio Herdada (Modelo Unificado)
+
+## Rebase canonico — 2026-04-22
+
+O tronco macro soberano da implantacao passou a ser `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+
+Este diretorio permanece como apoio operacional por blocos e indice legado. Ele nao prevalece sobre
+o mestre em `schema/source/` em conflitos de macro, ordem T0-T7 ou gates G0-G7.
 
 ## Finalidade
 
@@ -17,8 +24,8 @@ O legado mestre unifica os **19 documentos legados** da Enova 1 e os **9 documen
 - Não são base de arquitetura da ENOVA 2.
 - Não são contratos de implementação.
 - Não substituem os contratos novos por frente.
-- Não comandam a ordem executiva (que pertence ao A01).
-- Não competem com a precedência documental (A00 > A01 > A02 > contrato > legados).
+- Não comandam a ordem executiva (que pertence ao mestre em `schema/source/`, operacionalizado por A00/A01/A02).
+- Não competem com a precedência documental (`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A02 > contrato/fase ativa > legados`).
 
 ## Precedência
 
@@ -30,11 +37,12 @@ Conforme A00 (seção 7) e A02 (seção 3):
 ## Estrutura
 
 - `INDEX_LEGADO_MESTRE.md` — Índice operacional unificado com amarração por frente, âncoras e status de assimilação.
-- `LEGADO_MESTRE_ENOVA1_ENOVA2.md` — Arquivo markdown canônico derivado do PDF mestre. Contém todos os blocos L01–L19 e C01–C09.
+- `LEGADO_MESTRE_ENOVA1_ENOVA2.md` — Arquivo markdown auxiliar derivado do PDF mestre por blocos.
 
 ## Fonte bruta
 
-- `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — PDF mestre original (a ser incorporado ao repo).
+- `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — markdown soberano de implantacao.
+- `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` — PDF mestre original.
 
 ## Como usar
 

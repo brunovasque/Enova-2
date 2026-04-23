@@ -1,3 +1,23 @@
+## ADENDO DE REBASE CANONICO — 2026-04-22
+
+O tronco macro soberano da implantacao passa a ser `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+
+Este A01 permanece como painel operacional auxiliar, mas a ordem executiva oficial fica corrigida para
+T0-T7:
+
+1. T0 — Congelamento, inventario e mapa do legado vivo.
+2. T1 — Constituicao do agente e contrato cognitivo canonico.
+3. T2 — Estado estruturado, memoria e reconciliacao.
+4. T3 — Policy engine v1 e guardrails declarativos.
+5. T4 — Orquestrador de turno LLM-first.
+6. T5 — Migracao do funil prioritario.
+7. T6 — Docs, multimodal e superficies de canal.
+8. T7 — Shadow mode, canary, cutover e desativacao do legado.
+
+Fase real atual: T0. Gate aberto: G0. Proximo passo autorizado: T0-PR2 — inventario legado vivo.
+As frentes ja arquivadas permanecem como recortes tecnicos/historicos, nao como conclusao da
+implantacao macro.
+
 ENOVA 2 — A01
 Backlog Mestre e Ordem Executiva
 Documento operacional-mestre de implantação. Alinhado ao A00 e governado pelo A02.

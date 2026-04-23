@@ -17,7 +17,7 @@ Outros storages (Cloudflare KV, R2, D1, cache, arquivos locais) **não são alvo
 
 ## 2. Precedência
 
-**A00 > A01 > A02 > DATA_CHANGE_PROTOCOL > contrato específico da frente ativa**
+**schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A02 > DATA_CHANGE_PROTOCOL > contrato/fase ativa**
 
 Em caso de conflito, prevalece o nível mais alto da cadeia. Este protocolo está subordinado ao A00, A01 e A02, mas tem precedência sobre qualquer decisão de frente individual quando o assunto é mudança de dado persistido no Supabase.
 

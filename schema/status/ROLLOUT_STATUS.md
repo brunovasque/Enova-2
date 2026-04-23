@@ -1,5 +1,10 @@
 # STATUS VIVO — Rollout — ENOVA 2
 
+## Aviso de rebase canonico — 2026-04-22
+
+Este arquivo preserva o historico tecnico/local do recorte anterior. Apos o rebase canonico, ele nao deve ser lido como prova de implantacao macro concluida. A base macro soberana passou a ser `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`; a fase real atual e T0/G0, conforme `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+
 | Campo | Valor |
 |---|---|
 | Frente | Rollout |
@@ -14,7 +19,7 @@
 | Ultima PR relevante | PR4 — smoke integrado final + closeout formal da Frente 8 |
 | Ultimo commit | commit desta PR4 (smoke integrado final + closeout) |
 | Pendencia remanescente herdada | nenhuma |
-| Proximo passo autorizado | Frente 8 é a última frente formal do macro ENOVA 2 — ativação real requer contrato extraordinário explícito quando autorizado |
+| Proximo passo autorizado | Historico preservado. Proximo passo macro real: T0-PR2 — inventario legado vivo |
 | Legados aplicaveis | L18 obrigatorio; L03 e C* complementares quando confirmados |
 | Mudancas em dados persistidos (Supabase) | nenhuma |
 | Permissoes Cloudflare necessarias | nenhuma adicional |
@@ -64,7 +69,7 @@ Prioridade 7 — consolidar rollout (shadow mode, canary e cutover com rollback)
 
 encerrada
 
-A Frente 8 encerrou formalmente com PR1+PR2+PR3+PR4 no recorte contratado. Smoke integrado final passou 8/8 cenários. Contrato arquivado. Frente 8 é a última frente formal do macro ENOVA 2.
+A Frente 8 encerrou formalmente com PR1+PR2+PR3+PR4 no recorte tecnico/local contratado. Smoke integrado final passou 8/8 cenários. Contrato arquivado. Apos o rebase canonico, este encerramento nao equivale ao fechamento do macro ENOVA 2.
 
 ## 5. Classe da ultima tarefa
 
@@ -99,7 +104,7 @@ Frente encerrada. Qualquer ativacao real (rollout operacional real, canary com t
 
 ## 12. Proximo passo autorizado
 
-Frente 8 é a última frente formal do macro ENOVA 2. Ativação real requer contrato extraordinário explícito quando autorizado.
+Historico preservado. Proximo passo macro real: T0-PR2 — inventario legado vivo. Ativacao real continua bloqueada ate fase/gate/contrato correspondente no macro T0-T7.
 
 ## 13. Legados aplicaveis
 

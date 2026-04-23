@@ -1,5 +1,12 @@
 # INDEX_LEGADO_MESTRE — Índice Operacional do Legado Mestre Unificado
 
+## Rebase canonico — 2026-04-22
+
+O tronco macro soberano da implantacao passa a ser `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+
+Este indice permanece como apoio operacional por blocos L/C. Ele nao substitui o mestre em
+`schema/source/` e nao prevalece em conflito de macro, ordem T0-T7 ou gates G0-G7.
+
 ## Finalidade
 
 Este índice é o painel operacional do legado mestre unificado. Ele informa, por bloco, qual é a função, quais frentes o consomem, em que ordem deve ser lido, e qual é o status real de incorporação.
@@ -10,12 +17,13 @@ Substitui o antigo `INDEX_19_LEGADOS.md` e cobre também os 9 documentos complem
 
 ## Fonte
 
+- **Markdown soberano de implantacao**: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
 - **PDF mestre (fonte bruta canônica)**: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf` ← **disponível no repo**
-- **Markdown mestre (blocos transcritos)**: `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+- **Markdown auxiliar por blocos**: `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
 
 ## Precedência
 
-A00 > A01 > A02 > contrato específico da frente ativa > legado mestre (blocos aplicáveis).
+schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A02 > contrato/fase ativa > legado mestre auxiliar (blocos aplicáveis).
 
 ---
 

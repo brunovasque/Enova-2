@@ -168,8 +168,9 @@ Fontes de verdade consultadas — última tarefa:
   Status da frente lido:       schema/status/<FRENTE>_STATUS.md
   Handoff da frente lido:      schema/handoffs/<FRENTE>_LATEST.md
   Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
-  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
-  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — blocos transcritos disponíveis
+  Mestre macro consultado:     schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md
+  Legado markdown auxiliar:    schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
+  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado
 ```
 
 **Regras:**

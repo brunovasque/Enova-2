@@ -18,6 +18,10 @@
      Fonte de verdade: arquivos vivos em schema/status/, schema/handoffs/, schema/contracts/
      ===================================================================== -->
 
+## Mestre macro soberano
+<!-- OBRIGATÓRIO — confirmar leitura de schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md -->
+<!-- Valor esperado: lido; conflito com documentos atuais resolvido pelo mestre -->
+
 ## Contrato ativo
 <!-- OBRIGATÓRIO — valor real, não placeholder -->
 <!-- Copiar do arquivo vivo: schema/contracts/_INDEX.md -->
@@ -102,7 +106,7 @@ Próximo contrato autorizado:
 <!-- Se nenhum: "nenhuma atualização viva necessária" -->
 
 ## Referência de precedência
-<!-- Confirmar: A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis -->
+<!-- Confirmar: schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis -->
 
 ## Adendo de soberania da IA (A00-ADENDO-01)
 <!-- OBRIGATÓRIO quando a tarefa tocar conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo -->

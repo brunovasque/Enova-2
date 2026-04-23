@@ -1,59 +1,47 @@
-# HANDOFFS — Índice de Handoffs por Frente
+# HANDOFFS — Indice de Handoffs
 
 ## Finalidade
 
-Este índice centraliza todos os handoffs mais recentes das frentes da ENOVA 2.
-Qualquer agente ou humano deve consultar este índice para localizar o último handoff de continuidade de qualquer frente.
+Este indice centraliza o handoff macro da implantacao e preserva handoffs historicos por frente.
 
-## Formato dos arquivos de handoff
+O tronco macro soberano e:
 
-Todo arquivo de handoff segue o formato definido em `schema/HANDOFF_SCHEMA.md`.
+`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
 
-## Precedência
+## Handoff macro ativo
 
-Este índice está subordinado ao A00, A01, A02 e ao HANDOFF_SCHEMA.
+| Escopo | Ultimo handoff | Data | Proximo passo autorizado |
+|--------|----------------|------|--------------------------|
+| Implantacao macro LLM-first | `IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` | 2026-04-22 | T0-PR2 — inventario legado vivo |
 
----
+## Handoffs historicos por frente
 
-## Handoffs mais recentes por frente
+Os handoffs abaixo preservam continuidade tecnica, mas nao equivalem a implantacao macro concluida.
 
-| # | Frente                                         | Último handoff                                | Data             |
-|---|------------------------------------------------|-----------------------------------------------|------------------|
-| 1 | Core Mecânico 2                                | `CORE_MECANICO_2_LATEST.md`                   | 2026-04-21       |
-| 2 | Speech Engine e Surface Única                  | `SPEECH_ENGINE_SURFACE_UNICA_LATEST.md`       | 2026-04-21       |
-| 3 | Contexto, Extração Estruturada e Memória Viva  | `CONTEXTO_EXTRACAO_MEMORIA_VIVA_LATEST.md`    | 2026-04-21       |
-| 4 | Supabase Adapter e Persistência                | `SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md`   | 2026-04-21       |
-| 5 | Áudio e Multimodalidade                        | `AUDIO_E_MULTIMODALIDADE_LATEST.md`           | 2026-04-21       |
-| 6 | Meta/WhatsApp                                  | `META_WHATSAPP_LATEST.md`                     | 2026-04-22       |
-| 7 | Telemetria e Observabilidade                   | `TELEMETRIA_E_OBSERVABILIDADE_LATEST.md`      | 2026-04-22       |
-| 8 | Rollout                                        | `ROLLOUT_LATEST.md`                            | 2026-04-22       |
+| # | Frente | Ultimo handoff | Estado canonico apos rebase |
+|---|--------|----------------|-----------------------------|
+| 1 | Core Mecânico 2 | `CORE_MECANICO_2_LATEST.md` | historico tecnico/local |
+| 2 | Speech Engine e Surface Única | `SPEECH_ENGINE_SURFACE_UNICA_LATEST.md` | historico tecnico/local |
+| 3 | Contexto, Extração Estruturada e Memória Viva | `CONTEXTO_EXTRACAO_MEMORIA_VIVA_LATEST.md` | historico tecnico/local |
+| 4 | Supabase Adapter e Persistência | `SUPABASE_ADAPTER_E_PERSISTENCIA_LATEST.md` | historico tecnico/local |
+| 5 | Áudio e Multimodalidade | `AUDIO_E_MULTIMODALIDADE_LATEST.md` | historico tecnico/local |
+| 6 | Meta/WhatsApp | `META_WHATSAPP_LATEST.md` | historico tecnico/local |
+| 7 | Telemetria e Observabilidade | `TELEMETRIA_E_OBSERVABILIDADE_LATEST.md` | historico tecnico/local |
+| 8 | Rollout | `ROLLOUT_LATEST.md` | historico tecnico/local |
 
-## Contratos Extraordinários
+## Contratos extraordinarios historicos
 
-| # | Módulo                                                                              | Último handoff                                                                                      | Data       |
-|---|--------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|------------|
-| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional                | `EXTRA_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_LATEST.md`               | 2026-04-22 |
-
----
+| # | Modulo | Ultimo handoff | Estado canonico apos rebase |
+|---|--------|----------------|-----------------------------|
+| E1 | Memoria, Base Normativa, Regras Comerciais e Aprendizado Operacional | `EXTRA_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_LATEST.md` | historico tecnico/local |
 
 ## Regras
 
-1. Cada frente tem no máximo um arquivo `_LATEST.md` neste diretório, representando o handoff mais recente.
-2. Handoffs anteriores podem ser preservados com sufixo de data (`_YYYY-MM-DD.md`).
-3. O handoff é atualizado ao final de cada tarefa, conforme o CODEX_WORKFLOW.
-4. A data nesta tabela deve refletir sempre a data do último handoff registrado.
-5. Novas frentes devem ser adicionadas a esta tabela quando seu primeiro handoff for criado.
+1. Toda tarefa futura deve ler o handoff macro ativo.
+2. Toda tarefa futura deve ler tambem o handoff especifico do recorte ativo, quando houver.
+3. Handoffs historicos nao autorizam abertura de fase macro sem gate correspondente.
+4. O proximo passo unico autorizado e T0-PR2.
 
 ## Ultima sincronizacao
 
-- 2026-04-22 — Frente 6 Meta/WhatsApp encerrada formalmente apos PR4. Proximo contrato autorizado: Frente 7 — Telemetria e Observabilidade.
-- 2026-04-22 — Frente 7 Telemetria e Observabilidade aberta formalmente. Proximo passo autorizado: PR2 — contrato tecnico de observabilidade/telemetria.
-- 2026-04-22 — Frente 7 executou PR2 (contrato tecnico de observabilidade/telemetria). Proximo passo autorizado: PR3 — runtime minimo de observabilidade no Worker/repo.
-- 2026-04-22 — Frente 7 executou PR3 (runtime minimo de observabilidade no Worker/repo). Proximo passo autorizado: PR4 — smoke integrado + closeout formal da Frente 7.
-- 2026-04-22 — Frente 7 executou PR4 (smoke integrado + closeout formal), encerrou e arquivou contrato. Proximo contrato autorizado: Frente 8 — Rollout.
-- 2026-04-22 — Frente 8 Rollout aberta formalmente com handoff vivo criado. Proximo passo autorizado: PR2 — contrato tecnico de rollout.
-- 2026-04-22 — Frente 8 executou PR2 (contrato tecnico de rollout) e atualizou handoff vivo. Proximo passo autorizado: PR3 — runtime minimo/controladores de rollout.
-- 2026-04-22 — Frente 8 executou PR4 (smoke integrado final + closeout formal) e encerrou formalmente. Frente 8 é a última frente formal do macro ENOVA 2. Ativação real requer contrato extraordinário explícito quando autorizado.
-- 2026-04-22 — Contrato Extraordinário E1 aberto: Módulo de Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional. Handoff vivo criado em `EXTRA_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_LATEST.md`. Próximo passo autorizado: PR2 — contrato técnico do módulo.
-- 2026-04-22 — Contrato Extraordinário E1 executou PR3 (runtime mínimo técnico/local) com handoff vivo atualizado. Próximo passo autorizado: PR4 — smoke integrado + closeout formal do contrato extraordinário E1.
-- 2026-04-22 — Contrato Extraordinário E1 executou PR4 (smoke integrado final + closeout formal), handoff vivo atualizado para contrato encerrado/arquivado. Não há contrato extraordinário ativo no momento; próximo passo depende de decisão estratégica.
+- 2026-04-22 — Rebase canonico aplicado. Criado handoff macro em `IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`.
