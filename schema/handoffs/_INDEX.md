@@ -48,3 +48,4 @@ Os handoffs abaixo preservam continuidade tecnica, mas nao equivalem a implantac
 
 - 2026-04-22 — Rebase canonico aplicado. Criado handoff macro em `IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`.
 - 2026-04-23 — Handoff macro atualizado com continuidade documental de `PR-T0.1` e internalizacao canonica da classificacao ENOVA 1.
+- 2026-04-23 — Handoff macro atualizado com continuidade documental de `PR-T0.1` e internalizacao canonica do inventario vivo real da ENOVA 1.
