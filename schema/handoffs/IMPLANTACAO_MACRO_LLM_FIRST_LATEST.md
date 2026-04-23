@@ -314,3 +314,62 @@ Internalizar no repositorio ENOVA 2, sem dependencia externa, o inventario do le
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 10. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — fechamento documental real de escopo de PR-T0.1 (continuidade)
+
+### Objetivo executado
+
+Consolidar o inventario operacional auditavel de `PR-T0.1` sem abrir escopo funcional, deixando explicito o que ja esta coberto e a lacuna exata que ainda impede fechamento formal da etapa.
+
+### O que foi feito
+
+- Atualizado `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` com:
+  - matriz de rastreabilidade operacional (fluxos topo->pos-envio_docs -> blocos legados correspondentes);
+  - inventario de estados/campos usados com nivel de prova;
+  - checklist de cobertura obrigatoria de `PR-T0.1`;
+  - decisao canonica de nao fechar `PR-T0.1` sem prova remanescente.
+- Atualizado `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md` para refletir o estado real:
+  - `T0-PR1` concluida;
+  - `T0-PR2` em execucao (continuidade documental de `PR-T0.1`);
+  - lacuna remanescente declarada sem ambiguidade.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` com o novo estado vivo dessa continuidade.
+
+### O que nao foi feito
+
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- Nenhuma implementacao funcional.
+- Nenhum fechamento de G0.
+- Nenhuma abertura de T1.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Estado atual e lacuna remanescente
+
+- `PR-T0.1` permanece aberta.
+- G0 permanece aberto.
+- Lacuna remanescente para encerramento da etapa:
+  1. elevar prova dos blocos legados L03-L17 de "parcial estrutural" para "validada" (transcricao fiel ou evidencia equivalente auditavel);
+  2. amarracao final de estados persistidos por origem de coluna/tabela sem inferencia.
+
+### Proximo passo autorizado (mantido)
+
+- Continuidade de `PR-T0.1` / `T0-PR2` ate eliminar a lacuna remanescente de prova.
+
+### Leituras obrigatorias da proxima PR (reafirmadas)
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`
+7. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/CODEX_WORKFLOW.md`

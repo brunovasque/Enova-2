@@ -195,3 +195,47 @@ O que esta entrega nao fecha:
 - implementacao real de telemetria nova;
 - migracao funcional da E1;
 - fechamento automatico de G0.
+
+## 12) Matriz de rastreabilidade operacional (topo ao pos-envio_docs)
+
+| Recorte operacional | Classificacao | Evidencia interna ENOVA 2 | Fonte legada correspondente | Nivel de prova | Observacao |
+|---|---|---|---|---|---|
+| Entrada webhook texto/interativo -> pre-funil -> `runFunnel` | vivo real | secoes 2.1, 2.3 e 4.1 deste documento | L03 + L04 + L05 + L06 | parcial estrutural | Blocos L identificados no indice legado, ainda sem transcricao literal do conteudo |
+| Fluxo de midia com `caption` e continuidade no funil | vivo real | secao 2.2 deste documento | L03 + L17 | parcial estrutural | Mapeamento interno coerente com T0; prova literal do bloco depende de transcricao L03/L17 |
+| Gate cognitivo acoplado ao funil (`COGNITIVE_V2_MODE`) | vivo real (escopo tecnico) | secao 2.4 e secao 4.4 | L03 + L19 | parcial estrutural | Ativacao real em producao continua inconclusiva (ver secao 6) |
+| Fluxo operacional de docs/correspondente/visita (`envio_docs` ate pos-final) | vivo real | secao 2.5, secao 4.6, secao 5.1 | L17 | parcial estrutural | Cobre recorte exigido pelo macro ate pos-envio_docs |
+| Fluxo admin/simulacao | inconclusivo em producao | secao 2.6 e secao 6 | L18 | inconclusivo | Existe como fluxo executavel, sem prova documental de uso produtivo no recorte atual |
+| Gates de negocio (RNM, composicao, IR/CTPS/restricao) | vivo real | secao 4.5 | L07 + L08 + L09 + L10 + L11 + L12 + L13 + L14 | parcial estrutural | Conteudo de regra permanece no PDF mestre ate transcricao bloco a bloco |
+| Transicoes dinamicas criticas (`inicio_decisao`, `envio_docs`, `parceiro`) | vivo real | secao 5.2 | L03 + L15 + L16 + L17 | parcial estrutural | Recorte dinamico catalogado; prova de detalhe fino depende de bloco legado transcrito |
+
+## 13) Inventario de estados persistidos e campos usados (estado de prova atual)
+
+| Item (estado/campo) | Classe | Status de uso no inventario T0.1 | Origem legada correspondente | Nivel de prova | Classificacao canonica |
+|---|---|---|---|---|---|
+| `fase_conversa` | estado de fase persistida | usado como ancora de retomada/roteamento | L03 | parcial estrutural | vivo real |
+| `messageId` / dedupe de mensagem | chave operacional de idempotencia | usado na borda de entrada | L03 | parcial estrutural | vivo real |
+| `wamid` / id de evento de canal | identificador de mensagem/canal | usado para dedupe e correlacao no pre-funil | L03 | parcial estrutural | vivo real |
+| metadata de midia + `caption` | sinal de entrada multimodal no recorte legado | usado em `envio_docs` e trilho de midia | L17 | parcial estrutural | vivo real |
+| status de retorno do correspondente | estado operacional de espera/retomada | usado no trilho `aguardando_retorno_correspondente` | L17 | parcial estrutural | vivo real |
+| `informativo_*` como pseudo-stage | pseudo-estado operacional de apoio cognitivo | aparece como gatilho de apoio | L03 + L19 | inconclusivo | compatibilidade transitoria |
+| `fim_inelegivel` (alias) | compatibilidade de nomenclatura legada | ponte para `fim_ineligivel` | L03 | parcial estrutural | residuo/compatibilidade |
+| `yesNoStages` sem `case` correspondente | estrutura de decisao sem fechamento uniforme | detectado como discrepancia estrutural | L03 | parcial estrutural | residuo/stub |
+| ativacao real `COGNITIVE_V2_MODE=on|shadow` em producao | flag de operacao real | sem prova conclusiva no recorte atual | L19 | inconclusivo | inconclusivo |
+
+## 14) Cobertura obrigatoria de PR-T0.1 (checklist auditavel)
+
+- Cobertura topo -> pos-envio_docs: **sim**, com rastreabilidade em secao 12.
+- Estados persistidos/campos usados inventariados: **parcial com lacuna explicitada**, em secao 13.
+- Distincao entre vivo real, compatibilidade transitoria, residuo/stub e inconclusivo: **sim**, consolidada nas secoes 6, 7, 12 e 13.
+- Coerencia com macro soberano e Biblia (`PR-T0.1`): **sim**, mantendo T0/G0 abertos.
+
+Decisao desta continuidade documental:
+- `PR-T0.1` **ainda nao fecha nesta entrega**.
+- Lacuna remanescente exata para fechamento real de `PR-T0.1`:
+  1. transcricao fiel (ou prova equivalente auditavel) dos blocos legados L03-L17 necessarios para elevar a prova de "parcial estrutural" para "validada";
+  2. consolidacao final da lista de estados persistidos com origem de coluna/tabela validada no legado, sem inferencia.
+
+Com isso, o estado canonico permanece:
+- Fase: T0.
+- Gate: G0 aberto.
+- Proximo passo autorizado: continuidade de `PR-T0.1` / `T0-PR2`.

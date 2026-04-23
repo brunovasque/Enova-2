@@ -12,26 +12,24 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-T0-PR1 — rebase canonico da implantacao.
+T0-PR2 / `PR-T0.1` — continuidade documental de inventario operacional auditavel do legado vivo.
 
 ## O que esta PR fechou
 
-- Declarou o mestre em `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` como tronco macro soberano.
-- Reposicionou as frentes 1-8 e E1 como recortes historicos/tecnicos/locais, nao como implantacao macro completa.
-- Persistiu ordem T0-T7 e gates G0-G7.
-- Criou plano executivo T0-T7.
-- Abriu contrato macro T0.
+- Consolidou rastreabilidade operacional do inventario T0.1 em `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` (fluxos topo->pos-envio_docs, estados/campos e classificacao de prova).
+- Sincronizou o contrato T0 com o estado real da quebra de PRs (T0-PR1 concluida; T0-PR2 em execucao).
+- Reforcou no estado vivo que T0/G0 permanecem abertos ate readiness formal.
 
 ## O que esta PR nao fechou
 
-- Nao executou inventario legado vivo completo.
+- Nao encerrou `PR-T0.1`.
 - Nao aprovou G0.
 - Nao abriu T1.
 - Nao implementou LLM real, Supabase real, Meta real, STT/TTS real, shadow real, canary real ou cutover real.
 
 ## Proximo passo autorizado
 
-T0-PR2 — inventario legado vivo e mapa de aproveitamento do repo contra o mestre
+Continuidade de `PR-T0.1` / T0-PR2 — inventario legado vivo e mapa de aproveitamento do repo contra o mestre
 `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Mudancas em dados persistidos
@@ -146,3 +144,29 @@ O que esta PR nao fechou:
 
 Proximo passo autorizado:
 - Permanece em T0: continuidade de `PR-T0.1` / `T0-PR2` (inventario legado vivo), com foco na preparacao de readiness de G0 sem abrir escopo funcional.
+
+---
+
+## Atualizacao 2026-04-23 — Inventario operacional auditavel de T0.1 (continuidade documental)
+
+Ultima tarefa relevante:
+- T0 (continuidade documental de `PR-T0.1`) — consolidar matriz de rastreabilidade de fluxos/estados e declarar lacuna remanescente sem fechamento indevido de gate.
+
+O que esta PR fechou:
+- Atualizou `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` com:
+  - matriz de rastreabilidade operacional (fluxos topo->pos-envio_docs -> bloco legado correspondente);
+  - inventario de estados/campos usados com classificacao de prova;
+  - checklist de cobertura de `PR-T0.1` e decisao explicita de nao fechamento automatico.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md` para refletir:
+  - `T0-PR1` concluida;
+  - `T0-PR2` em execucao (continuidade de `PR-T0.1`);
+  - lacuna remanescente documentada para readiness de G0.
+
+O que esta PR nao fechou:
+- Nao encerrou `PR-T0.1`.
+- Nao fechou G0.
+- Nao abriu T1.
+- Nao implementou alteracao funcional em runtime.
+
+Proximo passo autorizado:
+- Permanece em T0: continuidade de `PR-T0.1` / `T0-PR2` ate eliminar a lacuna remanescente de prova para fechamento formal da etapa.
