@@ -118,3 +118,52 @@ macro soberano, Biblia de PRs, templates canônicos, gates T0-T7/G0-G7 e excecao
 5. `schema/execution/PR_EXECUTION_TEMPLATE.md`
 6. `schema/handoffs/PR_HANDOFF_TEMPLATE.md`
 7. `schema/CODEX_WORKFLOW.md`
+
+## Atualizacao 2026-04-23 — Trava de pré-brief leigo ao Vasques adicionada ao CODEX_WORKFLOW
+
+### Objetivo executado
+
+Incorporar ao `schema/CODEX_WORKFLOW.md` a trava operacional obrigatória de pré-brief leigo ao Vasques
+antes de qualquer tarefa/PR, como regra viva de bloqueio total — não como sugestão.
+
+### O que foi feito
+
+- Adicionada seção 21 ao `schema/CODEX_WORKFLOW.md` com a trava completa de pré-brief leigo.
+- Adicionada Etapa 0 (pré-brief leigo + aguardar validação explícita) como primeira etapa do fluxo de
+  execução, antes da Etapa 1 (leitura canônica).
+- Adicionada subseção 8.0 em Regras de execução reforçando a trava como bloqueio total.
+- Regra vigente: nenhuma tarefa começa sem apresentar os 7 itens do pré-brief leigo e receber `ok`
+  explícito do Vasques.
+
+### O que a nova regra exige de toda proxima PR
+
+Antes de qualquer abertura de PR, o executor deve apresentar ao Vasques, em linguagem leiga:
+
+1. O que vamos fazer
+2. Por que isso precisa ser feito agora
+3. O que isso causa ou impacta no sistema
+4. O que NÃO será mexido
+5. Riscos principais
+6. Resultado esperado se der certo
+7. Qual deve ser a próxima etapa depois disso
+
+Sem `ok` explícito do Vasques, a execução nao comeca.
+
+### O que nao foi feito
+
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- Nenhuma mudanca de gate ou de proximo passo autorizado.
+- Nenhuma alteracao na Biblia de PRs nem nos templates de execucao/handoff.
+
+### Excecao contratual
+
+- Excecao ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+- A excecao contratual formal nao suspende a trava de pre-brief leigo — o pre-brief continua obrigatorio mesmo com excecao autorizada.
+
+### Proximo passo autorizado (inalterado)
+
+- `PR-T0.1` / `T0-PR2` — inventario de fluxos e estados vivos.
+- **Obrigatorio antes de abrir PR-T0.1:** apresentar pre-brief leigo ao Vasques conforme secao 21 do CODEX_WORKFLOW.md e aguardar validacao explicita.
+

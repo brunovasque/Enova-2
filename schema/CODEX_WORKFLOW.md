@@ -69,9 +69,10 @@ Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas 
 > As 16 etapas abaixo são ações sequenciais do agente. A Etapa 1 ("Leitura canônica") executa a lista de documentos da seção 1 (31 itens), mas as 16 etapas e os 31 itens de leitura são categorias distintas.
 > `16 etapas de execução` ≠ `31 documentos de leitura`.
 
-Toda tarefa deve percorrer as 16 etapas abaixo, **em ordem, sem pular nenhuma**:
+Toda tarefa deve percorrer as etapas abaixo, **em ordem, sem pular nenhuma**:
 
 ```
+Etapa 0  — Pré-brief leigo ao Vasques + aguardar validação explícita (ver seção 21) ← TRAVA DE BLOQUEIO
 Etapa 1  — Leitura canônica obrigatória (seção 1 deste documento)
 Etapa 2  — Leitura do índice de contratos (schema/contracts/_INDEX.md)
 Etapa 3  — Leitura do contrato ativo da frente (se existir, em schema/contracts/active/)
@@ -90,6 +91,7 @@ Etapa 15 — Se houver encerramento de contrato: aplicar CONTRACT_CLOSEOUT_PROTO
 Etapa 16 — Resposta final padronizada (ver seção 7)
 ```
 
+**Tarefa que pule a Etapa 0 é não conforme e não deve ser aceita.**
 **Tarefa sem as etapas 8, 9, 10, 11, 13 e 14 é não conforme e não deve ser aceita.**
 
 ---
@@ -258,11 +260,19 @@ Provas
 - **Sem mistura de frentes sem necessidade comprovada e documentada.**
 - **Diagnóstico antes de patch.** Toda mudança começa com leitura e prova do problema.
 - **Prova antes de promoção.** Toda entrega precisa de smoke, evidência e plano de rollback.
-- **Sem pular etapas.** O fluxo de 16 etapas é obrigatório. Pular etapas é não conformidade.
+- **Sem pular etapas.** O fluxo de etapas (incluindo Etapa 0) é obrigatório. Pular etapas é não conformidade.
 - **Sem contexto implícito.** Estado herdado e estado entregue devem ser declarados explicitamente — nunca implícitos.
 - **Contrato ativo é imutável por PR de execução.** Nenhuma PR de execução pode alterar silenciosamente o contrato ativo. Qualquer alteração exige revisão contratual formal (ver `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` seção 7).
 - **Desvio de contrato é condição de parada.** Toda PR de execução deve declarar explicitamente se houve desvio de contrato. Desvio identificado = parada + revisão formal.
 - **Contrato só encerra via protocolo formal.** Nenhum contrato pode ser considerado encerrado sem cumprir integralmente o `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`.
+
+### 8.0 Trava de pré-brief leigo ao Vasques (Etapa 0 — BLOQUEIO TOTAL)
+
+**Nenhuma tarefa começa sem cumprir a Etapa 0: apresentar o pré-brief leigo ao Vasques e aguardar validação explícita.**
+
+Ver seção 21 para o bloco obrigatório completo, as 7 perguntas e as regras de bloqueio.
+
+Esta trava é anterior a qualquer leitura de documento, abertura de PR ou execução de código. Sem `ok` explícito do Vasques, o executor para e aguarda.
 
 ### 8.1 Leitura prévia obrigatória de toda PR da implantação macro
 
@@ -751,4 +761,82 @@ Gate aprovado              → body sincronizado com os vivos
 ```
 
 **Regra de parada:** se o auto-fix não conseguir extrair valor determinístico dos arquivos vivos (arquivos inexistentes, formato não reconhecido), o gate falha e exige intervenção manual. Isso indica que os arquivos vivos não estão atualizados — a causa deve ser resolvida nos vivos, não no body.
+
+---
+
+## 21. Trava obrigatória: pré-brief leigo ao Vasques antes de qualquer tarefa/PR
+
+> **Esta é uma trava operacional de bloqueio total.**
+> Nenhuma tarefa começa, nenhuma PR abre e nenhuma execução acontece sem que o executor
+> apresente ao Vasques o pré-brief leigo abaixo e receba validação explícita.
+>
+> Esta regra é a **Etapa 0** do fluxo de execução — anterior a toda e qualquer etapa do
+> fluxo das 16 etapas (seção 3). Não é sugestão. Não é checklist opcional. É condição
+> de bloqueio: sem validação do Vasques, a execução não começa.
+
+### 21.1 Objetivo desta trava
+
+Esta regra existe para:
+
+- **Impedir execução no escuro** — nenhuma mudança acontece sem que o Vasques entenda o que será feito antes de começar.
+- **Permitir ajuste de rumo antes do trabalho** — o Vasques pode redirecionar, cancelar ou ajustar o escopo sem custo, antes de qualquer código ser escrito ou PR aberta.
+- **Evitar drift** — o executor não pode interpretar sozinho o que o Vasques "provavelmente quer".
+- **Evitar retrabalho** — corrigir o rumo antes da execução custa zero; corrigir depois pode custar toda a PR.
+- **Evitar que a Enova 2 repita o acúmulo confuso da Enova 1** — onde execução acontecia sem validação clara do dono do projeto, gerando pilhas de débito técnico e documental difíceis de desfazer.
+
+### 21.2 Bloco obrigatório de pré-brief leigo
+
+Antes de qualquer execução (antes da Etapa 1 do fluxo de execução), o executor deve apresentar ao Vasques, em linguagem leiga, os 7 itens abaixo:
+
+```
+--- PRÉ-BRIEF LEIGO AO VASQUES ---
+
+1. O que vamos fazer:
+   <explicação clara, sem jargão técnico, do que será realizado nesta tarefa/PR>
+
+2. Por que isso precisa ser feito agora:
+   <justificativa objetiva — por que esta tarefa é a próxima correta, e não outra>
+
+3. O que isso causa ou impacta no sistema:
+   <efeito esperado — o que muda no comportamento, nos dados, na estrutura ou na governança>
+
+4. O que NÃO será mexido:
+   <limites explícitos do escopo — o que fica exatamente intacto>
+
+5. Riscos principais:
+   <o que pode dar errado, qual é a gravidade e qual é o plano se der>
+
+6. Resultado esperado se der certo:
+   <o que o Vasques vai poder ver ou verificar depois que a tarefa terminar>
+
+7. Qual deve ser a próxima etapa depois disso:
+   <o que vem imediatamente a seguir, sem ambiguidade>
+---
+```
+
+### 21.3 Regras de bloqueio
+
+- **Sem pré-brief apresentado ao Vasques: tarefa não começa.**
+- **Sem validação explícita do Vasques: execução não começa.**
+- O pré-brief deve acontecer **antes** da abertura/execução da PR, nunca depois.
+- A validação do Vasques deve ser **explícita** ("ok", "pode ir", "aprovado", "confirmo" ou equivalente claro) — silêncio não é aprovação.
+- Esta regra vale para **todas as frentes e todos os tipos de tarefa**: governança, código, contrato, workflow, integração, runtime, banco, canal, docs e qualquer outra frente da implantação macro, sem exceção.
+- Exceção contratual formal (seção 8.4) **não suspende esta regra** — mesmo com exceção contratual autorizada, o pré-brief leigo continua obrigatório.
+
+### 21.4 Posição no fluxo de execução
+
+O pré-brief leigo ao Vasques é a **Etapa 0** — anterior a toda e qualquer outra etapa:
+
+```
+Etapa 0  — Pré-brief leigo ao Vasques + aguardar validação explícita  ← TRAVA DE BLOQUEIO
+Etapa 1  — Leitura canônica obrigatória
+...
+Etapa 16 — Resposta final padronizada
+```
+
+**Tarefa que pule a Etapa 0 é não conforme e não deve ser aceita.**
+
+### 21.5 Inclusão obrigatória na resposta final
+
+Toda resposta final (seção 7 deste documento) deve incluir a seção `PRE_BRIEF_LEIGO_ADICIONADO` confirmando que o pré-brief foi apresentado e validado pelo Vasques antes da execução.
 
