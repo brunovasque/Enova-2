@@ -40,8 +40,8 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 | T0-PR1 | Rebase canonico da implantacao | Reposicionar repo no macro T0-T7, criar camada canonica, status/handoff macro e plano executivo | concluida |
 | T0-PR2 / PR-T0.1 | Inventario legado vivo (fluxos + estados) | Mapear fluxos, estados, dependencias, materiais aproveitaveis e discrepancias contra o mestre | **concluida** — L15-L16 elevados para "validada por referencia" via Core Mecanico 2 (E6.2/F2/F4); origem E1 bifurcada de mapeamento alvo E2; tabela/coluna real E1 declarada como limitacao de transcricao PDF (ver `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` secao 14) |
 | T0-PR2 / PR-T0.2 | Inventario de regras e classificacao por familia | Listar e classificar regras em 7 familias canonicas com bloco legado de origem | **concluida** — 48 regras catalogadas em 7 familias (38 ativas, 6 condicionais, 4 mortas); ver `schema/implantation/INVENTARIO_REGRAS_T0.md` |
-| T0-PR3 | Inventario de parsers, regex, fallbacks e heuristicas | Mapear pontos de decisao mecanica | **desbloqueada** — PR-T0.2 encerrada |
-| T0-PR4 | Inventario de canais, superficies e telemetria | Mapear superficies de entrada/saida e endpoints | bloqueada ate PR-T0.3 |
+| T0-PR3 | Inventario de parsers, regex, fallbacks e heuristicas | Mapear pontos de decisao mecanica | **concluida** — 27 pontos catalogados (17 ativos, 5 condicionais, 3 residuais, 2 mortos); ver `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md` |
+| T0-PR4 | Inventario de canais, superficies e telemetria | Mapear superficies de entrada/saida e endpoints | **desbloqueada** — PR-T0.3 encerrada |
 | T0-PR5 | Matriz de risco e desligamento futuro | Classificar riscos, compatibilidades, pontos de rollback | bloqueada ate PR-T0.4 |
 | T0-PR6 | Inventario de desligamento futuro e convivencia | O que sai primeiro, o que convive, o que permanece | bloqueada ate PR-T0.5 |
 | T0-PR7 / PR-T0.R | Readiness G0 e closeout T0 | Provar completude do inventario e fechar G0 se aprovado | bloqueada ate PR-T0.6 |
@@ -57,7 +57,7 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 
 ## Proximo passo autorizado
 
-PR-T0.3 — Inventario de parsers, regex, fallbacks e heuristicas (desbloqueada apos encerramento de PR-T0.2).
+PR-T0.4 — Inventario de canais, superficies e telemetria (desbloqueada apos encerramento de PR-T0.3).
 
 ## Atualizacao 2026-04-23 — evidencia documental de T0
 
@@ -179,6 +179,31 @@ Estado de fechamento:
 - `PR-T0.2` encerrada.
 - G0 permanece aberto.
 - `PR-T0.3` desbloqueada.
+
+Limites reafirmados:
+- sem runtime funcional;
+- sem alteracoes em `src/`, `package.json` ou `wrangler.toml`;
+- sem abertura de T1 antes de closeout formal de G0.
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.3 (inventario de parsers, heuristicas e branches de stage)
+
+Recorte executado nesta atualizacao:
+- `PR-T0.3` — inventariar parsers, regex, fallbacks, heuristicas e branches de stage do legado
+  com bloco legado de origem, fonte auditavel, regra associada (PR-T0.2), status e risco estrutural.
+
+Evidencia adicionada:
+- `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md` com:
+  - 27 pontos de decisao mecanica catalogados (17 ativos, 5 condicionais, 3 residuais, 2 mortos);
+  - 5 tipos cobertos: parser (2), regex (2), fallback (7), heuristica (7), stage (9);
+  - bloco legado de origem por item (L03-L19 aplicaveis);
+  - fonte LEGADO_MESTRE (linha ou secao) por item;
+  - regra associada (PR-T0.2 ID) por item;
+  - 8 categorias de inconclusivos declaradas (L-blocks nao transcritos; nao bloqueiam PR-T0.3).
+
+Estado de fechamento:
+- `PR-T0.3` encerrada.
+- G0 permanece aberto.
+- `PR-T0.4` desbloqueada.
 
 Limites reafirmados:
 - sem runtime funcional;
