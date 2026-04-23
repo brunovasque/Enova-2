@@ -10,7 +10,7 @@
 
 > **Esta seção define os documentos a ler — não as etapas de execução.**
 > A lista de leitura (abaixo) e o fluxo de execução (seção 3 — 16 etapas) são duas coisas distintas.
-> `16 etapas` ≠ `28 documentos de leitura`. Não confundir.
+> `16 etapas` ≠ `31 documentos de leitura`. Não confundir.
 
 Toda execução começa com leitura nesta sequência — **obrigatória, sem exceção**:
 
@@ -41,7 +41,10 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 25. `.github/PULL_REQUEST_TEMPLATE.md`
 26. `.github/AGENT_CONTRACT.md`
 27. `scripts/validate_pr_governance.js`
-28. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo. Regra-mãe canônica: IA soberana na fala, mecânico jamais com prioridade de fala.**
+28. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` — **bíblia canônica de PRs da implantação macro**
+29. `schema/execution/PR_EXECUTION_TEMPLATE.md` — **template canônico obrigatório de abertura de PR**
+30. `schema/handoffs/PR_HANDOFF_TEMPLATE.md` — **template canônico obrigatório de fechamento/handoff de PR**
+31. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo. Regra-mãe canônica: IA soberana na fala, mecânico jamais com prioridade de fala.**
   
 
 Nenhuma tarefa começa sem confirmar esta leitura.
@@ -63,8 +66,8 @@ Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas 
 ## 3. Fluxo obrigatório de execução — 16 etapas
 
 > **Esta seção define o fluxo de execução — não a lista de documentos a ler.**
-> As 16 etapas abaixo são ações sequenciais do agente. A Etapa 1 ("Leitura canônica") executa a lista de documentos da seção 1 (28 itens), mas as 16 etapas e os 28 itens de leitura são categorias distintas.
-> `16 etapas de execução` ≠ `28 documentos de leitura`.
+> As 16 etapas abaixo são ações sequenciais do agente. A Etapa 1 ("Leitura canônica") executa a lista de documentos da seção 1 (31 itens), mas as 16 etapas e os 31 itens de leitura são categorias distintas.
+> `16 etapas de execução` ≠ `31 documentos de leitura`.
 
 Toda tarefa deve percorrer as 16 etapas abaixo, **em ordem, sem pular nenhuma**:
 
@@ -261,6 +264,105 @@ Provas
 - **Desvio de contrato é condição de parada.** Toda PR de execução deve declarar explicitamente se houve desvio de contrato. Desvio identificado = parada + revisão formal.
 - **Contrato só encerra via protocolo formal.** Nenhum contrato pode ser considerado encerrado sem cumprir integralmente o `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`.
 
+### 8.1 Leitura prévia obrigatória de toda PR da implantação macro
+
+Nenhuma PR da implantação macro pode abrir sem confirmar leitura prévia, no mínimo, de:
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
+3. Contrato ativo da fase em `schema/contracts/active/`
+4. Último handoff vivo da fase em `schema/handoffs/<FASE>_LATEST.md`
+5. `schema/CODEX_WORKFLOW.md`
+
+Sem essa leitura, a PR é **não conforme**.
+
+### 8.2 Abertura obrigatória de PR (template canônico)
+
+Toda PR da implantação macro deve abrir com o bloco obrigatório de
+`schema/execution/PR_EXECUTION_TEMPLATE.md`, incluindo:
+
+- ID lógico da Bíblia
+- Fase ativa
+- Épico/microetapa do mestre
+- PR anterior seguida
+- Handoff seguido
+- Gate de entrada
+- Gate de saída esperado
+- O que fecha
+- O que não fecha
+- Declaração de exceção contratual
+
+Sem esse bloco preenchido com valores reais, a PR é **não conforme**.
+
+### 8.3 Fechamento obrigatório de PR (handoff canônico)
+
+Nenhuma PR é considerada concluída sem handoff no repo conforme
+`schema/handoffs/PR_HANDOFF_TEMPLATE.md`, contendo:
+
+- Próxima PR autorizada
+- Gate atingido ou não
+- O que foi feito
+- O que não foi feito
+- Riscos herdados
+- Plano de rollback
+
+Sem handoff atualizado, a próxima PR **não pode abrir**.
+
+### 8.4 Trava formal de exceção contratual
+
+Regra padrão: seguir o contrato literalmente.
+
+Nenhuma quebra, flexibilização ou desvio pode ser feita por interpretação do executor.
+Somente o **Vasques** pode autorizar manualmente exceção contratual, de forma:
+
+- Explícita
+- Específica
+- Temporária
+- Registrada
+- Com retorno obrigatório à normalidade contratual
+
+Se o executor perceber "necessidade de quebra", deve parar e aguardar autorização manual do Vasques.
+
+Limites duros não exceptuáveis (mesmo com exceção):
+
+- Fala mecânica dominante
+- Surface engessada
+- Fallback dominante
+- Quebra da soberania da IA (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`)
+- Quebra de regras MCMV
+- Pulo de gates G0-G7
+- Mudanças silenciosas de Supabase
+- Encerramento implícito de contrato
+
+### 8.5 Trava de não pular gates T0-T7 / G0-G7
+
+- T1 só abre após G0
+- T2 só abre após G1
+- T3 só abre após G2
+- T4 só abre após G3
+- T5 só abre após G4
+- T6 só abre após G5
+- T7 só abre após G6
+- Conclusão macro só após G7
+
+### 8.6 Trava de não misturar escopos
+
+- Uma PR = uma fase / um recorte
+- Não misturar governança com implementação pesada
+- Não misturar canal novo com cutover
+- Não misturar P2/P3 antes de P0/P1 estabilizado
+- Não abrir frente fora da sequência da Bíblia
+
+### 8.7 Checagem final obrigatória de coerência
+
+Antes de encerrar a PR, o executor deve verificar se a "Próxima PR autorizada" bate ao mesmo tempo com:
+
+1. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
+2. Contrato ativo
+3. Handoff vivo
+
+Se não bater, parar e corrigir os arquivos vivos antes de encerrar a PR.
+
 ---
 
 ## 9. Regra de continuidade entre PRs
@@ -308,6 +410,9 @@ Os seguintes schemas definem o formato obrigatório de artefatos de governança:
 - `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — protocolo obrigatório de execução contratual por PR.
 - `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — protocolo obrigatório de encerramento formal de contrato.
 - `schema/contracts/_INDEX.md` — índice canônico de contratos ativos por frente/fase.
+- `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` — sequência canônica obrigatória de PRs da implantação macro.
+- `schema/execution/PR_EXECUTION_TEMPLATE.md` — template canônico obrigatório de abertura de PR.
+- `schema/handoffs/PR_HANDOFF_TEMPLATE.md` — template canônico obrigatório de handoff de fechamento.
 
 Nenhum contrato, status ou handoff deve ser criado fora destes formatos.
 
@@ -322,6 +427,7 @@ O repositório mantém contexto vivo em:
 - `schema/contracts/` — contratos ativos e arquivados (índice em `_INDEX.md`, contratos ativos em `active/`, arquivados em `archive/`)
 - `schema/source/` — tronco markdown soberano e PDF mestre original
 - `schema/implantation/` — rebase canonico e plano executivo T0-T7
+- `schema/execution/` — Bíblia canônica de PRs e template canônico de abertura
 - `schema/legacy/` — apoio operacional por blocos (índice em `INDEX_LEGADO_MESTRE.md`, derivação em `LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
 
 **Ponte documental operacional:** ver `schema/CONTRACT_SOURCE_MAP.md` para o mapa explícito de relação entre esses artefatos, a precedência entre eles, quando consultar o PDF mestre e como declarar as fontes lidas.
@@ -533,6 +639,9 @@ Percorrer em ordem:
 8. schema/legacy/INDEX_LEGADO_MESTRE.md ← índice auxiliar de blocos legados aplicáveis
 9. schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md ← derivação auxiliar por blocos, quando aplicável
 10. schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf ← PDF mestre bruto, quando necessário
+11. schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md ← sequência oficial de PRs e travas de exceção
+12. schema/execution/PR_EXECUTION_TEMPLATE.md ← bloco obrigatório de abertura de PR
+13. schema/handoffs/PR_HANDOFF_TEMPLATE.md ← bloco obrigatório de fechamento/handoff de PR
 ```
 
 ### 19.2 Regra de ausência de contrato ativo
@@ -616,6 +725,10 @@ Os seguintes campos **devem estar presentes e preenchidos com valores reais** em
 - `Nenhum contrato ativo — verificar schema/...` (instrução não resolvida)
 - `Verificar schema/...` como valor primário
 - `TODO`, `preencher manualmente`, `pendência de preenchimento`
+
+**Regra adicional para implantação macro:**
+- Além destes 2 campos bloqueantes do gate automatizado, o body da PR deve conter o bloco completo de
+  `schema/execution/PR_EXECUTION_TEMPLATE.md` com valores reais.
 
 ### 20.3 Responsabilidade de sincronização
 

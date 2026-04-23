@@ -71,3 +71,50 @@ T0-PR2 — inventario legado vivo.
 
 - `PR-T0.1 — Inventário de fluxos e estados vivos` (equivalente a `T0-PR2 — inventario legado vivo`).
 - Leituras obrigatórias adicionais: Bíblia §G + §S, `PR_EXECUTION_TEMPLATE.md`, `PR_HANDOFF_TEMPLATE.md`.
+
+## Atualizacao 2026-04-23 — WORKFLOW macro amarrado como regra viva
+
+### Objetivo executado
+
+Transformar em regra operacional obrigatoria no `schema/CODEX_WORKFLOW.md` aquilo que ja estava aprovado no repo:
+macro soberano, Biblia de PRs, templates canônicos, gates T0-T7/G0-G7 e excecao contratual manual do Vasques.
+
+### O que foi feito
+
+- O `schema/CODEX_WORKFLOW.md` passou a exigir leitura previa obrigatoria de PR macro com:
+  - `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+  - `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
+  - contrato ativo da fase
+  - handoff vivo da fase
+  - o proprio `schema/CODEX_WORKFLOW.md`
+- O `schema/CODEX_WORKFLOW.md` passou a exigir abertura de PR com o bloco de `schema/execution/PR_EXECUTION_TEMPLATE.md`.
+- O `schema/CODEX_WORKFLOW.md` passou a exigir fechamento com handoff no formato `schema/handoffs/PR_HANDOFF_TEMPLATE.md`.
+- O `schema/CODEX_WORKFLOW.md` passou a bloquear excecao contratual sem autorizacao manual explicita do Vasques.
+- O `schema/CODEX_WORKFLOW.md` passou a listar explicitamente os limites duros nao exceptuaveis.
+- O `schema/CODEX_WORKFLOW.md` passou a travar formalmente os gates T0-T7/G0-G7 sem salto.
+- O `schema/CODEX_WORKFLOW.md` passou a travar mistura de escopo e exigir checagem final Biblia + contrato ativo + handoff vivo antes de encerrar PR.
+
+### O que nao foi feito
+
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- Nenhuma mudanca de gate ou de proximo passo autorizado.
+
+### Excecao contratual
+
+- Excecao ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Proximo passo autorizado (inalterado)
+
+- `PR-T0.1` / `T0-PR2` — inventario de fluxos e estados vivos.
+
+### Leituras obrigatorias da proxima PR (reafirmadas)
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+5. `schema/execution/PR_EXECUTION_TEMPLATE.md`
+6. `schema/handoffs/PR_HANDOFF_TEMPLATE.md`
+7. `schema/CODEX_WORKFLOW.md`
