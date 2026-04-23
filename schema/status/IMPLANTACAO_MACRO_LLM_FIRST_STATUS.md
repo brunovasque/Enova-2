@@ -12,21 +12,21 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-T0-PR2 / `PR-T0.1` — encerramento: L15-L16 elevados para "validada por referencia" via Core Mecanico 2
-(branch `feat/core-especiais-p3-multi-variantes`, PDF E6.2/F2/F4); origem E1 bifurcada de mapeamento
-alvo E2 em secao 13; todos os criterios de PR-T0.1 atendidos.
+`PR-T0.2` — inventario de regras encerrado: 48 regras catalogadas em 7 familias (negocio,
+compliance, docs, UX, operacao, roteamento, excecao); bloco legado de origem por regra;
+status ativa/condicional/morta por regra; regras inconclusivas declaradas.
 
 ## O que esta PR fechou
 
-- Atualizou `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` com:
-  - secao 13: bifurcacao de prova — "Bloco legado (origem E1)" separado de "Mapeamento alvo E2";
-    limitacao de transcricao Supabase E1 declarada explicitamente.
-  - secao 14: todos os criterios de PR-T0.1 atendidos; PR-T0.1 encerrada; PR-T0.2 desbloqueada.
-  - secao 15: L15-L16 elevados para "validada por referencia" via implementacao Core Mecanico 2
-    (trilhos P3, multi e variante familiar; stage `qualification_special`; PDF E6.2/F2/F4).
-  - secao 15 conclusao: todos os blocos L03-L17 em "validada por referencia".
+- Criou `schema/implantation/INVENTARIO_REGRAS_T0.md` com:
+  - 48 regras catalogadas (38 ativas, 6 condicionais, 4 mortas);
+  - 7 familias: negocio, compliance, docs, UX, operacao, roteamento, excecao;
+  - bloco legado de origem por regra;
+  - fonte LEGADO_MESTRE (linha ou secao) por regra;
+  - regras inconclusivas declaradas (8 categorias);
+  - nota sobre blocos nao transcritos.
 - Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
-  - PR-T0.1 marcada como concluida; PR-T0.2 desbloqueada.
+  - PR-T0.2 marcada como concluida; PR-T0.3 desbloqueada.
 
 ## O que esta PR nao fechou
 
@@ -37,16 +37,16 @@ alvo E2 em secao 13; todos os criterios de PR-T0.1 atendidos.
 
 ## Proximo passo autorizado
 
-PR-T0.2 — Inventario de regras e classificacao por familia.
+PR-T0.3 — Inventario de parsers, regex, fallbacks e heuristicas.
 
-Leituras obrigatorias para PR-T0.2:
+Leituras obrigatorias para PR-T0.3:
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.2)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.3)
 3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
 4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
 5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
 6. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
-7. `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`
+7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 10. `schema/CODEX_WORKFLOW.md`
@@ -63,6 +63,23 @@ Nenhuma adicional.
 
 - T1 permanece bloqueada ate G0 aprovado.
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
+
+## Atualizacao 2026-04-23 — Encerramento de PR-T0.2 (inventario de regras por familia)
+
+Ultima tarefa relevante:
+- `PR-T0.2` — inventario de regras do legado em 7 familias canonicas; 48 regras com bloco legado e status.
+
+O que esta PR fechou:
+- Criou `schema/implantation/INVENTARIO_REGRAS_T0.md`.
+- Atualizou contrato: PR-T0.2 concluida; PR-T0.3 desbloqueada.
+
+O que esta PR nao fechou:
+- Nao aprovou G0. Nao abriu T1. Nao alterou runtime.
+
+Proximo passo autorizado (atualizado):
+- PR-T0.3 — Inventario de parsers, regex, fallbacks e heuristicas.
+
+---
 
 ## Atualizacao 2026-04-23 — Adendo canônico A00-ADENDO-02 publicado
 
