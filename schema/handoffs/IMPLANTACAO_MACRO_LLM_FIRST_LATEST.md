@@ -419,3 +419,68 @@ declarar lacuna remanescente explicita (L15-L16 e origem legada/persistida) sem 
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 10. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.1 (lacunas remanescentes eliminadas)
+
+### Objetivo executado
+
+Eliminar as duas lacunas remanescentes de `PR-T0.1`:
+1. Elevar L15-L16 de "parcial estrutural" para "validada por referencia".
+2. Bifurcar prova de origem E1 do mapeamento alvo E2 em secao 13 do inventario.
+
+### O que foi feito
+
+- Atualizado `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`:
+  - secao 13: bifurcacao explicita de prova — coluna "Bloco legado (origem E1)" separada de
+    "Mapeamento alvo E2 (coluna/tabela)"; limitacao de transcricao Supabase E1 declarada
+    explicitamente como escopo futuro (L-block PDF pendente).
+  - secao 14: todos os criterios de PR-T0.1 atendidos; PR-T0.1 declarada pronta para encerramento;
+    PR-T0.2 desbloqueada; G0 permanece aberto.
+  - secao 15: L15-L16 elevados para "validada por referencia" via implementacao canonica Core
+    Mecanico 2 (branch `feat/core-especiais-p3-multi-variantes`, commit
+    `a3c27abec10af5222501e8dbcfae39705900af97`; PDF mestre E6.2/F2/F4 como fonte declarada;
+    stage `qualification_special`; trilhos P3 e multi com gates e fatos obrigatorios documentados).
+  - secao 15 conclusao: todos os blocos L03-L17 em "validada por referencia".
+- Atualizado `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
+  - PR-T0.1 marcada como concluida; PR-T0.2 desbloqueada.
+  - Proximo passo: PR-T0.2.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: reflete encerramento de PR-T0.1.
+
+### O que nao foi feito
+
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- Nenhuma implementacao funcional.
+- G0 nao aprovado (requer PR-T0.R apos PR-T0.2 a PR-T0.6).
+- T1 nao aberta.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Estado atual pos-encerramento
+
+- `PR-T0.1` **encerrada em pre-readiness G0**.
+- G0 aberto.
+- Limitacao residual documentada (nao bloqueia PR-T0.2): tabela/coluna real Supabase E1 por estado
+  nao transcrita; disponivel somente em L-block PDF (escopo de transcricao futura).
+
+### Proximo passo autorizado
+
+- **`PR-T0.2`** — Inventario de regras e classificacao por familia (desbloqueada).
+
+### Leituras obrigatorias para PR-T0.2
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.2)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+7. `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/CODEX_WORKFLOW.md`

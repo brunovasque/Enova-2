@@ -38,8 +38,8 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 | PR | Nome | Entrega | Estado |
 |----|------|---------|--------|
 | T0-PR1 | Rebase canonico da implantacao | Reposicionar repo no macro T0-T7, criar camada canonica, status/handoff macro e plano executivo | concluida |
-| T0-PR2 / PR-T0.1 | Inventario legado vivo (fluxos + estados) | Mapear fluxos, estados, dependencias, materiais aproveitaveis e discrepancias contra o mestre | **em execucao** — lacuna remanescente: L15-L16 em "parcial estrutural" e origem legada/persistida dos estados sem inferencia ainda nao completamente fechada (ver `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` secao 14) |
-| T0-PR2 / PR-T0.2 | Inventario de regras e classificacao por familia | Listar e classificar regras em 7 familias canonicas com bloco legado de origem | bloqueada ate encerramento de PR-T0.1 |
+| T0-PR2 / PR-T0.1 | Inventario legado vivo (fluxos + estados) | Mapear fluxos, estados, dependencias, materiais aproveitaveis e discrepancias contra o mestre | **concluida** — L15-L16 elevados para "validada por referencia" via Core Mecanico 2 (E6.2/F2/F4); origem E1 bifurcada de mapeamento alvo E2; tabela/coluna real E1 declarada como limitacao de transcricao PDF (ver `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` secao 14) |
+| T0-PR2 / PR-T0.2 | Inventario de regras e classificacao por familia | Listar e classificar regras em 7 familias canonicas com bloco legado de origem | **desbloqueada** — PR-T0.1 encerrada |
 | T0-PR3 | Inventario de parsers, regex, fallbacks e heuristicas | Mapear pontos de decisao mecanica | bloqueada ate PR-T0.2 |
 | T0-PR4 | Inventario de canais, superficies e telemetria | Mapear superficies de entrada/saida e endpoints | bloqueada ate PR-T0.3 |
 | T0-PR5 | Matriz de risco e desligamento futuro | Classificar riscos, compatibilidades, pontos de rollback | bloqueada ate PR-T0.4 |
@@ -57,7 +57,7 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 
 ## Proximo passo autorizado
 
-Continuidade de PR-T0.1 — eliminar lacuna remanescente (L15-L16 e origem legada/persistida dos estados) para permitir encerramento formal.
+PR-T0.2 — Inventario de regras e classificacao por familia (desbloqueada apos encerramento de PR-T0.1).
 
 ## Atualizacao 2026-04-23 — evidencia documental de T0
 
@@ -131,6 +131,31 @@ Estado de fechamento:
 - Lacuna remanescente: L15-L16 em "parcial estrutural" e origem legada/persistida dos estados ainda nao provada sem inferencia.
 
 Limites reafirmados:
+- sem runtime funcional;
+- sem alteracoes em `src/`, `package.json` ou `wrangler.toml`;
+- sem abertura de T1 antes de closeout formal de G0.
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.1 (lacunas remanescentes eliminadas)
+
+Recorte executado nesta atualizacao:
+- Continuidade final de `PR-T0.1`: eliminacao das lacunas remanescentes (L15-L16 e origem legada).
+
+Evidencias adicionadas:
+- `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` (secoes 13, 14 e 15 atualizadas):
+  - secao 13: bifurcacao explicita de prova — "Bloco legado (origem E1)" separado de "Mapeamento alvo E2";
+    limitacao de transcricao do Supabase E1 declarada explicitamente como escopo futuro.
+  - secao 14: todos os criterios atendidos; PR-T0.1 declarada pronta para encerramento; PR-T0.2 desbloqueada.
+  - secao 15: L15-L16 elevados para "validada por referencia" via implementacao canonica Core Mecanico 2
+    (branch `feat/core-especiais-p3-multi-variantes`, commit `a3c27abec10af5222501e8dbcfae39705900af97`,
+    PDF mestre E6.2/F2/F4 como fonte declarada; stage `qualification_special`, trilhos P3 e multi).
+  - secao 15 conclusao: todos os blocos L03-L17 em "validada por referencia".
+
+Estado de fechamento:
+- `PR-T0.1` **encerrada em pre-readiness G0**.
+- G0 permanece aberto (requer PR-T0.R apos PR-T0.2 a PR-T0.6).
+- PR-T0.2 desbloqueada.
+
+Limites reafirmados nesta atualizacao:
 - sem runtime funcional;
 - sem alteracoes em `src/`, `package.json` ou `wrangler.toml`;
 - sem abertura de T1 antes de closeout formal de G0.

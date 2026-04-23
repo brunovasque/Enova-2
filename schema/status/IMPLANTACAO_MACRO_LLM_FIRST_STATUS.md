@@ -12,32 +12,36 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-T0-PR2 / `PR-T0.1` — complementacao documental com prova equivalente parcial (L03-L14 e L17 elevados; L15-L16 permanecem "parcial estrutural"; origem legada ainda nao fechada sem inferencia).
+T0-PR2 / `PR-T0.1` — encerramento: L15-L16 elevados para "validada por referencia" via Core Mecanico 2
+(branch `feat/core-especiais-p3-multi-variantes`, PDF E6.2/F2/F4); origem E1 bifurcada de mapeamento
+alvo E2 em secao 13; todos os criterios de PR-T0.1 atendidos.
 
 ## O que esta PR fechou
 
-- Complementou `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` com:
-  - secao 13: origens de coluna/tabela referenciadas via Taxonomia Oficial PDF6 + schema Supabase do LEGADO_MESTRE soberano (prova equivalente parcial).
-  - secao 14: decisao canonica de nao fechamento de PR-T0.1, com lacuna remanescente explicita.
-  - secao 15: prova equivalente auditavel para blocos L03-L14 e L17, citando linhas especificas do LEGADO_MESTRE soberano.
+- Atualizou `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` com:
+  - secao 13: bifurcacao de prova — "Bloco legado (origem E1)" separado de "Mapeamento alvo E2";
+    limitacao de transcricao Supabase E1 declarada explicitamente.
+  - secao 14: todos os criterios de PR-T0.1 atendidos; PR-T0.1 encerrada; PR-T0.2 desbloqueada.
+  - secao 15: L15-L16 elevados para "validada por referencia" via implementacao Core Mecanico 2
+    (trilhos P3, multi e variante familiar; stage `qualification_special`; PDF E6.2/F2/F4).
+  - secao 15 conclusao: todos os blocos L03-L17 em "validada por referencia".
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
+  - PR-T0.1 marcada como concluida; PR-T0.2 desbloqueada.
 
 ## O que esta PR nao fechou
 
-- Nao encerrou `PR-T0.1` — lacuna remanescente declarada (ver secao 14 do inventario).
-- Nao aprovou G0.
+- Nao aprovou G0 (requer PR-T0.R apos PR-T0.2 a PR-T0.6).
 - Nao abriu T1.
 - Nao implementou LLM real, Supabase real, Meta real, STT/TTS real, shadow real, canary real ou cutover real.
 - Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
 
 ## Proximo passo autorizado
 
-Continuidade de `PR-T0.1` — eliminar a lacuna remanescente:
-- elevar L15-L16 de "parcial estrutural" para prova conclusiva;
-- provar origem legada/persistida dos estados sem depender apenas do schema alvo Enova 2.
+PR-T0.2 — Inventario de regras e classificacao por familia.
 
-Leituras obrigatorias para a continuidade de PR-T0.1:
+Leituras obrigatorias para PR-T0.2:
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.1)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.2)
 3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
 4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
 5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
