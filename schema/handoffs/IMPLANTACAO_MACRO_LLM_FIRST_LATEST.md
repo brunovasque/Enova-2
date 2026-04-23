@@ -625,3 +625,93 @@ Próxima PR autorizada:                 PR-T0.4 — Inventário de canais, super
 10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 12. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.4 (inventario de canais, superficies e telemetria)
+
+### Objetivo executado
+
+`PR-T0.4` — inventariar canais, superficies de interacao, endpoints e pontos de telemetria/log/evento
+do legado ENOVA 1 com bifurcacao explicita E1 (runtime) vs E2 (design-alvo), fluxo de dados por canal,
+relacao com regras (PR-T0.2) e parsers/heuristicas (PR-T0.3), status e risco estrutural.
+
+### O que foi feito
+
+- Criado `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md` com:
+  - 28 itens catalogados (7 canais, 7 superficies, 3 endpoints, 13 telemetria);
+  - 4 tipos: canal (7), superficie (7), endpoint (3), telemetria (13);
+  - bifurcacao E1/E2 obrigatoria aplicada: TE-01 como emissao runtime E1 real (linha 3416
+    LEGADO_MESTRE); TE-04 a TE-12 como referencias design-alvo E2 (nao prova E1);
+  - SF-03 (superficie fala mecanica E1) classificada morta — proibida por A00-ADENDO-01/02;
+  - EP-01 a EP-03: endpoints webhook texto, midia e admin/simulacao;
+  - TE-13 (CRM E1 real) ativo mas inconclusivo (L18 nao transcrito);
+  - fluxo de dados por canal consolidado (tabela CT→EP→SF);
+  - 7 categorias de inconclusivos declaradas (L17/L18 nao transcritos; nao bloqueiam PR-T0.4);
+  - Bloco E (A00-ADENDO-03) incorporado no documento.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
+  - PR-T0.4 concluida; PR-T0.5 desbloqueada.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que nao foi feito
+
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- G0 nao aprovado (requer PR-T0.R apos PR-T0.4 a PR-T0.6).
+- T1 nao aberta.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Bloco E — Fechamento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md
+Estado da evidência:                   completa — 28 itens catalogados em 4 tipos, cobrindo todas as
+                                       fontes acessíveis; bifurcação E1/E2 aplicada; critério de aceite
+                                       de PR-T0.4 plenamente atendido
+Há lacuna remanescente?:               sim — schema real de tabelas E1, eventos específicos emitidos E1
+                                       por canal, telemetria de áudio em L17/L18 não transcritos;
+                                       declarados em §8; não bloqueiam PR-T0.4
+Há item parcial/inconclusivo bloqueante?: não — todos os 28 itens têm evidência auditável completa
+                                       (TE-01 com linha exata; TE-04-TE-12 declarados explicitamente
+                                       como design-alvo E2; TE-13 inconclusivo com L18 declarado);
+                                       os inconclusivos de L-blocks são limitações de acesso estrutural
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         encerrada
+Próxima PR autorizada:                 PR-T0.5 — Matriz de risco operacional do legado vivo
+```
+
+### Estado atual pos-encerramento
+
+- `PR-T0.1` encerrada.
+- `PR-T0.2` encerrada.
+- `PR-T0.3` encerrada.
+- `PR-T0.4` **encerrada** — Bloco E: fechamento valido (evidencia completa dentro do escopo;
+  inconclusivos de L-blocks sao limitacoes estruturais nao bloqueantes; bifurcacao E1/E2 aplicada
+  canonicamente).
+- G0 aberto.
+- `PR-T0.5` desbloqueada.
+
+### Proximo passo autorizado
+
+- **`PR-T0.5`** — Matriz de risco operacional do legado vivo.
+
+### Leituras obrigatorias para PR-T0.5
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.5)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+8. `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md`
+9. `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+13. `schema/CODEX_WORKFLOW.md`
