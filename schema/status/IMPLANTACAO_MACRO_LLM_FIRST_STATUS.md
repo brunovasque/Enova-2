@@ -46,3 +46,24 @@ Nenhuma adicional.
 
 - T1 permanece bloqueada ate G0 aprovado.
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
+
+## Atualizacao 2026-04-23 — Workflow macro amarrado operacionalmente
+
+Ultima tarefa relevante:
+- Governanca macro — amarrar operacionalmente no `schema/CODEX_WORKFLOW.md` a Biblia de PRs, templates obrigatorios, gates T0-T7/G0-G7 e regra de excecao contratual.
+
+O que esta PR fechou:
+- Inseriu no `schema/CODEX_WORKFLOW.md` a secao obrigatoria de leitura previa da PR macro.
+- Inseriu no `schema/CODEX_WORKFLOW.md` a secao obrigatoria de abertura de PR via `schema/execution/PR_EXECUTION_TEMPLATE.md`.
+- Inseriu no `schema/CODEX_WORKFLOW.md` a secao obrigatoria de fechamento com handoff via `schema/handoffs/PR_HANDOFF_TEMPLATE.md`.
+- Inseriu no `schema/CODEX_WORKFLOW.md` a trava formal de excecao contratual com autorizacao manual exclusiva do Vasques.
+- Inseriu no `schema/CODEX_WORKFLOW.md` a trava explicita de nao pular gates T0-T7/G0-G7.
+- Inseriu no `schema/CODEX_WORKFLOW.md` a trava de nao misturar escopos e a checagem final obrigatoria de coerencia Biblia + contrato ativo + handoff vivo.
+
+O que esta PR nao fechou:
+- Nao executou o inventario legado vivo (T0-PR2).
+- Nao aprovou G0.
+- Nao abriu T1.
+
+Proximo passo autorizado (inalterado):
+- T0-PR2 — inventario legado vivo e mapa de aproveitamento do repo contra o mestre `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
