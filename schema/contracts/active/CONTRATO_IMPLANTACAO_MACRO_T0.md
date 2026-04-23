@@ -37,8 +37,8 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 
 | PR | Nome | Entrega | Estado |
 |----|------|---------|--------|
-| T0-PR1 | Rebase canonico da implantacao | Reposicionar repo no macro T0-T7, criar camada canonica, status/handoff macro e plano executivo | em execucao nesta PR |
-| T0-PR2 | Inventario legado vivo | Mapear fluxos, estados, dependencias, materiais aproveitaveis e discrepancias contra o mestre | proximo passo autorizado |
+| T0-PR1 | Rebase canonico da implantacao | Reposicionar repo no macro T0-T7, criar camada canonica, status/handoff macro e plano executivo | concluida |
+| T0-PR2 | Inventario legado vivo | Mapear fluxos, estados, dependencias, materiais aproveitaveis e discrepancias contra o mestre | em execucao (continuidade de `PR-T0.1`) |
 | T0-PR3 | Matriz de risco e desligamento futuro | Classificar riscos, compatibilidades, pontos de rollback e dependencias de convivencia | bloqueada ate T0-PR2 |
 | T0-PR4 | Readiness G0 e closeout T0 | Provar completude do inventario e fechar G0 se aprovado | bloqueada ate T0-PR3 |
 
@@ -89,3 +89,23 @@ Limites reafirmados:
 - E1 permanece materia-prima futura; sem refatoracao funcional nesta etapa.
 - Sem implementacao funcional e sem mudanca de runtime.
 - G0 permanece aberto ate readiness formal.
+
+## Atualizacao 2026-04-23 — inventario operacional auditavel de T0.1 (continuidade documental)
+
+Recorte executado nesta atualizacao:
+- Consolidacao da matriz de rastreabilidade operacional do inventario T0.1 (fluxos topo -> pos-envio_docs + estados/campos com classificacao de prova).
+
+Evidencia adicionada:
+- `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` (secoes 12, 13 e 14).
+
+Estado de fechamento desta continuidade:
+- `PR-T0.1` permanece aberta.
+- G0 permanece aberto.
+
+Lacuna remanescente explicita:
+- elevar rastreabilidade de "parcial estrutural" para prova validada em blocos legados criticos (L03-L17), incluindo amarracao final de estados persistidos por origem de coluna/tabela sem inferencia.
+
+Limites reafirmados:
+- sem runtime funcional;
+- sem alteracoes em `src/`, `package.json` ou `wrangler.toml`;
+- sem abertura de T1 antes de closeout formal de G0.
