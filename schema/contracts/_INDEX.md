@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T1 — Motor cognitivo LLM-first e contrato de fala soberano | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` | skeleton — aguardando PR-T1.0 | G1 — motor cognitivo LLM-first | 2026-04-23 (skeleton) | PR-T1.0 — abertura formal do contrato T1 | PR-T1.0 — preencher corpo do contrato e abrir T1 |
+| T1 — Constituição do agente e contrato cognitivo canônico | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` | aberto | G1 — contrato cognitivo aprovado | 2026-04-23 | PR-T1.1 — separação canônica tom × regra × veto × sugestão × repertório | PR-T1.1 |
 
 ## Contrato T0 encerrado
 
@@ -139,3 +139,4 @@ schema/contracts/
 - 2026-04-23 — Evidencia documental adicional de continuidade de `PR-T0.1` internalizada em `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`; contrato T0 permanece aberto em G0.
 - 2026-04-23 — Adicionado A00-ADENDO-03 (`schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`) na cadeia de precedência. Regra canônica: "Evidência manda no estado." Prova insuficiente bloqueia fechamento de etapa/gate/contrato. Toda abertura de contrato de frente deve declarar conformidade com A00-ADENDO-01, A00-ADENDO-02 e A00-ADENDO-03.
 - 2026-04-23 — PR-T0.R executada. Contrato T0 ENCERRADO. G0 APROVADO. T0 arquivado em `archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`. Skeleton T1 criado em `active/CONTRATO_IMPLANTACAO_MACRO_T1.md`. Próximo passo autorizado: PR-T1.0.
+- 2026-04-23 — PR-T1.0 executada. Contrato T1 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: objetivo, escopo, critérios de aceite, quebra de PRs (T1.1–T1.R), gate G1, legados aplicáveis. PR-T1.1 desbloqueada. Próximo passo: PR-T1.1.

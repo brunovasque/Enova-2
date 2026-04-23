@@ -1000,3 +1000,88 @@ Próxima PR autorizada:                 PR-T1.0 — abertura formal da fase T1
 11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 13. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — abertura formal do contrato T1 (PR-T1.0)
+
+### Objetivo executado
+
+`PR-T1.0` — preencher formalmente o corpo do contrato T1 conforme CONTRACT_SCHEMA.md,
+declarar objetivo, escopo, critérios de aceite, quebra de PRs e gate G1.
+
+### O que foi feito
+
+- Preencheu corpo completo de `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`:
+  - objetivo: transformar conhecimento da Enova em contrato operacional claro para o LLM;
+  - escopo: 5 dimensões (identidade, tom/regra, comportamentos, saída, bateria adversarial);
+  - fora de escopo: prompt real, schema Supabase, policy engine, orquestrador, runtime;
+  - dependências e entradas: G0 aprovado + 6 inventários T0 encerrados;
+  - saídas: 7 artefatos T1 definidos (T1.0–T1.R) com arquivos e PRs;
+  - critérios de aceite: 13 critérios incluindo soberania LLM-first, bateria adversarial,
+    nenhuma fala mecânica, rollback de "resposta bonita mas operacionalmente frouxa";
+  - provas obrigatórias: Bloco E por PR, bateria 10+ casos, 20–30 casos consistência;
+  - quebra de PRs: PR-T1.0 concluída; PR-T1.1 desbloqueada; PR-T1.2–T1.R bloqueadas;
+  - gate G1: condições de aprovação e regra de rollback explícitas;
+  - legados aplicáveis: L03 e L19 obrigatórios; L04–L18 complementares por segmento;
+  - 20 referências obrigatórias listadas;
+  - ordem mínima de leitura: L19 → L03.
+- Atualizou `schema/contracts/_INDEX.md`: contrato T1 aberto formalmente; PR-T1.1 desbloqueada.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que nao foi feito
+
+- Nenhum entregável técnico de T1 (PR-T1.1 a PR-T1.R — aguardam prompts específicos).
+- Nenhuma implementação de LLM real, prompt, taxonomia ou políticas.
+- Nenhuma alteração em runtime (`src/`, `package.json`, `wrangler.toml`).
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Bloco E — Fechamento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md
+Estado da evidência:                   completa — contrato T1 preenchido conforme CONTRACT_SCHEMA.md
+                                        com todas as 16 seções obrigatórias; quebra de PRs definida;
+                                        gate G1 explícito; legados aplicáveis declarados
+Há lacuna remanescente?:               não — PR-T1.0 é de abertura de contrato (governança),
+                                        não de inventário ou prova técnica; escopo cumprido
+                                        integralmente
+Há item parcial/inconclusivo bloqueante?: não — contrato T1 atende CONTRACT_SCHEMA.md;
+                                        nenhuma seção omitida; critérios de aceite verificáveis
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         contrato T1 aberto formalmente; PR-T1.1 desbloqueada
+Próxima PR autorizada:                 PR-T1.1 — Separação canônica tom × regra × veto × sugestão × repertório
+```
+
+### Estado atual pos-encerramento
+
+- Fase macro: T1 — contrato aberto formalmente.
+- G0: APROVADO.
+- G1: aberto — aguardando PR-T1.5 + PR-T1.R.
+- `PR-T1.0` **encerrada**.
+- `PR-T1.1` desbloqueada.
+- `PR-T1.2–T1.R` bloqueadas (aguardam conclusão sequencial).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T1.1`** — Separação canônica: tom × regra × veto × sugestão × repertório.
+
+### Leituras obrigatorias para PR-T1.1
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + legados L19 → L03)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T1.1)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+7. `schema/implantation/READINESS_G0.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+11. `schema/CODEX_WORKFLOW.md`

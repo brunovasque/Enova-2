@@ -2,23 +2,36 @@
 
 ## Estado atual
 
-Fase macro ativa: T1 — Motor cognitivo LLM-first e contrato de fala soberano (skeleton autorizado).
+Fase macro ativa: T1 — Constituição do agente e contrato cognitivo canônico.
 
 Gate anterior: G0 — APROVADO em 2026-04-23 via PR-T0.R.
 
-Gate aberto: G1 — Motor cognitivo LLM-first operacional.
+Gate aberto: G1 — contrato cognitivo aprovado.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (skeleton — aguardando PR-T1.0).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (aberto formalmente — PR-T1.1 desbloqueada).
 
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T0.R` — readiness e closeout do gate G0: smoke documental de 6 inventarios (PR-T0.1 a PR-T0.6),
-todos encerrados com Bloco E; 6/6 criterios de aceite T0 cumpridos; 7 bloqueantes G0 analisados
-(2 satisfeitos, 5 declarados com escopo T1+); G0 APROVADO; contrato T0 encerrado; T1 autorizada.
+`PR-T1.0` — abertura formal do contrato T1: corpo preenchido conforme CONTRACT_SCHEMA.md; objetivo,
+escopo, critérios de aceite, quebra de PRs (T1.1–T1.R) e gate G1 definidos; PR-T1.1 desbloqueada.
 
 ## O que esta PR fechou
+
+- Preencheu corpo formal de `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`:
+  - objetivo, escopo, fora de escopo, dependências, entradas, saídas;
+  - critérios de aceite (sistema LLM-first, bateria adversarial, soberania de fala);
+  - provas obrigatórias;
+  - bloqueios;
+  - quebra de PRs T1.0–T1.R com artefatos definidos;
+  - gate G1 com condições de aprovação e regra de rollback;
+  - legados aplicáveis (L03/L19 obrigatórios; L04–L18 complementares);
+  - referências obrigatórias (20 documentos);
+  - ordem mínima de leitura: L19 → L03.
+- Atualizou `schema/contracts/_INDEX.md`: contrato T1 aberto formalmente; PR-T1.1 desbloqueada.
+
+## O que a PR-T0.R fechou (historico)
 
 - Criou `schema/implantation/READINESS_G0.md` com:
   - smoke documental de PR-T0.1 a PR-T0.6: todos encerrados com Bloco E;
@@ -49,30 +62,28 @@ todos encerrados com Bloco E; 6/6 criterios de aceite T0 cumpridos; 7 bloqueante
 - Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
   - PR-T0.6 marcada como concluida; PR-T0.R desbloqueada.
 
-## O que a PR-T0.R nao fechou
+## O que a PR-T1.0 nao fechou
 
-- Nao abriu T1 com corpo (skeleton apenas).
-- Nao implementou nenhum item de desligamento real.
+- Nao escreveu prompt, taxonomia, comportamentos ou politicas (T1.1+).
+- Nao implementou LLM real.
 - Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
 
 ## Proximo passo autorizado
 
-PR-T1.0 — Abertura formal da fase T1 (preenchimento do corpo do contrato T1).
+PR-T1.1 — Separação canônica: tom × regra × veto × sugestão × repertório.
 
-Leituras obrigatorias para PR-T1.0:
-1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T1.0)
+Leituras obrigatorias para PR-T1.1:
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L19 + L03)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T1.1)
 3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
-4. `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`
-5. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-6. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/INVENTARIO_REGRAS_T0.md`
 7. `schema/implantation/READINESS_G0.md`
-8. `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md`
-9. `schema/implantation/MATRIZ_RISCO_T0.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-13. `schema/CODEX_WORKFLOW.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+11. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
@@ -86,6 +97,23 @@ Nenhuma adicional.
 
 - T1 skeleton aberto. Execucao de T1 bloqueada ate PR-T1.0 preencher o corpo do contrato.
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
+
+## Atualizacao 2026-04-23 — Abertura formal do contrato T1 (PR-T1.0)
+
+Ultima tarefa relevante:
+- `PR-T1.0` — contrato T1 preenchido conforme CONTRACT_SCHEMA.md; PR-T1.1 desbloqueada.
+
+O que esta PR fechou:
+- Preencheu corpo de `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`.
+- Atualizou `schema/contracts/_INDEX.md`: contrato T1 aberto.
+
+O que esta PR nao fechou:
+- Nenhum entregavel tecnico de T1 (T1.1+). Nao alterou runtime.
+
+Proximo passo autorizado (atualizado):
+- PR-T1.1 — Separação canônica tom × regra × veto × sugestão × repertório.
+
+---
 
 ## Atualizacao 2026-04-23 — Encerramento de PR-T0.R (readiness e closeout do gate G0)
 
