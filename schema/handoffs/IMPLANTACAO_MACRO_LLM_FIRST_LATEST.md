@@ -543,3 +543,64 @@ e status (ativa/condicional/morta) por regra.
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 10. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.3 (inventario de parsers, heuristicas e branches de stage)
+
+### Objetivo executado
+
+`PR-T0.3` — inventariar parsers, regex, fallbacks, heuristicas e branches de stage do legado ENOVA 1
+com bloco legado de origem, fonte auditavel, regra associada (PR-T0.2), status e risco estrutural.
+
+### O que foi feito
+
+- Criado `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md` com:
+  - 27 pontos de decisao mecanica catalogados (17 ativos, 5 condicionais, 3 residuais, 2 mortos);
+  - 5 tipos cobertos: parser (2), regex (2), fallback (7), heuristica (7), stage (9);
+  - bloco legado de origem (L03-L19) por item;
+  - fonte LEGADO_MESTRE soberano (linha ou secao) por item;
+  - regra associada (PR-T0.2 ID) por item;
+  - 8 categorias de inconclusivos declaradas (L-blocks nao transcritos — nao bloqueiam PR-T0.3).
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
+  - PR-T0.3 concluida; PR-T0.4 desbloqueada.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que nao foi feito
+
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- G0 nao aprovado (requer PR-T0.R apos PR-T0.3 a PR-T0.6).
+- T1 nao aberta.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Estado atual pos-encerramento
+
+- `PR-T0.1` encerrada.
+- `PR-T0.2` encerrada.
+- `PR-T0.3` **encerrada**.
+- G0 aberto.
+- `PR-T0.4` desbloqueada.
+
+### Proximo passo autorizado
+
+- **`PR-T0.4`** — Inventario de canais, superficies e telemetria.
+
+### Leituras obrigatorias para PR-T0.4
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.4)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+8. `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+12. `schema/CODEX_WORKFLOW.md`
