@@ -46,7 +46,8 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 30. `schema/handoffs/PR_HANDOFF_TEMPLATE.md` — **template canônico obrigatório de fechamento/handoff de PR**
 31. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo. Regra-mãe canônica: IA soberana na fala, mecânico jamais com prioridade de fala.**
 32. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque contrato cognitivo, policy engine, orquestrador, migração de funil, multimodal/áudio, ou qualquer trecho que possa ser lido como "mecânico manda na fala". Adendo canônico A00-ADENDO-02: identidade da Enova 2 como atendente especialista MCMV + guia de leitura das fases T1/T3/T4/T5/T6 com travas contra má interpretação.**
-  
+33. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` — **LEITURA OBRIGATÓRIA em toda tarefa/PR que tente fechar etapa, gate, contrato ou avançar próxima PR autorizada. Adendo canônico A00-ADENDO-03: "Evidência manda no estado." Prova parcial/inconclusiva/lacunosa bloqueia fechamento. Inclui Bloco E obrigatório.**
+
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
@@ -54,17 +55,21 @@ Nenhuma tarefa começa sem confirmar esta leitura.
 
 > **ATENÇÃO — ADENDO CANÔNICO ATIVO (A00-ADENDO-02):** `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` é leitura obrigatória antes de qualquer tarefa que toque T1 (contrato cognitivo), T3 (policy engine), T4 (orquestrador), T5 (migração do funil) ou T6 (multimodal/áudio). Proibido executar essas fases sem confirmar leitura deste adendo. Guia de leitura com travas explícitas por fase.
 
+> **ATENÇÃO — ADENDO CANÔNICO ATIVO (A00-ADENDO-03):** `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` é leitura obrigatória antes de qualquer PR que tente encerrar etapa, fechar gate, encerrar contrato ou avançar próxima PR autorizada. Regra central: **"Evidência manda no estado."** Prova parcial, inconclusiva ou com lacuna remanescente bloqueia o fechamento — independentemente de intenção ou pressão. Inclui Bloco E obrigatório em todo fechamento.
+
 ---
 
 ## 2. Precedência documental oficial
 
-**`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) > A00-ADENDO-02 (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
+**`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) > A00-ADENDO-02 (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) > A00-ADENDO-03 (`schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`) > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
 
 Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas regras de negócio; o pacote canônico manda na arquitetura, na ordem executiva e na forma de implantação.
 
 > **Adendo canônico ativo (A00-ADENDO-01):** `schema/ADENDO_CANONICO_SOBERANIA_IA.md` fixa como regra permanente que a IA é soberana em raciocínio e fala, e que é proibido dar qualquer prioridade de fala ao mecânico. Este adendo é transversal a todas as frentes e vigora imediatamente. Nenhum contrato de frente pode ser aberto ou executado de forma que contradiga este adendo.
 
 > **Adendo canônico ativo (A00-ADENDO-02):** `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` fixa a identidade da Enova 2 como atendente especialista MCMV (não bot de regras), o papel correto do conhecimento normativo/memória/telemetria como suporte ao LLM (nunca como casca dominante), e inclui guia de leitura com travas explícitas para T1 (contrato cognitivo), T3 (policy engine), T4 (orquestrador), T5 (migração do funil) e T6 (multimodal/áudio). Leitura obrigatória em qualquer PR dessas fases. Nenhum contrato pode ser aberto ou executado contradizendo este adendo.
+
+> **Adendo canônico ativo (A00-ADENDO-03):** `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` institui a regra canônica de que a evidência-base prevalece sobre qualquer intenção de fechamento. Presença de lacuna remanescente, item parcial, inconclusivo ou prova insuficiente no documento-base bloqueia: declaração de PR encerrada, avanço de próxima PR autorizada, fechamento de gate, e atualização de contrato/status/handoff como se a etapa estivesse concluída. Obrigatório em toda PR que tente fechar etapa ou avançar estado.
 
 ---
 
@@ -367,6 +372,25 @@ Antes de encerrar a PR, o executor deve verificar se a "Próxima PR autorizada" 
 3. Handoff vivo
 
 Se não bater, parar e corrigir os arquivos vivos antes de encerrar a PR.
+
+### 8.8 Checagem final obrigatória de evidência — Bloco E (A00-ADENDO-03)
+
+Antes de declarar qualquer PR encerrada, fechar gate, encerrar contrato ou avançar próxima PR autorizada, o executor deve verificar:
+
+1. O documento-base da evidência está identificado e apontado explicitamente.
+2. O estado da evidência é `completa` — não `parcial`, `incompleta` ou `ausente`.
+3. Não há lacuna remanescente, item parcial, inconclusivo ou prova insuficiente no documento-base.
+4. O Bloco E (`--- BLOCO E — FECHAMENTO POR PROVA ---`) está preenchido no ESTADO ENTREGUE e no body da PR.
+5. Todos os arquivos vivos (status, handoff, contrato) refletem o mesmo estado do Bloco E.
+
+**Se qualquer item acima não for verdadeiro:**
+- `Fechamento permitido nesta PR?: NÃO`
+- PR permanece em execução.
+- Gate permanece aberto.
+- Próxima PR = continuidade da mesma etapa.
+- Arquivos vivos não podem indicar encerramento.
+
+Ver `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03) para o protocolo completo e o Bloco E.
 
 ---
 
@@ -756,4 +780,58 @@ Gate aprovado              → body sincronizado com os vivos
 ```
 
 **Regra de parada:** se o auto-fix não conseguir extrair valor determinístico dos arquivos vivos (arquivos inexistentes, formato não reconhecido), o gate falha e exige intervenção manual. Isso indica que os arquivos vivos não estão atualizados — a causa deve ser resolvida nos vivos, não no body.
+
+---
+
+## 21. Regra canônica de fechamento por prova (A00-ADENDO-03)
+
+> **Esta seção é a transcrição operacional do adendo `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03) no CODEX_WORKFLOW.**
+> Nenhuma PR pode encerrar etapa, fechar gate, encerrar contrato ou avançar próxima PR autorizada sem cumprir esta regra.
+
+### 21.1 Regra central
+
+**"Evidência manda no estado."**
+
+A evidência-base de uma entrega prevalece sobre qualquer intenção, declaração ou pressão de fechamento.
+
+Se o documento-base da evidência ainda contiver qualquer marcador de insuficiência de prova (parcial, inconclusivo, lacuna remanescente, pendente de prova, não fechado, smoke não executado, etc.), então é **proibido**:
+
+- Declarar PR/etapa encerrada.
+- Avançar próxima PR autorizada.
+- Fechar gate.
+- Atualizar contrato/status/handoff como se a etapa estivesse concluída.
+
+### 21.2 Bloco E obrigatório
+
+Toda PR que tente fechar etapa, gate, contrato ou avançar próxima PR deve incluir no ESTADO ENTREGUE:
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           <caminho do arquivo com a prova>
+Estado da evidência:                   completa | parcial | incompleta | ausente
+Há lacuna remanescente?:               não | sim — <descrição>
+Há item parcial/inconclusivo bloqueante?: não | sim — <descrição>
+Fechamento permitido nesta PR?:        sim | NÃO — BLOQUEADO por insuficiência de evidência
+Estado permitido após esta PR:         encerrada | em execução (continua aberta)
+Próxima PR autorizada:                 <ID lógico> | continuação desta etapa
+```
+
+**Se `Estado da evidência` for `parcial`, `incompleta` ou `ausente` → `Fechamento permitido nesta PR?: NÃO`**
+**Se `Há lacuna remanescente?` for `sim` → `Fechamento permitido nesta PR?: NÃO`**
+**Se `Fechamento permitido nesta PR?: NÃO` → PR permanece aberta, gate permanece aberto, próxima PR = continuidade.**
+
+**PR que tenta fechar etapa sem o Bloco E preenchido = PR não conforme.**
+
+### 21.3 Melhora parcial não autoriza fechamento
+
+Melhora incremental ou parcial de evidência **não** autoriza avanço de estado. Apenas evidência completa, sem lacuna remanescente, autoriza fechamento.
+
+### 21.4 Integração com os protocolos existentes
+
+- `CONTRACT_CLOSEOUT_PROTOCOL.md` — checklist de encerramento deve incluir o Bloco E.
+- `CONTRACT_EXECUTION_PROTOCOL.md` — todo claim de fechamento deve citar documento-base e estado da evidência.
+- `PR_EXECUTION_TEMPLATE.md` — Bloco E obrigatório em toda PR que tente fechar etapa.
+- `PR_HANDOFF_TEMPLATE.md` — handoff deve declarar: continuidade de etapa | fechamento válido | bloqueado por prova insuficiente.
+
+Ver `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` para o protocolo completo.
 

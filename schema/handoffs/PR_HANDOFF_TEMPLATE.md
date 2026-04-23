@@ -116,8 +116,9 @@
   2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` — seção da PR
   3. `schema/handoffs/<FASE>_LATEST.md` (este handoff)
   4. Contrato ativo da fase em `schema/contracts/active/`
-  5. `schema/CODEX_WORKFLOW.md` (16 etapas)
-  6. (Outras leituras específicas)
+  5. `schema/CODEX_WORKFLOW.md` (16 etapas + §21)
+  6. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03) — obrigatório se a próxima PR tentar fechar etapa, gate ou contrato
+  7. (Outras leituras específicas)
 
 * **Arquivos que a próxima PR deve TOCAR:**
   - ...
@@ -129,6 +130,32 @@
 
 * **Bloqueios formais para a próxima PR:**
   (Ex.: "Não pode abrir antes de PR-Tx.R ser merged"; "Bloqueada até G_n aprovado".)
+
+---
+
+## Estado de evidência desta PR (Bloco E — obrigatório se esta PR tentou fechar etapa, gate ou contrato)
+
+> **Este bloco é obrigatório** se esta PR tentou fechar etapa, gate, contrato ou avançar a
+> "Próxima PR autorizada" para uma fase diferente.
+> Ver `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03) e
+> `schema/CODEX_WORKFLOW.md` §21.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           <caminho do arquivo que contém a prova da entrega>
+Estado da evidência:                   completa | parcial | incompleta | ausente
+Há lacuna remanescente?:               não | sim — <descrição da lacuna>
+Há item parcial/inconclusivo bloqueante?: não | sim — <descrição do item>
+Fechamento permitido nesta PR?:        sim | NÃO — BLOQUEADO por insuficiência de evidência
+Estado permitido após esta PR:         encerrada | em execução (continua aberta)
+Próxima PR autorizada:                 <ID lógico da próxima PR> | continuação desta etapa
+```
+
+**Estado do handoff:**
+continuidade de etapa | fechamento válido | bloqueado por prova insuficiente
+
+> Se `fechamento válido`: a Próxima PR autorizada pode avançar para a fase seguinte.
+> Se `continuidade de etapa` ou `bloqueado por prova insuficiente`: a Próxima PR = continuidade desta etapa; os arquivos vivos **não** podem indicar encerramento.
 
 ---
 
