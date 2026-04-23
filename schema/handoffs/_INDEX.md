@@ -12,7 +12,7 @@ O tronco macro soberano e:
 
 | Escopo | Ultimo handoff | Data | Proximo passo autorizado |
 |--------|----------------|------|--------------------------|
-| Implantacao macro LLM-first | `IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` | 2026-04-22 | T0-PR2 — inventario legado vivo |
+| Implantacao macro LLM-first | `IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` | 2026-04-23 | T0-PR2 — inventario legado vivo |
 
 ## Handoffs historicos por frente
 
@@ -47,3 +47,4 @@ Os handoffs abaixo preservam continuidade tecnica, mas nao equivalem a implantac
 ## Ultima sincronizacao
 
 - 2026-04-22 — Rebase canonico aplicado. Criado handoff macro em `IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`.
+- 2026-04-23 — Handoff macro atualizado com continuidade documental de `PR-T0.1` e internalizacao canonica da classificacao ENOVA 1.

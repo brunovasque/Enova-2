@@ -190,3 +190,58 @@ macro soberano, Biblia de PRs, templates canônicos, gates T0-T7/G0-G7 e excecao
 5. `schema/execution/PR_EXECUTION_TEMPLATE.md`
 6. `schema/handoffs/PR_HANDOFF_TEMPLATE.md`
 7. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — Internalizacao canonica da classificacao ENOVA 1 (continuidade documental de PR-T0.1)
+
+### Objetivo executado
+
+Internalizar no repositorio ENOVA 2, de forma canônica e sem dependencia externa, a classificacao executiva da base ENOVA 1 para orientar reaproveitamento em T0 e fases seguintes.
+
+### O que foi feito
+
+- Criado `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md` com consolidacao interna de:
+  - cognitivo util reaproveitavel;
+  - mecanico estrutural util reaproveitavel;
+  - mecanico de fala proibido;
+  - telemetria/CRM/painel/docs/reset/correspondente: o que aproveitar, redesenhar e nao levar;
+  - riscos de copiar a ENOVA 1 sem filtro;
+  - blocos prioritarios da ENOVA 1 para absorcao inicial.
+- Atualizado `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md` para registrar a evidencia documental adicionada nesta continuidade de T0.
+- Atualizado `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` em `PR-T0.1` para explicitar a internalizacao canônica como entregavel do inventario.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` com o estado desta PR.
+
+### O que nao foi feito
+
+- Nenhuma implementacao funcional.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- Nenhuma refatoracao funcional da E1.
+- Nenhum fechamento de gate G0 nesta PR.
+
+### Regra de reaproveitamento consolidada
+
+- Permitido: conhecimento cognitivo util + mecanico estrutural util.
+- Proibido: casca mecanica de fala, fallback dominante e scripts roteirizados de superficie.
+- E1 permanece como materia-prima futura de memoria/conhecimento; nao entra em refatoracao funcional agora.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Proximo passo autorizado (mantido em T0)
+
+- Continuidade de `PR-T0.1` / `T0-PR2` — inventario legado vivo e mapa de aproveitamento contra o mestre.
+
+### Leituras obrigatorias da proxima PR (reafirmadas)
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+5. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+6. `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/CODEX_WORKFLOW.md`
