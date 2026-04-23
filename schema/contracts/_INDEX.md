@@ -12,7 +12,13 @@ Em conflito de macro, ordem ou gate, o mestre em `schema/source/` prevalece.
 
 ## Precedencia
 
-`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicaveis
+`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 > A00-ADENDO-02 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicaveis
+
+Adendos canônicos ativos:
+- `schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01) — IA soberana na fala, mecânico jamais com prioridade de fala.
+- `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02) — identidade da Enova 2 como atendente especialista MCMV; guia de leitura das fases T1/T3/T4/T5/T6 com travas contra má interpretação.
+
+Toda abertura de contrato de frente deve declarar conformidade com ambos os adendos.
 
 ---
 
@@ -34,6 +40,8 @@ Toda tarefa futura deve ler:
 4. O contrato/fase/PR ativa do recorte atual
 5. Status e handoff vivos do recorte atual (handoffs no formato `schema/handoffs/PR_HANDOFF_TEMPLATE.md`)
 6. Abrir a PR conforme `schema/execution/PR_EXECUTION_TEMPLATE.md`
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01) — em toda PR que toque conversa, LLM, speech ou fluxo cognitivo
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02) — obrigatório em toda PR de T1, T3, T4, T5 ou T6
 
 ---
 
@@ -116,3 +124,4 @@ schema/contracts/
 - 2026-04-22 — Rebase canonico aplicado. O macro soberano passa a ser `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 - 2026-04-22 — Repo reposicionado em T0/G0. Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`.
 - 2026-04-22 — Proximo passo autorizado: T0-PR2 — inventario legado vivo.
+- 2026-04-23 — Adicionado A00-ADENDO-02 (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) na cadeia de precedência. Toda abertura de contrato de frente deve declarar conformidade com A00-ADENDO-01 e A00-ADENDO-02.

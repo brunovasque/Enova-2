@@ -29,10 +29,11 @@ schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md
   > A00 (schema/A00_PLANO_CANONICO_MACRO.md)
     > A01 (schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md)
       > A00-ADENDO-01 (schema/ADENDO_CANONICO_SOBERANIA_IA.md)
-        > A02 (schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md)
-          > schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md
-            > Contrato/fase ativa em schema/contracts/active/
-              > Documentos legados aplicáveis (schema/legacy/, schema/source/.pdf)
+        > A00-ADENDO-02 (schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md)
+          > A02 (schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md)
+            > schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md
+              > Contrato/fase ativa em schema/contracts/active/
+                > Documentos legados aplicáveis (schema/legacy/, schema/source/.pdf)
 ```
 
 **Regras duras de precedência:**
@@ -40,9 +41,11 @@ schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md
 1. O mestre manda nas fases macro, gates, microetapas, critérios de pronto e rollback.
 2. O A00 manda na arquitetura macro, na precedência documental e nas frentes oficiais.
 3. O A01 manda na ordem operacional (T0-T7) e nos gates de bloqueio.
-4. O A02 manda no pacote mínimo de documentos por aba.
-5. O contrato ativo manda no escopo executável da PR atual.
-6. O legado manda nas regras de negócio.
+4. O A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) manda na soberania da IA na fala: IA soberana, mecânico jamais com prioridade de fala.
+5. O A00-ADENDO-02 (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) manda na identidade de produto (atendente especialista MCMV) e no guia de leitura correto das fases T1/T3/T4/T5/T6.
+6. O A02 manda no pacote mínimo de documentos por aba.
+7. O contrato ativo manda no escopo executável da PR atual.
+8. O legado manda nas regras de negócio.
 
 ---
 
@@ -124,6 +127,8 @@ em paralelo sem necessidade comprovada":
 8. **Esta Bíblia (`schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`).**
 9. **O último handoff de PR (`schema/handoffs/<FASE>_LATEST.md`)** preenchido conforme
    `schema/handoffs/PR_HANDOFF_TEMPLATE.md`.
+10. **`schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01)** — obrigatório em toda PR que toque conversa, LLM, speech, surface ou fluxo cognitivo.
+11. **`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02)** — obrigatório em toda PR de T1, T3, T4, T5 ou T6, ou em qualquer PR que possa ser lida como "mecânico manda na fala".
 
 Cada PR específica adiciona suas leituras (campo "arquivos/documentos a ler" do bloco
 abaixo).
@@ -1080,6 +1085,72 @@ PR aberta sem essa declaração é não conforme e o PR Governance Gate deve bar
 * Nenhuma PR de T6 pode abrir antes de G5 fechado.
 * Nenhuma PR de T7 pode abrir antes de G6 fechado.
 * Nenhuma PR pós-go-live (PR-PG.*) pode abrir antes de G7 aprovado.
+
+---
+
+## S0. Trava LLM-first: fases com risco de má interpretação (leitura obrigatória antes de T1/T3/T4/T5/T6)
+
+> **Esta seção é um reforço canônico derivado do A00-ADENDO-02
+> (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`).
+> Leitura obrigatória antes de qualquer PR de T1, T3, T4, T5 ou T6.**
+>
+> Objetivo: impedir que nomenclaturas técnicas corretas sejam mal interpretadas como
+> autorização para o mecânico dominar a fala ou para recriar o padrão conversacional da Enova 1.
+
+### S0.1 Princípio de soberania em todas as fases
+
+**Estrutura governa consistência. IA governa fala e raciocínio. Em qualquer fase. Em qualquer canal.**
+
+Essa divisão não muda em T1, não muda em T3, não muda em T4, não muda em T5, não muda em T6. Ela é permanente e transversal.
+
+### S0.2 Travas por fase
+
+#### T1 — Contrato cognitivo / system prompt / taxonomia / comportamentos
+
+> **Trava:** "Contrato cognitivo" define o que o LLM é e o que não pode fazer — nunca o que ele diz.
+> Políticas proibitivas = limites de comportamento. Comportamentos canônicos = como o LLM raciocina, nunca scripts.
+> `reply_text` é sempre redigido pelo LLM com naturalidade — o contrato não pré-monta texto.
+> **Qualquer entregável de T1 que produza texto pré-montado de resposta ao cliente é não conforme.**
+
+#### T3 — Policy engine / guardrails declarativos
+
+> **Trava:** O policy engine avalia regras e decide o que é permitido — nunca redige resposta ao cliente.
+> "Classes de política" = tipos de restrição operacional (flags, bloqueios, sugestões ao LLM) — não templates de fala.
+> "Veto suave" = flag ao LLM para que ele comunique com naturalidade — nunca texto pré-montado.
+> "Validador pós-resposta/pré-persistência" = valida saída do LLM, nunca a reescreve.
+> **Qualquer entregável de T3 que produza texto ao cliente é não conforme.**
+
+#### T4 — Orquestrador de turno
+
+> **Trava:** O orquestrador é o pipeline, não o autor da surface. Quem escreve a resposta ao cliente é o LLM.
+> O orquestrador garante que o LLM seja chamado, que a saída seja válida e que o estado seja persistido.
+> "Fallbacks" são contingências mínimas e declaradas — o LLM conduz quando possível; fallback puro só em falha técnica.
+> **Qualquer entregável de T4 que faça o orquestrador redigir a response ao cliente é não conforme.**
+
+#### T5 — Migração do funil
+
+> **Trava:** "Paridade funcional" = cobrir os mesmos cenários de negócio com resultado correto — não reproduzir a fala da Enova 1.
+> "Shadow mode" compara resultados de negócio (elegibilidade, completude) — não compara texto de resposta.
+> A Enova 2 pode e deve responder de forma diferente da Enova 1 — mais natural, mais inteligente.
+> **Recriar o padrão conversacional da Enova 1 em T5 em nome de "paridade" é explicitamente não conforme.**
+
+#### T6 — Docs, multimodal, áudio
+
+> **Trava:** "Áudio" = canal de entrada. O LLM processa transcrição e responde com naturalidade ao canal.
+> "Representação unificada" = padroniza como a entrada multimodal chega ao LLM — não como a saída é montada.
+> "Política de confirmação por canal" = quando e como o LLM deve confirmar — não o texto que ele usa.
+> Multimodalidade expande o alcance da atendente, não engessa em scripts por canal.
+> **Em áudio, texto ou imagem: o LLM é soberano na fala. O mecânico é soberano na política. Isso não muda com o canal.**
+
+### S0.3 Regra-síntese
+
+```
+Estrutura governa CONSISTÊNCIA.
+IA governa FALA e RACIOCÍNIO.
+Política NÃO vira engessamento robótico da conversa.
+```
+
+Esta regra é idêntica em T1, T3, T4, T5 e T6. Nenhuma fase a relativiza.
 
 ---
 

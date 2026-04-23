@@ -45,21 +45,26 @@ Toda execução começa com leitura nesta sequência — **obrigatória, sem exc
 29. `schema/execution/PR_EXECUTION_TEMPLATE.md` — **template canônico obrigatório de abertura de PR**
 30. `schema/handoffs/PR_HANDOFF_TEMPLATE.md` — **template canônico obrigatório de fechamento/handoff de PR**
 31. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo. Regra-mãe canônica: IA soberana na fala, mecânico jamais com prioridade de fala.**
+32. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque contrato cognitivo, policy engine, orquestrador, migração de funil, multimodal/áudio, ou qualquer trecho que possa ser lido como "mecânico manda na fala". Adendo canônico A00-ADENDO-02: identidade da Enova 2 como atendente especialista MCMV + guia de leitura das fases T1/T3/T4/T5/T6 com travas contra má interpretação.**
   
 
 Nenhuma tarefa começa sem confirmar esta leitura.
 
 > **ATENÇÃO — ADENDO CANÔNICO ATIVO (A00-ADENDO-01):** `schema/ADENDO_CANONICO_SOBERANIA_IA.md` é leitura obrigatória antes de qualquer tarefa que toque conversa, LLM, speech, surface, fallback ou fluxo cognitivo. Nenhuma tarefa nessas áreas pode ser iniciada sem confirmar a leitura deste adendo. Ver seção 2 abaixo para posição na cadeia de precedência.
 
+> **ATENÇÃO — ADENDO CANÔNICO ATIVO (A00-ADENDO-02):** `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` é leitura obrigatória antes de qualquer tarefa que toque T1 (contrato cognitivo), T3 (policy engine), T4 (orquestrador), T5 (migração do funil) ou T6 (multimodal/áudio). Proibido executar essas fases sem confirmar leitura deste adendo. Guia de leitura com travas explícitas por fase.
+
 ---
 
 ## 2. Precedência documental oficial
 
-**`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
+**`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) > A00-ADENDO-02 (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
 
 Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas regras de negócio; o pacote canônico manda na arquitetura, na ordem executiva e na forma de implantação.
 
 > **Adendo canônico ativo (A00-ADENDO-01):** `schema/ADENDO_CANONICO_SOBERANIA_IA.md` fixa como regra permanente que a IA é soberana em raciocínio e fala, e que é proibido dar qualquer prioridade de fala ao mecânico. Este adendo é transversal a todas as frentes e vigora imediatamente. Nenhum contrato de frente pode ser aberto ou executado de forma que contradiga este adendo.
+
+> **Adendo canônico ativo (A00-ADENDO-02):** `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` fixa a identidade da Enova 2 como atendente especialista MCMV (não bot de regras), o papel correto do conhecimento normativo/memória/telemetria como suporte ao LLM (nunca como casca dominante), e inclui guia de leitura com travas explícitas para T1 (contrato cognitivo), T3 (policy engine), T4 (orquestrador), T5 (migração do funil) e T6 (multimodal/áudio). Leitura obrigatória em qualquer PR dessas fases. Nenhum contrato pode ser aberto ou executado contradizendo este adendo.
 
 ---
 

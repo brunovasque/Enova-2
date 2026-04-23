@@ -47,7 +47,26 @@ Nenhuma adicional.
 - T1 permanece bloqueada ate G0 aprovado.
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
 
-## Atualizacao 2026-04-23 — Workflow macro amarrado operacionalmente
+## Atualizacao 2026-04-23 — Adendo canônico A00-ADENDO-02 publicado
+
+Ultima tarefa relevante:
+- Governança macro — criar adendo canônico forte de soberania LLM-MCMV, amarrar à Bíblia, ao workflow e aos documentos vivos.
+
+O que esta PR fechou:
+- Criou `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02): identidade da Enova 2 como atendente especialista MCMV, visão LLM-first, divisão canônica LLM × mecânico, guia de leitura T1/T3/T4/T5/T6, proibições formais, reaproveitamento correto da E1.
+- Inseriu o A00-ADENDO-02 na cadeia de precedência documental do `schema/CODEX_WORKFLOW.md`.
+- Inseriu leituras obrigatórias A00-ADENDO-01 e A00-ADENDO-02 no `schema/CODEX_WORKFLOW.md` e na Bíblia.
+- Criou seção S0 na Bíblia com travas LLM-first explícitas para T1, T3, T4, T5 e T6.
+- Atualizou `schema/contracts/_INDEX.md`, `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` e `README.md`.
+
+O que esta PR nao fechou:
+- Nao executou o inventario legado vivo (T0-PR2 / PR-T0.1).
+- Nao aprovou G0.
+- Nao abriu T1.
+
+Proximo passo autorizado (inalterado):
+- `PR-T0.1` — inventario legado vivo e mapa de aproveitamento do repo contra o mestre.
+- **A PR-T0.1 deve ler obrigatoriamente o A00-ADENDO-02 antes de executar.**
 
 Ultima tarefa relevante:
 - Governanca macro — amarrar operacionalmente no `schema/CODEX_WORKFLOW.md` a Biblia de PRs, templates obrigatorios, gates T0-T7/G0-G7 e regra de excecao contratual.
