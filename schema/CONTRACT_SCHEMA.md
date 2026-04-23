@@ -10,7 +10,7 @@ O schema existe para garantir rastreabilidade, completude e coerência com a gov
 
 Este schema está subordinado ao A00, A01 e A02.
 Nenhum contrato pode contradizer a precedência documental oficial:
-**A00 > A01 > A02 > contrato específico da frente ativa > documentos legados aplicáveis**
+**schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A02 > contrato/fase ativa > documentos legados aplicáveis**
 
 ---
 
@@ -127,7 +127,7 @@ Exemplo para Core Mecânico 2: L03 → L04→L06 (topo) → L07→L10 (Meio A) �
 | Prioridade do A01                 | <prioridade>                                 |
 | Dependências                      | <lista>                                      |
 | Legados aplicáveis                | <L0x, L0y, ...>                              |
-| Referências obrigatórias          | <A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md, schema/legacy/INDEX_LEGADO_MESTRE.md, ...> |
+| Referências obrigatórias          | <schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md, A00, A01, A02, CONTRACT_EXECUTION_PROTOCOL, contrato/fase ativa, schema/legacy/INDEX_LEGADO_MESTRE.md, ...> |
 | Blocos legados obrigatórios       | <L0x, L0y, ...>                              |
 | Blocos legados complementares     | <L0x, L0y, C*, ...>                          |
 | Ordem mínima de leitura da frente | <L0x → L0y → L0z, ...>                       |

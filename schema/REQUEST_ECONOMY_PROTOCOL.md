@@ -142,7 +142,7 @@ O gate não usa modelo. Ele usa regex e checagem de presença de campo. Custo: p
 
 ## 8. Precedência
 
-Este documento é subordinado a: **A00 > A01 > A02 > CODEX_WORKFLOW > contratos ativos**.
+Este documento é subordinado a: **schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A02 > CODEX_WORKFLOW > contratos ativos**.
 
 Em caso de conflito com este documento, prevalece a cadeia de precedência acima.
 

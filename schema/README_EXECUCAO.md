@@ -8,25 +8,30 @@ O `CODEX_WORKFLOW.md` define o fluxo obrigatório de 16 etapas: leitura canônic
 
 ## Estado operacional do repositório (referência rápida)
 
-- A ENOVA 2 já possui código técnico executável no repositório (`src/`), incluindo Worker técnico e pipeline de deploy Cloudflare.
+- O tronco macro soberano e `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+- A ENOVA 2 já possui código técnico executável local no repositório (`src/`), incluindo Worker técnico e pipeline de deploy Cloudflare.
+- Isso nao equivale a implantacao macro concluida: a fase real atual e T0/G0.
 - Governança/documentação em `schema/` continua fonte de verdade de execução, mas **não** implica publicação automática no Worker.
 - Para auditoria de limite entre documentação, código versionado e publicação Cloudflare, consultar `schema/CLOUDFLARE_RUNTIME_AUDIT_2026-04-22.md`.
 
 ## Ordem de leitura obrigatória
-1. `A00_PLANO_CANONICO_MACRO.md`
-2. `A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
-3. `A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
-4. `CODEX_WORKFLOW.md` — protocolo de execução (16 etapas)
-5. `contracts/_INDEX.md` — **índice canônico de contratos ativos por frente**
-6. Contrato ativo da frente (em `contracts/active/`, formato em `CONTRACT_SCHEMA.md`)
-7. `contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo de execução contratual**
-8. `contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo de encerramento de contrato**
-9. Status vivo da frente ativa (`status/<FRENTE>_STATUS.md`)
-10. Último handoff da frente ativa (`handoffs/<FRENTE>_LATEST.md`)
-11. `legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
-12. `legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa
+1. `source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — tronco macro soberano
+2. `A00_PLANO_CANONICO_MACRO.md`
+3. `A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
+4. `A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
+5. `CODEX_WORKFLOW.md` — protocolo de execução (16 etapas)
+6. `contracts/_INDEX.md` — **índice canônico de contratos ativos**
+7. Contrato ativo da frente/fase (em `contracts/active/`, formato em `CONTRACT_SCHEMA.md`)
+8. `contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo de execução contratual**
+9. `contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo de encerramento de contrato**
+10. Status vivo da frente/fase ativa (`status/<FRENTE_OU_FASE>_STATUS.md`)
+11. Último handoff da frente/fase ativa (`handoffs/<FRENTE_OU_FASE>_LATEST.md`)
+12. `implantation/REBASE_CANONICO_IMPLANTACAO_2026-04-22.md`
+13. `implantation/PLANO_EXECUTIVO_T0_T7.md`
+14. `legacy/INDEX_LEGADO_MESTRE.md` — índice operacional auxiliar do legado mestre unificado
+15. `legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — derivação auxiliar por blocos, quando aplicável
 ## Precedência documental
-**A00 > A01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
+**source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
 
 Em caso de conflito, prevalece o nível mais alto da cadeia acima.
 
@@ -79,8 +84,9 @@ O repo mantém memória operacional persistida em:
 - `schema/status/` — status vivo por frente (formato em `STATUS_SCHEMA.md`)
 - `schema/handoffs/` — handoff persistido por frente (formato em `HANDOFF_SCHEMA.md`)
 - `schema/contracts/` — contratos ativos e arquivados (índice em `contracts/_INDEX.md`, protocolos em `contracts/CONTRACT_EXECUTION_PROTOCOL.md` e `contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`)
-- `schema/legacy/` — legado mestre unificado (índice em `legacy/INDEX_LEGADO_MESTRE.md`, conteúdo em `legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
-- `schema/source/` — PDF mestre original (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`)
+- `schema/implantation/` — rebase canonico e plano executivo T0-T7
+- `schema/source/` — tronco markdown soberano e PDF mestre original
+- `schema/legacy/` — índice e copia/derivação auxiliar por blocos
 
 Para saber o estado de qualquer frente: consultar `schema/status/_INDEX.md`.
 Para retomar qualquer frente: consultar `schema/handoffs/_INDEX.md`.

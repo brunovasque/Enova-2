@@ -10,37 +10,38 @@
 
 > **Esta seção define os documentos a ler — não as etapas de execução.**
 > A lista de leitura (abaixo) e o fluxo de execução (seção 3 — 16 etapas) são duas coisas distintas.
-> `16 etapas` ≠ `26 documentos de leitura`. Não confundir.
+> `16 etapas` ≠ `28 documentos de leitura`. Não confundir.
 
 Toda execução começa com leitura nesta sequência — **obrigatória, sem exceção**:
 
-1. `schema/A00_PLANO_CANONICO_MACRO.md`
-2. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
-3. `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
-4. `schema/contracts/_INDEX.md` — **índice canônico de contratos ativos por frente**
-5. Contrato ativo da frente (em `schema/contracts/active/`) — seguindo formato de `schema/CONTRACT_SCHEMA.md` — **se ausente: condição de parada (ver seção 19)**
-6. `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo de execução contratual**
-7. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo de encerramento de contrato**
-8. Status vivo da frente ativa (`schema/status/<FRENTE>_STATUS.md`)
-9. Último handoff da frente ativa (`schema/handoffs/<FRENTE>_LATEST.md`)
-10. `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice operacional do legado mestre unificado
-11. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — blocos aplicáveis à frente ativa (se transcrito; caso contrário, ver PDF em `schema/source/`)
-12. `schema/CONTRACT_SOURCE_MAP.md` — **mapa de fontes e ponte documental operacional**
-13. `schema/TASK_CLASSIFICATION.md`
-14. `schema/DATA_CHANGE_PROTOCOL.md`
-15. `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
-16. `schema/CONTRACT_SCHEMA.md`
-17. `schema/STATUS_SCHEMA.md`
-18. `schema/HANDOFF_SCHEMA.md`
-19. `schema/status/CORE_MECANICO_2_STATUS.md`
-20. `schema/handoffs/CORE_MECANICO_2_LATEST.md`
-21. `docs/BOOTSTRAP_CLOUDFLARE.md`
-22. `wrangler.toml`
-23. `.github/workflows/pr-governance-check.yml`
-24. `.github/PULL_REQUEST_TEMPLATE.md`
-25. `.github/AGENT_CONTRACT.md`
-26. `scripts/validate_pr_governance.js`
-27. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo. Regra-mãe canônica: IA soberana na fala, mecânico jamais com prioridade de fala.**
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — **tronco macro soberano da implantação**
+2. `schema/A00_PLANO_CANONICO_MACRO.md`
+3. `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`
+4. `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md`
+5. `schema/contracts/_INDEX.md` — **índice canônico de contratos ativos**
+6. Contrato ativo da frente/fase (em `schema/contracts/active/`) — seguindo formato de `schema/CONTRACT_SCHEMA.md` — **se ausente: condição de parada para execução contratual (ver seção 19)**
+7. `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — **protocolo de execução contratual**
+8. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — **protocolo de encerramento de contrato**
+9. Status vivo da frente/fase ativa (`schema/status/<FRENTE_OU_FASE>_STATUS.md`)
+10. Último handoff da frente/fase ativa (`schema/handoffs/<FRENTE_OU_FASE>_LATEST.md`)
+11. `schema/implantation/REBASE_CANONICO_IMPLANTACAO_2026-04-22.md` — **estado canonico macro apos rebase**
+12. `schema/implantation/PLANO_EXECUTIVO_T0_T7.md` — **ordem executiva derivada do mestre**
+13. `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice operacional auxiliar do legado mestre unificado
+14. `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — cópia/derivação auxiliar por blocos, quando aplicável
+15. `schema/CONTRACT_SOURCE_MAP.md` — **mapa de fontes e ponte documental operacional**
+16. `schema/TASK_CLASSIFICATION.md`
+17. `schema/DATA_CHANGE_PROTOCOL.md`
+18. `schema/CLOUDFLARE_PERMISSION_PROTOCOL.md`
+19. `schema/CONTRACT_SCHEMA.md`
+20. `schema/STATUS_SCHEMA.md`
+21. `schema/HANDOFF_SCHEMA.md`
+22. `docs/BOOTSTRAP_CLOUDFLARE.md`
+23. `wrangler.toml`
+24. `.github/workflows/pr-governance-check.yml`
+25. `.github/PULL_REQUEST_TEMPLATE.md`
+26. `.github/AGENT_CONTRACT.md`
+27. `scripts/validate_pr_governance.js`
+28. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **LEITURA OBRIGATÓRIA em toda tarefa que toque conversa, atendimento, LLM, speech, surface, fallback, multimodalidade ou fluxo cognitivo. Regra-mãe canônica: IA soberana na fala, mecânico jamais com prioridade de fala.**
   
 
 Nenhuma tarefa começa sem confirmar esta leitura.
@@ -51,7 +52,7 @@ Nenhuma tarefa começa sem confirmar esta leitura.
 
 ## 2. Precedência documental oficial
 
-**A00 > A01 > A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
+**`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`) > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
 
 Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas regras de negócio; o pacote canônico manda na arquitetura, na ordem executiva e na forma de implantação.
 
@@ -62,8 +63,8 @@ Em caso de conflito, prevalece o nível mais alto da cadeia. O legado manda nas 
 ## 3. Fluxo obrigatório de execução — 16 etapas
 
 > **Esta seção define o fluxo de execução — não a lista de documentos a ler.**
-> As 16 etapas abaixo são ações sequenciais do agente. A Etapa 1 ("Leitura canônica") executa a lista de documentos da seção 1 (26 itens), mas as 16 etapas e os 26 itens de leitura são categorias distintas.
-> `16 etapas de execução` ≠ `26 documentos de leitura`.
+> As 16 etapas abaixo são ações sequenciais do agente. A Etapa 1 ("Leitura canônica") executa a lista de documentos da seção 1 (28 itens), mas as 16 etapas e os 28 itens de leitura são categorias distintas.
+> `16 etapas de execução` ≠ `28 documentos de leitura`.
 
 Toda tarefa deve percorrer as 16 etapas abaixo, **em ordem, sem pular nenhuma**:
 
@@ -115,13 +116,14 @@ Houve desvio de contrato?: <não | sim — se sim, ver CONTRACT_EXECUTION_PROTOC
 Mudanças em dados persistidos (Supabase): <nenhuma | sim — se sim, ver schema/DATA_CHANGE_PROTOCOL.md seção 4.2>
 Permissões Cloudflare necessárias: <nenhuma adicional | sim — se sim, ver schema/CLOUDFLARE_PERMISSION_PROTOCOL.md seção 4.2>
 Fontes de verdade consultadas:
+  Mestre macro consultado:     schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md
   Índice de contratos lido:    schema/contracts/_INDEX.md
   Contrato ativo lido:         schema/contracts/active/<NOME>.md | Nenhum — ausência é condição de parada para execução contratual
   Status da frente lido:       schema/status/<FRENTE>_STATUS.md
   Handoff da frente lido:      schema/handoffs/<FRENTE>_LATEST.md
   Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
-  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
-  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — blocos transcritos disponíveis
+  Legado markdown auxiliar:    schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
+  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — markdown soberano suficiente
 ```
 
 Este bloco é a âncora de rastreabilidade entre PRs. Sem ele, a tarefa não começa.
@@ -305,7 +307,7 @@ Os seguintes schemas definem o formato obrigatório de artefatos de governança:
 - `schema/REQUEST_ECONOMY_PROTOCOL.md` — protocolo obrigatório de economia de request e modelo.
 - `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — protocolo obrigatório de execução contratual por PR.
 - `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — protocolo obrigatório de encerramento formal de contrato.
-- `schema/contracts/_INDEX.md` — índice canônico de contratos ativos por frente.
+- `schema/contracts/_INDEX.md` — índice canônico de contratos ativos por frente/fase.
 
 Nenhum contrato, status ou handoff deve ser criado fora destes formatos.
 
@@ -315,11 +317,12 @@ Nenhum contrato, status ou handoff deve ser criado fora destes formatos.
 
 O repositório mantém contexto vivo em:
 
-- `schema/status/` — status vivos por frente (índice em `_INDEX.md`)
-- `schema/handoffs/` — handoffs persistidos por frente (índice em `_INDEX.md`)
+- `schema/status/` — status vivos por frente/fase (índice em `_INDEX.md`)
+- `schema/handoffs/` — handoffs persistidos por frente/fase (índice em `_INDEX.md`)
 - `schema/contracts/` — contratos ativos e arquivados (índice em `_INDEX.md`, contratos ativos em `active/`, arquivados em `archive/`)
-- `schema/legacy/` — legado mestre unificado (índice em `INDEX_LEGADO_MESTRE.md`, conteúdo em `LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
-- `schema/source/` — PDF mestre original (`LEGADO_MESTRE_ENOVA1_ENOVA2.pdf`)
+- `schema/source/` — tronco markdown soberano e PDF mestre original
+- `schema/implantation/` — rebase canonico e plano executivo T0-T7
+- `schema/legacy/` — apoio operacional por blocos (índice em `INDEX_LEGADO_MESTRE.md`, derivação em `LEGADO_MESTRE_ENOVA1_ENOVA2.md`)
 
 **Ponte documental operacional:** ver `schema/CONTRACT_SOURCE_MAP.md` para o mapa explícito de relação entre esses artefatos, a precedência entre eles, quando consultar o PDF mestre e como declarar as fontes lidas.
 
@@ -329,7 +332,7 @@ O repositório mantém contexto vivo em:
 
 Se qualquer das condições abaixo for identificada, parar e reportar em vez de improvisar:
 
-- Ambiguidade estrutural não resolvida pelo A00, A01 ou A02
+- Ambiguidade estrutural não resolvida pelo mestre em `schema/source/`, A00, A01 ou A02
 - Conflito documental entre camadas da precedência
 - **Ausência de contrato ativo explícito para a frente** — ausência de contrato NÃO autoriza improvisação contratual; é condição de parada para execução contratual (ver `schema/CONTRACT_SOURCE_MAP.md` seção 4)
 - Escopo que ultrapassa o contrato ativo sem autorização
@@ -520,13 +523,16 @@ Ver `.github/AGENT_CONTRACT.md` regra 26 para detalhes.
 Percorrer em ordem:
 
 ```
-1. schema/contracts/_INDEX.md          ← índice canônico de contratos ativos por frente
-2. schema/contracts/active/<NOME>.md   ← contrato ativo da frente (se existir)
-3. schema/status/<FRENTE>_STATUS.md    ← status vivo da frente
-4. schema/handoffs/<FRENTE>_LATEST.md  ← handoff mais recente da frente
-5. schema/legacy/INDEX_LEGADO_MESTRE.md ← índice de blocos legados aplicáveis
-6. schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md ← blocos transcritos (se disponíveis)
-7. schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf ← PDF mestre (quando bloco não transcrito)
+1. schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md ← tronco macro soberano
+2. schema/contracts/_INDEX.md          ← índice canônico de contratos ativos
+3. schema/contracts/active/<NOME>.md   ← contrato ativo da frente/fase (se existir)
+4. schema/status/<FRENTE_OU_FASE>_STATUS.md    ← status vivo da frente/fase
+5. schema/handoffs/<FRENTE_OU_FASE>_LATEST.md  ← handoff mais recente da frente/fase
+6. schema/implantation/REBASE_CANONICO_IMPLANTACAO_2026-04-22.md ← rebase macro atual
+7. schema/implantation/PLANO_EXECUTIVO_T0_T7.md ← ordem executiva T0-T7
+8. schema/legacy/INDEX_LEGADO_MESTRE.md ← índice auxiliar de blocos legados aplicáveis
+9. schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md ← derivação auxiliar por blocos, quando aplicável
+10. schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf ← PDF mestre bruto, quando necessário
 ```
 
 ### 19.2 Regra de ausência de contrato ativo
@@ -556,13 +562,16 @@ Em todo ESTADO HERDADO e ESTADO ENTREGUE, adicionar o bloco:
 
 ```
 Fontes de verdade consultadas:
+  Mestre macro consultado:     schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md
   Índice de contratos lido:    schema/contracts/_INDEX.md
   Contrato ativo lido:         schema/contracts/active/<NOME>.md | Nenhum — ausência declarada
-  Status da frente lido:       schema/status/<FRENTE>_STATUS.md
-  Handoff da frente lido:      schema/handoffs/<FRENTE>_LATEST.md
+  Status da frente/fase lido:  schema/status/<FRENTE_OU_FASE>_STATUS.md
+  Handoff da frente/fase lido: schema/handoffs/<FRENTE_OU_FASE>_LATEST.md
+  Rebase canonico lido:        schema/implantation/REBASE_CANONICO_IMPLANTACAO_2026-04-22.md | N/A
+  Plano T0-T7 lido:            schema/implantation/PLANO_EXECUTIVO_T0_T7.md | N/A
   Índice legado consultado:    schema/legacy/INDEX_LEGADO_MESTRE.md
-  Legado markdown consultado:  schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
-  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — blocos transcritos disponíveis
+  Legado markdown auxiliar:    schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md — blocos <lista> | N/A
+  PDF mestre consultado:       schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf — seção <X> | não consultado — markdown soberano suficiente
 ```
 
 **Regras:**

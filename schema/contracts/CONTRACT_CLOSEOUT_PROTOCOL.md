@@ -21,7 +21,7 @@ Ele existe para impedir:
 
 ## 2. Precedência
 
-**A00 > A01 > A02 > CONTRACT_CLOSEOUT_PROTOCOL > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente**
+**schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_CLOSEOUT_PROTOCOL > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa**
 
 Este protocolo está subordinado ao A00, A01 e A02.
 Ele tem precedência sobre o contrato individual quando o assunto é encerramento.

@@ -1,3 +1,15 @@
+## ADENDO DE REBASE CANONICO — 2026-04-22
+
+O tronco macro soberano da implantacao passa a ser `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+
+Este A00 permanece como documento de fundacao, mas fica subordinado ao mestre em `schema/source/`
+quando houver conflito de macro, gates ou ordem executiva. A ordem correta de implantacao passa a ser
+T0-T7 e os gates oficiais passam a ser G0-G7, conforme o mestre.
+
+Os recortes de frentes ja arquivados no repo sao evidencias tecnicas/historicas aproveitaveis; eles nao
+equivalem a implantacao macro concluida. A fase real atual apos o rebase e T0 — Congelamento,
+inventario e mapa do legado vivo; o gate aberto e G0 — Inventario legado.
+
 ENOVA 2 — A00
 Plano Canônico Macro
 Documento-mãe de fundação, precedência e direção arquitetural

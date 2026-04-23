@@ -1,103 +1,116 @@
-# CONTRACTS — Índice de Contratos Ativos por Frente — ENOVA 2
+# CONTRACTS — Indice Canonico de Contratos — ENOVA 2
 
 ## Finalidade
 
-Este índice é o registro canônico de qual contrato está ativo em cada frente da ENOVA 2.
-Ele deve ser consultado obrigatoriamente antes de qualquer PR de execução, conforme o `CODEX_WORKFLOW.md`.
+Este indice registra o contrato ativo da implantacao e preserva os contratos historicos por frente.
 
-**Regra fundamental:** cada frente pode ter no máximo **1 contrato ativo** por vez.
-Contratos anteriores são movidos para `schema/contracts/archive/`.
+O tronco macro soberano e:
 
-## Precedência
+`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
 
-**A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
+Em conflito de macro, ordem ou gate, o mestre em `schema/source/` prevalece.
 
-Este índice está subordinado ao A00, A01, ao A00-ADENDO-01, ao A02 e ao `CONTRACT_EXECUTION_PROTOCOL.md`.
+## Precedencia
 
----
-
-## Contratos ativos por frente
-
-| # | Frente | Contrato ativo | Status do contrato | Data de abertura | PR que abriu | Última PR que executou | Contrato anterior arquivado | Próximo contrato esperado |
-|---|--------|----------------|-------------------|-----------------|-------------|----------------------|---------------------------|--------------------------|
-| 1 | Core Mecânico 2 | *(nenhum — contrato anterior encerrado)* | encerrado | 2026-04-20 | PR de abertura | PR 23 — L17: Final operacional, docs, visita e handoff | `schema/contracts/archive/CONTRATO_CORE_MECANICO_2_2026-04-21.md` | Contrato do Speech Engine |
-| 2 | Speech Engine e Surface Única | *(nenhum — contrato encerrado em 2026-04-21)* | arquivado | 2026-04-21 | PR 25 — abertura do contrato da frente sucessora do Core | PR closeout — encerramento formal da Frente 2 | `schema/contracts/archive/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL_2026-04-21.md` | Contrato da Frente 3 — Contexto, Extração Estruturada e Memória Viva |
-| 3 | Contexto, Extração e Memória Viva | *(nenhum — contrato encerrado em 2026-04-21)* | arquivado | 2026-04-21 | PR 35 — abertura contratual da Frente 3 | PR 39 — acceptance smoke + closeout da Frente 3 | `schema/contracts/archive/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA_2026-04-21.md` | Contrato da Frente 4 — Supabase Adapter e Persistência |
-| 4 | Supabase Adapter e Persistência | *(nenhum — contrato encerrado em 2026-04-21)* | arquivado | 2026-04-21 | PR 40 — abertura contratual da Frente 4 | PR 44 — runtime real mínimo + smoke persistente integrado + closeout formal da Frente 4 | `schema/contracts/archive/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA_2026-04-21.md` | Contrato da Frente 5 — Áudio e Multimodalidade |
-| 5 | Áudio e Multimodalidade | *(nenhum — contrato encerrado em 2026-04-21)* | arquivado | 2026-04-21 | PR 45 — abertura contratual da Frente 5 | PR 49 — smoke integrado de áudio + closeout formal da Frente 5 | `schema/contracts/archive/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md` | Contrato da Frente 6 — Meta/WhatsApp |
-| 6 | Meta/WhatsApp | *(nenhum — contrato encerrado em 2026-04-22)* | arquivado | 2026-04-22 | PR 1 — abertura do micro contrato da Frente 6 | PR 4 — smoke integrado + closeout formal da Frente 6 | `schema/contracts/archive/CONTRATO_META_WHATSAPP_2026-04-22.md` | Contrato da Frente 7 — Telemetria e Observabilidade |
-| 7 | Telemetria e Observabilidade | *(nenhum — contrato encerrado em 2026-04-22)* | arquivado | 2026-04-22 | PR 1 — abertura contratual forte da Frente 7 | PR 4 — smoke integrado + closeout formal da Frente 7 | `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md` | Contrato da Frente 8 — Rollout |
-| 8 | Rollout | *(nenhum — contrato encerrado em 2026-04-22)* | arquivado | 2026-04-22 | PR 1 — abertura contratual forte da Frente 8 | PR 4 — smoke integrado final + closeout formal da Frente 8 | `schema/contracts/archive/CONTRATO_ROLLOUT_2026-04-22.md` | Frente 8 é a última frente formal do macro ENOVA 2 — ativação real requer contrato extraordinário |
+`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` > A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicaveis
 
 ---
 
-## Contratos Extraordinários
+## Contrato macro ativo
 
-Contratos abertos **fora do macro de 8 frentes formais**, para módulos estratégicos que nascem após o encerramento do macro.
-
-Índice canônico: `schema/contracts/extraordinary/_INDEX.md`
-
-| # | Módulo | Contrato ativo | Status | Data de abertura | PR que abriu | Próximo passo autorizado |
-|---|--------|----------------|--------|-----------------|-------------|--------------------------|
-| E1 | Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional | *(nenhum — contrato encerrado em 2026-04-22)* | arquivado | 2026-04-22 | PR1 — abertura do contrato extraordinário | nenhum contrato extraordinário ativo — aguardando decisão estratégica |
+| Fase | Contrato ativo | Status | Gate aberto | Data de abertura | PR atual | Proximo passo autorizado |
+|------|----------------|--------|-------------|------------------|----------|--------------------------|
+| T0 — Congelamento, inventario e mapa do legado vivo | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md` | aberto | G0 — inventario legado | 2026-04-22 | T0-PR1 — rebase canonico da implantacao | T0-PR2 — inventario legado vivo |
 
 ---
 
-## Status canônicos de contrato
+## Regra de leitura obrigatoria
+
+Toda tarefa futura deve ler:
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/contracts/_INDEX.md`
+3. O contrato/fase/PR ativa do recorte atual
+4. Status e handoff vivos do recorte atual
+
+---
+
+## Rebase canonico
+
+Os contratos abaixo continuam preservados como historico tecnico, mas nao representam implantacao
+macro concluida. Eles comprovam recortes locais, estruturais ou tecnicos previamente explorados.
+
+Documentos de rebase:
+
+- `schema/implantation/REBASE_CANONICO_IMPLANTACAO_2026-04-22.md`
+- `schema/implantation/PLANO_EXECUTIVO_T0_T7.md`
+- `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+- `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+
+---
+
+## Recortes historicos por frente
+
+| # | Frente | Contrato arquivado | Estado canonico apos rebase | Observacao |
+|---|--------|--------------------|-----------------------------|------------|
+| 1 | Core Mecânico 2 | `schema/contracts/archive/CONTRATO_CORE_MECANICO_2_2026-04-21.md` | historico tecnico/local | Material aproveitavel para T0/T1/T3; nao prova policy macro completa |
+| 2 | Speech Engine e Surface Única | `schema/contracts/archive/CONTRATO_ATENDENTE_ESPECIALISTA_MCMV_GOVERNANCA_ESTRUTURAL_2026-04-21.md` | historico tecnico/local | Nao prova contrato cognitivo LLM-first final de T1 |
+| 3 | Contexto, Extração Estruturada e Memória Viva | `schema/contracts/archive/CONTRATO_CONTEXTO_EXTRACAO_E_MEMORIA_VIVA_2026-04-21.md` | historico tecnico/local | Nao prova estado macro v1 de T2 |
+| 4 | Supabase Adapter e Persistência | `schema/contracts/archive/CONTRATO_SUPABASE_ADAPTER_E_PERSISTENCIA_2026-04-21.md` | historico tecnico/local | Nao prova Supabase real novo/produtivo macro |
+| 5 | Áudio e Multimodalidade | `schema/contracts/archive/CONTRATO_AUDIO_E_MULTIMODALIDADE_2026-04-21.md` | historico tecnico/local | Nao prova STT/TTS real nem T6 |
+| 6 | Meta/WhatsApp | `schema/contracts/archive/CONTRATO_META_WHATSAPP_2026-04-22.md` | historico tecnico/local | Nao prova Meta real |
+| 7 | Telemetria e Observabilidade | `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md` | historico tecnico/local | Nao prova observabilidade profunda externa |
+| 8 | Rollout | `schema/contracts/archive/CONTRATO_ROLLOUT_2026-04-22.md` | historico tecnico/local | Nao prova shadow/canary/cutover real |
+
+Artefatos auxiliares antigos do Core foram arquivados para remover ambiguidade em `active/`:
+
+- `schema/contracts/archive/CONTRATO_CORE_MECANICO_2_CLAUSE_MAP_AUX_2026-04-22.md`
+- `schema/contracts/archive/CONTRATO_CORE_MECANICO_2_EXECUTION_RULES_AUX_2026-04-22.md`
+
+---
+
+## Contratos extraordinarios
+
+Indice canonico: `schema/contracts/extraordinary/_INDEX.md`
+
+| # | Modulo | Contrato arquivado | Estado canonico apos rebase | Observacao |
+|---|--------|--------------------|-----------------------------|------------|
+| E1 | Memoria, Base Normativa, Regras Comerciais e Aprendizado Operacional | `schema/contracts/extraordinary/archive/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_2026-04-22.md` | historico tecnico/local | Aproveitavel para T1/T2/T3; nao prova ingestao real, motor comercial real ou aprendizado grande |
+
+---
+
+## Status canonicos de contrato
 
 | Status | Significado |
 |--------|-------------|
-| `aguardando abertura` | Nenhum contrato ativo para esta frente — aguardando criação |
-| `aberto` | Contrato criado e aprovado, execução autorizada |
-| `em execução` | Pelo menos uma PR de execução já foi feita contra este contrato |
-| `em revisão` | Contrato em processo de revisão formal (objetivo, escopo ou critérios sendo alterados) |
+| `aberto` | Contrato criado e execucao autorizada no recorte declarado |
+| `em execucao` | Pelo menos uma PR de execucao ja foi feita contra este contrato |
+| `bloqueado` | Contrato nao pode avancar sem resolver gate ou conflito |
 | `encerrado` | Contrato encerrado via `CONTRACT_CLOSEOUT_PROTOCOL.md` |
-| `arquivado` | Contrato movido para `archive/` após encerramento |
+| `arquivado` | Contrato movido para `archive/` apos encerramento |
+| `historico tecnico/local` | Recorte preservado como evidencia tecnica, sem equivaler a implantacao macro concluida |
 
 ---
 
-## Estrutura de diretórios
+## Estrutura de diretorios
 
 ```text
 schema/contracts/
-├── _INDEX.md                          ← este arquivo (índice canônico)
-├── CONTRACT_EXECUTION_PROTOCOL.md     ← protocolo de execução contratual
-├── CONTRACT_CLOSEOUT_PROTOCOL.md      ← protocolo de encerramento de contrato
-├── active/                            ← contratos ativos (1 por frente, máximo)
-│   └── .gitkeep
-└── archive/                           ← contratos encerrados e arquivados
-    └── .gitkeep
+├── _INDEX.md
+├── CONTRACT_EXECUTION_PROTOCOL.md
+├── CONTRACT_CLOSEOUT_PROTOCOL.md
+├── active/
+│   └── CONTRATO_IMPLANTACAO_MACRO_T0.md
+├── archive/
+│   └── contratos encerrados e artefatos auxiliares historicos
+└── extraordinary/
+    └── contratos extraordinarios ativos/arquivados
 ```
 
 ---
 
-## Regras
-
-1. **Um contrato ativo por frente.** Nunca dois contratos ativos para a mesma frente.
-2. **Contratos anteriores vão para `archive/`.** Nenhum contrato antigo permanece em `active/`.
-3. **Este índice é atualizado obrigatoriamente** sempre que um contrato é aberto, encerrado ou arquivado.
-4. **Toda PR de execução deve ler este índice** antes de executar — conforme `CODEX_WORKFLOW.md`.
-5. **Contrato ativo não pode ser alterado silenciosamente por PR de execução.** Qualquer alteração de contrato é classificada como revisão contratual/governança.
-6. **Contrato só encerra via protocolo formal** — ver `CONTRACT_CLOSEOUT_PROTOCOL.md`.
-
----
-
-## Documentos complementares
-
-- `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` — como uma PR executa um recorte do contrato ativo
-- `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — como um contrato encerra formalmente
-- `schema/CONTRACT_SCHEMA.md` — formato obrigatório de qualquer contrato novo
-
 ## Ultima sincronizacao
 
-- 2026-04-22 — Frente 7 Telemetria e Observabilidade aberta formalmente. Proximo passo autorizado: PR 2 — contrato tecnico de observabilidade/telemetria.
-- 2026-04-22 — Frente 7 executou PR2 (contrato tecnico de observabilidade/telemetria) e permanece com contrato ativo em execucao. Proximo passo autorizado: PR 3 — runtime minimo de observabilidade no Worker/repo.
-- 2026-04-22 — Frente 7 executou PR3 (runtime minimo de observabilidade no Worker/repo) e permanece com contrato ativo em execucao. Proximo passo autorizado: PR 4 — smoke integrado + closeout formal da Frente 7.
-- 2026-04-22 — Frente 7 executou PR4 (smoke integrado + closeout formal), encerrou e arquivou o contrato em `schema/contracts/archive/CONTRATO_TELEMETRIA_E_OBSERVABILIDADE_2026-04-22.md`. Proximo contrato autorizado: Frente 8 — Rollout.
-- 2026-04-22 — Frente 8 Rollout aberta formalmente com contrato ativo em `schema/contracts/active/CONTRATO_ROLLOUT.md`. Proximo passo autorizado: PR 2 — contrato tecnico de rollout.
-- 2026-04-22 — Frente 8 executou PR2 (contrato tecnico de rollout), com artefato tecnico em `schema/rollout/FRENTE8_ROLLOUT_TECHNICAL_CONTRACT.md`. Proximo passo autorizado: PR 3 — runtime minimo/controladores de rollout.
-- 2026-04-22 — Frente 8 executou PR4 (smoke integrado final + closeout formal), encerrou e arquivou o contrato em `schema/contracts/archive/CONTRATO_ROLLOUT_2026-04-22.md`. Frente 8 é a última frente formal do macro ENOVA 2. Ativação real requer contrato extraordinário explícito quando autorizado.
-- 2026-04-22 — Contrato Extraordinário E1 aberto formalmente: Módulo de Memória, Base Normativa, Regras Comerciais e Aprendizado Operacional. Índice extraordinário criado em `schema/contracts/extraordinary/_INDEX.md`. Contrato ativo em `schema/contracts/extraordinary/active/`. Próximo passo autorizado: PR2 — contrato técnico do módulo.
-- 2026-04-22 — PR2 do Contrato Extraordinário E1 executada: contrato técnico canônico criado em `schema/contracts/extraordinary/technical/E1_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_APRENDIZADO_TECHNICAL_CONTRACT.md`. Status → `em execução`. Próximo passo autorizado: PR3 — runtime mínimo do módulo.
-- 2026-04-22 — PR3 do Contrato Extraordinário E1 executada: runtime mínimo técnico/local implementado em `src/e1/` com hooks mínimos no Worker/canal e smoke específico (`smoke:e1`). Próximo passo autorizado: PR4 — smoke integrado + closeout formal do contrato extraordinário E1.
-- 2026-04-22 — PR4 do Contrato Extraordinário E1 executada: smoke integrado final aprovado, closeout readiness criado em `schema/contracts/extraordinary/closeout/E1_CLOSEOUT_READINESS.md`, contrato encerrado e arquivado em `schema/contracts/extraordinary/archive/CONTRATO_EXTRAORDINARIO_MEMORIA_BASE_NORMATIVA_REGRAS_COMERCIAIS_E_APRENDIZADO_OPERACIONAL_2026-04-22.md`. Próximo passo autorizado: nenhum contrato extraordinário ativo — aguardando decisão estratégica.
+- 2026-04-22 — Rebase canonico aplicado. O macro soberano passa a ser `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+- 2026-04-22 — Repo reposicionado em T0/G0. Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`.
+- 2026-04-22 — Proximo passo autorizado: T0-PR2 — inventario legado vivo.

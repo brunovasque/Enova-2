@@ -1,3 +1,16 @@
+## ADENDO DE REBASE CANONICO — 2026-04-22
+
+O arquivo `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` passa a ser leitura obrigatoria e
+tronco macro soberano antes de qualquer pacote de envio. O indice legado em `schema/legacy/` fica
+como apoio operacional por blocos; nao substitui o mestre em `schema/source/`.
+
+Toda tarefa futura deve ler:
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. O contrato, fase ou PR ativa do recorte atual
+
+Se houver conflito entre este A02 e o mestre em `schema/source/`, prevalece o mestre.
+
 ENOVA 2 — ÍNDICE MESTRE DE
 INTEGRAÇÃO
 Amarração dos 19 arquivos legados ao novo modelo
@@ -292,8 +305,9 @@ implantação da ENOVA 2 sob uma única governança canônica.
 11. Atualização: modelo unificado de legados
 A partir da PR #2, os 19 legados e os 9 documentos complementares deixam de existir como
 arquivos separados no repositório. Eles são consolidados em um legado mestre único:
+- Markdown soberano de implantacao: schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md
 - PDF mestre: schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.pdf
-- Markdown mestre: schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md
+- Markdown auxiliar por blocos: schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md
 - Índice operacional: schema/legacy/INDEX_LEGADO_MESTRE.md
 A consulta passa a ser por blocos internos do legado mestre, usando as âncoras do índice
 operacional. As classes canônicas (L01-L19) e os 9 complementares (C01-C09) permanecem

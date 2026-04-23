@@ -1,14 +1,27 @@
 # ENOVA 2
 
-Este repositório é a base canônica da ENOVA 2 com **governança viva + código técnico executável**.
+Este repositório é a base canônica de implantação da ENOVA 2 com **governança viva + código técnico executável local**.
+
+## Tronco macro soberano
+
+O tronco macro soberano da implantação é:
+
+`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+
+Se houver conflito entre documentos atuais do repo e esse arquivo mestre, prevalece o arquivo mestre.
+Os documentos do repo detalham, operacionalizam e organizam o que ele manda.
 
 ## Objetivo atual do repositório
-Manter governança, ordem executiva, contratos, memória operacional e runtime técnico mínimo auditável (Core, Worker, Speech, Contexto, Adapter e Áudio em recortes contratuais já concluídos).
+Manter governança, ordem executiva, contratos, memória operacional e runtime técnico mínimo auditável, agora recolocados no macro original T0-T7.
 
-> O repositório **não é mais somente documental**: já possui Worker técnico, pipeline de deploy Cloudflare e runtimes mínimos versionados por frente.
-> Integrações externas completas (Meta/WhatsApp, STT/TTS real, rollout, telemetria profunda e bindings adicionais de Cloudflare) continuam fora do escopo atual.
+> O repositório **não representa implantação macro concluída**.
+> Ele contém fundação técnica/documental útil e recortes locais já arquivados, mas a implantação real segue aberta em T0/G0.
+> LLM real, Supabase real novo/produtivo, Meta real, STT/TTS real, shadow/canary/cutover real e rollout real continuam fora do escopo atual.
 
 ## Documentos canônicos
+- `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — **tronco macro soberano obrigatório em toda tarefa**
+- `schema/implantation/REBASE_CANONICO_IMPLANTACAO_2026-04-22.md` — rebase canônico da implantação
+- `schema/implantation/PLANO_EXECUTIVO_T0_T7.md` — plano executivo derivado do macro T0-T7
 - `schema/README_EXECUCAO.md`
 - `schema/CODEX_WORKFLOW.md` — **lei operacional única entre PRs** (16 etapas obrigatórias)
 - `schema/TASK_CLASSIFICATION.md` — classificação canônica de tarefas e PRs
@@ -35,24 +48,28 @@ Manter governança, ordem executiva, contratos, memória operacional e runtime t
 - `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` — encerramento formal de contrato (checklist, evidências, archive)
 
 ## Contexto vivo do repositório
+- `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` — status vivo macro da implantação
+- `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` — handoff vivo macro da implantação
 - `schema/status/_INDEX.md` — índice de status vivos por frente
 - `schema/handoffs/_INDEX.md` — índice de handoffs por frente
 - `schema/contracts/_INDEX.md` — **índice de contratos ativos por frente**
 - `schema/legacy/INDEX_LEGADO_MESTRE.md` — índice do legado mestre unificado
 
 ## Como saber o estado de qualquer frente
-1. Consultar `schema/contracts/_INDEX.md` para saber qual contrato está ativo.
-2. Consultar `schema/status/_INDEX.md` para localizar o arquivo de status.
-3. Ler o status vivo da frente (`schema/status/<FRENTE>_STATUS.md`).
-4. Ler o último handoff da frente (`schema/handoffs/<FRENTE>_LATEST.md`).
+1. Ler `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` para confirmar o macro soberano.
+2. Consultar `schema/contracts/_INDEX.md` para saber qual contrato está ativo.
+3. Consultar `schema/status/_INDEX.md` para localizar o status macro e os status históricos por frente.
+4. Ler o status vivo macro (`schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`).
+5. Ler o último handoff macro (`schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`).
 
 ## Como saber quais legados ler
-1. Consultar `schema/legacy/INDEX_LEGADO_MESTRE.md` — seção "Amarração por frente".
-2. Navegar aos blocos indicados no `schema/legacy/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+1. Consultar primeiro `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+2. Consultar `schema/legacy/INDEX_LEGADO_MESTRE.md` como índice operacional auxiliar.
+3. Navegar aos blocos indicados no markdown legado derivado quando aplicável.
 3. Consultar `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md` — seções 4 e 5.
 
 ## Precedência documental (obrigatória)
-**A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo da frente > documentos legados aplicáveis**
+**schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
 
 ## Protocolo de execução
 Toda tarefa segue o fluxo obrigatório de 16 etapas definido em `schema/CODEX_WORKFLOW.md`:
