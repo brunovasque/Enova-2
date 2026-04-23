@@ -813,3 +813,96 @@ Próxima PR autorizada:                 PR-T0.6 — Inventário de desligamento 
 12. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 13. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 14. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.6 (inventario de desligamento futuro e convivencia)
+
+### Objetivo executado
+
+`PR-T0.6` — classificar cada peca do legado E1 em ordem de desligamento futuro: o que sai primeiro,
+o que convive durante migracao (shadow/canary), o que deve ser redesenhado antes de migrar, e o que
+se transforma em conhecimento/politica na E2. Definir criterios de desligamento canonicos.
+
+### O que foi feito
+
+- Criado `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md` com:
+  - 39 itens em 5 classificacoes: 7 DI (desligar imediato pre-T1), 5 RO (redesenho obrigatorio),
+    6 CT (convivencia temporaria shadow/canary), 14 MD (migrar e desligar), 7 RC (reaproveitamento);
+  - DS-DI-01 a DS-DI-07: SF-03, PH-F05, RM-01, RM-02, fim_inelegivel, yesNoStages-stubs, RU-06
+    classificados como imediatos/proibidos (pre-T1) — proibidos por A00-ADENDO-01/02;
+  - 7 criterios de desligamento canonicos (CDC-01 a CDC-07): turn.fallback_used=0, cobertura stages,
+    smoke idempotencia, trilha CRM equivalente, emitter persistente, RNM transcrito, policy rules;
+  - mapa de dependencias de fallback (EP/CT → SF-02 → SF-01 → PH-F03 → CDC-01 last);
+  - referencia cruzada com MATRIZ_RISCO (RZ-xx) por item onde aplicavel;
+  - 7 categorias de inconclusivos declaradas (L17/L18 — nao bloqueiam PR-T0.6);
+  - Bloco E (A00-ADENDO-03) incorporado.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
+  - PR-T0.6 concluida; PR-T0.R desbloqueada.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que nao foi feito
+
+- Nenhum desligamento implementado (fora do escopo de PR-T0.6).
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- G0 nao aprovado (requer PR-T0.R).
+- T1 nao aberta.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Bloco E — Fechamento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md
+Estado da evidência:                   completa — 39 itens em 5 classificações, cobrindo todo
+                                       o inventário mapeado em PR-T0.1 a PR-T0.4; critério de
+                                       aceite de PR-T0.6 (Bíblia §PR-T0.6) plenamente atendido
+Há lacuna remanescente?:               sim — schema real E1 de tabelas Supabase, CRM E1 e
+                                       telemetria de áudio em L17/L18 não transcritos impedem
+                                       definição completa de critérios CDC para TE-07 a TE-13
+                                       e DS-MD-12; declarados em §Inconclusivos; não bloqueiam
+Há item parcial/inconclusivo bloqueante?: não — todos os 39 itens têm evidência auditável nos
+                                       inventários anteriores (PR-T0.1 a PR-T0.5)
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         encerrada
+Próxima PR autorizada:                 PR-T0.R — Readiness e closeout do gate G0
+```
+
+### Estado atual pos-encerramento
+
+- `PR-T0.1` encerrada.
+- `PR-T0.2` encerrada.
+- `PR-T0.3` encerrada.
+- `PR-T0.4` encerrada.
+- `PR-T0.5` encerrada.
+- `PR-T0.6` **encerrada** — Bloco E: fechamento valido; soberania LLM-first verificada;
+  criterios CDC canonicos definidos; mapa de dependencias de fallback publicado.
+- G0 aberto.
+- `PR-T0.R` desbloqueada — todos os 6 inventarios T0 publicados.
+
+### Proximo passo autorizado
+
+- **`PR-T0.R`** — Readiness e closeout do gate G0.
+
+### Leituras obrigatorias para PR-T0.R
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.R)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+8. `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md`
+9. `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md`
+10. `schema/implantation/MATRIZ_RISCO_T0.md`
+11. `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md`
+12. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+13. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+14. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+15. `schema/CODEX_WORKFLOW.md`

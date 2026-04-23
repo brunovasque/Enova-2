@@ -12,37 +12,37 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T0.5` — matriz de risco operacional do legado vivo encerrada: 26 riscos catalogados em 5 categorias
-(elegibilidade, tom/fala, docs, telemetria, estrutural/governanca); 3 criticos, 14 altos, 9 medios;
-7 bloqueantes para G0 declarados; referencia cruzada com PR-T0.1 a PR-T0.4.
+`PR-T0.6` — inventario de desligamento futuro e convivencia encerrado: 39 itens em 5 classificacoes
+(DI/RO/CT/MD/RC); 7 mortos/imediatos (pre-T1), 7 criterios CDC canonicos, mapa de dependencias de
+fallback publicado; referencia cruzada com PR-T0.1 a PR-T0.5.
 
 ## O que esta PR fechou
 
-- Criou `schema/implantation/MATRIZ_RISCO_T0.md` com:
-  - 26 riscos em 5 categorias (elegibilidade, tom, docs, telemetria, estrutural);
-  - 3 criticos (RZ-TM-01, RZ-TE-02, RZ-ES-04), 14 altos, 9 medios;
-  - referencia cruzada com todos os inventarios anteriores por item;
-  - 7 bloqueantes para G0 declarados na secao de sintese;
-  - soberania LLM-first verificada: RZ-TM-01 classificado critico/proibido;
-  - bifurcacao E1/E2 aplicada na categoria de telemetria;
-  - 7 categorias de inconclusivos declaradas (nao bloqueiam PR-T0.5).
+- Criou `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md` com:
+  - 39 itens em 5 classificacoes: 7 DI (desligar imediato pre-T1), 5 RO (redesenho obrigatorio),
+    6 CT (convivencia temporaria shadow/canary), 14 MD (migrar e desligar), 7 RC (reaproveitamento);
+  - 7 criterios de desligamento canonicos (CDC-01 a CDC-07);
+  - mapa de dependencias de fallback (EP/CT-01 → SF-02 → SF-01 → PH-F03);
+  - referencia cruzada com MATRIZ_RISCO (PR-T0.5) por item onde aplicavel;
+  - soberania LLM-first verificada: DS-DI-01 a DS-DI-07 classificados como imediatos/proibidos;
+  - 7 categorias de inconclusivos declaradas (L17/L18 nao transcritos; nao bloqueiam PR-T0.6).
 - Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
-  - PR-T0.5 marcada como concluida; PR-T0.6 desbloqueada.
+  - PR-T0.6 marcada como concluida; PR-T0.R desbloqueada.
 
 ## O que esta PR nao fechou
 
-- Nao aprovou G0 (requer PR-T0.R apos PR-T0.5 e PR-T0.6).
+- Nao aprovou G0 (requer PR-T0.R).
 - Nao abriu T1.
-- Nao implementou mitigacao de nenhum risco.
+- Nao implementou nenhum desligamento real.
 - Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
 
 ## Proximo passo autorizado
 
-PR-T0.6 — Inventario de desligamento futuro e convivencia.
+PR-T0.R — Readiness e closeout do gate G0.
 
-Leituras obrigatorias para PR-T0.6:
+Leituras obrigatorias para PR-T0.R:
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.6)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.R)
 3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
 4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
 5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
@@ -51,10 +51,11 @@ Leituras obrigatorias para PR-T0.6:
 8. `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md`
 9. `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md`
 10. `schema/implantation/MATRIZ_RISCO_T0.md`
-11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-12. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-13. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-14. `schema/CODEX_WORKFLOW.md`
+11. `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md`
+12. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+13. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+14. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+15. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
@@ -83,6 +84,23 @@ O que esta PR nao fechou:
 
 Proximo passo autorizado (atualizado):
 - PR-T0.4 — Inventario de canais, superficies e telemetria.
+
+---
+
+## Atualizacao 2026-04-23 — Encerramento de PR-T0.6 (inventario de desligamento futuro e convivencia)
+
+Ultima tarefa relevante:
+- `PR-T0.6` — 39 itens em 5 classificacoes; mapa de dependencias de fallback; 7 CDC canonicos.
+
+O que esta PR fechou:
+- Criou `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md`.
+- Atualizou contrato: PR-T0.6 concluida; PR-T0.R desbloqueada.
+
+O que esta PR nao fechou:
+- Nao aprovou G0. Nao abriu T1. Nao implementou desligamento. Nao alterou runtime.
+
+Proximo passo autorizado (atualizado):
+- PR-T0.R — Readiness e closeout do gate G0.
 
 ---
 
