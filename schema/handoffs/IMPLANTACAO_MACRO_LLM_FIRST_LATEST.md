@@ -715,3 +715,101 @@ Próxima PR autorizada:                 PR-T0.5 — Matriz de risco operacional 
 11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 13. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.5 (matriz de risco operacional do legado vivo)
+
+### Objetivo executado
+
+`PR-T0.5` — produzir matriz de risco cruzando fluxos (PR-T0.1), regras (PR-T0.2),
+parsers/heuristicas (PR-T0.3) e canais/superficies/telemetria (PR-T0.4), classificando
+o impacto operacional de cada risco por severidade, probabilidade, evidencia e mitigacao sugerida.
+
+### O que foi feito
+
+- Criado `schema/implantation/MATRIZ_RISCO_T0.md` com:
+  - 26 riscos catalogados em 5 categorias (elegibilidade, tom/fala, docs, telemetria, estrutural);
+  - 3 criticos: RZ-TM-01 (casca mecanica de fala — proibida A00-ADENDO-01/02), RZ-TE-02 (schema
+    E1 desconhecido), RZ-ES-04 (abertura de T1 sem G0);
+  - 14 altos: parsers/regex sem criterio (RZ-EL-01/04), offtrackGuard (RZ-EL-02), isModoFamiliar
+    (RZ-EL-03), fallback default_path (RZ-TM-02), needs_confirmation (RZ-TM-03), correspondente
+    orphan (RZ-DC-01), keepStage sem timeout (RZ-DC-02), emitter console.log (RZ-TE-01), CRM E1
+    (RZ-TE-03), L-blocks (RZ-ES-01), fallback sem criterio de desligamento (RZ-ES-02), namespace
+    E1/E2 (RZ-ES-03), fechamento sem prova (RZ-ES-05);
+  - 9 medios: scoring cognitivo (RZ-EL-07/08), alias fim_inelegivel (RZ-EL-05), stubs yesNoStages
+    (RZ-EL-06), renda multipla (RZ-TM-04), roteamento docs (RZ-DC-03), site sem doc (RZ-DC-04),
+    artefatos (RZ-DC-05), audio telemetria (RZ-TE-04), turn.fallback_used (RZ-TE-05);
+  - referencia cruzada auditavel com PR-T0.1 a PR-T0.4 por item;
+  - 7 bloqueantes para G0 declarados na tabela de sintese;
+  - 7 categorias de inconclusivos declaradas (L-blocks nao transcritos; nao bloqueiam PR-T0.5);
+  - Bloco E (A00-ADENDO-03) incorporado no documento.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
+  - PR-T0.5 concluida; PR-T0.6 desbloqueada.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que nao foi feito
+
+- Nenhuma mitigacao implementada (fora do escopo de PR-T0.5).
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+- G0 nao aprovado (requer PR-T0.R apos PR-T0.5 e PR-T0.6).
+- T1 nao aberta.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Bloco E — Fechamento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/MATRIZ_RISCO_T0.md
+Estado da evidência:                   completa — 26 riscos catalogados em 5 categorias,
+                                       cobrindo todas as fontes acessíveis; referência cruzada
+                                       com PR-T0.1 a PR-T0.4; critério de aceite de PR-T0.5
+                                       (Bíblia §PR-T0.5) plenamente atendido
+Há lacuna remanescente?:               sim — riscos de L-blocks não transcritos (L04, L07-L14,
+                                       L17, L18) declarados em §Inconclusivos; não bloqueiam
+                                       PR-T0.5 (mesmo critério PR-T0.2/T0.3/T0.4)
+Há item parcial/inconclusivo bloqueante?: não — todos os 26 riscos têm evidência auditável
+                                       nos inventários anteriores; inconclusivos de L-blocks são
+                                       limitações estruturais de acesso
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         encerrada
+Próxima PR autorizada:                 PR-T0.6 — Inventário de desligamento futuro e convivência
+```
+
+### Estado atual pos-encerramento
+
+- `PR-T0.1` encerrada.
+- `PR-T0.2` encerrada.
+- `PR-T0.3` encerrada.
+- `PR-T0.4` encerrada.
+- `PR-T0.5` **encerrada** — Bloco E: fechamento valido (evidencia completa dentro do escopo;
+  inconclusivos de L-blocks sao limitacoes estruturais nao bloqueantes; soberania LLM-first
+  verificada; 7 bloqueantes para G0 declarados canonicamente).
+- G0 aberto.
+- `PR-T0.6` desbloqueada.
+
+### Proximo passo autorizado
+
+- **`PR-T0.6`** — Inventario de desligamento futuro e convivencia.
+
+### Leituras obrigatorias para PR-T0.6
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.6)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+8. `schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md`
+9. `schema/implantation/INVENTARIO_CANAIS_TELEMETRIA_T0.md`
+10. `schema/implantation/MATRIZ_RISCO_T0.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+12. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+13. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+14. `schema/CODEX_WORKFLOW.md`
