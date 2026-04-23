@@ -906,3 +906,97 @@ Próxima PR autorizada:                 PR-T0.R — Readiness e closeout do gate
 13. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 14. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 15. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — encerramento de PR-T0.R (readiness e closeout do gate G0)
+
+### Objetivo executado
+
+`PR-T0.R` — validar completude da fase T0 com smoke documental de todos os 6 inventarios,
+decidir formalmente sobre G0, encerrar o contrato T0 e criar skeleton de T1.
+
+### O que foi feito
+
+- Criado `schema/implantation/READINESS_G0.md` com:
+  - smoke documental de PR-T0.1 a PR-T0.6: 6/6 encerrados com Bloco E valido;
+  - verificacao de 6/6 criterios de aceite de T0: todos cumpridos;
+  - analise dos 7 bloqueantes para G0: RZ-TM-01 e RZ-ES-04 satisfeitos com evidencia;
+    RZ-EL-01, RZ-EL-04, RZ-DC-02, RZ-TE-02, RZ-TE-03 declarados com escopo T1+;
+  - verificacao de coerencia entre todos os 6 inventarios: referencias cruzadas validas;
+  - 5 limitacoes residuais estruturais declaradas (L-blocks, keepStage, schema E1) — escopo T1+;
+  - decisao formal G0 APROVADO COM LIMITACOES RESIDUAIS FORMALMENTE DECLARADAS;
+  - encerramento de contrato conforme CONTRACT_CLOSEOUT_PROTOCOL;
+  - Bloco E (A00-ADENDO-03) incorporado.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
+  - status `encerrado`; PR-T0.R marcada como concluida; T1 autorizada.
+- Copiou contrato T0 para `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`.
+- Criou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (skeleton — sem corpo).
+- Atualizou `schema/contracts/_INDEX.md`:
+  - T0 encerrado/arquivado; T1 skeleton como proximo contrato ativo.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` e este handoff.
+
+### O que nao foi feito
+
+- Nenhuma implementacao de T1 (skeleton apenas; corpo sera preenchido em PR-T1.0).
+- Nenhum desligamento implementado.
+- Nenhuma alteracao em runtime.
+- Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
+
+### Excecao contratual
+
+- Excecao contratual ativa nesta PR: nao.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
+
+### Bloco E — Fechamento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/READINESS_G0.md +
+                                        PR-T0.1 a PR-T0.6 (inventários seção 1 do READINESS_G0)
+Estado da evidência:                   completa — smoke documental de todos os 6 inventários
+                                        realizado; 6/6 critérios de aceite T0 verificados;
+                                        7 bloqueantes G0 analisados com resolução declarada
+Há lacuna remanescente?:               sim — 5 limitações residuais estruturais declaradas
+                                        (L17/L18, L04, L11, keepStage, schema E1); TODAS com
+                                        escopo T1+ e NÃO bloqueantes para gate documental T0
+Há item parcial/inconclusivo bloqueante?: não — nenhum critério de aceite T0 ficou parcial;
+                                        inconclusivos são de transcrição PDF (fora do escopo T0)
+                                        ou de implementação futura (escopo T1+)
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         T0 encerrada; G0 aprovado; T1 autorizada
+Próxima PR autorizada:                 PR-T1.0 — abertura formal da fase T1
+```
+
+### Estado atual pos-encerramento
+
+- `PR-T0.1` encerrada.
+- `PR-T0.2` encerrada.
+- `PR-T0.3` encerrada.
+- `PR-T0.4` encerrada.
+- `PR-T0.5` encerrada.
+- `PR-T0.6` encerrada.
+- `PR-T0.R` **encerrada** — G0 APROVADO — contrato T0 ENCERRADO — T1 AUTORIZADA.
+- G0 APROVADO em 2026-04-23.
+- T0 arquivado.
+- T1 skeleton ativo — aguardando PR-T1.0.
+
+### Proximo passo autorizado
+
+- **`PR-T1.0`** — Abertura formal da fase T1 (preenchimento do corpo do contrato T1).
+
+### Leituras obrigatorias para PR-T1.0
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T1.0)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`
+5. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+6. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+7. `schema/implantation/READINESS_G0.md`
+8. `schema/implantation/INVENTARIO_DESLIGAMENTO_T0.md`
+9. `schema/implantation/MATRIZ_RISCO_T0.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+13. `schema/CODEX_WORKFLOW.md`

@@ -25,9 +25,15 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 ## Contrato macro ativo
 
-| Fase | Contrato ativo | Status | Gate aberto | Data de abertura | PR atual | Proximo passo autorizado |
-|------|----------------|--------|-------------|------------------|----------|--------------------------|
-| T0 — Congelamento, inventario e mapa do legado vivo | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md` | aberto | G0 — inventario legado | 2026-04-22 | PR-T0.1 — inventario legado vivo (continuidade documental) | T0-PR2 — inventario legado vivo |
+| Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
+|------|----------------|--------|------|------------------|----------|--------------------------|
+| T1 — Motor cognitivo LLM-first e contrato de fala soberano | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` | skeleton — aguardando PR-T1.0 | G1 — motor cognitivo LLM-first | 2026-04-23 (skeleton) | PR-T1.0 — abertura formal do contrato T1 | PR-T1.0 — preencher corpo do contrato e abrir T1 |
+
+## Contrato T0 encerrado
+
+| Fase | Contrato arquivado | Status | Gate | Data de encerramento | PR que encerrou |
+|------|-------------------|--------|------|----------------------|-----------------|
+| T0 — Congelamento, inventario e mapa do legado vivo | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md` | encerrado | G0 — aprovado | 2026-04-23 | PR-T0.R |
 
 ---
 
@@ -112,8 +118,10 @@ schema/contracts/
 ├── CONTRACT_EXECUTION_PROTOCOL.md
 ├── CONTRACT_CLOSEOUT_PROTOCOL.md
 ├── active/
-│   └── CONTRATO_IMPLANTACAO_MACRO_T0.md
+│   ├── CONTRATO_IMPLANTACAO_MACRO_T0.md  (encerrado — manter para referência até archival completo)
+│   └── CONTRATO_IMPLANTACAO_MACRO_T1.md  (skeleton — aguardando PR-T1.0)
 ├── archive/
+│   ├── CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md  (T0 encerrado formalmente)
 │   └── contratos encerrados e artefatos auxiliares historicos
 └── extraordinary/
     └── contratos extraordinarios ativos/arquivados
@@ -130,3 +138,4 @@ schema/contracts/
 - 2026-04-23 — Evidencia documental de continuidade de `PR-T0.1` internalizada em `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`; contrato T0 permanece aberto em G0.
 - 2026-04-23 — Evidencia documental adicional de continuidade de `PR-T0.1` internalizada em `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`; contrato T0 permanece aberto em G0.
 - 2026-04-23 — Adicionado A00-ADENDO-03 (`schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`) na cadeia de precedência. Regra canônica: "Evidência manda no estado." Prova insuficiente bloqueia fechamento de etapa/gate/contrato. Toda abertura de contrato de frente deve declarar conformidade com A00-ADENDO-01, A00-ADENDO-02 e A00-ADENDO-03.
+- 2026-04-23 — PR-T0.R executada. Contrato T0 ENCERRADO. G0 APROVADO. T0 arquivado em `archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`. Skeleton T1 criado em `active/CONTRATO_IMPLANTACAO_MACRO_T1.md`. Próximo passo autorizado: PR-T1.0.
