@@ -20,6 +20,8 @@ Manter governança, ordem executiva, contratos, memória operacional e runtime t
 
 ## Documentos canônicos
 - `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` — **tronco macro soberano obrigatório em toda tarefa**
+- `schema/ADENDO_CANONICO_SOBERANIA_IA.md` — **A00-ADENDO-01: IA soberana na fala — mecânico jamais com prioridade de fala — leitura obrigatória em toda PR que toque conversa/LLM/speech/surface**
+- `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` — **A00-ADENDO-02: Enova 2 como atendente especialista MCMV — identidade LLM-first — guia de leitura T1/T3/T4/T5/T6 — leitura obrigatória nessas fases**
 - `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` — **Bíblia Canônica de Execução por PRs (T0..T7 + pós) derivada fielmente do mestre — leitura obrigatória em toda PR**
 - `schema/execution/PR_EXECUTION_TEMPLATE.md` — **template canônico obrigatório de abertura de PR**
 - `schema/handoffs/PR_HANDOFF_TEMPLATE.md` — **template canônico obrigatório de handoff por PR (continuidade zero-escuro)**
@@ -73,7 +75,11 @@ Manter governança, ordem executiva, contratos, memória operacional e runtime t
 3. Consultar `schema/A02_INDICE_MESTRE_GUIA_DE_ENVIO.md` — seções 4 e 5.
 
 ## Precedência documental (obrigatória)
-**schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
+**schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md > A00 > A01 > A00-ADENDO-01 > A00-ADENDO-02 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato/fase ativa > documentos legados aplicáveis**
+
+Adendos canônicos ativos:
+- `schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01) — IA soberana na fala, mecânico jamais com prioridade de fala.
+- `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02) — Enova 2 como atendente especialista MCMV; guia de leitura das fases T1/T3/T4/T5/T6.
 
 ## Bíblia Canônica de Execução por PRs
 

@@ -72,9 +72,81 @@ T0-PR2 — inventario legado vivo.
 - `PR-T0.1 — Inventário de fluxos e estados vivos` (equivalente a `T0-PR2 — inventario legado vivo`).
 - Leituras obrigatórias adicionais: Bíblia §G + §S, `PR_EXECUTION_TEMPLATE.md`, `PR_HANDOFF_TEMPLATE.md`.
 
-## Atualizacao 2026-04-23 — WORKFLOW macro amarrado como regra viva
+## Atualizacao 2026-04-23 — Adendo canônico A00-ADENDO-02 publicado (soberania LLM-MCMV)
 
 ### Objetivo executado
+
+Criar adendo canônico forte (`schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`) que:
+
+- Posiciona a Enova 2 explicitamente como **atendente especialista MCMV**, humana na fala, LLM-first de verdade, com soberania de raciocínio e fala.
+- Proíbe formalmente que a Enova 2 seja executada como continuação mecânica da Enova 1.
+- Define o papel correto do conhecimento normativo, memória e telemetria: suporte ao LLM, nunca casca dominante.
+- Inclui guia de leitura com travas explícitas para T1, T3, T4, T5 e T6 — as fases com maior risco de má interpretação.
+- Define o uso correto da E1: matéria-prima de conhecimento, regras, telemetria e ativos úteis; sem refatoração imediata, sem recriar casca mecânica.
+
+### Prioridade máxima de interpretação
+
+**Este adendo (A00-ADENDO-02) passa a ser leitura obrigatória antes de qualquer PR de T1, T3, T4, T5 ou T6.**
+
+Sua posição na cadeia de precedência:
+
+```
+LEGADO_MESTRE > A00 > A01 > A00-ADENDO-01 > A00-ADENDO-02 > A02 > CONTRACT_EXECUTION_PROTOCOL > contrato ativo
+```
+
+### O que foi feito
+
+- Criado `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02): identidade, visão de produto, divisão canônica LLM × mecânico, papel do conhecimento normativo, reaproveitamento correto da E1, proibições formais, guia de leitura por fase.
+- Atualizado `schema/CODEX_WORKFLOW.md`: adendo adicionado na lista de leitura obrigatória (item 32) e na cadeia de precedência (seção 2); alertas explícitos para T1/T3/T4/T5/T6.
+- Atualizado `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`: cadeia de precedência atualizada (seção A), leituras obrigatórias por PR (seção E com items 10 e 11), nova seção S0 com travas LLM-first por fase.
+- Atualizado `schema/contracts/_INDEX.md`: precedência, adendos ativos, regra de leitura, data de sincronização.
+- Atualizado `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo): registro deste adendo como prioridade máxima de interpretação.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: registro desta PR.
+- Atualizado `README.md`: referência ao novo adendo na cadeia de precedência e nos documentos canônicos.
+
+### O que não foi feito
+
+- Nenhuma alteração em runtime.
+- Nenhuma alteração em `src/`, `package.json` ou `wrangler.toml`.
+- Nenhuma alteração no macro soberano (`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`).
+- Nenhuma refatoração da Enova 1.
+- Nenhuma abertura de implementação funcional.
+- Nenhuma mudança de gate ou de próximo passo autorizado.
+
+### Regra de E1 atualizada
+
+- A Enova 1 não deve ser refatorada nesta etapa (T0).
+- O uso da E1 é apenas de diretriz de reaproveitamento futuro: inventário, mapeamento, referência de regras.
+- Quando a fase de memória (T2) chegar, a base da E1 será usada como matéria-prima (dados, regras, casos, estrutura de estado). A integração será definida no contrato T2.
+- O uso da E1 foca em: **conhecimento, telemetria, regras, ativos úteis** — nunca em casca mecânica de atendimento.
+
+### Exceção contratual
+
+- Exceção contratual ativa nesta PR: não.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente exceção contratual.
+
+### Próximo passo autorizado (inalterado)
+
+- `PR-T0.1` / `T0-PR2` — inventário de fluxos e estados vivos.
+- **A PR-T0.1 deve ser executada lendo obrigatoriamente o novo adendo A00-ADENDO-02.**
+
+### Leituras obrigatórias da próxima PR (reafirmadas e expandidas)
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+5. `schema/execution/PR_EXECUTION_TEMPLATE.md`
+6. `schema/handoffs/PR_HANDOFF_TEMPLATE.md`
+7. `schema/CODEX_WORKFLOW.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01)
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02)
+
+---
+
+## Atualizacao 2026-04-23 — WORKFLOW macro amarrado como regra viva (histórico)
+
+### Objetivo executado (PR anterior)
 
 Transformar em regra operacional obrigatoria no `schema/CODEX_WORKFLOW.md` aquilo que ja estava aprovado no repo:
 macro soberano, Biblia de PRs, templates canônicos, gates T0-T7/G0-G7 e excecao contratual manual do Vasques.
