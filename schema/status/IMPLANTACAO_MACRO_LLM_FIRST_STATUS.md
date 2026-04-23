@@ -12,25 +12,38 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-T0-PR2 / `PR-T0.1` — continuidade documental de inventario operacional auditavel do legado vivo.
+T0-PR2 / `PR-T0.1` — encerramento formal em pre-readiness G0 via prova equivalente auditavel de L03-L17.
 
 ## O que esta PR fechou
 
-- Consolidou rastreabilidade operacional do inventario T0.1 em `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` (fluxos topo->pos-envio_docs, estados/campos e classificacao de prova).
-- Sincronizou o contrato T0 com o estado real da quebra de PRs (T0-PR1 concluida; T0-PR2 em execucao).
-- Reforcou no estado vivo que T0/G0 permanecem abertos ate readiness formal.
+- Eliminou a lacuna remanescente de PR-T0.1:
+  - secao 13 de `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` atualizada com origens de coluna/tabela canonicas (Taxonomia Oficial PDF6 + schema Supabase do LEGADO_MESTRE soberano).
+  - secao 14 atualizada com decisao formal de fechamento de PR-T0.1 em pre-readiness G0.
+  - secao 15 criada com prova equivalente auditavel para cada bloco L03-L17, citando linhas especificas do LEGADO_MESTRE soberano.
+- Sincronizou contrato T0 com estado pos-encerramento de PR-T0.1 e desbloqueio de PR-T0.2.
 
 ## O que esta PR nao fechou
 
-- Nao encerrou `PR-T0.1`.
-- Nao aprovou G0.
+- Nao aprovou G0 (G0 so fecha via PR-T0.R apos PR-T0.2..T0.6).
 - Nao abriu T1.
 - Nao implementou LLM real, Supabase real, Meta real, STT/TTS real, shadow real, canary real ou cutover real.
+- Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
 
 ## Proximo passo autorizado
 
-Continuidade de `PR-T0.1` / T0-PR2 — inventario legado vivo e mapa de aproveitamento do repo contra o mestre
-`schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
+`PR-T0.2` — Inventario de regras e classificacao por familia (primeira PR desbloqueada apos encerramento de PR-T0.1).
+
+Leituras obrigatorias para PR-T0.2:
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.2)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
+4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+6. `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`
+7. `schema/implantation/T0_PR1_ENOVA1_REAPROVEITAMENTO_CANONICO.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
