@@ -51,6 +51,25 @@
 * **Mudanças em dados persistidos (Supabase):** nenhuma | sim — se sim, citar `DATA_CHANGE_PROTOCOL.md` §4.2
 * **Permissões Cloudflare necessárias:** nenhuma adicional | sim — se sim, citar `CLOUDFLARE_PERMISSION_PROTOCOL.md` §4.2
 
+## Exceção contratual (obrigatório — ver Bíblia §S)
+
+> **Regra padrão:** seguir o contrato literalmente. Nenhuma quebra, flexibilização,
+> suspensão parcial, "atalho útil" ou "quebra benéfica" pode ser feita por
+> interpretação do executor. **Somente o Vasques pode autorizar manualmente uma
+> exceção contratual**, de forma explícita, específica, temporária e registrada.
+> Limites duros nunca exceptuáveis: soberania da IA na fala (A00-ADENDO-01),
+> regras de negócio MCMV, gates G0..G7, mudanças Supabase silenciosas, encerramento
+> implícito de contrato.
+
+* **Exceção contratual autorizada pelo Vasques?:** não | sim | pendente — aguardando autorização
+* **Motivo específico da exceção:** (preencher apenas se sim/pendente)
+* **Benefício esperado ao contrato/projeto:** (preencher apenas se sim/pendente)
+* **Escopo exato da quebra:** (preencher apenas se sim/pendente — nada além disso)
+* **Duração da exceção (esta PR / até qual PR):** (preencher apenas se sim/pendente)
+* **Condição objetiva de retorno à normalidade contratual:** (preencher apenas se sim/pendente)
+* **Evidência da autorização do Vasques:** (link/quote do registro explícito — apenas se sim)
+* **Esta PR introduz fala mecânica, surface engessada, fallback dominante ou desvio da soberania da IA?:** não (declaração obrigatória; "sim" é proibido por §S.3 mesmo sob autorização)
+
 ## Continuidade obrigatória ao final
 
 * Compromisso explícito: ao concluir esta PR, será produzido handoff em

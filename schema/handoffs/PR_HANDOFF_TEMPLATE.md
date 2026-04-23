@@ -73,6 +73,27 @@
 * **Mudanças em dados persistidos (Supabase):** nenhuma | sim — se sim, citar `DATA_CHANGE_PROTOCOL.md` §4.2
 * **Permissões Cloudflare necessárias:** nenhuma adicional | sim — se sim, citar `CLOUDFLARE_PERMISSION_PROTOCOL.md` §4.2
 
+## Exceção contratual (obrigatório — ver Bíblia §S)
+
+> **Regra padrão:** seguir o contrato literalmente. Nenhuma quebra, flexibilização,
+> "atalho útil" ou "quebra benéfica" pode ser feita por interpretação do executor.
+> **Somente o Vasques pode autorizar manualmente uma exceção contratual**, de forma
+> explícita, específica, temporária e registrada. Encerrada a causa específica, o
+> projeto retorna automaticamente à normalidade. Limites duros nunca exceptuáveis:
+> soberania da IA na fala (A00-ADENDO-01), regras de negócio MCMV, gates G0..G7,
+> mudanças Supabase silenciosas, encerramento implícito de contrato.
+
+* **Esta PR operou sob exceção contratual autorizada pelo Vasques?:** não | sim
+* **Motivo específico da exceção:** (apenas se sim)
+* **Benefício obtido para o contrato/projeto:** (apenas se sim)
+* **Escopo exato da quebra realizada:** (apenas se sim)
+* **Duração da exceção (esta PR / até qual PR):** (apenas se sim)
+* **Condição objetiva de retorno à normalidade contratual:** (apenas se sim)
+* **Evidência da autorização do Vasques:** (link/quote — apenas se sim)
+* **A causa específica da exceção foi encerrada nesta PR?:** N/A | sim | não
+* **A próxima PR herda exceção ativa?:** não — volta à normalidade do contrato | sim — a próxima PR deve declarar a mesma exceção e repetir todos os campos
+* **Esta PR introduziu fala mecânica, surface engessada, fallback dominante ou desvio da soberania da IA?:** não (declaração obrigatória; "sim" é proibido por §S.3 mesmo sob autorização)
+
 ## Plano de rollback
 
 (O que fazer para reverter o que esta PR introduziu — comandos, branches, contratos a reabrir.)

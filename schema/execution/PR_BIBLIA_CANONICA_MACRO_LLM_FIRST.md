@@ -950,6 +950,11 @@ de testes") e regressão observada.
 O handoff é **obrigatório, nunca opcional**. PR sem handoff conforme o template é
 considerada não conforme e bloqueia a abertura da próxima PR.
 
+> **Obrigatório também:** declarar o bloco de **Exceção contratual** conforme §S
+> desta Bíblia. Mesmo quando não há exceção ativa, o handoff deve declarar
+> explicitamente `Exceção contratual autorizada pelo Vasques?: não`. Sem essa
+> declaração, o handoff é não conforme.
+
 O handoff deve conter no mínimo:
 
 * Base macro lida.
@@ -991,6 +996,11 @@ O template exige declaração explícita de:
 * Aderência à regra de menção `@copilot+claude-sonnet-4.6` quando aplicável.
 
 PR aberta sem essa declaração é não conforme e o PR Governance Gate deve barrá-la.
+
+> **Obrigatório também:** declarar o bloco de **Exceção contratual** conforme §S
+> desta Bíblia. Toda PR deve declarar explicitamente se opera sob exceção
+> contratual autorizada pelo Vasques. Sem essa declaração (mesmo quando a
+> resposta for `não`), a PR é não conforme.
 
 ---
 
@@ -1070,6 +1080,96 @@ PR aberta sem essa declaração é não conforme e o PR Governance Gate deve bar
 * Nenhuma PR de T6 pode abrir antes de G5 fechado.
 * Nenhuma PR de T7 pode abrir antes de G6 fechado.
 * Nenhuma PR pós-go-live (PR-PG.*) pode abrir antes de G7 aprovado.
+
+---
+
+## S. Regra canônica de exceção contratual (autorização manual obrigatória do Vasques)
+
+> **Esta regra é soberana sobre toda a Bíblia, sobre todos os contratos ativos, sobre
+> qualquer "interpretação útil" ou "quebra benéfica" que um executor possa cogitar.**
+> Em qualquer dúvida, vale a versão literal do contrato/macro — não a versão
+> "melhorada" pelo executor.
+
+### S.1 Princípio
+
+* **Regra padrão, sempre:** seguir o contrato e o macro literalmente.
+* **Nenhuma quebra, flexibilização, suspensão parcial, suavização, "atalho útil",
+  "quebra benéfica" ou desvio pontual** do contrato/macro pode ser feita por
+  interpretação do executor (humano ou agente), por economia de tempo, por
+  conveniência técnica, por suposto benefício ao usuário ou por qualquer outra
+  justificativa interna do executor.
+* **Somente o Vasques pode autorizar manualmente uma exceção contratual.**
+  Nenhuma outra pessoa, agente, modelo, automação ou processo está autorizado.
+* A autorização do Vasques deve ser **explícita, específica, temporária e
+  registrada** no repo (no body da PR + no handoff vivo da fase). Autorização
+  verbal, implícita, presumida ou genérica é inválida.
+* **Encerrada a causa específica que motivou a exceção, o projeto retorna
+  automaticamente à normalidade do contrato.** Nenhuma exceção é permanente
+  por omissão.
+
+### S.2 Campos obrigatórios de uma exceção válida
+
+Toda autorização de exceção contratual deve declarar, sem exceção, todos os campos
+abaixo (mesmo formato exigido pelos templates §Q e §P):
+
+```
+Exceção contratual autorizada pelo Vasques?: sim
+Motivo específico da exceção: <causa pontual e verificável>
+Benefício esperado ao contrato/projeto: <ganho concreto, não estético>
+Escopo exato da quebra: <o que sai do contrato literal — e nada além disso>
+Duração da exceção (esta PR / até qual PR): <PR-X | até PR-Y inclusive>
+Condição objetiva de retorno à normalidade contratual: <evento mensurável que encerra a exceção>
+Evidência da autorização do Vasques: <link/quote do comentário ou registro explícito>
+```
+
+Sem qualquer um desses campos, **a exceção é inválida** e o contrato literal vale.
+
+### S.3 O que está expressamente fora de exceção (nunca exceptuável)
+
+Mesmo com autorização do Vasques, **as seguintes regras nunca podem ser
+exceptuadas**, porque pertencem ao macro soberano e ao adendo A00-ADENDO-01:
+
+1. **Soberania da IA na fala** (`schema/ADENDO_CANONICO_SOBERANIA_IA.md`).
+   Não é admissível introduzir fala mecânica, surface engessada, fallback dominante
+   sobre o LLM, prioridade de fala do mecânico ou qualquer arquitetura que retire
+   a soberania da IA na fala. **"Quebra benéfica" desse princípio é proibida.**
+2. **Quebra das regras de negócio do MCMV** consolidadas no legado.
+3. **Pular gates** (G0..G7) ou abrir fase Tn antes do Readiness/Closeout de Tn-1.
+4. **Mudança silenciosa em dados persistidos do Supabase** sem `DATA_CHANGE_PROTOCOL.md`
+   cumprido integralmente.
+5. **Encerramento implícito de contrato** sem `CONTRACT_CLOSEOUT_PROTOCOL.md`.
+
+Esses pontos são limites duros do projeto. Exceção que tente atingi-los é nula
+de origem.
+
+### S.4 Fluxo obrigatório quando o executor identificar suposta necessidade de exceção
+
+1. **Parar a execução.** Não aplicar a quebra.
+2. Declarar no body da PR a **proposta de exceção** com todos os campos de §S.2,
+   marcando `Exceção contratual autorizada pelo Vasques?: pendente — aguardando autorização`.
+3. Aguardar manifestação **explícita** do Vasques.
+4. Só prosseguir com a quebra após o Vasques registrar autorização explícita
+   (comentário no PR, mensagem registrada no handoff). A autorização entra no
+   repo via atualização do body + handoff.
+5. Ao encerrar a causa específica, registrar o retorno à normalidade no handoff
+   da PR seguinte e remover qualquer marca de exceção ativa.
+
+### S.5 Regra padrão na ausência de exceção válida
+
+Em toda PR, na ausência de autorização do Vasques registrada conforme §S.2:
+**seguir o contrato literalmente, sem julgamento autoral do executor**.
+
+### S.6 Aplicação obrigatória nos templates
+
+Esta regra é aplicada operacionalmente em:
+
+* `schema/execution/PR_EXECUTION_TEMPLATE.md` — bloco "Exceção contratual" obrigatório
+  no body de toda PR (mesmo quando não há exceção, declarando explicitamente `não`).
+* `schema/handoffs/PR_HANDOFF_TEMPLATE.md` — bloco "Exceção contratual" obrigatório
+  em todo handoff (declarando se a PR atual operou sob exceção e se a próxima PR
+  herda exceção ativa ou volta à normalidade).
+* Esta Bíblia §P (handoff) e §Q (abertura) referenciam esta seção como leitura
+  obrigatória.
 
 ---
 
