@@ -142,7 +142,11 @@ LEGADO_MESTRE > A00 > A01 > A00-ADENDO-01 > A00-ADENDO-02 > A02 > CONTRACT_EXECU
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01)
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02)
 
-### Objetivo executado
+---
+
+## Atualizacao 2026-04-23 — WORKFLOW macro amarrado como regra viva (histórico)
+
+### Objetivo executado (PR anterior)
 
 Transformar em regra operacional obrigatoria no `schema/CODEX_WORKFLOW.md` aquilo que ja estava aprovado no repo:
 macro soberano, Biblia de PRs, templates canônicos, gates T0-T7/G0-G7 e excecao contratual manual do Vasques.

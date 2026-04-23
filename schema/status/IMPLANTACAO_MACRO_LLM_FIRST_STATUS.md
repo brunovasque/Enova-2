@@ -68,7 +68,11 @@ Proximo passo autorizado (inalterado):
 - `PR-T0.1` — inventario legado vivo e mapa de aproveitamento do repo contra o mestre.
 - **A PR-T0.1 deve ler obrigatoriamente o A00-ADENDO-02 antes de executar.**
 
-Ultima tarefa relevante:
+---
+
+## Historico — Atualizacao 2026-04-23 — Workflow macro amarrado operacionalmente (PR anterior)
+
+Ultima tarefa relevante (PR anterior):
 - Governanca macro — amarrar operacionalmente no `schema/CODEX_WORKFLOW.md` a Biblia de PRs, templates obrigatorios, gates T0-T7/G0-G7 e regra de excecao contratual.
 
 O que esta PR fechou:

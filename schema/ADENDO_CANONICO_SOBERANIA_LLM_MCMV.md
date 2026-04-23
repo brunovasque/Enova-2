@@ -158,7 +158,7 @@ O conhecimento da Enova 2 — regras CEF, normativos MCMV, tabelas de elegibilid
 
 A Enova 1 é um ativo valioso. Ela tem anos de operação, casos reais, regras calibradas, telemetria de comportamento de leads, mapa de edge cases do MCMV. Tudo isso é matéria-prima de alto valor.
 
-### O que reaprovitar da Enova 1:
+### O que reaproveitar da Enova 1:
 
 | Ativo | Como usar |
 |-------|-----------|
