@@ -230,23 +230,23 @@ por "transcricao fiel ou prova equivalente auditavel" do fechamento de PR-T0.1.
 ## 14) Cobertura obrigatoria de PR-T0.1 (checklist auditavel)
 
 - Cobertura topo -> pos-envio_docs: **sim**, com rastreabilidade em secao 12.
-- Estados persistidos/campos usados inventariados: **sim**, com origem de coluna/tabela declarada em secao 13 (prova equivalente auditavel via Taxonomia Oficial PDF6 do LEGADO_MESTRE).
+- Estados persistidos/campos usados inventariados: **sim (parcial)**, com origem de coluna/tabela referenciada em secao 13 via Taxonomia Oficial PDF6 do LEGADO_MESTRE como prova equivalente; origin legada/persistida sem inferencia ainda nao completamente fechada.
 - Distincao entre vivo real, compatibilidade transitoria, residuo/stub e inconclusivo: **sim**, consolidada nas secoes 6, 7, 12 e 13.
-- Prova equivalente auditavel para blocos L03-L17: **sim**, documentada em secao 15 (referencias a linhas do LEGADO_MESTRE soberano + PDF6 Taxonomia Oficial).
+- Prova equivalente auditavel para blocos L03-L17: **parcial** — L03-L14 e L17 elevados para "validada por referencia" em secao 15; L15-L16 permanecem em "parcial estrutural" (dominio confirmado, microregras P3 pendentes de transcricao do PDF).
 - Coerencia com macro soberano e Biblia (`PR-T0.1`): **sim**.
 
 Decisao de fechamento desta PR:
-- `PR-T0.1` **fecha nesta entrega** em nivel de pre-readiness G0 (fluxos+estados mapeados).
-- Criterio minimo da Biblia satisfeito: inventario cobre topo -> pos-envio_docs e enumera todos os estados persistidos efetivamente usados, com cada estado citando coluna/origem canonica.
-- Evidencia smoke: cada fluxo em secao 12 cita bloco legado fonte; cada estado em secao 13 cita coluna/tabela de origem (Enova 2) ou declara explicitamente a natureza do campo (runtime sem persistencia Supabase).
-- Residuos nao bloqueantes: blocos L ainda sem transcricao literal do PDF; itens inconclusivos (`informativo_*`, `COGNITIVE_V2_MODE`) declarados e nao mascaram prova.
-- Proximo passo autorizado pela Biblia: **PR-T0.2** — Inventario de regras e classificacao por familia.
+- `PR-T0.1` **permanece aberta**.
+- Lacuna remanescente:
+  - L15-L16 com prova em nivel "parcial estrutural" (dominio confirmado, microregras de trilho P3 pendentes de transcricao literal do PDF).
+  - Origem legada/persistida dos estados ainda apoiada no schema alvo Enova 2 (PDF6) em vez de provar a origem no legado E1 sem inferencia.
+- Proximo passo: continuar `PR-T0.1` ate eliminar a lacuna remanescente e fechar com prova conclusiva.
 
-Estado canonico pos-fechamento:
+Estado canonico atual:
 - Fase: T0.
-- Gate: G0 permanece aberto (so fecha via PR-T0.R apos PR-T0.2..T0.6).
-- `PR-T0.1` encerrada em pre-readiness G0.
-- Proximo passo: `PR-T0.2`.
+- Gate: G0 aberto.
+- `PR-T0.1` continua em execucao.
+- Proximo passo autorizado: continuidade de `PR-T0.1`.
 
 ## 15) Prova equivalente auditavel dos blocos legados L03-L17
 

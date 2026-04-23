@@ -38,8 +38,8 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 | PR | Nome | Entrega | Estado |
 |----|------|---------|--------|
 | T0-PR1 | Rebase canonico da implantacao | Reposicionar repo no macro T0-T7, criar camada canonica, status/handoff macro e plano executivo | concluida |
-| T0-PR2 / PR-T0.1 | Inventario legado vivo (fluxos + estados) | Mapear fluxos, estados, dependencias, materiais aproveitaveis e discrepancias contra o mestre | **encerrada em pre-readiness G0** (ver `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` secao 14) |
-| T0-PR2 / PR-T0.2 | Inventario de regras e classificacao por familia | Listar e classificar regras em 7 familias canonicas com bloco legado de origem | **proximo passo autorizado** |
+| T0-PR2 / PR-T0.1 | Inventario legado vivo (fluxos + estados) | Mapear fluxos, estados, dependencias, materiais aproveitaveis e discrepancias contra o mestre | **em execucao** — lacuna remanescente: L15-L16 em "parcial estrutural" e origem legada/persistida dos estados sem inferencia ainda nao completamente fechada (ver `T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` secao 14) |
+| T0-PR2 / PR-T0.2 | Inventario de regras e classificacao por familia | Listar e classificar regras em 7 familias canonicas com bloco legado de origem | bloqueada ate encerramento de PR-T0.1 |
 | T0-PR3 | Inventario de parsers, regex, fallbacks e heuristicas | Mapear pontos de decisao mecanica | bloqueada ate PR-T0.2 |
 | T0-PR4 | Inventario de canais, superficies e telemetria | Mapear superficies de entrada/saida e endpoints | bloqueada ate PR-T0.3 |
 | T0-PR5 | Matriz de risco e desligamento futuro | Classificar riscos, compatibilidades, pontos de rollback | bloqueada ate PR-T0.4 |
@@ -57,7 +57,7 @@ mapear riscos/dependencias e provar se o repositorio esta pronto para abrir T1.
 
 ## Proximo passo autorizado
 
-PR-T0.2 — Inventario de regras e classificacao por familia (primeira PR de T0-PR2 apos encerramento de PR-T0.1).
+Continuidade de PR-T0.1 — eliminar lacuna remanescente (L15-L16 e origem legada/persistida dos estados) para permitir encerramento formal.
 
 ## Atualizacao 2026-04-23 — evidencia documental de T0
 
@@ -114,21 +114,21 @@ Limites reafirmados:
 - sem alteracoes em `src/`, `package.json` ou `wrangler.toml`;
 - sem abertura de T1 antes de closeout formal de G0.
 
-## Atualizacao 2026-04-23 — encerramento de PR-T0.1 em pre-readiness G0
+## Atualizacao 2026-04-23 — prova equivalente parcial de PR-T0.1 (lacuna remanescente declarada)
 
 Recorte executado nesta atualizacao:
-- Eliminacao da lacuna remanescente de PR-T0.1 via prova equivalente auditavel.
+- Complementacao documental de `PR-T0.1` com prova equivalente auditavel para blocos L03-L14 e L17 e referencia de coluna/tabela via Taxonomia Oficial PDF6.
 
 Evidencias adicionadas:
 - `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` (secoes 13, 14 e 15 atualizadas):
-  - secao 13: origens de coluna/tabela preenchidas com referencia ao schema Supabase canonico (PDF6 Taxonomia Oficial + LEGADO_MESTRE fonte);
-  - secao 14: decisao de fechamento formal de PR-T0.1 em pre-readiness G0;
-  - secao 15: prova equivalente auditavel para cada bloco L03-L17 (referencias a linhas especificas do LEGADO_MESTRE soberano e PDF6).
+  - secao 13: origens de coluna/tabela referenciadas via schema Supabase canonico (PDF6 Taxonomia Oficial + LEGADO_MESTRE fonte);
+  - secao 14: decisao de nao fechamento de PR-T0.1 com lacuna remanescente explicita;
+  - secao 15: prova equivalente auditavel para blocos L03-L14 e L17 (referencias a linhas especificas do LEGADO_MESTRE soberano e PDF6); L15-L16 permanecem em "parcial estrutural".
 
 Estado de fechamento:
-- `PR-T0.1` **encerrada** em pre-readiness G0 (fluxos+estados mapeados).
-- G0 permanece aberto (so fecha via PR-T0.R apos PR-T0.2..T0.6).
-- `PR-T0.2` desbloqueada como proximo passo autorizado.
+- `PR-T0.1` **permanece aberta**.
+- G0 permanece aberto.
+- Lacuna remanescente: L15-L16 em "parcial estrutural" e origem legada/persistida dos estados ainda nao provada sem inferencia.
 
 Limites reafirmados:
 - sem runtime funcional;

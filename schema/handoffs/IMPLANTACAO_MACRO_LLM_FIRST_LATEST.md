@@ -351,42 +351,43 @@ Consolidar o inventario operacional auditavel de `PR-T0.1` sem abrir escopo func
 
 ### Estado atual pos-encerramento
 
-- `PR-T0.1` **encerrada** em pre-readiness G0.
-- G0 permanece aberto (so fecha via PR-T0.R apos PR-T0.2..T0.6).
-- Lacunas residuais nao bloqueantes (declaradas em T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md §14-15):
+- `PR-T0.1` **permanece aberta** — lacuna remanescente declarada (ver §14 do inventario).
+- G0 aberto.
+- Lacunas remanescentes (declaradas em T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md §14):
   - blocos L15-L16 com prova em nivel "parcial estrutural" (dominio confirmado, microregras P3 pendentes de PDF);
   - itens `informativo_*` e `COGNITIVE_V2_MODE` permanecem inconclusivos (correto — sem prova de uso produtivo).
 
 ### Proximo passo autorizado
 
-- **`PR-T0.2`** — Inventario de regras e classificacao por familia (Biblia §PR-T0.2).
+- Continuidade de **`PR-T0.1`** — eliminar a lacuna remanescente.
 
 ---
 
-## Atualizacao 2026-04-23 — encerramento formal de PR-T0.1 em pre-readiness G0
+## Atualizacao 2026-04-23 — prova equivalente parcial de PR-T0.1 (lacuna remanescente declarada)
 
 ### Objetivo executado
 
-Eliminar a lacuna remanescente de PR-T0.1 via prova equivalente auditavel, encerrando formalmente
-a etapa em pre-readiness G0 e desbloqueando PR-T0.2.
+Complementar o inventario de `PR-T0.1` com prova equivalente auditavel para blocos L03-L14 e L17,
+declarar lacuna remanescente explicita (L15-L16 e origem legada/persistida) sem fechar prematuramente.
 
 ### O que foi feito
 
 - Atualizado `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md`:
-  - secao 13: origens de coluna/tabela preenchidas (Taxonomia Oficial PDF6 + schema Supabase canonico);
-  - secao 14: decisao formal de fechamento de PR-T0.1 em pre-readiness G0;
-  - secao 15 (nova): prova equivalente auditavel por bloco L03-L17, citando linhas especificas do LEGADO_MESTRE soberano.
+  - secao 13: origens de coluna/tabela referenciadas via Taxonomia Oficial PDF6 + schema Supabase canonico;
+  - secao 14: decisao canonica de nao fechamento de PR-T0.1, com lacuna remanescente explicita;
+  - secao 15 (nova): prova equivalente auditavel para blocos L03-L14 e L17; L15-L16 permanecem "parcial estrutural".
 - Atualizado `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
-  - quebra oficial de PRs expandida conforme Biblia (PR-T0.1..PR-T0.R);
-  - PR-T0.1 marcada como encerrada; PR-T0.2 como proximo passo.
-- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` com novo estado e leituras de PR-T0.2.
+  - quebra oficial de PRs corrigida: PR-T0.1 como "em execucao"; PR-T0.2 como "bloqueada ate encerramento de PR-T0.1";
+  - proximo passo autorizado: continuidade de PR-T0.1.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` refletindo estado aberto de PR-T0.1.
 
 ### O que nao foi feito
 
 - Nenhuma alteracao em runtime.
 - Nenhuma alteracao em `src/`, `package.json` ou `wrangler.toml`.
 - Nenhuma implementacao funcional.
-- G0 nao aprovado (permanece aberto ate PR-T0.R).
+- PR-T0.1 nao encerrada (lacuna remanescente declarada).
+- G0 nao aprovado.
 - T1 nao aberta.
 
 ### Excecao contratual
@@ -394,16 +395,22 @@ a etapa em pre-readiness G0 e desbloqueando PR-T0.2.
 - Excecao contratual ativa nesta PR: nao.
 - Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
 
+### Estado atual pos-encerramento
+
+- `PR-T0.1` **permanece aberta**.
+- G0 aberto.
+- Lacunas remanescentes (declaradas em T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md §14):
+  - blocos L15-L16 com prova em nivel "parcial estrutural" (dominio confirmado, microregras P3 pendentes de PDF);
+  - origem legada/persistida dos estados apoiada no schema alvo Enova 2 (PDF6) em vez do legado E1 sem inferencia.
+
 ### Proximo passo autorizado
 
-- **`PR-T0.2`** — Inventario de regras e classificacao por familia.
-- Dependencia: PR-T0.1 encerrada (cumprida nesta PR).
-- Gate de entrada: pre-readiness PR-T0.1 (cumprido).
+- Continuidade de **`PR-T0.1`** — eliminar a lacuna remanescente para fechar com prova conclusiva.
 
-### Leituras obrigatorias para PR-T0.2
+### Leituras obrigatorias para a continuidade de PR-T0.1
 
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.2)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (secao PR-T0.1)
 3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`
 4. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
 5. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
