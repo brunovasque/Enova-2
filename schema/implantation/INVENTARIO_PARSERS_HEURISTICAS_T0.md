@@ -109,7 +109,7 @@ Os inconclusivos de L-blocks não bloqueiam PR-T0.3 (mesmo critério de PR-T0.2 
 
 ---
 
-## Inconclusivos declarados (não catalogados nesta PR por limitação de L-blocks)
+## §7 — Inconclusivos declarados (não catalogados nesta PR por limitação de L-blocks)
 
 Os seguintes pontos de decisão mecânica são suspeitos de existir nos L-blocks não transcritos
 mas não puderam ser catalogados com evidência auditável nesta PR:
@@ -124,6 +124,73 @@ mas não puderam ser catalogados com evidência auditável nesta PR:
 | Valor de `limite_operacional` (renda baixa solo) | Limiar numérico MCMV para PH-H05 | L11 | PR-T0.3+ / transcrição L11 |
 | Detalhe dos 73 cases do switch(stage) | Lógica interna de cada case além da espinha dorsal observável | L03 | PR-T0.R / transcrição completa L03 |
 | Parsers de mídia/imagem (OCR e extração de campos) | Extração de dados de imagem de documentos (RG, CPF, CTPS) | L17, L18 | PR-T0.4+ |
+
+---
+
+## §8 — Classificação de lacunas: bloqueantes vs. não bloqueantes (A00-ADENDO-03)
+
+### Critério de aceite de PR-T0.3
+
+O critério de aceite de PR-T0.3 é: **catalogar todos os pontos de decisão mecânica identificáveis
+nas fontes acessíveis**, com bloco legado de origem, fonte auditável e regra associada por item.
+
+Fontes acessíveis de PR-T0.3:
+
+- `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (markdown soberano)
+- `schema/implantation/T0_PR1_ENOVA1_LEGADO_VIVO_CANONICO.md` (inventário T0.1)
+- `schema/implantation/INVENTARIO_REGRAS_T0.md` (inventário T0.2)
+- Implementação Core Mecânico 2 (branch/commit auditável)
+
+### Definições
+
+**Lacuna bloqueante de PR-T0.3** = ponto que:
+1. deveria estar catalogado a partir das fontes acessíveis acima, E
+2. foi omitido do catálogo sem justificativa
+
+**Limitação estrutural não bloqueante** = ponto que:
+1. está exclusivamente em L-blocks não transcritos (somente em PDF — inacessível sem ferramenta PDF), E
+2. foi declarado explicitamente como inconclusivo nesta PR, E
+3. não é identificável com evidência auditável nas fontes acessíveis acima
+
+### Classificação dos 8 inconclusivos declarados
+
+| Inconclusivo | Classificação | Justificativa |
+|--------------|---------------|---------------|
+| Regex de validação de CPF/CNPJ | **Limitação estrutural — não bloqueante** | Localizado em L04 (PDF inacessível); padrão exato não verificável nas fontes markdown; não é ponto identificável sem transcrição |
+| Regex de parsing numérico de renda | **Limitação estrutural — não bloqueante** | Localizado em L11, L12 (PDF inacessível); extração de valor monetário não verificável nas fontes markdown |
+| Regex de formato de CTPS/documentos | **Limitação estrutural — não bloqueante** | Localizado em L13, L17 (PDF inacessível); padrão de validação de CTPS não verificável nas fontes markdown |
+| Lógica completa de `isModoFamiliar` | **Limitação estrutural — não bloqueante** | Localizado em L07, L09 (PDF inacessível); PH-H04 e PH-S02 capturam existência e risco; critério exato requer transcrição |
+| Critérios exatos de `offtrack_type` | **Limitação estrutural — não bloqueante** | Localizado em L03 (PDF inacessível); PH-H01 captura existência e risco; regras de classificação fina requerem transcrição |
+| Valor de `limite_operacional` | **Limitação estrutural — não bloqueante** | Localizado em L11 (PDF inacessível); PH-H05 captura existência e risco; limiar numérico requer transcrição |
+| Detalhe dos 73 cases do switch(stage) | **Limitação estrutural — não bloqueante** | Localizado em L03 (PDF inacessível); PH-S08 captura espinha dorsal observável (73 stages, início→fim); lógica interna de cada case requer transcrição de L03 |
+| Parsers de mídia/imagem (OCR) | **Limitação estrutural — não bloqueante** | Localizado em L17, L18 (PDF inacessível); não identificável nas fontes markdown; escopo formal de PR-T0.4+ |
+
+**Lacunas bloqueantes de PR-T0.3: nenhuma.**
+
+Todos os 27 itens catalogados têm bloco legado de origem, fonte auditável e regra associada (PR-T0.2).
+Os 8 inconclusivos são limitações estruturais de acesso (L-blocks PDF não transcritos), não gaps
+no escopo de PR-T0.3. Nenhum ponto identificável nas fontes acessíveis foi omitido.
+
+---
+
+## Bloco E — Fechamento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md
+Estado da evidência:                   completa — 27 itens catalogados em 5 tipos, cobrindo todas as
+                                       fontes acessíveis; critério de aceite de PR-T0.3 plenamente atendido
+Há lacuna remanescente?:               não — os 8 inconclusivos declarados no §7 são limitações
+                                       estruturais de L-blocks não transcritos (PDF inacessível),
+                                       classificados explicitamente como não bloqueantes no §8;
+                                       nenhum ponto identificável nas fontes acessíveis foi omitido
+Há item parcial/inconclusivo bloqueante?: não — todos os 27 itens têm evidência auditável completa;
+                                       os inconclusivos de L-blocks são limitações de acesso,
+                                       não itens parciais do catálogo de PR-T0.3
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         encerrada
+Próxima PR autorizada:                 PR-T0.4 — Inventário de canais, superfícies e telemetria
+```
 
 ---
 
@@ -144,13 +211,14 @@ derivadas do PDF fornecerem prova equivalente auditável.
 
 - Tipos cobertos: 5/5 (parser, regex, fallback, heurística, stage).
 - Pontos catalogados: 27 (17 ativos, 5 condicionais, 3 residuais, 2 mortos).
-- Inconclusivos declarados: 8 categorias (não bloqueiam fechamento de PR-T0.3).
+- Inconclusivos declarados: 8 categorias (limitações estruturais de L-blocks PDF — classificados como não bloqueantes no §8).
 - Bloco legado citado por item: sim (todos os 27 itens têm bloco legado de origem).
 - Fonte auditável citada por item: sim (todos com linha ou seção verificável).
 - Regra associada (PR-T0.2): sim (todos linkados a pelo menos uma regra do inventário de regras).
 - Coerência com soberania LLM-first: sim — itens de fala mecânica classificados como "morto".
 - Coerência com PR-T0.1: sim — transições dinâmicas e gates alinhados com matriz de rastreabilidade.
+- Lacunas bloqueantes de PR-T0.3: nenhuma (ver §8).
 
 Decisão de fechamento de PR-T0.3:
-- `PR-T0.3` **pronta para encerramento**.
+- `PR-T0.3` **pronta para encerramento** (Bloco E confirma: fechamento permitido).
 - Próximo passo autorizado: PR-T0.4 — Inventário de canais, superfícies e telemetria.

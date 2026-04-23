@@ -561,7 +561,9 @@ com bloco legado de origem, fonte auditavel, regra associada (PR-T0.2), status e
   - bloco legado de origem (L03-L19) por item;
   - fonte LEGADO_MESTRE soberano (linha ou secao) por item;
   - regra associada (PR-T0.2 ID) por item;
-  - 8 categorias de inconclusivos declaradas (L-blocks nao transcritos — nao bloqueiam PR-T0.3).
+  - 8 categorias de inconclusivos declaradas (§7): limitacoes estruturais de L-blocks PDF nao transcritos;
+  - secao §8: classificacao explicita de cada inconclusivo como "limitacao estrutural — nao bloqueante" (criterio de aceite: catalogar pontos identificaveis nas fontes acessiveis — completamente atendido);
+  - Bloco E (A00-ADENDO-03) incorporado no documento.
 - Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T0.md`:
   - PR-T0.3 concluida; PR-T0.4 desbloqueada.
 - Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
@@ -578,11 +580,30 @@ com bloco legado de origem, fonte auditavel, regra associada (PR-T0.2), status e
 - Excecao contratual ativa nesta PR: nao.
 - Regra vigente reafirmada: somente Vasques pode autorizar manualmente excecao contratual.
 
+### Bloco E — Fechamento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/INVENTARIO_PARSERS_HEURISTICAS_T0.md
+Estado da evidência:                   completa — 27 itens catalogados em 5 tipos, cobrindo todas as
+                                       fontes acessíveis; critério de aceite de PR-T0.3 plenamente atendido
+Há lacuna remanescente?:               não — os 8 inconclusivos declarados no §7 são limitações
+                                       estruturais de L-blocks não transcritos (PDF inacessível),
+                                       classificados explicitamente como não bloqueantes no §8;
+                                       nenhum ponto identificável nas fontes acessíveis foi omitido
+Há item parcial/inconclusivo bloqueante?: não — todos os 27 itens têm evidência auditável completa;
+                                       os inconclusivos de L-blocks são limitações de acesso,
+                                       não itens parciais do catálogo de PR-T0.3
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         encerrada
+Próxima PR autorizada:                 PR-T0.4 — Inventário de canais, superfícies e telemetria
+```
+
 ### Estado atual pos-encerramento
 
 - `PR-T0.1` encerrada.
 - `PR-T0.2` encerrada.
-- `PR-T0.3` **encerrada**.
+- `PR-T0.3` **encerrada** — Bloco E: fechamento valido (evidencia completa dentro do escopo; inconclusivos de L-blocks sao limitacoes estruturais nao bloqueantes, declaradas explicitamente no §8 do documento-base).
 - G0 aberto.
 - `PR-T0.4` desbloqueada.
 
