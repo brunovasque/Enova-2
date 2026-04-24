@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T2 — Estado estruturado, memória e reconciliação | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` | aberto | G1 aprovado; G2 — estado estruturado funcional | 2026-04-23 | PR-T2.0 executada | PR-T2.1 |
+| T2 — Estado estruturado, memória e reconciliação | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` | em execução | G1 aprovado; G2 — estado estruturado funcional | 2026-04-23 | PR-T2.1 executada | PR-T2.2 |
 
 ## Contratos encerrados
 
@@ -148,3 +148,4 @@ schema/contracts/
 - 2026-04-23 — PR-T1.5 executada. T1_COMPORTAMENTOS_E_PROIBICOES.md criado: 15 comportamentos obrigatórios; 13 proibições absolutas; 8 padrões de condução; 12 cenários adversariais; amarração às 5 camadas e 13 campos de saída; 9 anti-padrões. PR-T1.R desbloqueada. Próximo passo: PR-T1.R.
 - 2026-04-23 — PR-T1.R executada. READINESS_G1.md criado: smoke 6/6 PRs; 12/12 critérios cumpridos; G1 APROVADO. Contrato T1 ENCERRADO e arquivado. Skeleton T2 criado. PR-T2.0 desbloqueada. Próximo passo: PR-T2.0.
 - 2026-04-23 — PR-T2.0 executada. Contrato T2 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: objetivo, escopo, fora de escopo, dependências, entradas, saídas, critérios de aceite, provas, bloqueios, quebra de PRs (T2.1–T2.R), gate G2, legados, referências. PR-T2.1 desbloqueada. Próximo passo: PR-T2.1.
+- 2026-04-24 — PR-T2.1 executada. T2_DICIONARIO_FATOS.md criado: 50 chaves canônicas (35 fact_*, 9 derived_*, 6 signal_*); auditoria E1→E2 completa (42 campos mapeados); 7 categorias de memória com limites LLM-first; 10 regras invioláveis; cobertura das 5 microetapas do mestre. PR-T2.2 desbloqueada. Próximo passo: PR-T2.2.

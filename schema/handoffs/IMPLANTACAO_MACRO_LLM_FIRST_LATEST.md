@@ -1799,3 +1799,90 @@ Próxima PR autorizada:                 PR-T2.1 — Nomes canônicos dos fatos
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 10. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-24 — dicionario canonico de fatos (PR-T2.1)
+
+### Objetivo executado
+
+`PR-T2.1` — criar `schema/implantation/T2_DICIONARIO_FATOS.md` com nomes canônicos únicos,
+mapeamento E1→E2, 7 categorias de memória com limites LLM-first e 10 regras invioláveis.
+
+### Estado herdado
+
+- Branch `feat/t2-pr21-dicionario-fatos` criada limpa a partir de main pós-PR-T2.0.
+- Contrato T2 aberto: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`.
+- G1 APROVADO; G2 aberto.
+- Artefatos T1 completos como base de entrada.
+
+### O que foi feito
+
+- Criou `schema/implantation/T2_DICIONARIO_FATOS.md` com:
+  - **§1** Princípio de uso: prefixos `fact_`/`derived_`/`signal_`; memória ≠ fala.
+  - **§2** Auditoria de duplicidade semântica: 42 campos E1 analisados; 4 eliminados como fatos primários (`rnm_required`, `dependents_applicable`, `subsidy_band_hint`) ou rebaixados (`has_multi_income_p1`, sinais cognitivos E1); `marital_status` renomeado para `fact_estado_civil`.
+  - **§3** Dicionário canônico: 50 chaves estáveis em 12 grupos (I a XII): 35 `fact_*`, 9 `derived_*`, 6 `signal_*`.
+  - **§4** 7 categorias de memória com limites explícitos por categoria: atendimento, normativa/MCMV, comercial, manual Vasques, regras do funil, aprendizado por atendimento, operacional/telemetria.
+  - **§5** Tabela consolidada E1→E2: cada campo E1 com decisão (renomeado, eliminado, adicionado, alinhado T1).
+  - **§6** Contagem final: 50 chaves totais.
+  - **§7** 10 regras LLM-first invioláveis (M-01..M-10).
+  - **§8** Cobertura das 5 microetapas do mestre declarada.
+  - **§9** Bloco E: fechamento permitido; PR-T2.2 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: T2 → em execução; próximo passo PR-T2.2.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: última tarefa PR-T2.1; próximo passo PR-T2.2.
+
+### O que nao foi feito
+
+- T2_LEAD_STATE_V1.md não criado (escopo PR-T2.2).
+- Nenhuma migration Supabase.
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+- Tipologia completa de status do fato (bruto/confirmado/inferência/hipótese/pendência) — detalhamento em T2.4.
+- G2 não fechado (requer PR-T2.R).
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+PR que fecha:                          PR-T2.1
+Contrato de referência:                schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md
+Critério de aceite verificado:         T2_DICIONARIO_FATOS.md cobre todos os fatos centrais e
+                                       derivados do mestre seção T2; 50 chaves canônicas sem
+                                       duplicidade semântica; 7 categorias de memória com limites;
+                                       10 regras LLM-first; tabela E1→E2 exaustiva; 5 microetapas
+                                       do mestre cobertas
+Lacuna remanescente:                   nenhuma bloqueante — tipologia de status do fato
+                                       (bruto/confirmado/etc.) é detalhada em T2.4 conforme
+                                       sequência da Bíblia (T2.3 antes de T2.4)
+Há item parcial bloqueante?:           não
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T2.1 encerrada; T2_DICIONARIO_FATOS.md publicado;
+                                       PR-T2.2 desbloqueada
+Próxima PR autorizada:                 PR-T2.2 — Schema lead_state v1
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T2** — em execução; PR-T2.2 próxima.
+- G0: APROVADO.
+- G1: APROVADO em 2026-04-23.
+- G2: aberto — aguardando PR-T2.R.
+- T2_DICIONARIO_FATOS.md: **publicado**.
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T2.2`** — Schema `lead_state` v1.
+
+### Leituras obrigatorias para PR-T2.2
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.2)
+3. `schema/implantation/T2_DICIONARIO_FATOS.md` (base obrigatória)
+4. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — estado canônico, PDF6 pp. 4–5)
+5. `schema/implantation/T1_CONTRATO_SAIDA.md` (13 campos de saída)
+6. `schema/implantation/T1_TAXONOMIA_OFICIAL.md` (OBJ_*, PEND_*, CONF_*, RISCO_*)
+7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+11. `schema/CODEX_WORKFLOW.md`
