@@ -1390,3 +1390,125 @@ Próxima PR autorizada:                 PR-T1.4 — Contrato de saída do agente
 11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 13. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — contrato de saida do agente (PR-T1.4)
+
+### Objetivo executado
+
+`PR-T1.4` — Criar `schema/implantation/T1_CONTRATO_SAIDA.md` definindo a interface conceitual
+de saída estruturada do agente ENOVA 2 por turno — campos, semântica, responsabilidade e travas
+LLM-first. Sem implementação de runtime, sem schema Supabase, sem policy engine.
+
+### O que foi feito
+
+- Criado `schema/implantation/T1_CONTRATO_SAIDA.md` com:
+  - Princípio canônico: `reply_text` é sempre e exclusivamente do LLM; demais campos são
+    estruturais — organizam estado e decisão, nunca falam com o cliente;
+  - §1 Tabela de soberania: 13 campos × soberano × trava canônica;
+  - §2 Shape descritivo completo (TurnoSaida + sub-shapes FactsUpdated, Objective, Pending,
+    Conflict, Risk, Action, Block, Confidence, Flags);
+  - §3 Semântica completa de cada campo:
+    - `reply_text` — LLM soberano — texto ao cliente;
+    - `turn_id` / `case_id` — identidade do turno/case;
+    - `facts_updated` — F1–F8 da taxonomia; source + confirmed flag;
+    - `next_objective` — OBJ_* da taxonomia; mecânico declara; LLM conduz;
+    - `pending` — PEND_* da taxonomia; slots obrigatórios ausentes;
+    - `conflicts` — CONF_* da taxonomia; implica needs_confirmation=true;
+    - `risks` — RISCO_* da taxonomia com severidade;
+    - `actions_executed` — ACAO_* da taxonomia; mecânico executa;
+    - `blocks` — bloqueios semânticos internos;
+    - `needs_confirmation` — flag obrigatória (boolean);
+    - `confidence` — único campo de meta-avaliação do LLM (high/medium/low);
+    - `flags` — sinais operacionais (bypass_manual, rollback_flag, offtrack);
+  - §4 Tabela resumo: campos × responsável × proibição absoluta;
+  - §5 Amarração completa à T1_TAXONOMIA_OFICIAL por seção;
+  - §6 8 invariantes de consistência interna (I-01 a I-08);
+  - §7 6 cenários sintéticos de validação:
+    - C1: lead CLT básico — coleta limpa sem pendências;
+    - C2: lead autônomo sem IR — risco orientativo + objetivo de orientação;
+    - C3: lead casado civil — ACAO_FORCAR_CONJUNTO + coleta P2;
+    - C4: restrição de crédito bloqueante — inelegibilidade;
+    - C5: conflito de dado contradito — needs_confirmation=true + OBJ_CONFIRMAR;
+    - C6: lead offtrack — RISCO_OFFTRACK + OBJ_RETORNAR_AO_TRILHO;
+  - §8 Ciclo de vida do contrato por turno (canal-agnóstico);
+  - §9 O que este contrato NÃO é (não é schema Supabase, não é runtime, não é policy
+    engine, não é template, não é system prompt);
+  - §10 Cobertura de microetapas do mestre (8/8 verificadas);
+  - Bloco E: fechamento permitido; PR-T1.5 desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.4 concluída; PR-T1.5 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T1.5 como próximo passo.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: ultima tarefa PR-T1.4; próximo passo PR-T1.5.
+
+### O que nao foi feito
+
+- Comportamentos canônicos e proibições não criados (PR-T1.5).
+- Schema Supabase não definido (escopo T2).
+- Policy engine não criado (escopo T3).
+- Parser/serializer de runtime não implementado (escopo T4).
+- Nenhum LLM real ativado.
+- Nenhuma alteração em runtime (`src/`, `package.json`, `wrangler.toml`).
+
+### Excecao contratual
+
+- Exceção contratual ativa nesta PR: não.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente exceção contratual.
+
+### Bloco E — encerramento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+PR que fecha:                          PR-T1.4
+Contrato de referência:                schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md
+Critério de aceite verificado:         13 campos canônicos definidos; reply_text soberano do
+                                       LLM verificado; shape descritivo completo; 8 invariantes
+                                       de consistência; 6 cenários sintéticos (>5 exigidos);
+                                       amarração completa à taxonomia T1.3; cobertura das
+                                       microetapas do mestre 8/8
+Estado da evidência:                   completa — T1_CONTRATO_SAIDA.md gerado com todos os
+                                       campos exigidos pelo mestre; invariantes declaradas;
+                                       cenários sintéticos validam conformidade de cada campo;
+                                       nenhum campo estrutural contém fala ao cliente
+Há lacuna remanescente?:               não — schema Supabase é escopo T2; policy engine é
+                                       escopo T3; serialização runtime é escopo T4 (todos
+                                       corretamente fora do escopo desta PR)
+Há item parcial/inconclusivo bloqueante?: não — todos os 13 campos têm definição canônica
+                                       completa com semântica, responsável, trava LLM-first
+                                       e amarração à taxonomia
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         T1_CONTRATO_SAIDA.md publicado; PR-T1.4 encerrada;
+                                       PR-T1.5 desbloqueada
+Próxima PR autorizada:                 PR-T1.5 — Comportamentos canônicos e proibições
+```
+
+### Estado atual pos-encerramento
+
+- Fase macro: T1 — em execução.
+- G0: APROVADO.
+- G1: aberto — aguardando PR-T1.5 + PR-T1.R.
+- `PR-T1.4` **encerrada**.
+- `PR-T1.5` **desbloqueada**.
+- `PR-T1.R` bloqueada (aguarda conclusão de PR-T1.5).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T1.5`** — Comportamentos canônicos e proibições.
+
+### Leituras obrigatorias para PR-T1.5
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L19 + L03)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.5)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/implantation/T1_CAMADAS_CANONICAS.md`
+5. `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md`
+6. `schema/implantation/T1_TAXONOMIA_OFICIAL.md`
+7. `schema/implantation/T1_CONTRATO_SAIDA.md` (obrigatório — base desta PR)
+8. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+9. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+10. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+12. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+13. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+14. `schema/CODEX_WORKFLOW.md`
