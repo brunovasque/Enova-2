@@ -1280,3 +1280,113 @@ Próxima PR autorizada:                 PR-T1.3 — Taxonomia oficial (facts/obj
 10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 12. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — taxonomia oficial do agente (PR-T1.3)
+
+### Objetivo executado
+
+`PR-T1.3` — Criar `schema/implantation/T1_TAXONOMIA_OFICIAL.md` definindo a taxonomia canônica
+de facts, objetivos, pendências, conflitos, riscos e ações — organizando o raciocínio do agente
+sem escrever fala, amarrada aos 48 itens do inventário T0.
+
+### O que foi feito
+
+- Criado `schema/implantation/T1_TAXONOMIA_OFICIAL.md` com:
+  - §1 Finalidade e princípio canônico: "A taxonomia organiza o raciocínio — ela nunca escreve a fala";
+  - §2 Tabela de uso: 6 categorias × quem produz / consome / não pode conter;
+  - §3 FACTS (18 tipos em 8 grupos):
+    - F1 Perfil pessoal: estado civil, nationality, rnm_status, dependente;
+    - F2 Regime/renda P1: work_regime_p1, monthly_income_p1, autonomo_has_ir_p1, ctps_36m_p1;
+    - F3 Processo/composição: processo, p3_required;
+    - F4 P2: work_regime_p2, monthly_income_p2, autonomo_has_ir_p2;
+    - F5 P3: work_regime_p3;
+    - F6 Elegibilidade: credit_restriction, restriction_regularization_status;
+    - F7 Documentação: doc_identity/income/residence/ctps/channel;
+    - F8 Operacional: visit_interest;
+  - §4 OBJETIVOS (9): OBJ_COLETAR, OBJ_CONFIRMAR, OBJ_SUGERIR_COMPOSICAO, OBJ_ORIENTAR_IR,
+    OBJ_INFORMAR_CTPS, OBJ_RETORNAR_AO_TRILHO, OBJ_AVANÇAR_STAGE, OBJ_PREPARAR_DOCS, OBJ_HANDOFF;
+  - §5 PENDÊNCIAS (6): PEND_SLOT_VAZIO, PEND_CONFIRMACAO, PEND_DOCUMENTO, PEND_P2_SLOT,
+    PEND_P3_SLOT, PEND_RNM;
+  - §6 CONFLITOS (4): CONF_DADO_CONTRADITO, CONF_COMPOSICAO, CONF_PROCESSO, CONF_RENDA;
+  - §7 RISCOS (8 em 5 severidades): BLOQUEANTE (inelegibilidade restrição/RNM), ORIENTATIVO
+    (renda baixa, IR autônomo, CTPS curto), VETO (promessa), INFORMATIVO (offtrack),
+    OPERACIONAL (dados conflitantes);
+  - §8 AÇÕES (11): ACAO_AVANÇAR_STAGE, ACAO_ROTEAR_SPECIAL/DOCS/AGUARDANDO, ACAO_FORCAR_CONJUNTO,
+    ACAO_SINALIZAR_CONFLITO, ACAO_INELEGIBILIDADE, ACAO_KEEPSTAGE, ACAO_HANDOFF,
+    ACAO_BYPASS_MANUAL, ACAO_ROLLBACK_FLAG;
+  - §9 Tabela completa: 48 regras T0 → categorias de taxonomia (cobertura total);
+  - §10 Resumo de contagem por categoria;
+  - §11 O que esta taxonomia NÃO é (não é schema Supabase, não é contrato de saída, não é policy
+    engine, não é roteiro);
+  - §12 Cobertura de microetapas do mestre (7/7 verificadas);
+  - Bloco E: fechamento permitido; PR-T1.4 desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.3 concluída; PR-T1.4 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T1.4 como PR atual e próximo passo.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: ultima tarefa PR-T1.3; próximo passo PR-T1.4.
+
+### O que nao foi feito
+
+- Contrato de saída não criado (PR-T1.4).
+- Comportamentos canônicos não criados (PR-T1.5).
+- Taxonomia não carregada em runtime (correto — escopo T3/T4).
+- Nenhum LLM real ativado.
+- Nenhuma alteração em runtime (`src/`, `package.json`, `wrangler.toml`).
+
+### Excecao contratual
+
+- Exceção contratual ativa nesta PR: não.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente exceção contratual.
+
+### Bloco E — encerramento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+PR que fecha:                          PR-T1.3
+Contrato de referência:                schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md
+Critério de aceite verificado:         6 categorias definidas; 48 regras T0 mapeadas; nenhum
+                                       campo redige fala; princípio "taxonomia organiza raciocínio"
+                                       declarado e verificado em todos os tipos
+Estado da evidência:                   completa — T1_TAXONOMIA_OFICIAL.md gerado com 56 tipos
+                                       canônicos; cobertura total das regras T0; trava LLM-first
+                                       verificada; microetapas do mestre cobertas 7/7
+Há lacuna remanescente?:               não — taxonomia cobre o escopo completo de PR-T1.3;
+                                       campos de saída estruturada (reply_text, schema) são
+                                       escopo de PR-T1.4 (contrato de saída)
+Há item parcial/inconclusivo bloqueante?: não
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         T1_TAXONOMIA_OFICIAL.md publicado; PR-T1.3 encerrada;
+                                       PR-T1.4 desbloqueada
+Próxima PR autorizada:                 PR-T1.4 — Contrato de saída do agente
+```
+
+### Estado atual pos-encerramento
+
+- Fase macro: T1 — em execução.
+- G0: APROVADO.
+- G1: aberto — aguardando PR-T1.4–T1.5 + PR-T1.R.
+- `PR-T1.3` **encerrada**.
+- `PR-T1.4` **desbloqueada**.
+- `PR-T1.5–T1.R` bloqueadas (aguardam conclusão sequencial).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T1.4`** — Contrato de saída do agente (reply_text + facts + objetivo + flags + bloqueios).
+
+### Leituras obrigatorias para PR-T1.4
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L19 + L03)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.4)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/implantation/T1_CAMADAS_CANONICAS.md`
+5. `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md`
+6. `schema/implantation/T1_TAXONOMIA_OFICIAL.md` (obrigatório — base desta PR)
+7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+13. `schema/CODEX_WORKFLOW.md`
