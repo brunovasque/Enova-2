@@ -27,12 +27,13 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T1 — Constituição do agente e contrato cognitivo canônico | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` | aberto | G1 — contrato cognitivo aprovado | 2026-04-23 | PR-T1.R — readiness e closeout do gate G1 | PR-T1.R |
+| T2 — Estado estruturado, memória e reconciliação | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` | skeleton — aguardando PR-T2.0 | G1 aprovado; G2 — estado estruturado funcional | 2026-04-23 | PR-T2.0 — abertura do contrato T2 | PR-T2.0 |
 
-## Contrato T0 encerrado
+## Contratos encerrados
 
 | Fase | Contrato arquivado | Status | Gate | Data de encerramento | PR que encerrou |
 |------|-------------------|--------|------|----------------------|-----------------|
+| T1 — Constituição do agente e contrato cognitivo canônico | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md` | encerrado | G1 — APROVADO | 2026-04-23 | PR-T1.R |
 | T0 — Congelamento, inventario e mapa do legado vivo | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md` | encerrado | G0 — aprovado | 2026-04-23 | PR-T0.R |
 
 ---
@@ -145,3 +146,4 @@ schema/contracts/
 - 2026-04-23 — PR-T1.3 executada. T1_TAXONOMIA_OFICIAL.md criado: 6 categorias canônicas (FACTS 18 tipos, OBJETIVOS 9, PENDÊNCIAS 6, CONFLITOS 4, RISCOS 8, AÇÕES 11); todas as 48 regras T0 mapeadas; trava LLM-first verificada. PR-T1.4 desbloqueada. Próximo passo: PR-T1.4.
 - 2026-04-23 — PR-T1.4 executada. T1_CONTRATO_SAIDA.md criado: 13 campos canônicos com semântica, responsável e travas LLM-first; 8 invariantes; 6 cenários sintéticos; amarração completa à T1.3. PR-T1.5 desbloqueada. Próximo passo: PR-T1.5.
 - 2026-04-23 — PR-T1.5 executada. T1_COMPORTAMENTOS_E_PROIBICOES.md criado: 15 comportamentos obrigatórios; 13 proibições absolutas; 8 padrões de condução; 12 cenários adversariais; amarração às 5 camadas e 13 campos de saída; 9 anti-padrões. PR-T1.R desbloqueada. Próximo passo: PR-T1.R.
+- 2026-04-23 — PR-T1.R executada. READINESS_G1.md criado: smoke 6/6 PRs; 12/12 critérios cumpridos; G1 APROVADO. Contrato T1 ENCERRADO e arquivado. Skeleton T2 criado. PR-T2.0 desbloqueada. Próximo passo: PR-T2.0.
