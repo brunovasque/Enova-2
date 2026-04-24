@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T1 — Constituição do agente e contrato cognitivo canônico | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` | aberto | G1 — contrato cognitivo aprovado | 2026-04-23 | PR-T1.2 — system prompt canônico em camadas | PR-T1.2 |
+| T1 — Constituição do agente e contrato cognitivo canônico | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` | aberto | G1 — contrato cognitivo aprovado | 2026-04-23 | PR-T1.3 — taxonomia oficial | PR-T1.3 |
 
 ## Contrato T0 encerrado
 
@@ -141,3 +141,4 @@ schema/contracts/
 - 2026-04-23 — PR-T0.R executada. Contrato T0 ENCERRADO. G0 APROVADO. T0 arquivado em `archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md`. Skeleton T1 criado em `active/CONTRATO_IMPLANTACAO_MACRO_T1.md`. Próximo passo autorizado: PR-T1.0.
 - 2026-04-23 — PR-T1.0 executada. Contrato T1 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: objetivo, escopo, critérios de aceite, quebra de PRs (T1.1–T1.R), gate G1, legados aplicáveis. PR-T1.1 desbloqueada. Próximo passo: PR-T1.1.
 - 2026-04-23 — PR-T1.1 executada. T1_CAMADAS_CANONICAS.md criado: 5 camadas canônicas (TOM/REGRA/VETO/SUGESTÃO MANDATÓRIA/REPERTÓRIO) com definições, anti-padrões, travas LLM-first e classificação completa das 48 regras T0. PR-T1.2 desbloqueada. Próximo passo: PR-T1.2.
+- 2026-04-23 — PR-T1.2 executada. T1_SYSTEM_PROMPT_CANONICO.md v1 criado: 6 seções em camadas (identidade/papel operacional/proibições/condução/conhecimento/objetivo); 7 anti-padrões proibidos; 6 cenários adversariais documentados; conformidade com T1_CAMADAS_CANONICAS verificada. PR-T1.3 desbloqueada. Próximo passo: PR-T1.3.

@@ -1184,3 +1184,99 @@ Próxima PR autorizada:                 PR-T1.2 — System prompt canônico em c
 8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 10. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — system prompt canonico em camadas (PR-T1.2)
+
+### Objetivo executado
+
+`PR-T1.2` — Criar `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` v1 com o system prompt
+da Enova 2 estruturado em camadas, orientando identidade, limites e raciocínio do LLM sem
+scripts, templates ou fala mecânica.
+
+### O que foi feito
+
+- Criado `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` v1 com:
+  - §1 Identidade (TOM): "Ana", analista especialista MCMV, fala humana, adapta tom ao momento;
+  - §2 Papel operacional (REGRA): como o LLM recebe contexto estruturado do mecânico (objetivo,
+    restrições, pendências, flags) sem expô-lo ao cliente;
+  - §3 Proibições absolutas (VETO): 5 proibições declarativas — aprovação, avanço sem fatos,
+    contradição não reconciliada, linguagem de sistema, exposição da mecânica interna;
+  - §4 Condução em contextos (SUGESTÃO MANDATÓRIA): 7 orientações de raciocínio — ambiguidade,
+    offtrack, renda baixa, autônomo sem IR, CTPS curto, insistência em valores, dado contradito;
+  - §5 Conhecimento especialista (REPERTÓRIO): substrato MCMV como competência intrínseca, sem
+    template de uso;
+  - §6 Objetivo final: qualificar leads com inteligência, honestidade e naturalidade;
+  - Tabela de conformidade seção×camada verificada; 7 anti-padrões proibidos;
+    6 cenários adversariais documentados; cobertura de microetapas do mestre verificada;
+  - Bloco E: fechamento permitido; PR-T1.3 desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.2 concluída; PR-T1.3 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T1.3 como PR atual e próximo passo.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: ultima tarefa PR-T1.2; próximo passo PR-T1.3.
+
+### O que nao foi feito
+
+- Taxonomia oficial não criada (PR-T1.3).
+- Contrato de saída não criado (PR-T1.4).
+- Comportamentos canônicos não criados (PR-T1.5).
+- Prompt não carregado em runtime (correto — escopo de T3/T4).
+- Nenhum LLM real ativado.
+- Nenhuma alteração em runtime (`src/`, `package.json`, `wrangler.toml`).
+
+### Bloco E — encerramento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+PR que fecha:                          PR-T1.2
+Contrato de referência:                schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md
+Critério de aceite verificado:         prompt v1 em 6 seções cobrindo as 5 camadas; identidade,
+                                       limites e objetivos cobertos; remetendo às camadas via
+                                       tabela de conformidade; bateria adversarial mínima
+                                       documentada sem execução de LLM real
+Estado da evidência:                   completa — T1_SYSTEM_PROMPT_CANONICO.md v1 gerado com
+                                       estrutura em camadas, anti-padrões proibidos, cenários
+                                       adversariais, conformidade com T1_CAMADAS_CANONICAS verificada
+Há lacuna remanescente?:               não — prompt cobre identidade, limites, objetivos e
+                                       remete às camadas; não está em runtime (correto);
+                                       taxonomia/contrato de saída são escopo de T1.3/T1.4
+Há item parcial/inconclusivo bloqueante?: não
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         T1_SYSTEM_PROMPT_CANONICO.md v1 publicado; PR-T1.2
+                                       encerrada; PR-T1.3 desbloqueada
+Próxima PR autorizada:                 PR-T1.3 — Taxonomia oficial (facts/objetivos/pendências/conflitos/riscos/ações)
+```
+
+### Excecao contratual
+
+- Exceção contratual ativa nesta PR: não.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente exceção contratual.
+
+### Estado atual pos-encerramento
+
+- Fase macro: T1 — em execução.
+- G0: APROVADO.
+- G1: aberto — aguardando PR-T1.3–T1.5 + PR-T1.R.
+- `PR-T1.2` **encerrada**.
+- `PR-T1.3` **desbloqueada**.
+- `PR-T1.4–T1.R` bloqueadas (aguardam conclusão sequencial).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T1.3`** — Taxonomia oficial (facts/objetivos/pendências/conflitos/riscos/ações).
+
+### Leituras obrigatorias para PR-T1.3
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L19 + L03)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.3)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/implantation/T1_CAMADAS_CANONICAS.md`
+5. `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` (obrigatório — base desta PR)
+6. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+12. `schema/CODEX_WORKFLOW.md`
