@@ -58,7 +58,7 @@ Esta seção registra os casos onde E1 tinha campos com semântica sobreposta e 
 | `p3_required` | — | `fact_p3_required` | Alinhado com T1; sem sobreposição |
 | `work_regime_p1` | — | `fact_work_regime_p1` | Direto; alinhado com T1 |
 | `monthly_income_p1` | — | `fact_monthly_income_p1` | Direto; alinhado com T1 |
-| `has_multi_income_p1` | — | `fact_multi_income_signal_p1` | E1 usava como booleano; E2 renomeia para `signal` pois é uma sinalização operacional, não fato confirmado diretamente |
+| `has_multi_income_p1` | — | `signal_multi_income_p1` (perceptivo) + `fact_has_multi_income_p1` (confirmado) | E1 tinha um único campo booleano ambíguo. E2 separa: `signal_multi_income_p1` = sinal perceptivo observado no turno antes de confirmação explícita; `fact_has_multi_income_p1` = fato confirmado diretamente pelo lead ("tenho mais de uma fonte de renda"). Sem duplicidade: namespaces distintos, semântica distinta. |
 | `autonomo_has_ir_p1` | — | `fact_autonomo_has_ir_p1` | Direto; alinhado com T1 |
 | `ctps_36m_p1` | — | `fact_ctps_36m_p1` | Direto; alinhado com T1 |
 | `work_regime_p2` | — | `fact_work_regime_p2` | Direto; alinhado com T1 |
@@ -130,7 +130,7 @@ Esta seção registra os casos onde E1 tinha campos com semântica sobreposta e 
 |---------------|-----------|-------------|---------------|----------|
 | `fact_work_regime_p1` | Regime de trabalho P1 (CLT, autônomo, servidor, aposentado, informal, múltiplo) | enum | Coleta direta | ativo |
 | `fact_monthly_income_p1` | Renda mensal declarada P1 | decimal | Coleta direta | ativo |
-| `fact_multi_income_signal_p1` | Sinal de múltiplas fontes de renda P1 | boolean | Observação de turno | ativo |
+| `fact_has_multi_income_p1` | Lead confirmou explicitamente possuir múltiplas fontes de renda P1 | boolean | Coleta direta | ativo |
 | `fact_autonomo_has_ir_p1` | P1 autônomo tem declaração de IR (sim, não, parcial, não_informado) | enum | Coleta direta | ativo |
 | `fact_ctps_36m_p1` | P1 tem CTPS com 36 meses contínuos (sim, não, parcial, não_informado) | enum | Coleta direta | ativo |
 
@@ -377,7 +377,8 @@ confiança, shadow mode data. Não é acessível ao lead. Serve a auditoria, deb
 | `p3_required` | ativo | `fact_p3_required` | atendimento | renomeado com prefixo |
 | `work_regime_p1` | ativo | `fact_work_regime_p1` | atendimento | alinhado com T1 |
 | `monthly_income_p1` | ativo | `fact_monthly_income_p1` | atendimento | alinhado com T1 |
-| `has_multi_income_p1` | sinal | `fact_multi_income_signal_p1` | atendimento | renomeado: semântica de sinal preservada |
+| `has_multi_income_p1` | ambíguo E1 | `signal_multi_income_p1` | telemetria/operacional | **desdobrado**: sinal perceptivo → `signal_multi_income_p1`; confirmação explícita → `fact_has_multi_income_p1` (abaixo) |
+| (desdobrado de `has_multi_income_p1`) | confirmado | `fact_has_multi_income_p1` | atendimento | fato confirmado pelo lead; separado do sinal perceptivo |
 | `autonomo_has_ir_p1` | ativo | `fact_autonomo_has_ir_p1` | atendimento | alinhado com T1 |
 | `ctps_36m_p1` | ativo | `fact_ctps_36m_p1` | atendimento | alinhado com T1 |
 | `work_regime_p2` | ativo | `fact_work_regime_p2` | atendimento | alinhado com T1 |
@@ -456,11 +457,15 @@ confiança, shadow mode data. Não é acessível ao lead. Serve a auditoria, deb
 --- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
 Documento-base da evidência:           schema/implantation/T2_DICIONARIO_FATOS.md (este documento)
 Estado da evidência:                   completa
-Há lacuna remanescente?:               não — 50 chaves canônicas definidas; auditoria E1→E2 completa;
+Há lacuna remanescente?:               não — 50 chaves canônicas; auditoria E1→E2 completa;
                                        7 categorias de memória com limites; 10 regras LLM-first;
-                                       cobertura das 5 microetapas do mestre declarada
-Há item parcial/inconclusivo bloqueante?: não — tipologia completa (fato/derivado/signal);
-                                       tabela E1→E2 exaustiva; sem duplicidade semântica remanescente
+                                       cobertura das 5 microetapas do mestre declarada;
+                                       duplicidade semântica multi-renda P1 resolvida:
+                                       signal_multi_income_p1 (perceptivo, turno) ≠
+                                       fact_has_multi_income_p1 (confirmado diretamente pelo lead);
+                                       fact_multi_income_signal_p1 eliminado
+Há item parcial/inconclusivo bloqueante?: não — sem duplicidade semântica remanescente;
+                                       namespaces fact_*/derived_*/signal_* sem sobreposição
 Fechamento permitido nesta PR?:        sim
 Estado permitido após esta PR:         PR-T2.1 encerrada; T2_DICIONARIO_FATOS.md publicado;
                                        PR-T2.2 desbloqueada
