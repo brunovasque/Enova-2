@@ -11,7 +11,7 @@
 | Blocos legados obrigatórios       | L03 (Mapa Canônico do Funil), L19 (Memorial do Programa / Analista MCMV)        |
 | Blocos legados complementares     | L04–L17 (regras de negócio por segmento), L18 (QA/telemetria), C01–C09          |
 | Ordem mínima de leitura da frente | L19 → L03                                                                         |
-| Status                            | **ENCERRADO** — G1 APROVADO em 2026-04-23 via PR-T1.R                            |
+| Status                            | Aberto                                                                            |
 | Última atualização                | 2026-04-23                                                                        |
 
 ---
@@ -303,53 +303,6 @@ Condições de aprovação de G1:
 - `reply_text` soberano do LLM verificado; nenhum campo estrutural contém fala.
 - PR-T1.5 desbloqueada.
 - Próximo passo: PR-T1.5 — Comportamentos canônicos e proibições.
-
-### 2026-04-23 — PR-T1.R: readiness G1 e closeout do contrato T1
-
-- `schema/implantation/READINESS_G1.md` criado: smoke documental 6/6 PRs; 12/12 critérios de aceite cumpridos; coerência entre artefatos verificada em 5 dimensões; 3 casos sintéticos cobrindo estilo/regra/saída; G1 APROVADO.
-- Contrato T1 ENCERRADO conforme CONTRACT_CLOSEOUT_PROTOCOL.md.
-- Contrato T1 arquivado em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
-- Skeleton T2 criado em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`.
-- T2 AUTORIZADA — PR-T2.0 desbloqueada.
-
----
-
-## ENCERRAMENTO DE CONTRATO
-
-```
---- ENCERRAMENTO DE CONTRATO ---
-Contrato encerrado:                     schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md
-Contrato encerrado com sucesso?:        sim
-Objetivo do contrato cumprido?:         sim — LLM tem: identidade definida, limites explícitos,
-                                         taxonomia canônica, formato de saída fixo, comportamentos
-                                         canônicos declarados, bateria adversarial aprovada
-Critérios de aceite cumpridos?:         sim
-  - [x] System prompt canônico em camadas sem ambiguidades centrais
-  - [x] Manual declarativo das regras separado de estilo de fala
-  - [x] Taxonomia oficial publicada com tipos amarrados a regras T0
-  - [x] Formato de saída com pelo menos 5 cenários cobertos (6)
-  - [x] Comportamentos canônicos para todos os cenários do mestre
-  - [x] Lista explícita do que o agente nunca pode fazer (13 proibições absolutas)
-  - [x] Bateria adversarial documentada (32 casos totais)
-  - [x] Teste de consistência entre 20-30 casos (32 produzidos)
-  - [x] Revisão manual de aderência com regras históricas da Enova
-  - [x] Trava de rollback verificada — sem "resposta bonita mas operacionalmente frouxa"
-  - [x] Soberania LLM-first em todos os artefatos
-  - [x] Nenhuma fala mecânica em T1
-Fora de escopo respeitado?:             sim — nenhum runtime, LLM real, Supabase, policy engine
-                                         ou alteração de src/ foi feita em T1
-Pendências remanescentes:               nenhuma bloqueante — limitações residuais declaradas em
-                                         READINESS_G1.md §3 (L18 não transcrito; runtime não
-                                         testado; TurnoSaida sem schema concreto) são estruturais
-                                         e escopo de T2/T3/T4
-Evidências / provas do encerramento:    PR #83 (T1.0), PR #84 (T1.1), PR #85 (T1.2), PR #86 (T1.3),
-                                         PR #87 (T1.4), PR #88 (T1.5) — todos merged; diffs em
-                                         schema/implantation/; smoke documental em READINESS_G1.md
-Data de encerramento:                   2026-04-23
-PR que encerrou:                        PR-T1.R — Readiness e closeout do gate G1
-Destino do contrato encerrado:          archive — schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md
-Próximo contrato autorizado:            schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md (skeleton)
-```
 
 ### 2026-04-23 — PR-T1.5: comportamentos canônicos e proibições criados
 

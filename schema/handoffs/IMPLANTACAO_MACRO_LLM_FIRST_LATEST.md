@@ -1580,7 +1580,7 @@ Estado permitido após esta PR:         T1_COMPORTAMENTOS_E_PROIBICOES.md public
 Próxima PR autorizada:                 PR-T1.R — Readiness e closeout do gate G1
 ```
 
-### Estado atual do repositorio
+### Estado atual do repositorio (pós PR-T1.5)
 
 - Fase macro: T1 — em execução.
 - G0: APROVADO.
@@ -1589,7 +1589,7 @@ Próxima PR autorizada:                 PR-T1.R — Readiness e closeout do gate
 - `PR-T1.R` **desbloqueada**.
 - Runtime: inalterado.
 
-### Proximo passo autorizado
+### Proximo passo autorizado (pós PR-T1.5)
 
 - **`PR-T1.R`** — Readiness e closeout do gate G1.
 
@@ -1607,3 +1607,97 @@ Próxima PR autorizada:                 PR-T1.R — Readiness e closeout do gate
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 11. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — readiness G1 e closeout do contrato T1 (PR-T1.R)
+
+### Objetivo executado
+
+`PR-T1.R` — Smoke documental de PR-T1.0 a PR-T1.5; validação de coerência entre artefatos;
+decisão formal G1; criação de READINESS_G1.md; closeout contrato T1; skeleton T2.
+
+### O que foi feito
+
+- Criou `schema/implantation/READINESS_G1.md` com:
+  - Smoke documental de PR-T1.0 a PR-T1.5: 6/6 PASS com evidências por artefato;
+  - Verificação dos 12/12 critérios de aceite do contrato T1 com evidência por critério;
+  - Validação de coerência em 5 dimensões: camadas↔system prompt, taxonomia↔contrato de saída,
+    comportamentos↔contrato de saída, comportamentos↔camadas, regras T0↔taxonomia↔camadas;
+  - Verificação de adendos A00-ADENDO-01/02/03 em todos os artefatos T1 (tabela §2.6);
+  - 4 lacunas identificadas e classificadas como não bloqueantes com justificativa;
+  - 3 casos sintéticos cobrindo 3 dimensões: estilo/regra/saída (§5);
+  - Decisão formal G1 APROVADO (§6.4) — T2 AUTORIZADA;
+  - Bloco E: fechamento permitido; PR-T2.0 desbloqueada.
+- Encerrou contrato T1 formalmente via CONTRACT_CLOSEOUT_PROTOCOL.md:
+  - Bloco ENCERRAMENTO DE CONTRATO preenchido no contrato ativo;
+  - Checklist completo — 12/12 critérios de aceite individualmente marcados como cumpridos;
+  - Evidências declaradas: PR #83..#88, diffs em schema/implantation/.
+- Arquivou contrato T1 em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
+- Atualizou status do contrato ativo para **ENCERRADO — G1 APROVADO**.
+- Criou skeleton T2 em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`:
+  - Microetapas do mestre (seção T2) listadas;
+  - Escopo previsto;
+  - Fora de escopo;
+  - Próximo passo: PR-T2.0 com leituras obrigatórias.
+- Atualizou `schema/contracts/_INDEX.md`: T1 encerrado/arquivado; T2 skeleton ativo; PR-T2.0 desbloqueada.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: fase T2; G1 APROVADO; PR-T2.0 próximo passo.
+
+### O que nao foi feito
+
+- T2 não aberto com corpo completo (skeleton criado — PR-T2.0 preencherá).
+- LLM real não implementado.
+- Schema Supabase não definido (escopo T2).
+- Runtime não alterado.
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+PR que fecha:                          PR-T1.R
+Contrato de referência:                schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md
+Critério de aceite verificado:         smoke documental 6/6 PRs passando; 12/12 critérios
+                                       de aceite T1 cumpridos com evidência documental
+                                       completa; coerência entre todos os artefatos T1
+                                       verificada em 5 dimensões; G1 APROVADO
+Lacuna remanescente:                   nenhuma bloqueante — 4 limitações residuais declaradas
+                                       e classificadas como fora do escopo de T1 no próprio
+                                       contrato T1 §3 (L18 não transcrito; runtime não testado;
+                                       TurnoSaida sem schema concreto; 32 vs. "20-30" casos)
+Há item parcial bloqueante?:           não — todos os critérios têm evidência completa
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T1.R encerrada; G1 APROVADO; contrato T1 encerrado
+                                       e arquivado; skeleton T2 criado; PR-T2.0 desbloqueada
+Próxima PR autorizada:                 PR-T2.0 — Abertura do contrato de Estado Estruturado
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T2** — skeleton ativo; aguardando PR-T2.0.
+- G0: APROVADO.
+- G1: **APROVADO** em 2026-04-23.
+- G2: aberto — aguardando PR-T2.R.
+- Contrato T1: **ENCERRADO** e arquivado.
+- Contrato T2: skeleton em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`.
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T2.0`** — Abertura do contrato de Estado Estruturado e Memória v1.
+
+### Leituras obrigatorias para PR-T2.0
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.0)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (skeleton a preencher)
+4. `schema/implantation/READINESS_G1.md` (smoke e limitações residuais T1)
+5. `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`
+6. Artefatos T1: T1_CAMADAS_CANONICAS, T1_SYSTEM_PROMPT_CANONICO, T1_TAXONOMIA_OFICIAL,
+   T1_CONTRATO_SAIDA, T1_COMPORTAMENTOS_E_PROIBICOES
+7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+12. `schema/CODEX_WORKFLOW.md`
+13. `schema/CONTRACT_SCHEMA.md`

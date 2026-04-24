@@ -2,76 +2,70 @@
 
 ## Estado atual
 
-Fase macro ativa: T1 — Constituição do agente e contrato cognitivo canônico.
+Fase macro ativa: T2 — Estado estruturado, memória e reconciliação.
 
-Gate anterior: G0 — APROVADO em 2026-04-23 via PR-T0.R.
+Gate anterior: G1 — APROVADO em 2026-04-23 via PR-T1.R.
 
-Gate aberto: G1 — contrato cognitivo aprovado.
+Gate aberto: G2 — estado estruturado funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (aberto — PR-T1.R desbloqueada).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (skeleton — aguardando PR-T2.0).
+
+Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
 
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T1.5` — comportamentos canônicos e proibições: `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md`
-criado com 15 comportamentos obrigatórios (C-01..C-15), 13 proibições absolutas (V-01..V-13), 8 padrões
-de condução, 12 cenários adversariais, amarração completa às 5 camadas e aos 13 campos de saída,
-9 anti-padrões comportamentais. PR-T1.R desbloqueada.
+`PR-T1.R` — readiness e closeout do gate G1: `schema/implantation/READINESS_G1.md` criado com
+smoke documental 6/6 PRs; 12/12 critérios de aceite verificados; coerência entre artefatos
+validada em 5 dimensões; G1 APROVADO. Contrato T1 encerrado e arquivado. Skeleton T2 criado.
+PR-T2.0 desbloqueada.
 
-## O que a PR-T1.5 fechou
+## O que a PR-T1.R fechou
 
-- Criou `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md` com:
-  - 15 comportamentos obrigatórios: C-01 (direção no turno), C-02 (conflito → needs_confirmation),
-    C-03 (coleta de fatos), C-04 (off-track → responder + retornar objetivo), C-05 (risco → registrar),
-    C-06 (bloqueio → comunicar naturalmente), C-07 (dado contradito → reconciliar),
-    C-08 (objeção → acolher com substância), C-09 (renda solo → composição antes de inviabilizar),
-    C-10 (autônomo sem IR → orientar), C-11 (CTPS → informar valor estratégico sem bloquear),
-    C-12 (inelegibilidade → comunicar + alternativa), C-13 (confidence low → continuar),
-    C-14 (insistência em valor → não ceder), C-15 (processo conjunto → coletar P2 naturalmente);
-  - 13 proibições absolutas (V-01..V-13): prometer aprovação/parcela/taxa/subsídio; avançar sem facts;
-    descartar fato confirmado; reply_text mecânico; template/script de stage; fallback textual;
-    expor mecânica; encerrar sem alternativa; coletar dado desnecessário; ignorar conflito; expandir E1;
-  - 8 padrões de condução: dúvida (§4.1), objeção (§4.2), conflito de informação (§4.3),
-    risco identificado (§4.4), bloqueio declarado (§4.5), lead off-track (§4.6),
-    insistência em valor/taxa/aprovação (§4.7), áudio ruim/ininteligível (§4.8);
-  - 12 cenários adversariais: ambiguidade pura, contradição de fato confirmado, prolixo,
-    evasivo, insistência em preço, insistência em aprovação, lead testa limites,
-    documentação parcial, inelegibilidade implícita, questionamento de dado anterior,
-    pergunta técnica sobre processo interno, mudança de posição após confirmação;
-  - Amarração às 5 camadas (§6.1): TOM/REGRA/VETO/SUGESTÃO MANDATÓRIA/REPERTÓRIO × comportamentos/proibições;
-  - Amarração aos 13 campos de saída (§6.2): todos os campos cobertos com comportamentos que os alimentam;
-  - 9 anti-padrões comportamentais proibidos (seção 7);
-  - Cobertura dos critérios do mestre verificada (seção 8);
-  - Bloco E com fechamento permitido e PR-T1.R desbloqueada.
-- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.5 concluída; PR-T1.R desbloqueada.
-- Atualizou `schema/contracts/_INDEX.md`: PR-T1.R como próximo passo.
+- Criou `schema/implantation/READINESS_G1.md` com:
+  - Smoke documental de PR-T1.0 a PR-T1.5 — 6/6 PASS;
+  - Verificação dos 12/12 critérios de aceite do contrato T1 com evidência por critério;
+  - Validação de coerência entre artefatos em 5 dimensões: camadas↔system prompt, taxonomia↔contrato
+    de saída, comportamentos↔contrato de saída, comportamentos↔camadas, regras T0↔taxonomia↔camadas;
+  - Verificação dos adendos A00-ADENDO-01/02/03 em todos os artefatos T1;
+  - 4 lacunas identificadas e classificadas como não bloqueantes (L18 não transcrito; runtime
+    não testado; TurnoSaida sem schema concreto; 32 casos vs. "20-30" — supera o mínimo);
+  - 3 casos sintéticos cobrindo 3 dimensões: estilo (aprovação), regra (casado civil), saída (conflito IR);
+  - Decisão formal G1 APROVADO com justificativa;
+  - Bloco E: fechamento permitido; PR-T2.0 desbloqueada.
+- Encerrou contrato T1 via CONTRACT_CLOSEOUT_PROTOCOL.md: checklist completo; critérios cumpridos; evidências declaradas.
+- Arquivou contrato T1 em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
+- Criou skeleton T2 em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`.
+- Atualizou `schema/contracts/_INDEX.md`: T1 encerrado/arquivado; T2 skeleton ativo; PR-T2.0 próximo passo.
 
-## O que a PR-T1.5 nao fechou
+## O que a PR-T1.R nao fechou
 
-- Nao executou readiness G1 (PR-T1.R).
+- Nao abriu T2 com corpo completo (skeleton criado — PR-T2.0 preencherá).
 - Nao implementou LLM real.
-- Nao criou parser/serializer de runtime (escopo T4).
-- Nao definiu schema Supabase (escopo T2).
+- Nao criou schema Supabase (escopo T2).
 - Nao criou policy engine (escopo T3).
 - Nao alterou `src/`, `package.json`, `wrangler.toml`.
 
 ## Proximo passo autorizado
 
-PR-T1.R — Readiness e closeout do gate G1.
+PR-T2.0 — Abertura do contrato de Estado Estruturado e Memória v1.
 
-Leituras obrigatórias para PR-T1.R:
-1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L18 para bateria adversarial)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.R)
-3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
-4. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
-5. Todos os artefatos T1.0–T1.5 (smoke documental)
-6. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-7. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-11. `schema/CODEX_WORKFLOW.md`
+Leituras obrigatórias para PR-T2.0:
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.0)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (skeleton a preencher)
+4. `schema/implantation/READINESS_G1.md` (smoke e limitações residuais T1)
+5. `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`
+6. Artefatos T1: T1_CAMADAS_CANONICAS, T1_SYSTEM_PROMPT_CANONICO, T1_TAXONOMIA_OFICIAL,
+   T1_CONTRATO_SAIDA, T1_COMPORTAMENTOS_E_PROIBICOES
+7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+12. `schema/CODEX_WORKFLOW.md`
+13. `schema/CONTRACT_SCHEMA.md`
 
 ## Mudancas em dados persistidos
 
@@ -83,7 +77,8 @@ Nenhuma adicional.
 
 ## Bloqueios
 
-- PR-T1.R desbloqueada. G1 ainda não aprovado.
+- G1 APROVADO. T2 autorizada.
+- G2 aberto — bloqueado até PR-T2.R (readiness de T2).
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
 
 ## O que a PR-T1.3 fechou (historico)
