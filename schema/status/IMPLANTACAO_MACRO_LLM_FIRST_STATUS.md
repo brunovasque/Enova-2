@@ -8,65 +8,76 @@ Gate anterior: G0 — APROVADO em 2026-04-23 via PR-T0.R.
 
 Gate aberto: G1 — contrato cognitivo aprovado.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (aberto — PR-T1.4 desbloqueada).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (aberto — PR-T1.5 desbloqueada).
 
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T1.3` — taxonomia oficial: `schema/implantation/T1_TAXONOMIA_OFICIAL.md` criado com 6 categorias
-canônicas (FACTS 18 tipos em 8 grupos, OBJETIVOS 9, PENDÊNCIAS 6, CONFLITOS 4, RISCOS 8 em 5
-severidades, AÇÕES 11). Todas as 48 regras T0 mapeadas. Trava LLM-first verificada: nenhum tipo
-de taxonomia redige fala do cliente. Cobertura das 7 microetapas do mestre verificada. PR-T1.4 desbloqueada.
+`PR-T1.4` — contrato de saída do agente: `schema/implantation/T1_CONTRATO_SAIDA.md` criado com 13
+campos canônicos (reply_text, turn_id, case_id, facts_updated, next_objective, pending, conflicts,
+risks, actions_executed, blocks, needs_confirmation, confidence, flags). Shape descritivo completo
+com semântica, responsável e travas LLM-first por campo. 8 invariantes de consistência. 6 cenários
+sintéticos. Amarração completa à taxonomia T1.3. PR-T1.5 desbloqueada.
 
-## O que a PR-T1.3 fechou
+## O que a PR-T1.4 fechou
 
-- Criou `schema/implantation/T1_TAXONOMIA_OFICIAL.md` com:
-  - FACTS (18 tipos em 8 grupos): perfil pessoal, regime/renda P1, processo/composição, P2, P3,
-    elegibilidade, documentação, operacional;
-  - OBJETIVOS (9): coletar, confirmar, sugerir composição, orientar IR, informar CTPS, retornar ao
-    trilho, avançar stage, preparar docs, handoff;
-  - PENDÊNCIAS (6): slot vazio, confirmação, documento, P2 slot, P3 slot, RNM;
-  - CONFLITOS (4): dado contradito, composição, processo, renda;
-  - RISCOS (8 em 5 severidades): inelegibilidade restrição/RNM, renda baixa, IR autônomo, CTPS curto,
-    promessa, offtrack, dados conflitantes;
-  - AÇÕES (11): avançar stage, rotear special/docs/aguardando, forçar conjunto, sinalizar conflito,
-    inelegibilidade, keepstage, handoff, bypass manual, rollback flag;
-  - Tabela completa de mapeamento das 48 regras T0 → categorias de taxonomia;
-  - Princípio canônico: "A taxonomia organiza o raciocínio — ela nunca escreve a fala";
-  - Trava LLM-first: `reply_text` sempre soberano do LLM; nenhum campo de taxonomia contém texto
-    dirigido ao cliente;
-  - Cobertura das 7 microetapas do mestre verificada;
-  - Bloco E com fechamento permitido e PR-T1.4 desbloqueada.
-- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.3 concluída; PR-T1.4 desbloqueada.
-- Atualizou `schema/contracts/_INDEX.md`: PR-T1.4 como PR atual e próximo passo.
+- Criou `schema/implantation/T1_CONTRATO_SAIDA.md` com:
+  - 13 campos canônicos definidos com semântica, responsável e trava LLM-first;
+  - `reply_text`: soberano do LLM — nenhum outro campo pode redigir ou substituir;
+  - `facts_updated`: LLM coleta → mecânico estrutura; source (llm_collected/confirmed/inferred)
+    + confirmed flag;
+  - `next_objective`: OBJ_* da taxonomia T1.3; mecânico declara; LLM decide como conduzir;
+  - `pending`: PEND_* da taxonomia; mecânico detecta slots obrigatórios ausentes;
+  - `conflicts`: CONF_* da taxonomia; implica needs_confirmation=true (invariante I-01);
+  - `risks`: RISCO_* da taxonomia com severidade; BLOQUEANTE implica block correspondente (I-03);
+  - `actions_executed`: ACAO_* da taxonomia; mecânico executa; LLM recebe resultado como contexto;
+  - `blocks`: bloqueios semânticos internos; nunca anunciados mecanicamente ao cliente;
+  - `needs_confirmation`: flag obrigatória; true implica OBJ_CONFIRMAR (invariante I-02);
+  - `confidence`: único campo de meta-avaliação do LLM; score high/medium/low;
+  - `flags`: bypass_manual, rollback_flag, offtrack e flags operacionais adicionais;
+  - Shape descritivo completo (TurnoSaida + sub-shapes);
+  - Tabela de soberania: campos × responsável × trava canônica;
+  - Tabela de amarração: campos → seções da T1_TAXONOMIA_OFICIAL;
+  - 8 invariantes de consistência interna (I-01 a I-08);
+  - 6 cenários sintéticos de validação cobrindo: CLT básico, autônomo sem IR, casado civil,
+    inelegibilidade, conflito de dado contradito, lead offtrack;
+  - Ciclo de vida do contrato por turno (canal-agnóstico);
+  - O que este contrato NÃO é (não é schema Supabase, não é runtime, não é policy engine,
+    não é template de resposta, não é system prompt);
+  - Cobertura das microetapas do mestre verificada (8/8);
+  - Bloco E com fechamento permitido e PR-T1.5 desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.4 concluída; PR-T1.5 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T1.5 como próximo passo.
 
-## O que a PR-T1.3 nao fechou
+## O que a PR-T1.4 nao fechou
 
-- Nao criou contrato de saída do agente (PR-T1.4).
-- Nao criou policy de comportamentos (PR-T1.5).
+- Nao criou comportamentos canônicos e proibições (PR-T1.5).
 - Nao implementou LLM real.
-- Nao carregou taxonomia em runtime (correto — escopo T3/T4).
+- Nao criou parser/serializer de runtime (escopo T4).
+- Nao definiu schema Supabase (escopo T2).
+- Nao criou policy engine (escopo T3).
 - Nao alterou `src/`, `package.json`, `wrangler.toml`.
 
 ## Proximo passo autorizado
 
-PR-T1.4 — Contrato de saída do agente (reply_text + facts + objetivo + flags + bloqueios).
+PR-T1.5 — Comportamentos canônicos e proibições.
 
-Leituras obrigatórias para PR-T1.4:
+Leituras obrigatórias para PR-T1.5:
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L19 + L03)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.4)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.5)
 3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
 4. `schema/implantation/T1_CAMADAS_CANONICAS.md`
 5. `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md`
-6. `schema/implantation/T1_TAXONOMIA_OFICIAL.md` (base desta PR)
-7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
-8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-13. `schema/CODEX_WORKFLOW.md`
+6. `schema/implantation/T1_TAXONOMIA_OFICIAL.md`
+7. `schema/implantation/T1_CONTRATO_SAIDA.md` (base desta PR)
+8. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+9. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+10. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+12. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+13. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+14. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
@@ -78,8 +89,14 @@ Nenhuma adicional.
 
 ## Bloqueios
 
-- PR-T1.4 desbloqueada. Demais PRs T1.5–T1.R ainda bloqueadas.
+- PR-T1.5 desbloqueada. PR-T1.R ainda bloqueada.
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
+
+## O que a PR-T1.3 fechou (historico)
+
+- Criou `schema/implantation/T1_TAXONOMIA_OFICIAL.md` com 6 categorias canônicas (FACTS 18 tipos,
+  OBJETIVOS 9, PENDÊNCIAS 6, CONFLITOS 4, RISCOS 8, AÇÕES 11); 48 regras T0 mapeadas; trava
+  LLM-first verificada; PR-T1.4 desbloqueada.
 
 ## O que a PR-T1.2 fechou (historico)
 
