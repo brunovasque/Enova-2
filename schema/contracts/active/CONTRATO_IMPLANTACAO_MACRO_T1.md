@@ -238,8 +238,8 @@ Gate de saída: G1 — contrato assinado.
 | PR-T1.0 | Abertura do contrato cognitivo canônico (governança) | `CONTRATO_IMPLANTACAO_MACRO_T1.md` preenchido | G0 aprovado | **concluída** |
 | PR-T1.1 | Separação canônica: tom × regra × veto × sugestão × repertório | `schema/implantation/T1_CAMADAS_CANONICAS.md` | PR-T1.0 | **concluída** |
 | PR-T1.2 | System prompt canônico em camadas (sem ambiguidade central) | `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` | PR-T1.1 | **concluída** |
-| PR-T1.3 | Taxonomia oficial (facts/objetivos/pendências/conflitos/riscos/ações) | `schema/implantation/T1_TAXONOMIA_OFICIAL.md` | PR-T1.2 | **desbloqueada** |
-| PR-T1.4 | Contrato de saída do agente (reply_text + facts + objetivo + flags + bloqueios) | `schema/implantation/T1_CONTRATO_SAIDA.md` | PR-T1.3 | bloqueada |
+| PR-T1.3 | Taxonomia oficial (facts/objetivos/pendências/conflitos/riscos/ações) | `schema/implantation/T1_TAXONOMIA_OFICIAL.md` | PR-T1.2 | **concluída** |
+| PR-T1.4 | Contrato de saída do agente (reply_text + facts + objetivo + flags + bloqueios) | `schema/implantation/T1_CONTRATO_SAIDA.md` | PR-T1.3 | **desbloqueada** |
 | PR-T1.5 | Comportamentos canônicos e proibições | `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md` | PR-T1.4 | bloqueada |
 | PR-T1.R | Readiness e closeout do gate G1 | `schema/implantation/READINESS_G1.md` + arquivo T1 + skeleton T2 | PR-T1.5 | bloqueada |
 
@@ -273,3 +273,22 @@ Condições de aprovação de G1:
 - Objetivo, escopo, critérios de aceite, quebra de PRs e gate G1 definidos.
 - PR-T1.1 desbloqueada.
 - Próximo passo: PR-T1.1 — Separação canônica tom × regra × veto × sugestão × repertório.
+
+### 2026-04-23 — PR-T1.1: camadas canônicas criadas
+
+- `schema/implantation/T1_CAMADAS_CANONICAS.md` criado: 5 camadas (TOM/REGRA/VETO/SUGESTÃO MANDATÓRIA/REPERTÓRIO); 48 regras T0 classificadas.
+- PR-T1.2 desbloqueada.
+
+### 2026-04-23 — PR-T1.2: system prompt canônico v1 criado
+
+- `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` v1 criado: 6 seções em camadas; identidade Enova (atendente especialista Minha Casa Minha Vida); 7 anti-padrões proibidos; 6 cenários adversariais.
+- PR-T1.3 desbloqueada.
+
+### 2026-04-23 — PR-T1.3: taxonomia oficial criada
+
+- `schema/implantation/T1_TAXONOMIA_OFICIAL.md` criado: 6 categorias canônicas — FACTS (18 tipos em 8 grupos), OBJETIVOS (9), PENDÊNCIAS (6), CONFLITOS (4), RISCOS (8 em 5 severidades), AÇÕES (11).
+- Todas as 48 regras T0 mapeadas às categorias.
+- Trava LLM-first verificada: nenhum campo de taxonomia redige fala; `reply_text` permanece soberano do LLM.
+- Cobertura das 7 microetapas do mestre verificada.
+- PR-T1.4 desbloqueada.
+- Próximo passo: PR-T1.4 — Contrato de saída do agente.

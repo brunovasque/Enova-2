@@ -8,60 +8,65 @@ Gate anterior: G0 — APROVADO em 2026-04-23 via PR-T0.R.
 
 Gate aberto: G1 — contrato cognitivo aprovado.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (aberto — PR-T1.3 desbloqueada).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (aberto — PR-T1.4 desbloqueada).
 
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T1.2` — system prompt canônico em camadas: `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` v1
-criado com 6 seções (identidade, papel operacional, proibições absolutas, condução, conhecimento,
-objetivo final). 7 anti-padrões proibidos enumerados. 6 cenários adversariais documentados. Conformidade
-com T1_CAMADAS_CANONICAS verificada. PR-T1.3 desbloqueada.
+`PR-T1.3` — taxonomia oficial: `schema/implantation/T1_TAXONOMIA_OFICIAL.md` criado com 6 categorias
+canônicas (FACTS 18 tipos em 8 grupos, OBJETIVOS 9, PENDÊNCIAS 6, CONFLITOS 4, RISCOS 8 em 5
+severidades, AÇÕES 11). Todas as 48 regras T0 mapeadas. Trava LLM-first verificada: nenhum tipo
+de taxonomia redige fala do cliente. Cobertura das 7 microetapas do mestre verificada. PR-T1.4 desbloqueada.
 
-## O que a PR-T1.2 fechou
+## O que a PR-T1.3 fechou
 
-- Criou `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` v1 com:
-  - §1 Identidade (TOM): quem é Ana — analista especialista MCMV, fala humana, nunca sistema;
-  - §2 Papel operacional (REGRA): como o LLM recebe e usa contexto do mecânico sem expô-lo ao cliente;
-  - §3 Proibições absolutas (VETO): 5 proibições declarativas sem templates de recusa;
-  - §4 Condução em contextos específicos (SUGESTÃO MANDATÓRIA): 7 orientações de conduta sem scripts;
-  - §5 Conhecimento especialista (REPERTÓRIO): substrato MCMV sem template de uso;
-  - §6 Objetivo final: qualificar com inteligência, honestidade e naturalidade;
-  - Tabela de conformidade seção × camada (§4);
-  - 7 anti-padrões explicitamente proibidos (§5);
-  - 6 cenários adversariais documentados sem execução de LLM real (§6);
-  - Cobertura de microetapas do mestre verificada (§7);
-  - Bloco E com fechamento permitido e PR-T1.3 desbloqueada.
-- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.2 concluída; PR-T1.3 desbloqueada.
-- Atualizou `schema/contracts/_INDEX.md`: PR-T1.3 como próximo passo.
+- Criou `schema/implantation/T1_TAXONOMIA_OFICIAL.md` com:
+  - FACTS (18 tipos em 8 grupos): perfil pessoal, regime/renda P1, processo/composição, P2, P3,
+    elegibilidade, documentação, operacional;
+  - OBJETIVOS (9): coletar, confirmar, sugerir composição, orientar IR, informar CTPS, retornar ao
+    trilho, avançar stage, preparar docs, handoff;
+  - PENDÊNCIAS (6): slot vazio, confirmação, documento, P2 slot, P3 slot, RNM;
+  - CONFLITOS (4): dado contradito, composição, processo, renda;
+  - RISCOS (8 em 5 severidades): inelegibilidade restrição/RNM, renda baixa, IR autônomo, CTPS curto,
+    promessa, offtrack, dados conflitantes;
+  - AÇÕES (11): avançar stage, rotear special/docs/aguardando, forçar conjunto, sinalizar conflito,
+    inelegibilidade, keepstage, handoff, bypass manual, rollback flag;
+  - Tabela completa de mapeamento das 48 regras T0 → categorias de taxonomia;
+  - Princípio canônico: "A taxonomia organiza o raciocínio — ela nunca escreve a fala";
+  - Trava LLM-first: `reply_text` sempre soberano do LLM; nenhum campo de taxonomia contém texto
+    dirigido ao cliente;
+  - Cobertura das 7 microetapas do mestre verificada;
+  - Bloco E com fechamento permitido e PR-T1.4 desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.3 concluída; PR-T1.4 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T1.4 como PR atual e próximo passo.
 
-## O que a PR-T1.2 nao fechou
+## O que a PR-T1.3 nao fechou
 
-- Nao criou taxonomia oficial de facts/objetivos/pendências (PR-T1.3).
-- Nao criou contrato de saída (PR-T1.4).
+- Nao criou contrato de saída do agente (PR-T1.4).
 - Nao criou policy de comportamentos (PR-T1.5).
-- Nao carregou prompt em runtime (correto — T3/T4).
 - Nao implementou LLM real.
+- Nao carregou taxonomia em runtime (correto — escopo T3/T4).
 - Nao alterou `src/`, `package.json`, `wrangler.toml`.
 
 ## Proximo passo autorizado
 
-PR-T1.3 — Taxonomia oficial (facts/objetivos/pendências/conflitos/riscos/ações).
+PR-T1.4 — Contrato de saída do agente (reply_text + facts + objetivo + flags + bloqueios).
 
-Leituras obrigatórias para PR-T1.3:
+Leituras obrigatórias para PR-T1.4:
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L19 + L03)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.3)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.4)
 3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
 4. `schema/implantation/T1_CAMADAS_CANONICAS.md`
-5. `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` (base desta PR)
-6. `schema/implantation/INVENTARIO_REGRAS_T0.md`
-7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-12. `schema/CODEX_WORKFLOW.md`
+5. `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md`
+6. `schema/implantation/T1_TAXONOMIA_OFICIAL.md` (base desta PR)
+7. `schema/implantation/INVENTARIO_REGRAS_T0.md`
+8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+13. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
@@ -73,8 +78,25 @@ Nenhuma adicional.
 
 ## Bloqueios
 
-- PR-T1.3 desbloqueada. Demais PRs T1.4–T1.R ainda bloqueadas.
+- PR-T1.4 desbloqueada. Demais PRs T1.5–T1.R ainda bloqueadas.
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
+
+## O que a PR-T1.2 fechou (historico)
+
+- Criou `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` v1 com:
+  - §1 Identidade (TOM): Enova — analista especialista Minha Casa Minha Vida, fala humana, nunca sistema;
+  - §2 Papel operacional (REGRA): como o LLM recebe e usa contexto do mecânico sem expô-lo ao cliente;
+  - §3 Proibições absolutas (VETO): 5 proibições declarativas sem templates de recusa;
+  - §4 Condução em contextos específicos (SUGESTÃO MANDATÓRIA): 7 orientações de conduta sem scripts;
+  - §5 Conhecimento especialista (REPERTÓRIO): substrato Minha Casa Minha Vida sem template de uso;
+  - §6 Objetivo final: qualificar com inteligência, honestidade e naturalidade;
+  - Tabela de conformidade seção × camada;
+  - 7 anti-padrões explicitamente proibidos;
+  - 6 cenários adversariais documentados sem execução de LLM real;
+  - Cobertura de microetapas do mestre verificada;
+  - Bloco E com fechamento permitido e PR-T1.3 desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.2 concluída; PR-T1.3 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T1.3 como próximo passo.
 
 ## O que a PR-T1.1 fechou (historico)
 
