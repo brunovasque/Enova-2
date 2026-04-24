@@ -236,8 +236,8 @@ Gate de saída: G1 — contrato assinado.
 | PR | Nome canônico | Entregável principal | Dependência | Estado |
 |----|--------------|---------------------|------------|--------|
 | PR-T1.0 | Abertura do contrato cognitivo canônico (governança) | `CONTRATO_IMPLANTACAO_MACRO_T1.md` preenchido | G0 aprovado | **concluída** |
-| PR-T1.1 | Separação canônica: tom × regra × veto × sugestão × repertório | `schema/implantation/T1_CAMADAS_CANONICAS.md` | PR-T1.0 | **desbloqueada** |
-| PR-T1.2 | System prompt canônico em camadas (sem ambiguidade central) | `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` | PR-T1.1 | bloqueada |
+| PR-T1.1 | Separação canônica: tom × regra × veto × sugestão × repertório | `schema/implantation/T1_CAMADAS_CANONICAS.md` | PR-T1.0 | **concluída** |
+| PR-T1.2 | System prompt canônico em camadas (sem ambiguidade central) | `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` | PR-T1.1 | **desbloqueada** |
 | PR-T1.3 | Taxonomia oficial (facts/objetivos/pendências/conflitos/riscos/ações) | `schema/implantation/T1_TAXONOMIA_OFICIAL.md` | PR-T1.2 | bloqueada |
 | PR-T1.4 | Contrato de saída do agente (reply_text + facts + objetivo + flags + bloqueios) | `schema/implantation/T1_CONTRATO_SAIDA.md` | PR-T1.3 | bloqueada |
 | PR-T1.5 | Comportamentos canônicos e proibições | `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md` | PR-T1.4 | bloqueada |

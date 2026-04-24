@@ -1085,3 +1085,102 @@ Próxima PR autorizada:                 PR-T1.1 — Separação canônica tom ×
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 11. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — separacao canonica das 5 camadas do agente (PR-T1.1)
+
+### Objetivo executado
+
+`PR-T1.1` — Criar `schema/implantation/T1_CAMADAS_CANONICAS.md` separando as 5 dimensões canônicas
+do agente (TOM / REGRA / VETO / SUGESTÃO MANDATÓRIA / REPERTÓRIO), classificando as 48 regras T0
+e protegendo a soberania de fala do LLM.
+
+### O que foi feito
+
+- Criado `schema/implantation/T1_CAMADAS_CANONICAS.md` com:
+  - fundamento normativo canônico: soberania LLM na fala; soberania mecânico na regra e decisão
+    operacional; nenhuma camada pode cruzar essa fronteira;
+  - mapa de responsabilidades por camada (proprietário, competência, o que pertence, o que é proibido);
+  - definições completas das 5 camadas:
+    - **TOM**: LLM soberano — orienta estilo, energia, profundidade, jamais prescreve palavras;
+    - **REGRA**: mecânico soberano — obrigações operacionais (coletar, verificar, rotear), recebida
+      pelo LLM como contexto estruturado; nunca fala ao cliente diretamente;
+    - **VETO**: mecânico emite flag de bloqueio; LLM comunica a negação naturalmente; nunca vira
+      template de resposta;
+    - **SUGESTÃO MANDATÓRIA**: mecânico instrui "você DEVE sugerir X neste contexto"; LLM decide
+      as palavras; não força texto nem substitui raciocínio;
+    - **REPERTÓRIO**: substrato de conhecimento disponível passivamente ao LLM (L19, L03, casos
+      históricos); informa sem roteirizar;
+  - anti-padrões e travas LLM-first por camada;
+  - modelo de interação ASCII (MECÂNICO→contexto estruturado→LLM→reply_text→CANAL);
+  - classificação completa das 48 regras T0 com camada primária e secundária;
+  - sumário de distribuição: TOM 3, REGRA 28, VETO 8, SUGESTÃO MANDATÓRIA 8, REPERTÓRIO L19+L03;
+  - cobertura das microetapas do LEGADO_MESTRE verificada;
+  - Bloco E com fechamento permitido.
+- Atualizado `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`:
+  - PR-T1.1 marcada como concluída; PR-T1.2 desbloqueada.
+- Atualizado `schema/contracts/_INDEX.md`:
+  - PR-T1.2 como PR atual e próximo passo; sincronização 2026-04-23 registrada.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`:
+  - ultima tarefa PR-T1.1; próximo passo PR-T1.2; histórico PR-T1.0 preservado.
+
+### O que nao foi feito
+
+- System prompt não criado (PR-T1.2).
+- Taxonomia oficial não criada (PR-T1.3).
+- Nenhuma alteração em runtime (`src/`, `package.json`, `wrangler.toml`).
+- Nenhum LLM real ativado.
+- Nenhuma mudança de gate.
+
+### Bloco E — encerramento por prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+PR que fecha:                          PR-T1.1
+Contrato de referência:                schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md
+Critério de aceite verificado:         5 camadas definidas; 48 regras T0 classificadas; travas
+                                       LLM-first sem exceção; soberania de fala do LLM protegida
+Estado da evidência:                   completa — T1_CAMADAS_CANONICAS.md gerado com cobertura
+                                       total das regras T0 e das microetapas do LEGADO_MESTRE
+Há lacuna remanescente?:               não — L04–L17 não transcritos de PDF mas não necessários
+                                       para separação de princípio; classificação feita via
+                                       INVENTARIO_REGRAS_T0 (fonte canônica dos 48 itens)
+Há item parcial/inconclusivo bloqueante?: não
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         T1_CAMADAS_CANONICAS.md criado; PR-T1.1 encerrada;
+                                       PR-T1.2 desbloqueada
+Próxima PR autorizada:                 PR-T1.2 — System prompt canônico em camadas
+```
+
+### Excecao contratual
+
+- Exceção contratual ativa nesta PR: não.
+- Regra vigente reafirmada: somente Vasques pode autorizar manualmente exceção contratual.
+
+### Estado atual pos-encerramento
+
+- Fase macro: T1 — em execução.
+- G0: APROVADO.
+- G1: aberto — aguardando PR-T1.2–T1.5 + PR-T1.R.
+- `PR-T1.1` **encerrada**.
+- `PR-T1.2` **desbloqueada**.
+- `PR-T1.3–T1.R` bloqueadas (aguardam conclusão sequencial).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T1.2`** — System prompt canônico em camadas (sem ambiguidade central).
+
+### Leituras obrigatorias para PR-T1.2
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L19 + L03)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.2)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/implantation/T1_CAMADAS_CANONICAS.md` (obrigatório — base desta PR)
+5. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+6. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+10. `schema/CODEX_WORKFLOW.md`
