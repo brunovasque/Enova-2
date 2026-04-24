@@ -8,7 +8,7 @@ Gate anterior: G1 — APROVADO em 2026-04-23 via PR-T1.R.
 
 Gate aberto: G2 — estado estruturado funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (aberto — PR-T2.0 executada; aguardando PR-T2.1).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (em execução — PR-T2.1 executada; aguardando PR-T2.2).
 
 Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
 
@@ -16,9 +16,28 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T2.0` — abertura formal do contrato T2: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`
-preenchido com corpo completo conforme CONTRACT_SCHEMA.md. Objetivo, escopo, critérios de aceite,
-quebra de PRs T2.1–T2.R, gate G2, legados e referências declarados. PR-T2.1 desbloqueada.
+`PR-T2.1` — dicionário canônico de fatos: `schema/implantation/T2_DICIONARIO_FATOS.md` criado com
+50 chaves canônicas (35 fact_*, 9 derived_*, 6 signal_*); auditoria E1→E2 de 42 campos; 7 categorias
+de memória com limites LLM-first; 10 regras invioláveis; tabela E1→E2 completa. PR-T2.2 desbloqueada.
+
+## O que a PR-T2.1 fechou
+
+- Criou `schema/implantation/T2_DICIONARIO_FATOS.md` com:
+  - 50 chaves canônicas: 35 `fact_*`, 9 `derived_*`, 6 `signal_*`;
+  - Auditoria E1→E2 completa (42 campos): renomeados, eliminados como primários, rebaixados a derived/signal;
+  - 7 categorias de memória (atendimento, normativa/MCMV, comercial, manual Vasques, regras funil, aprendizado, telemetria);
+  - Limites LLM-first por categoria + 10 regras invioláveis (M-01..M-10);
+  - Tabela E1→E2 consolidada (§5);
+  - Cobertura das 5 microetapas do mestre declarada;
+  - Bloco E: fechamento permitido; PR-T2.2 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: T2 → em execução; próximo passo PR-T2.2.
+
+## O que a PR-T2.1 nao fechou
+
+- Não criou T2_LEAD_STATE_V1.md (schema estrutural — escopo T2.2).
+- Não implementou Supabase real.
+- Não alterou `src/`, `package.json`, `wrangler.toml`.
+- Tipologia completa de status do fato (bruto/confirmado/inferência/hipótese/pendência) em T2.4.
 
 ## O que a PR-T2.0 fechou
 
@@ -65,19 +84,20 @@ quebra de PRs T2.1–T2.R, gate G2, legados e referências declarados. PR-T2.1 d
 
 ## Proximo passo autorizado
 
-PR-T2.1 — Nomes canônicos dos fatos (sem duplicidade semântica).
+PR-T2.2 — Schema `lead_state` v1 (fatos, objetivos, pendências, conflitos, histórico resumido, metadados de confiança).
 
-Leituras obrigatórias para PR-T2.1:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (contrato aberto)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.1)
-3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — State Store, fatos centrais/derivados)
-4. `schema/implantation/T1_TAXONOMIA_OFICIAL.md` (56 tipos — base para dicionário)
-5. `schema/implantation/T1_CONTRATO_SAIDA.md` (13 campos — fatos que LLM preenche)
-6. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-7. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-10. `schema/CODEX_WORKFLOW.md`
+Leituras obrigatórias para PR-T2.2:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (contrato em execução)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.2)
+3. `schema/implantation/T2_DICIONARIO_FATOS.md` (dicionário canônico — base obrigatória)
+4. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — estado canônico do lead, PDF6 pp. 4–5)
+5. `schema/implantation/T1_CONTRATO_SAIDA.md` (13 campos de saída)
+6. `schema/implantation/T1_TAXONOMIA_OFICIAL.md` (OBJ_*, PEND_*, CONF_*, RISCO_*)
+7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+11. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
