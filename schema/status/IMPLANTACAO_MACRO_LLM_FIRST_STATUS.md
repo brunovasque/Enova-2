@@ -8,16 +8,70 @@ Gate anterior: G0 — APROVADO em 2026-04-23 via PR-T0.R.
 
 Gate aberto: G1 — contrato cognitivo aprovado.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (aberto formalmente — PR-T1.1 desbloqueada).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` (aberto — PR-T1.2 desbloqueada).
 
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T1.0` — abertura formal do contrato T1: corpo preenchido conforme CONTRACT_SCHEMA.md; objetivo,
-escopo, critérios de aceite, quebra de PRs (T1.1–T1.R) e gate G1 definidos; PR-T1.1 desbloqueada.
+`PR-T1.1` — separação canônica das 5 camadas do agente: TOM / REGRA / VETO / SUGESTÃO MANDATÓRIA /
+REPERTÓRIO. Documento `schema/implantation/T1_CAMADAS_CANONICAS.md` criado com definições, limites,
+anti-padrões, travas LLM-first e classificação completa das 48 regras T0. PR-T1.2 desbloqueada.
 
-## O que esta PR fechou
+## O que a PR-T1.1 fechou
+
+- Criou `schema/implantation/T1_CAMADAS_CANONICAS.md` com:
+  - fundamento normativo canônico (soberania LLM na fala; soberania mecânico na regra);
+  - mapa de responsabilidades por camada (proprietário, competência, proibição);
+  - definição completa de cada camada: TOM (LLM soberano), REGRA (mecânico soberano),
+    VETO (mecânico emite flag, LLM comunica), SUGESTÃO MANDATÓRIA (mecânico instrui→LLM executa),
+    REPERTÓRIO (substrato de contexto passivo do LLM);
+  - anti-padrões e travas LLM-first por camada;
+  - modelo de interação ASCII (mecânico→contexto→LLM→reply_text→canal);
+  - classificação completa das 48 regras T0 com camada primária e secundária;
+  - sumário: TOM 3, REGRA 28, VETO 8, SUGESTÃO MANDATÓRIA 8, REPERTÓRIO L19+L03;
+  - cobertura das microetapas do LEGADO_MESTRE verificada;
+  - Bloco E com fechamento permitido e PR-T1.2 desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.1 concluída; PR-T1.2 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T1.2 como próximo passo.
+
+## O que a PR-T1.1 nao fechou
+
+- Nao criou system prompt (PR-T1.2).
+- Nao criou taxonomia oficial (PR-T1.3).
+- Nao implementou LLM real.
+- Nao alterou runtime (`src/`, `package.json`, `wrangler.toml`).
+
+## Proximo passo autorizado
+
+PR-T1.2 — System prompt canônico em camadas (sem ambiguidade central).
+
+Leituras obrigatórias para PR-T1.2:
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L19 + L03)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.2)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/implantation/T1_CAMADAS_CANONICAS.md` (obrigatório — base desta PR)
+5. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+6. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+10. `schema/CODEX_WORKFLOW.md`
+
+## Mudancas em dados persistidos
+
+Nenhuma.
+
+## Permissoes Cloudflare
+
+Nenhuma adicional.
+
+## Bloqueios
+
+- PR-T1.2 desbloqueada. Demais PRs T1.3–T1.R ainda bloqueadas.
+- Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
+
+## O que a PR-T1.0 fechou (historico)
 
 - Preencheu corpo formal de `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`:
   - objetivo, escopo, fora de escopo, dependências, entradas, saídas;
