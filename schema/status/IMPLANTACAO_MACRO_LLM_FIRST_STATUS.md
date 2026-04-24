@@ -8,7 +8,7 @@ Gate anterior: G1 — APROVADO em 2026-04-23 via PR-T1.R.
 
 Gate aberto: G2 — estado estruturado funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (em execução — PR-T2.1 executada; aguardando PR-T2.2).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (em execução — PR-T2.2 executada; aguardando PR-T2.3).
 
 Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
 
@@ -16,9 +16,32 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T2.1` — dicionário canônico de fatos: `schema/implantation/T2_DICIONARIO_FATOS.md` criado com
-50 chaves canônicas (35 fact_*, 9 derived_*, 6 signal_*); auditoria E1→E2 de 42 campos; 7 categorias
-de memória com limites LLM-first; 10 regras invioláveis; tabela E1→E2 completa. PR-T2.2 desbloqueada.
+`PR-T2.2` — schema `lead_state` v1: `schema/implantation/T2_LEAD_STATE_V1.md` criado com 11 blocos
+canônicos (CaseMeta, OperationalState, FactBlock/35 fact_*, DerivedBlock/9 derived_*, Pending/6 PEND_*,
+Conflicts/4 CONF_*, SignalBlock/6 signal_*, HistorySummary/4 camadas+snapshot, VasquesNotes, NormativeContext);
+12 regras invioláveis LS-01..LS-12; mapeamento campo↔fato↔regra T0; tabela E1→E2. PR-T2.3 desbloqueada.
+
+## O que a PR-T2.2 fechou
+
+- Criou `schema/implantation/T2_LEAD_STATE_V1.md` com:
+  - 11 blocos canônicos: CaseMeta, OperationalState (11 campos do mestre PDF6), FactBlock (35 fact_*
+    por grupo I–X com status canônicos), DerivedBlock (9 derived_* com condições de derivação),
+    Pending (6 PEND_* tipos), Conflicts (4 CONF_* tipos + protocolo de resolução), SignalBlock (6
+    signal_*), HistorySummary (4 camadas + shape snapshot executivo), VasquesNotes (shape auditável),
+    NormativeContext (referência compartilhada);
+  - 12 regras invioláveis LS-01..LS-12;
+  - Tabela de mapeamento campo ↔ fato canônico ↔ regra T0;
+  - Tabela de compatibilidade transitória E1→E2;
+  - Bloco E: fechamento permitido; PR-T2.3 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR atual → PR-T2.2; próximo passo PR-T2.3.
+
+## O que a PR-T2.2 nao fechou
+
+- Não criou T2_POLITICA_CONFIANCA.md (política de confiança por origem — escopo T2.3).
+- Não detalhando tipologia completa bruto/confirmado/hipótese/pendência (escopo T2.4).
+- Não criou T2_RESUMO_PERSISTIDO.md (escopo T2.5).
+- Não implementou Supabase real.
+- Não alterou `src/`, `package.json`, `wrangler.toml`.
 
 ## O que a PR-T2.1 fechou
 

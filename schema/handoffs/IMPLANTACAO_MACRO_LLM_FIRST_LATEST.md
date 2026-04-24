@@ -1886,3 +1886,109 @@ Próxima PR autorizada:                 PR-T2.2 — Schema lead_state v1
 9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 11. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-24 — schema lead_state v1 (PR-T2.2)
+
+### Objetivo executado
+
+`PR-T2.2` — criar `schema/implantation/T2_LEAD_STATE_V1.md`: schema estrutural canônico do
+`lead_state` com todos os blocos, shapes, status de fatos, regras invioláveis e mapeamento
+campo ↔ fato ↔ regra.
+
+### Estado herdado
+
+- Branch `feat/t2-pr22-lead-state-v1` criada limpa a partir de main pós-PR-T2.1.
+- `T2_DICIONARIO_FATOS.md` publicado (50 chaves: 35 fact_*, 9 derived_*, 6 signal_*).
+- T1_TAXONOMIA_OFICIAL.md, T1_CONTRATO_SAIDA.md, mestre seção T2 (PDF6) lidos.
+
+### O que foi feito
+
+- Criou `schema/implantation/T2_LEAD_STATE_V1.md` com:
+  - **§1** Visão geral do shape `LeadState` com 10 sub-blocos.
+  - **§2** `CaseMeta`: lead_id, case_id, created_at, last_updated, channel_origin.
+  - **§3** `OperationalState`: 11 campos do mestre PDF6 (current_phase, current_objective,
+    progress_score, risk_level, must_ask_now, blocked_by, recommended_next_actions,
+    open_contradictions, last_policy_decision, handoff_readiness, needs_confirmation,
+    elegibility_status); 8 valores canônicos de `current_phase`.
+  - **§4** `FactBlock`: 35 fact_* por grupos I–X; shape FactEntry com 5 campos;
+    5 status canônicos (captured/confirmed/inferred/contradicted/obsolete) com
+    transições permitidas e proibidas; índice por grupo com stage de exigibilidade.
+  - **§5** `DerivedBlock`: 9 derived_*; shape DerivedEntry com `stale` flag; índice
+    com condições de derivação.
+  - **§6** `Pending`: 6 PEND_* tipos (PEND_SLOT_VAZIO/CONFIRMACAO/DOCUMENTO/P2_SLOT/P3_SLOT/RNM);
+    shape com stage e turno de criação.
+  - **§7** `Conflicts`: 4 CONF_* tipos (CONF_DADO_CONTRADITO/COMPOSICAO/PROCESSO/RENDA);
+    protocolo de resolução em 6 passos.
+  - **§8** `SignalBlock`: 6 signal_*; shape SignalEntry; distinção explícita signal_multi_income_p1
+    vs fact_has_multi_income_p1.
+  - **§9** `HistorySummary`: 4 camadas (L1 curto prazo, L2 factual estruturada, L3 snapshot
+    executivo, L4 histórico frio); shape SnapshotExecutivo com `approval_prohibited = true`
+    invariante.
+  - **§10** `VasquesNotes`: shape auditável (note_id, content, note_type, author, created_at,
+    reason, applies_to, supersedes); 4 tipos de nota; regras de prioridade.
+  - **§11** `NormativeContext`: referência compartilhada; não por lead.
+  - **§12** 12 regras invioláveis LS-01..LS-12.
+  - **§13** Tabela de mapeamento campo ↔ fato canônico ↔ regra T0 (48 linhas).
+  - **§14** Tabela de compatibilidade transitória E1→E2 (11 mapeamentos).
+  - **§15** Bloco E: fechamento permitido; PR-T2.3 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR atual → PR-T2.2 executada; próximo passo PR-T2.3.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: última tarefa PR-T2.2;
+  próximo passo PR-T2.3.
+
+### O que nao foi feito
+
+- T2_POLITICA_CONFIANCA.md não criado (escopo PR-T2.3).
+- Tipologia detalhada bruto/confirmado/hipótese/pendência não documentada formalmente (T2.4).
+- T2_RESUMO_PERSISTIDO.md não criado (escopo T2.5).
+- Nenhuma implementação Supabase real.
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+- G2 não fechado (requer PR-T2.R após T2.3–T2.5).
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T2_LEAD_STATE_V1.md
+PR que fecha:                          PR-T2.2
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — 11 blocos canônicos; 35 fact_*; 9 derived_*;
+                                       6 signal_*; 6 PEND_*; 4 CONF_*; 4 camadas de memória;
+                                       12 regras invioláveis; mapeamento campo↔fato↔regra;
+                                       compatibilidade E1→E2; Bloco E no documento.
+Há item parcial bloqueante?:           não — política de confiança (T2.3), reconciliação
+                                       formal (T2.4) e resumo persistido detalhado (T2.5)
+                                       são escopos das próximas PRs, não lacunas desta.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T2.2 encerrada; T2_LEAD_STATE_V1.md publicado;
+                                       PR-T2.3 desbloqueada
+Próxima PR autorizada:                 PR-T2.3 — Política de confiança por origem do dado
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T2** — em execução; PR-T2.3 próxima.
+- G0: APROVADO.
+- G1: APROVADO em 2026-04-23.
+- G2: aberto — aguardando PR-T2.R.
+- T2_DICIONARIO_FATOS.md: publicado.
+- T2_LEAD_STATE_V1.md: **publicado**.
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T2.3`** — Política de confiança por origem do dado.
+
+### Leituras obrigatorias para PR-T2.3
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.3)
+3. `schema/implantation/T2_LEAD_STATE_V1.md` (base obrigatória)
+4. `schema/implantation/T2_DICIONARIO_FATOS.md`
+5. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — origens de dado)
+6. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+7. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+10. `schema/CODEX_WORKFLOW.md`
