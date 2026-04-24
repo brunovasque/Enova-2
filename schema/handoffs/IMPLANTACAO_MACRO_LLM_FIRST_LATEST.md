@@ -1992,3 +1992,100 @@ Próxima PR autorizada:                 PR-T2.3 — Política de confiança por 
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 10. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-24 — política de confiança por origem (PR-T2.3)
+
+### Objetivo executado
+
+`PR-T2.3` — criar `schema/implantation/T2_POLITICA_CONFIANCA.md`: política canônica de confiança
+por origem do dado, definindo quando dados atingem cada status, quando exigem confirmação, quando
+geram conflito e quando bloqueiam avanço de stage.
+
+### Estado herdado
+
+- Branch `feat/t2-pr23-politica-confianca` criada limpa a partir de main pós-PR-T2.2.
+- `T2_LEAD_STATE_V1.md` publicado (11 blocos, 5 status de fato).
+- `T2_DICIONARIO_FATOS.md` publicado (50 chaves canônicas).
+- Mestre seção T2 (PDF6, p. 5–6), T1_CONTRATO_SAIDA, T1_TAXONOMIA lidos.
+
+### O que foi feito
+
+- Criou `schema/implantation/T2_POLITICA_CONFIANCA.md` com:
+  - **§1** Referência cruzada com status canônicos do lead_state v1 (+ `hypothesis`).
+  - **§2** Tabela das 6 origens com nível de confiança e status máximo atingível.
+  - **§3** Política detalhada por origem:
+    - O1 `EXPLICIT_TEXT`: alto; críticos exigem confirmação; contradição gera conflito.
+    - O2 `INDIRECT_TEXT`: baixo; nunca `confirmed` diretamente; fatos críticos = `hypothesis`.
+    - O3 `AUDIO_TRANSCRIPT`: 3 níveis (bom/médio/ruim); áudio ruim não persiste.
+    - O4 `DOCUMENT`: alto; conflito com fala anterior; documento ilegível = `hypothesis`.
+    - O5 `INFERENCE`: mecânica → `inferred`; LLM → `hypothesis`; nunca `confirmed`.
+    - O6 `OPERATOR_NOTE`: auditável; não sobrescreve `confirmed` sem reconciliação.
+  - **§4** Mapa de transição de status por origem (tabela executiva).
+  - **§5** Lista canônica de 12 fatos críticos com motivo de criticidade.
+  - **§6** 7 condições de confirmação obrigatória antes de `confirmed`.
+  - **§7** Tabela de geração de conflito + proibição de conflito silencioso.
+  - **§8** 6 condições de bloqueio de avanço de stage por confiança.
+  - **§9** Registro obrigatório por atualização + 9 valores canônicos de `source`.
+  - **§10** 5 casos sintéticos (S1–S5: indireto→confirmado, doc↔fala, áudio ruim, inferência bloqueada, Vasques x confirmed).
+  - **§11** Amarração campo por campo ao lead_state v1.
+  - **§12** 12 regras invioláveis PC-01..PC-12.
+  - **§13** Cobertura das 5 origens do mestre + Vasques.
+  - **§14** Bloco E.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T2.3 executada; próximo PR-T2.4.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que nao foi feito
+
+- Reconciliação formal e tipologia detalhada — escopo PR-T2.4.
+- T2_RESUMO_PERSISTIDO.md — escopo T2.5.
+- Nenhuma implementação Supabase real.
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+- G2 não fechado.
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T2_POLITICA_CONFIANCA.md
+PR que fecha:                          PR-T2.3
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — 6 origens cobertas; mapa de transição por origem;
+                                       12 fatos críticos; condições de confirmação/conflito/
+                                       bloqueio; 9 source values; 5 casos sintéticos;
+                                       12 regras PC-01..PC-12; cobertura do mestre verificada.
+Há item parcial bloqueante?:           não — reconciliação formal e tipologia hipótese/pendência
+                                       são escopo T2.4, não lacunas desta PR.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T2.3 encerrada; T2_POLITICA_CONFIANCA.md publicado;
+                                       PR-T2.4 desbloqueada
+Próxima PR autorizada:                 PR-T2.4 — Reconciliação e tipologia
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T2** — em execução; PR-T2.4 próxima.
+- G0: APROVADO. G1: APROVADO em 2026-04-23. G2: aberto — aguardando PR-T2.R.
+- T2_DICIONARIO_FATOS.md: publicado.
+- T2_LEAD_STATE_V1.md: publicado.
+- T2_POLITICA_CONFIANCA.md: **publicado**.
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T2.4`** — Reconciliação e tipologia (bruto/confirmado/inferência/hipótese/pendência).
+
+### Leituras obrigatorias para PR-T2.4
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.4)
+3. `schema/implantation/T2_POLITICA_CONFIANCA.md` (base obrigatória)
+4. `schema/implantation/T2_LEAD_STATE_V1.md`
+5. `schema/implantation/T2_DICIONARIO_FATOS.md`
+6. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — casos de mudança de versão)
+7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+11. `schema/CODEX_WORKFLOW.md`
