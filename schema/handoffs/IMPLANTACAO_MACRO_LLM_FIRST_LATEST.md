@@ -2089,3 +2089,112 @@ Próxima PR autorizada:                 PR-T2.4 — Reconciliação e tipologia
 9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 11. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-24 — reconciliação e tipologia (PR-T2.4)
+
+### Objetivo executado
+
+`PR-T2.4` — criar `schema/implantation/T2_RECONCILIACAO.md`: tipologia formal de estados de fato,
+protocolo canônico de reconciliação, hierarquia de prioridade por origem, 10 domínios específicos,
+anti-padrões e regras invioláveis.
+
+### Estado herdado
+
+- Branch `feat/t2-pr23-politica-confianca` (reaproveitada para PR-T2.4).
+- `T2_POLITICA_CONFIANCA.md` publicado (6 origens, 12 regras PC-01..PC-12).
+- `T2_LEAD_STATE_V1.md` publicado (11 blocos, 5 status canônicos).
+- `T2_DICIONARIO_FATOS.md` publicado (50 chaves canônicas).
+
+### O que foi feito
+
+- Criou `schema/implantation/T2_RECONCILIACAO.md` com:
+  - **§1** Tipologia formal de 7 estados: `hypothesis`, `captured`, `inferred`, `confirmed`,
+    `contradicted`, `pending`, `obsolete`; regras internas RC-H1, RC-C1, RC-I1, RC-CF1,
+    RC-CO1, RC-P1, RC-OB1.
+  - **§2** Protocolo de reconciliação em 7 etapas com fluxograma ASCII:
+    - Etapa 1: receber novo dado;
+    - Etapa 2: verificar existência no lead_state;
+    - Etapa 3A: primeiro registro → `captured`;
+    - Etapa 3B: fato existe → avaliar compatibilidade;
+    - Etapa 4: gerar CONF_* em conflicts[];
+    - Etapa 5: LLM conduz confirmação (OBJ_CONFIRMAR);
+    - Etapa 6: resolução — confirmado/obsoleto; Conflict.resolved = true;
+    - Etapa 7: trilha de auditoria obrigatória.
+  - **§3** Hierarquia de prioridade por origem (não automática): DOCUMENT > EXPLICIT_TEXT
+    recente > confirmed anterior > áudio > indireto > inferência; Vasques especial.
+  - **§4** 10 domínios específicos de reconciliação:
+    - §4.1 Renda (CONF_RENDA);
+    - §4.2 Estado civil (CONF_DADO_CONTRADITO / CONF_COMPOSICAO);
+    - §4.3 Regime de trabalho (CONF_DADO_CONTRADITO);
+    - §4.4 Composição e P2 (CONF_COMPOSICAO / CONF_PROCESSO);
+    - §4.5 IR autônomo (CONF_DADO_CONTRADITO);
+    - §4.6 Restrição (CONF_DADO_CONTRADITO — ACAO_INELEGIBILIDADE só após confirmed);
+    - §4.7 RNM (CONF_DADO_CONTRADITO — mesma regra);
+    - §4.8 Áudio ruim (protocolo de recoleta);
+    - §4.9 Nota Vasques vs confirmed (bloqueio sem reconciliação formal);
+    - §4.10 Documento ilegível (hypothesis não persiste).
+  - **§5** 10 casos sintéticos RC-01..RC-10 com passo a passo tabular.
+  - **§6** Tabela de transições de status (todas as transições com condições e autoridade).
+  - **§7** 12 anti-padrões AP-01..AP-12.
+  - **§8** 10 regras invioláveis RC-01..RC-10.
+  - **§9** Mapeamento ao lead_state v1 e política de confiança.
+  - **§10** Bloco E: fechamento permitido; PR-T2.5 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T2.4 executada; próximo PR-T2.5.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que nao foi feito
+
+- T2_RESUMO_PERSISTIDO.md não criado (escopo PR-T2.5).
+- Nenhuma implementação Supabase real.
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+- G2 não fechado (requer PR-T2.R após T2.5).
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T2_RECONCILIACAO.md
+PR que fecha:                          PR-T2.4
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — tipologia 7 estados; protocolo 7 etapas; 10 domínios
+                                       específicos; 10 casos sintéticos; tabela de transições
+                                       completa; 12 anti-padrões; 10 regras invioláveis;
+                                       mapeamento ao lead_state v1 e política de confiança.
+Há item parcial bloqueante?:           não — resumo persistido (T2_RESUMO_PERSISTIDO.md) é
+                                       escopo T2.5, não lacuna desta PR.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T2.4 encerrada; T2_RECONCILIACAO.md publicado;
+                                       PR-T2.5 desbloqueada
+Próxima PR autorizada:                 PR-T2.5 — Resumo persistido (T2_RESUMO_PERSISTIDO.md)
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T2** — em execução; PR-T2.5 próxima.
+- G0: APROVADO. G1: APROVADO em 2026-04-23. G2: aberto — aguardando PR-T2.R.
+- T2_DICIONARIO_FATOS.md: publicado.
+- T2_LEAD_STATE_V1.md: publicado.
+- T2_POLITICA_CONFIANCA.md: publicado.
+- T2_RECONCILIACAO.md: **publicado**.
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T2.5`** — Resumo persistido (T2_RESUMO_PERSISTIDO.md).
+
+### Leituras obrigatorias para PR-T2.5
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.5)
+3. `schema/implantation/T2_RECONCILIACAO.md` (base obrigatória)
+4. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+5. `schema/implantation/T2_LEAD_STATE_V1.md`
+6. `schema/implantation/T2_DICIONARIO_FATOS.md`
+7. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — resumo e persistência)
+8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+12. `schema/CODEX_WORKFLOW.md`

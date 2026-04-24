@@ -8,7 +8,7 @@ Gate anterior: G1 — APROVADO em 2026-04-23 via PR-T1.R.
 
 Gate aberto: G2 — estado estruturado funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (em execução — PR-T2.3 executada; aguardando PR-T2.4).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (em execução — PR-T2.4 executada; aguardando PR-T2.5).
 
 Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
 
@@ -16,11 +16,36 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T2.3` — política de confiança por origem: `schema/implantation/T2_POLITICA_CONFIANCA.md` criado
-com 6 origens canônicas (EXPLICIT_TEXT, INDIRECT_TEXT, AUDIO_TRANSCRIPT/3 níveis, DOCUMENT, INFERENCE,
-OPERATOR_NOTE); mapa de transição de status por origem; 12 fatos críticos; condições de confirmação/
-conflito/bloqueio; 9 valores canônicos de source; 5 casos sintéticos; 12 regras PC-01..PC-12.
-PR-T2.4 desbloqueada.
+`PR-T2.4` — reconciliação e tipologia: `schema/implantation/T2_RECONCILIACAO.md` criado com
+tipologia formal de 7 estados (hypothesis/captured/inferred/confirmed/contradicted/pending/obsolete);
+protocolo de reconciliação em 7 etapas com fluxograma; hierarquia de prioridade por origem;
+10 domínios específicos (renda, estado civil, regime, composição/P2, IR autônomo, restrição, RNM,
+áudio ruim, Vasques vs confirmed, documento ilegível); 10 casos sintéticos; tabela de transições;
+12 anti-padrões AP-01..AP-12; 10 regras invioláveis RC-01..RC-10. PR-T2.5 desbloqueada.
+
+## O que a PR-T2.4 fechou
+
+- Criou `schema/implantation/T2_RECONCILIACAO.md` com:
+  - §1 Tipologia formal de 7 estados com definições e regras internas;
+  - §2 Protocolo de reconciliação em 7 etapas com fluxograma ASCII;
+  - §3 Hierarquia de prioridade por origem (não automática);
+  - §4 10 domínios específicos de reconciliação (renda, estado civil, regime de trabalho,
+    composição/P2, IR autônomo, restrição, RNM, áudio ruim, nota Vasques vs confirmed,
+    documento ilegível);
+  - §5 10 casos sintéticos RC-01..RC-10 com passo a passo;
+  - §6 Tabela completa de transições de status com condições e autoridade;
+  - §7 12 anti-padrões AP-01..AP-12;
+  - §8 10 regras invioláveis RC-01..RC-10;
+  - §9 Mapeamento ao lead_state v1 e política de confiança;
+  - §10 Bloco E: fechamento permitido; PR-T2.5 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR atual → PR-T2.4 executada; próximo passo PR-T2.5.
+
+## O que a PR-T2.4 nao fechou
+
+- T2_RESUMO_PERSISTIDO.md — escopo T2.5.
+- Nenhuma implementação Supabase real.
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+- G2 não fechado.
 
 ## O que a PR-T2.3 fechou
 
@@ -135,20 +160,21 @@ PR-T2.4 desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T2.2 — Schema `lead_state` v1 (fatos, objetivos, pendências, conflitos, histórico resumido, metadados de confiança).
+PR-T2.5 — Resumo persistido (T2_RESUMO_PERSISTIDO.md).
 
-Leituras obrigatórias para PR-T2.2:
+Leituras obrigatórias para PR-T2.5:
 1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (contrato em execução)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.2)
-3. `schema/implantation/T2_DICIONARIO_FATOS.md` (dicionário canônico — base obrigatória)
-4. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — estado canônico do lead, PDF6 pp. 4–5)
-5. `schema/implantation/T1_CONTRATO_SAIDA.md` (13 campos de saída)
-6. `schema/implantation/T1_TAXONOMIA_OFICIAL.md` (OBJ_*, PEND_*, CONF_*, RISCO_*)
-7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-11. `schema/CODEX_WORKFLOW.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.5)
+3. `schema/implantation/T2_RECONCILIACAO.md` (base obrigatória)
+4. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+5. `schema/implantation/T2_LEAD_STATE_V1.md`
+6. `schema/implantation/T2_DICIONARIO_FATOS.md`
+7. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — resumo e persistência)
+8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+12. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
