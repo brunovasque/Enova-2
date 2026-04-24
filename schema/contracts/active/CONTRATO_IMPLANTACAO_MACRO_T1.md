@@ -240,8 +240,8 @@ Gate de saída: G1 — contrato assinado.
 | PR-T1.2 | System prompt canônico em camadas (sem ambiguidade central) | `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` | PR-T1.1 | **concluída** |
 | PR-T1.3 | Taxonomia oficial (facts/objetivos/pendências/conflitos/riscos/ações) | `schema/implantation/T1_TAXONOMIA_OFICIAL.md` | PR-T1.2 | **concluída** |
 | PR-T1.4 | Contrato de saída do agente (reply_text + facts + objetivo + flags + bloqueios) | `schema/implantation/T1_CONTRATO_SAIDA.md` | PR-T1.3 | **concluída** |
-| PR-T1.5 | Comportamentos canônicos e proibições | `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md` | PR-T1.4 | **desbloqueada** |
-| PR-T1.R | Readiness e closeout do gate G1 | `schema/implantation/READINESS_G1.md` + arquivo T1 + skeleton T2 | PR-T1.5 | bloqueada |
+| PR-T1.5 | Comportamentos canônicos e proibições | `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md` | PR-T1.4 | **concluída** |
+| PR-T1.R | Readiness e closeout do gate G1 | `schema/implantation/READINESS_G1.md` + arquivo T1 + skeleton T2 | PR-T1.5 | **desbloqueada** |
 
 ---
 
@@ -303,3 +303,10 @@ Condições de aprovação de G1:
 - `reply_text` soberano do LLM verificado; nenhum campo estrutural contém fala.
 - PR-T1.5 desbloqueada.
 - Próximo passo: PR-T1.5 — Comportamentos canônicos e proibições.
+
+### 2026-04-23 — PR-T1.5: comportamentos canônicos e proibições criados
+
+- `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md` criado: 15 comportamentos obrigatórios (C-01..C-15); 13 proibições absolutas (V-01..V-13); 8 padrões de condução (dúvida, objeção, conflito, risco, bloqueio, off-track, insistência, áudio ruim); 12 cenários adversariais; amarração completa às 5 camadas e aos 13 campos de saída; 9 anti-padrões comportamentais.
+- Soberania LLM-first reforçada em todas as seções: comportamento define conduta, nunca script; proibição declara veto, nunca template de recusa.
+- PR-T1.R desbloqueada.
+- Próximo passo: PR-T1.R — Readiness e closeout do gate G1.

@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T1 — Constituição do agente e contrato cognitivo canônico | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` | aberto | G1 — contrato cognitivo aprovado | 2026-04-23 | PR-T1.5 — comportamentos canônicos e proibições | PR-T1.5 |
+| T1 — Constituição do agente e contrato cognitivo canônico | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md` | aberto | G1 — contrato cognitivo aprovado | 2026-04-23 | PR-T1.R — readiness e closeout do gate G1 | PR-T1.R |
 
 ## Contrato T0 encerrado
 
@@ -144,3 +144,4 @@ schema/contracts/
 - 2026-04-23 — PR-T1.2 executada. T1_SYSTEM_PROMPT_CANONICO.md v1 criado: 6 seções em camadas (identidade/papel operacional/proibições/condução/conhecimento/objetivo); 7 anti-padrões proibidos; 6 cenários adversariais documentados; conformidade com T1_CAMADAS_CANONICAS verificada. PR-T1.3 desbloqueada. Próximo passo: PR-T1.3.
 - 2026-04-23 — PR-T1.3 executada. T1_TAXONOMIA_OFICIAL.md criado: 6 categorias canônicas (FACTS 18 tipos, OBJETIVOS 9, PENDÊNCIAS 6, CONFLITOS 4, RISCOS 8, AÇÕES 11); todas as 48 regras T0 mapeadas; trava LLM-first verificada. PR-T1.4 desbloqueada. Próximo passo: PR-T1.4.
 - 2026-04-23 — PR-T1.4 executada. T1_CONTRATO_SAIDA.md criado: 13 campos canônicos com semântica, responsável e travas LLM-first; 8 invariantes; 6 cenários sintéticos; amarração completa à T1.3. PR-T1.5 desbloqueada. Próximo passo: PR-T1.5.
+- 2026-04-23 — PR-T1.5 executada. T1_COMPORTAMENTOS_E_PROIBICOES.md criado: 15 comportamentos obrigatórios; 13 proibições absolutas; 8 padrões de condução; 12 cenários adversariais; amarração às 5 camadas e 13 campos de saída; 9 anti-padrões. PR-T1.R desbloqueada. Próximo passo: PR-T1.R.

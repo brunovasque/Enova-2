@@ -1486,10 +1486,10 @@ Próxima PR autorizada:                 PR-T1.5 — Comportamentos canônicos e 
 
 - Fase macro: T1 — em execução.
 - G0: APROVADO.
-- G1: aberto — aguardando PR-T1.5 + PR-T1.R.
+- G1: aberto — aguardando PR-T1.R.
 - `PR-T1.4` **encerrada**.
-- `PR-T1.5` **desbloqueada**.
-- `PR-T1.R` bloqueada (aguarda conclusão de PR-T1.5).
+- `PR-T1.5` **encerrada**.
+- `PR-T1.R` **desbloqueada**.
 - Runtime: inalterado.
 
 ### Proximo passo autorizado
@@ -1512,3 +1512,98 @@ Próxima PR autorizada:                 PR-T1.5 — Comportamentos canônicos e 
 12. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 13. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 14. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-23 — comportamentos canonicos e proibicoes (PR-T1.5)
+
+### Objetivo executado
+
+`PR-T1.5` — Criar `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md` definindo os
+comportamentos obrigatórios, proibições absolutas e padrões de condução do agente ENOVA 2.
+Sem implementação de runtime, sem LLM real, sem policy engine, sem template ou script.
+
+### O que foi feito
+
+- Criou `schema/implantation/T1_COMPORTAMENTOS_E_PROIBICOES.md` com:
+  - §1 Princípio de leitura: comportamento = conduta, nunca script; proibição = veto, nunca template;
+  - §2 15 comportamentos obrigatórios (C-01..C-15): direção no turno, conflito→needs_confirmation,
+    coleta de fatos, off-track→retornar objetivo, risco→registrar, bloqueio→comunicar naturalmente,
+    dado contradito→reconciliar, objeção→acolher com substância, renda solo→composição,
+    autônomo sem IR→orientar, CTPS→valor estratégico sem bloquear, inelegibilidade→comunicar+alternativa,
+    confidence low→continuar, insistência→não ceder, processo conjunto→coletar P2 naturalmente;
+  - §3 13 proibições absolutas (V-01..V-13): prometer aprovação/parcela/taxa/subsídio/imóvel,
+    avançar sem facts obrigatórios, descartar fato confirmado sem reconciliação, reply_text mecânico,
+    template ou script por stage, fallback textual estático, expor mecânica interna, encerrar sem
+    alternativa quando há alternativa, coletar dado desnecessário, ignorar conflito e avançar, expandir E1;
+  - §4 8 padrões de condução (dúvida, objeção, conflito de informação, risco identificado,
+    bloqueio declarado, lead off-track, insistência em valor/taxa/aprovação, áudio ruim);
+  - §5 12 cenários adversariais: ambiguidade pura, contradição de fato confirmado, prolixo,
+    evasivo, insistência em preço, insistência em aprovação, lead testa limites, documentação
+    parcial, inelegibilidade implícita, questionamento de dado anterior, pergunta técnica sobre
+    processo interno, mudança de posição após confirmação;
+  - §6.1 Amarração às 5 camadas: TOM/REGRA/VETO/SUGESTÃO MANDATÓRIA/REPERTÓRIO × comportamentos e proibições;
+  - §6.2 Amarração aos 13 campos de saída: reply_text, facts_updated, next_objective, conflicts,
+    risks, blocks, needs_confirmation, confidence, pending, actions_executed, flags.offtrack, flags.bypass_manual;
+  - §7 9 anti-padrões comportamentais proibidos;
+  - §8 Cobertura dos critérios do mestre verificada;
+  - Bloco E: fechamento permitido; PR-T1.R desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`: PR-T1.5 concluída; PR-T1.R desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T1.R como próximo passo.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: ultima tarefa PR-T1.5; próximo passo PR-T1.R.
+
+### O que nao foi feito
+
+- Readiness G1 não criado (PR-T1.R).
+- LLM real não implementado.
+- Runtime não alterado.
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+PR que fecha:                          PR-T1.5
+Contrato de referência:                schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md
+Critério de aceite verificado:         15 comportamentos obrigatórios; 13 proibições absolutas;
+                                       8 padrões de condução; 12 cenários adversariais;
+                                       amarração completa às 5 camadas e 13 campos de saída;
+                                       soberania LLM-first reforçada em todas as seções;
+                                       9 anti-padrões comportamentais documentados
+Lacuna remanescente:                   nenhuma — bateria adversarial cobre os 6 cenários
+                                       obrigatórios do mestre (ambiguidade, contradição,
+                                       prolixo, evasivo, áudio ruim, insistência em preço);
+                                       amarração às camadas e ao contrato de saída completa
+Há item parcial bloqueante?:           não
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         T1_COMPORTAMENTOS_E_PROIBICOES.md publicado;
+                                       PR-T1.5 encerrada; PR-T1.R desbloqueada
+Próxima PR autorizada:                 PR-T1.R — Readiness e closeout do gate G1
+```
+
+### Estado atual do repositorio
+
+- Fase macro: T1 — em execução.
+- G0: APROVADO.
+- G1: aberto — aguardando PR-T1.R.
+- `PR-T1.5` **encerrada**.
+- `PR-T1.R` **desbloqueada**.
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T1.R`** — Readiness e closeout do gate G1.
+
+### Leituras obrigatorias para PR-T1.R
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T1 + L18 para bateria adversarial)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T1.R)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T1.md`
+4. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
+5. Todos os artefatos T1: T1_CAMADAS_CANONICAS, T1_SYSTEM_PROMPT_CANONICO, T1_TAXONOMIA_OFICIAL,
+   T1_CONTRATO_SAIDA, T1_COMPORTAMENTOS_E_PROIBICOES (smoke documental)
+6. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+7. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+11. `schema/CODEX_WORKFLOW.md`
