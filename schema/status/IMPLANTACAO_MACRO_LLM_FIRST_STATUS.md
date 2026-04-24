@@ -8,7 +8,7 @@ Gate anterior: G1 — APROVADO em 2026-04-23 via PR-T1.R.
 
 Gate aberto: G2 — estado estruturado funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (skeleton — aguardando PR-T2.0).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (aberto — PR-T2.0 executada; aguardando PR-T2.1).
 
 Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
 
@@ -16,10 +16,26 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T1.R` — readiness e closeout do gate G1: `schema/implantation/READINESS_G1.md` criado com
-smoke documental 6/6 PRs; 12/12 critérios de aceite verificados; coerência entre artefatos
-validada em 5 dimensões; G1 APROVADO. Contrato T1 encerrado e arquivado. Skeleton T2 criado.
-PR-T2.0 desbloqueada.
+`PR-T2.0` — abertura formal do contrato T2: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`
+preenchido com corpo completo conforme CONTRACT_SCHEMA.md. Objetivo, escopo, critérios de aceite,
+quebra de PRs T2.1–T2.R, gate G2, legados e referências declarados. PR-T2.1 desbloqueada.
+
+## O que a PR-T2.0 fechou
+
+- Preencheu `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` com corpo completo (CONTRACT_SCHEMA.md):
+  - §1 Objetivo; §2 Escopo; §3 Fora de escopo; §4 Dependências; §5 Entradas; §6 Saídas;
+  - §7 Critérios de aceite (8 verificáveis); §8 Provas obrigatórias; §9 Bloqueios (8 condições);
+  - §10 Próximo passo; §11 Relação A01; §12 Relação legados; §13 Referências; §14 Blocos legados;
+  - §15 Ordem mínima de leitura; §16 Quebra de PRs T2.0–T2.R; §17 Gate G2.
+  - Adendos A00-ADENDO-01/02/03 declarados.
+- Atualizou `schema/contracts/_INDEX.md`: T2 aberto; PR-T2.1 próximo passo.
+- Bloco E: fechamento permitido; PR-T2.1 desbloqueada.
+
+## O que a PR-T2.0 nao fechou
+
+- Não criou artefatos de execução T2 (T2_DICIONARIO_FATOS, T2_LEAD_STATE_V1, etc.) — esses são escopo T2.1+.
+- Não implementou Supabase real.
+- Não alterou `src/`, `package.json`, `wrangler.toml`.
 
 ## O que a PR-T1.R fechou
 
@@ -49,23 +65,19 @@ PR-T2.0 desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T2.0 — Abertura do contrato de Estado Estruturado e Memória v1.
+PR-T2.1 — Nomes canônicos dos fatos (sem duplicidade semântica).
 
-Leituras obrigatórias para PR-T2.0:
-1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.0)
-3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (skeleton a preencher)
-4. `schema/implantation/READINESS_G1.md` (smoke e limitações residuais T1)
-5. `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`
-6. Artefatos T1: T1_CAMADAS_CANONICAS, T1_SYSTEM_PROMPT_CANONICO, T1_TAXONOMIA_OFICIAL,
-   T1_CONTRATO_SAIDA, T1_COMPORTAMENTOS_E_PROIBICOES
-7. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-8. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-12. `schema/CODEX_WORKFLOW.md`
-13. `schema/CONTRACT_SCHEMA.md`
+Leituras obrigatórias para PR-T2.1:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (contrato aberto)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.1)
+3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — State Store, fatos centrais/derivados)
+4. `schema/implantation/T1_TAXONOMIA_OFICIAL.md` (56 tipos — base para dicionário)
+5. `schema/implantation/T1_CONTRATO_SAIDA.md` (13 campos — fatos que LLM preenche)
+6. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+7. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+10. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
