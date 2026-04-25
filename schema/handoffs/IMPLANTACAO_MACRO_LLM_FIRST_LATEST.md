@@ -2864,21 +2864,102 @@ Estado permitido após esta PR:         PR-T3.4 CONCLUÍDA; PR-T3.5 desbloqueada
 Próxima PR autorizada:                 PR-T3.5 — Suíte de testes de regras críticas
 ```
 
+### Proximo passo autorizado (histórico — PR-T3.5 desbloqueava PR-T3.R)
+
+Seção substituída por bloco PR-T3.5 abaixo.
+
+---
+
+## Atualizacao 2026-04-25 — PR-T3.5: suíte de testes de regras críticas
+
+### Objetivo executado
+
+Criar `schema/implantation/T3_SUITE_TESTES_REGRAS.md` com suíte documental de testes
+declarativos cobrindo as 4 regras críticas T3, a ordem/composição T3.3 e o validador T3.4.
+
+### O que foi feito
+
+- Criado `schema/implantation/T3_SUITE_TESTES_REGRAS.md`:
+  - 24 casos declarativos (mínimo contratual: 20 — CA-06 cumprido com margem de 4);
+  - 4 positivos TC-POS-01..04 (uma regra crítica cada — condições plenas, output correto);
+  - 4 negativos TC-NEG-01..04 (regra não dispara — condições não atendidas);
+  - 4 ambíguos TC-AMB-01..04 (dado incerto → confirmação obrigatória; nunca decisão final);
+  - 4 colisões TC-COL-01..04 (COL-BLOCK-OBLIG, coexistência válida, COL-CONF-CONF-LEVEL,
+    COL-BLOCK-ROUTE — todas registradas em collisions[], nenhuma silenciosa);
+  - 4 regressões TC-REG-01..04 (RC-INV-03 autônomo sem IR, RC-INV-04 solo sem bloqueio,
+    RC-INV-05 estrangeiro sem confirmed, RC-INV-01 zero reply_text cross-rule);
+  - 2 ordem/composição TC-ORD-01..02 (pipeline 6 estágios; confirmação precede obrigação);
+  - 2 validador TC-VAL-01..02 (VC-09 template mecânico; VC-03 fase não avança com bloqueio);
+  - §10 critérios PASS/FAIL globais: 11 critérios universais + 9 falhas críticas;
+  - §11 validação cruzada T3.1/T3.2/T3.3/T3.4/T2 em 18 linhas;
+  - §12 8 anti-padrões AP-ST-01..08;
+  - §13 cobertura das 5 microetapas T3;
+  - Bloco E com 5 provas (P-T3.5-01..05).
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+- Atualizado `schema/contracts/_INDEX.md`: PR atual = PR-T3.5; próximo = PR-T3.R.
+- Atualizado `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo).
+
+### O que não foi feito
+
+- Não criou READINESS_G3.md (escopo PR-T3.R).
+- Não implementou motor real em src/.
+- Não alterou package.json, wrangler.toml.
+- Não inventou regra nova (toda chave e regra referenciada já documentada).
+- G3 não fechado.
+
+### Provas entregues
+
+- **P-T3.5-01:** 24 casos > 20 mínimo; todas 5 categorias obrigatórias cobertas.
+- **P-T3.5-02:** nenhum caso espera reply_text em qualquer campo de output.
+- **P-T3.5-03:** todas as fact_keys referenciadas existem em T2_DICIONARIO_FATOS.
+- **P-T3.5-04:** 4 regressões cobrem RC-INV-01/03/04/05 — invariantes críticos formalizados.
+- **P-T3.5-05:** §13 cobre as 5 microetapas T3 (CA-09 cumprido).
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — nenhum caso espera reply_text; P-GLOBAL-01 em 24 casos.
+- A00-ADENDO-02: confirmada — R_SOLO nunca bloqueia; R_AUTONOMO nunca declara inelegível.
+- A00-ADENDO-03: confirmada — Bloco E presente.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T3_SUITE_TESTES_REGRAS.md
+PR que fecha:                          PR-T3.5 (suíte de testes de regras críticas)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — 24 casos; 5 categorias; 5 microetapas T3;
+                                       critérios PASS/FAIL globais; validação cruzada completa.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T3.5 CONCLUÍDA; PR-T3.R desbloqueada.
+Próxima PR autorizada:                 PR-T3.R — Readiness/Closeout G3
+```
+
+### Estado atual do repositorio (após PR-T3.5)
+
+- Fase macro: **T3** — em execução; PR-T3.R próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: aberto.
+- T3_CLASSES_POLITICA.md: **publicado**.
+- T3_REGRAS_CRITICAS_DECLARATIVAS.md: **publicado**.
+- T3_ORDEM_AVALIACAO_COMPOSICAO.md: **publicado**.
+- T3_VETO_SUAVE_VALIDADOR.md: **publicado**.
+- T3_SUITE_TESTES_REGRAS.md: **publicado** (PR-T3.5).
+- READINESS_G3.md: pendente (PR-T3.R).
+- Runtime: inalterado.
+
 ### Proximo passo autorizado
 
-- **`PR-T3.5`** — Suíte de testes de regras críticas (`T3_SUITE_TESTES_REGRAS.md`).
+- **`PR-T3.R`** — Readiness/Closeout G3 (`READINESS_G3.md`).
 
-### Leituras obrigatorias para PR-T3.5
+### Leituras obrigatorias para PR-T3.R
 
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§7 CA-06/CA-10, §16 PR-T3.5)
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§17 gate G3, §16 PR-T3.R)
 2. `schema/implantation/T3_CLASSES_POLITICA.md`
 3. `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md`
 4. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md`
 5. `schema/implantation/T3_VETO_SUAVE_VALIDADOR.md`
-6. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.5)
-7. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — todas microetapas)
-8. `schema/implantation/T2_LEAD_STATE_V1.md`
+6. `schema/implantation/T3_SUITE_TESTES_REGRAS.md`
+7. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
+8. `schema/implantation/READINESS_G2.md` (modelo de Readiness anterior)
 9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
