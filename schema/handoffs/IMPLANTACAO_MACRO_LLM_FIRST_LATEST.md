@@ -3268,3 +3268,154 @@ Próxima PR autorizada:                 PR-T4.2 — Pipeline LLM com contrato ú
 7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+---
+
+## Atualizacao 2026-04-25 — PR-T4.2: Pipeline LLM com contrato único
+
+### Objetivo executado
+
+Criar `schema/implantation/T4_PIPELINE_LLM.md` com o shape canônico `PipelinePrompt`,
+o contrato de chamada LLM (`LLMCallContract`), a captura imutável do `reply_text` e a
+separação formal de componentes de saída entre T4.3 e T4.4.
+
+### Estado herdado
+
+- PR-T4.1 CONCLUÍDA. `T4_ENTRADA_TURNO.md` publicado.
+- `ContextoTurno` especificado: input do pipeline LLM.
+- T4_PIPELINE_LLM.md: pendente.
+- Fase T4 em execução. G4 aberto.
+
+### Estado entregue
+
+- PR-T4.2 CONCLUÍDA. `T4_PIPELINE_LLM.md` publicado.
+- `PipelinePrompt`, `LLMCallContract`, `LLMResult` especificados.
+- `reply_text` IMUTÁVEL após captura na Etapa 3.
+- PR-T4.3 desbloqueada.
+
+### O que foi feito
+
+- Criado `schema/implantation/T4_PIPELINE_LLM.md` com:
+  - §1 Posição no pipeline: Etapa 3 de 5 (pós-ContextoTurno, pré-policy/validação);
+  - §2 Shape `PipelinePrompt` com 4 blocos em ordem inviolável: §SYS (contrato cognitivo do LLM),
+    §CTX (ContextoTurno serializado), §POL (opcional — só presente quando
+    decisions/vetos existem), §OUT (instrução de formato de saída);
+  - §3 Definição detalhada de cada bloco: §CTX com 7 subseções (turno_atual, fatos_confirmados,
+    fatos_pendentes, conflitos, histórico_l1_l3, vetos_suaves, objetivo_operacional);
+    §OUT instrução JSON com os 4 campos que o LLM deve produzir; §OUT jamais contém
+    reply_text de turno anterior como exemplo;
+  - §4 `LLMCallContract`: campos model_id, max_tokens, temperature, turn_id, case_id,
+    raw_response, latency_ms, tokens_used (TokenCount), call_timestamp, error? (LLMCallError);
+    invariante LLP-INV-03: exatamente 1 chamada LLM por turno; malformed → fallback, nunca retry;
+  - §5 `LLMOutputRaw` (texto bruto) e `LLMResult` (parseado):
+    - reply_text: string — IMUTÁVEL após captura; rota direta para T4.4;
+    - facts_updated_candidates: FactsUpdated — sempre source:"llm_collected", confirmed:false;
+    - confidence: Confidence {score:"high"|"medium"|"low", reason?};
+    - next_objective_candidate?: Objective — sugestão; mecânico valida em T4.3;
+    - parse_successful: boolean; parse_errors: ParseError[]; latency_ms; tokens_used; call_timestamp;
+    - 6 ParseError codes: INVALID_JSON (fatal), MISSING_REPLY_TEXT (fatal), UNKNOWN_FACT_KEY
+      (não-fatal), INVALID_OBJ_TYPE (não-fatal), INVALID_CONFIDENCE_SCORE (não-fatal),
+      EXTRA_FIELDS (não-fatal);
+  - §6 Captura de reply_text com invariante LLP-INV-05 (imutabilidade);
+    rotas de fallback por tipo de erro: INVALID_JSON/MISSING_REPLY_TEXT/LLM_TIMEOUT/
+    LLM_UNAVAILABLE/LLM_RATE_LIMIT → T4.5 fallback; proibição de improviso de reply_text;
+  - §7 Captura parcial de TurnoSaida: tabela campos LLM produz (reply_text, facts_updated,
+    confidence, next_objective_candidate) vs. campos mecânico produz (pending_updates,
+    conflicts_updates, risks, blocks, rastos, métricas);
+  - §8 Tratamento de saída malformada: 5 fatais com código de fallback → T4.5 imediato;
+    4 não fatais → campo ignorado com warning no TurnoRastro;
+  - §9 Separação de componentes com diagrama ASCII: reply_text → T4.4 (IMUTÁVEL, direto);
+    facts_updated_candidates → T4.3 (validação + reconciliação); confidence → T4.4+T4.3;
+    next_objective_candidate → T4.3 (mecânico valida ou substitui); parse_errors não fatais
+    → T4.4 rastro; latency_ms/tokens_used/call_timestamp → T4.4 TurnoRastro métricas;
+  - §10 Invariante de não sobrescrita: tabela de conformidade por componente (T4.3, T4.4,
+    gateway, orquestrador — nenhum pode alterar reply_text após captura);
+  - §11 10 regras invioláveis LLP-INV-01..10 (prompt montado em ordem §SYS→§CTX→§POL→§OUT;
+    máximo §CTX por turno; exatamente 1 chamada; timeout → fallback não retry; reply_text
+    imutável; facts_updated_candidates jamais entram como confirmados; LLM não ve score_llm;
+    reply_text anterior não aparece em §OUT; §POL opcional sem modificar §OUT; §OUT instrui
+    formato não conteúdo);
+  - §12 12 anti-padrões proibidos AP-LLP-01..12;
+  - §13 5 exemplos sintéticos (E1 CLT com obrigação, E2 reply_text ausente → fallback,
+    E3 campos extras descartados, E4 veto suave ativo presente em §POL,
+    E5 T4.3 bloqueia persistência mas reply_text entregue normalmente);
+  - §14 Cobertura de microetapa 2 confirmada ("Pipeline LLM: montar prompt, chamar LLM, capturar resposta");
+  - §15 Validação cruzada T1/T2/T3/T4.1 em 17 dimensões;
+  - Bloco E: PR-T4.3 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: T4 PR atual → PR-T4.2; próximo → PR-T4.3.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: última tarefa = PR-T4.2;
+  próximo = PR-T4.3; seção "O que a PR-T4.2 fechou" adicionada.
+
+### O que não foi feito
+
+- Não criou T4_VALIDACAO_PERSISTENCIA.md (microetapa 3 — PR-T4.3).
+- Não criou T4_RESPOSTA_RASTRO_METRICAS.md (microetapa 4 — PR-T4.4).
+- Não criou T4_FALLBACKS.md (microetapa 5 — PR-T4.5).
+- Não implementou orquestrador real em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não fechado.
+
+### Provas entregues
+
+- **P-T4.2-01:** `PipelinePrompt` com 4 blocos em ordem inviolável §SYS→§CTX→§POL→§OUT — CA-03 (LLM único) suportado.
+- **P-T4.2-02:** LLP-INV-03 declara exatamente 1 chamada LLM por turno; malformed → fallback sem retry.
+- **P-T4.2-03:** LLP-INV-05 + §10 declaram reply_text imutável após captura; tabela confirma que T4.3 nunca o recebe.
+- **P-T4.2-04:** `facts_updated_candidates` sempre source:"llm_collected"/confirmed:false — CA-06 (reconciliação antes de persistir) preservado para T4.3.
+- **P-T4.2-05:** Microetapa 2 coberta; Bloco E presente; zero lacunas bloqueantes.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — LLM é a única fonte de reply_text (§6); orquestrador nunca fala (§9); mecânico não sobrescreve (§10).
+- A00-ADENDO-02: confirmada — §SYS carreia T1_SYSTEM_PROMPT_CANONICO sem modificação; identidade MCMV preservada.
+- A00-ADENDO-03: confirmada — Bloco E presente; evidência completa; microetapa 2 coberta.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T4_PIPELINE_LLM.md
+PR que fecha:                          PR-T4.2 (Pipeline LLM com contrato único)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — PipelinePrompt completo; LLMCallContract com
+                                       invariante de 1 chamada; LLMResult com reply_text
+                                       imutável; separação de roteamento por componente;
+                                       malformed handling 5 fatais + 4 não fatais; LLP-INV-01..10;
+                                       12 anti-padrões; 5 exemplos; microetapa 2 coberta;
+                                       cross-ref T1/T2/T3/T4.1 em 17 dimensões.
+                                       Validação/persistência (T4.3) e demais são PRs subsequentes.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T4.2 CONCLUÍDA; T4_PIPELINE_LLM.md publicado;
+                                       PR-T4.3 desbloqueada.
+Próxima PR autorizada:                 PR-T4.3 — Validação policy engine + reconciliação antes de persistir
+```
+
+### Estado atual do repositorio (após PR-T4.2)
+
+- Fase macro: **T4** — em execução; PR-T4.3 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: **APROVADO**. G4: aberto.
+- CONTRATO_IMPLANTACAO_MACRO_T4.md: **aberto / em execução** (PR-T4.0 + PR-T4.1 + PR-T4.2).
+- T4_ENTRADA_TURNO.md: **publicado** (PR-T4.1).
+- T4_PIPELINE_LLM.md: **publicado** (PR-T4.2).
+- T4_VALIDACAO_PERSISTENCIA.md: pendente (PR-T4.3).
+- T4_RESPOSTA_RASTRO_METRICAS.md: pendente (PR-T4.4).
+- T4_FALLBACKS.md: pendente (PR-T4.5).
+- T4_BATERIA_E2E.md: pendente (PR-T4.6).
+- READINESS_G4.md: pendente (PR-T4.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T4.3`** — Validação policy engine + reconciliação antes de persistir (`T4_VALIDACAO_PERSISTENCIA.md`).
+
+### Leituras obrigatorias para PR-T4.3
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S3, §7 CA-04/CA-05/CA-06, §16 PR-T4.3)
+2. `schema/implantation/T4_PIPELINE_LLM.md` (LLMResult — saída que entra no validador)
+3. `schema/implantation/T4_ENTRADA_TURNO.md` (prior_decisions, soft_vetos_ctx)
+4. `schema/implantation/T3_CLASSES_POLITICA.md` (classes de decisão avaliadas)
+5. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (pipeline de composição PolicyDecisionSet)
+6. `schema/implantation/T3_VETO_SUAVE_VALIDADOR.md` (ValidationContext + ValidationResult)
+7. `schema/implantation/T2_LEAD_STATE_V1.md` (estado que será ou não atualizado)
+8. `schema/implantation/T2_RECONCILIACAO.md` (reconciliação de fatos antes de persistir)
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
