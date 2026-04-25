@@ -8,7 +8,7 @@ Gate anterior: G2 — APROVADO em 2026-04-24 via PR-T2.R.
 
 Gate aberto: G3 — policy engine funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (em execução — PR-T3.4 executada em 2026-04-25).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (em execução — PR-T3.5 executada em 2026-04-25).
 
 Contrato T2 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
 
@@ -18,19 +18,16 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T3.4` — veto suave + validador pós-resposta/pré-persistência:
-`schema/implantation/T3_VETO_SUAVE_VALIDADOR.md` criado com:
-definição formal de veto suave e distinção de bloqueio em 7 dimensões (§1.2); shape
-`VetoSuaveRecord` com 5 tipos de risco, 3 resoluções, escalada condicional para bloqueio,
-ciclo de vida e acknowledged; extensão do `PolicyDecisionSet` com `soft_vetos[]` e invariante
-de separação (§1.6); validador posicionado como passo 4 de 6 no pipeline de turno (§2.2);
-shapes `ValidationContext` + `LLMResponseMeta` + `ValidationResult` com `safe_fields` e
-`blocked_fields` (§2.3/§2.6); checklist VC-01..VC-08 (8 itens — 5 critical, 3 advisory)
-com severity e ação por item (§2.4); lógica de decisão agregada com prioridade REJECT >
-PREVENT_PERSISTENCE > REQUIRE_REVISION (§2.5); tabela efeito×decisão×validation_log (§2.7);
-10 cenários SC-VS-01..SC-VS-10 cobrindo todos os casos exigidos; validação cruzada
-T3.1/T3.2/T3.3/T2 em 13 linhas (§5); 10 anti-padrões AP-VS-01..AP-VS-10; 10 regras invioláveis
-RC-VS-01..RC-VS-10; todas as 5 microetapas T3 cobertas (§8). PR-T3.5 desbloqueada.
+`PR-T3.5` — suíte de testes declarativos de regras críticas:
+`schema/implantation/T3_SUITE_TESTES_REGRAS.md` criado com 24 casos (mínimo: 20, CA-06
+cumprido): 4 positivos (TC-POS-01..04, uma regra crítica cada); 4 negativos (TC-NEG-01..04,
+regra não dispara); 4 ambíguos (TC-AMB-01..04, dado incerto → confirmação, nunca decisão
+final); 4 colisões (TC-COL-01..04, COL-BLOCK-OBLIG, coexistência, COL-CONF-CONF-LEVEL,
+COL-BLOCK-ROUTE); 4 regressões (TC-REG-01..04, RC-INV-01/03/04/05 verificados); 2 de
+ordem/composição T3.3 (TC-ORD-01..02); 2 de validador T3.4 (TC-VAL-01..02); tabela geral
+de cobertura; 11 critérios PASS globais + 9 falhas críticas; validação cruzada
+T3.1/T3.2/T3.3/T3.4/T2 em 18 linhas; 8 anti-padrões AP-ST-01..08; cobertura das 5
+microetapas T3. PR-T3.R desbloqueada.
 
 ## O que a PR-T2.R fechou
 
