@@ -101,10 +101,10 @@ criterios_aceite:     — lista de asserções PASS/FAIL verificáveis
 | TC-AMB-02 | ambíguo | R_AUTONOMO_IR | confirmação (não inelegível) | IR não_informado |
 | TC-AMB-03 | ambíguo | R_SOLO_BAIXA_COMPOSICAO | sugestão + confirmação | renda limítrofe |
 | TC-AMB-04 | ambíguo | R_ESTRANGEIRO_SEM_RNM | confirmação (não bloqueio) | nationality captured |
-| TC-COL-01 | colisão | R_CASADO_CIVIL + R_ESTRANGEIRO | bloqueio + obrigação → COL-BLOCK-OBLIG | colisão em collisions[] |
+| TC-COL-01 | colisão | R_CASADO_CIVIL + R_ESTRANGEIRO | bloqueio + obrigação coexistem; collisions[] vazio (fatos distintos) | COL-BLOCK-OBLIG não se aplica a fatos distintos |
 | TC-COL-02 | colisão | R_AUTONOMO_IR + R_SOLO_BAIXA | obrigação + sugestão coexistem | sem colisão silenciosa |
 | TC-COL-03 | colisão | R_CASADO_CIVIL + R_ESTRANGEIRO | 2 confirmações → COL-CONF-CONF-LEVEL | colisão registrada |
-| TC-COL-04 | colisão | R_ESTRANGEIRO + roteamento | bloqueio + roteamento → COL-BLOCK-ROUTE | bloqueio vence |
+| TC-COL-04 | colisão | R_ESTRANGEIRO + roteamento | decisions[]=[bloqueio]; roteamento em decisions_dropped; COL-BLOCK-ROUTE | roteamento suprimido; nunca em decisions[] |
 | TC-REG-01 | regressão | R_AUTONOMO_IR | sugestão_mandatória; elegibility intacto | RC-INV-03: sem inelegível auto |
 | TC-REG-02 | regressão | R_SOLO_BAIXA_COMPOSICAO | sugestão; zero bloqueio | RC-INV-04: nunca bloqueio |
 | TC-REG-03 | regressão | R_ESTRANGEIRO_SEM_RNM | confirmação; zero bloqueio | RC-INV-05: bloqueio só com confirmed |
@@ -720,13 +720,16 @@ criterios_aceite:
 
 ## 6. Casos de teste — Colisões (TC-COL)
 
-### TC-COL-01 — Casado civil + estrangeiro sem RNM: bloqueio + obrigação → COL-BLOCK-OBLIG
+### TC-COL-01 — Casado civil + estrangeiro sem RNM: bloqueio e obrigação coexistem (fatos distintos)
 
 ```
 test_id:           TC-COL-01
 regras_alvo:       R_CASADO_CIVIL_CONJUNTO + R_ESTRANGEIRO_SEM_RNM
-objetivo:          Verificar que colisão entre bloqueio e obrigação é registrada em collisions[]
-                   e NOT silenciosa. Bloqueio permanece; obrigação em standby.
+objetivo:          Verificar que bloqueio (sobre fact_rnm_status) e obrigação (sobre
+                   fact_process_mode) coexistem corretamente quando apontam para fatos
+                   DISTINTOS — collisions[] corretamente vazio (sem colisão real).
+                   COL-BLOCK-OBLIG só se aplica quando bloqueio e obrigação apontam para
+                   o MESMO fact_key; fatos diferentes não geram esta colisão.
 
 lead_state_entrada:
   facts:
@@ -743,37 +746,38 @@ lead_state_entrada:
       value: "ausente"
       status: "confirmed"
 
+facts_distintos:
+  - bloqueio target: "fact_rnm_status"       ← fato do bloqueio
+  - obrigação target: "fact_process_mode"    ← fato diferente; sem conflito de target
+
 policy_esperada:
   decisions:
     - class: "bloqueio"
       rule_id: "R_ESTRANGEIRO_SEM_RNM"
       severity: "blocking"
+      action.blocked_fact: "fact_rnm_status"
     - class: "obrigação"
       rule_id: "R_CASADO_CIVIL_CONJUNTO"
       severity: "warning"
-  collisions:
-    - code: "COL-BLOCK-OBLIG"
-      blocking_rule: "R_ESTRANGEIRO_SEM_RNM"
-      competing_rule: "R_CASADO_CIVIL_CONJUNTO"
-      resolution: "bloqueio_prevalece"
-      obrigacao_status: "standby_pending_resolution"
-  # collisions[] NÃO pode estar vazio
+      action.required_fact: "fact_process_mode"
+  collisions: []    ← vazio: fatos distintos não geram COL-BLOCK-OBLIG
 
 soft_veto_esperado: nenhum
 
 validacao_esperada:
-  VC-04: PASS — COL-BLOCK-OBLIG registrada em collisions[]
+  VC-04: PASS — collisions[] corretamente vazio (nenhuma colisão detectável)
   VC-03: PASS — blocked_by populado; fase não avança
 
-resultado_esperado: APPROVE (estado com bloqueio e colisão registrada)
+resultado_esperado: APPROVE (bloqueio + obrigação persistidos; sem colisão registrada)
 
 criterios_aceite:
-  PASS-01: decisions[] contém bloqueio + obrigação
-  PASS-02: collisions[] contém entrada com code="COL-BLOCK-OBLIG"
-  PASS-03: CollisionRecord declara resolution="bloqueio_prevalece"
-  PASS-04: operational.blocked_by populado com R_ESTRANGEIRO_SEM_RNM
-  PASS-05: colisão NÃO é silenciosa
-  FAIL se: collisions[] vazio, obrigação ignorada sem registro de colisão, reply_text presente
+  PASS-01: decisions[] contém bloqueio (fact_rnm_status) + obrigação (fact_process_mode)
+  PASS-02: collisions[] VAZIO — COL-BLOCK-OBLIG não se aplica a fatos distintos
+  PASS-03: operational.blocked_by populado com R_ESTRANGEIRO_SEM_RNM
+  PASS-04: obrigação R_CASADO_CIVIL_CONJUNTO mantida em decisions[] (não suprimida)
+  PASS-05: nenhum reply_text em nenhum payload
+  FAIL se: COL-BLOCK-OBLIG registrada para fatos distintos (colisão falsa),
+           obrigação suprimida sem motivo, reply_text presente
 ```
 
 ---
@@ -882,7 +886,8 @@ criterios_aceite:
 test_id:           TC-COL-04
 regras_alvo:       R_ESTRANGEIRO_SEM_RNM + roteamento de avanço de fase
 objetivo:          Verificar que bloqueio vence roteamento: colisão COL-BLOCK-ROUTE registrada,
-                   roteamento suprimido, bloqueio prevalece.
+                   roteamento suprimido (NÃO aparece em decisions[]); CollisionRecord registra
+                   o roteamento em decisions_dropped.
 
 lead_state_entrada:
   facts:
@@ -894,34 +899,42 @@ lead_state_entrada:
       status: "confirmed"
   operational:
     current_phase: "qualification"
-    # engine também avaliaria roteamento para "elegibility" mas bloqueio prevalece
+    # engine avaliou roteamento para "elegibility" no Estágio 6
+    # mas bloqueio ativo no Estágio 2 suprime o roteamento antes de emitir
 
 policy_esperada:
   decisions:
     - class: "bloqueio"
       rule_id: "R_ESTRANGEIRO_SEM_RNM"
       severity: "blocking"
-    - class: "roteamento"
-      rule_id: "<regra_de_avanco>"
-      # roteamento emitido mas suprimido pela composição
+    # roteamento NÃO aparece em decisions[] — foi suprimido antes de emitir
   collisions:
     - code: "COL-BLOCK-ROUTE"
       blocking_rule: "R_ESTRANGEIRO_SEM_RNM"
-      suppressed_rule: "<regra_de_avanco>"
+      decisions_dropped:
+        - class: "roteamento"
+          rule_id: "<regra_de_avanco>"
+          target_phase: "elegibility"
+          suppression_reason: "bloqueio_ativo_impede_roteamento"
       resolution: "bloqueio_prevalece_roteamento_suprimido"
 
-validacao_esperada:
-  VC-03: PASS — fase não avança (blocked_by populado)
-  VC-04: PASS — COL-BLOCK-ROUTE em collisions[]
+  # invariante: roteamento suprimido aparece SOMENTE em collisions[].decisions_dropped
+  #             NUNCA em decisions[] — mesmo que "inativo"
 
-resultado_esperado: APPROVE (bloqueio persistido; roteamento descartado)
+validacao_esperada:
+  VC-03: PASS — blocked_by populado; fase não avança
+  VC-04: PASS — COL-BLOCK-ROUTE em collisions[] com decisions_dropped preenchido
+
+resultado_esperado: APPROVE (bloqueio persistido; roteamento descartado e registrado em colisão)
 
 criterios_aceite:
-  PASS-01: collisions[] contém code="COL-BLOCK-ROUTE"
-  PASS-02: roteamento NÃO persiste avanço de fase
-  PASS-03: blocked_by populado; current_phase inalterado
-  PASS-04: colisão NÃO é silenciosa
-  FAIL se: fase avança apesar de bloqueio, collisions[] vazio, roteamento aplicado sem resolução
+  PASS-01: decisions[] contém APENAS o bloqueio — roteamento ausente de decisions[]
+  PASS-02: collisions[] contém code="COL-BLOCK-ROUTE"
+  PASS-03: CollisionRecord.decisions_dropped contém o roteamento suprimido
+  PASS-04: blocked_by populado; current_phase inalterado
+  PASS-05: colisão NÃO é silenciosa
+  FAIL se: roteamento aparece em decisions[] (mesmo como "suprimido"),
+           collisions[] vazio, fase avança, decisions_dropped ausente do CollisionRecord
 ```
 
 ---
@@ -1372,8 +1385,8 @@ Há lacuna remanescente?:               não —
   4 positivos (TC-POS-01..04): uma regra crítica cada;
   4 negativos (TC-NEG-01..04): uma regra crítica cada;
   4 ambíguos (TC-AMB-01..04): dado incerto → confirmação, nunca decisão final;
-  4 colisões (TC-COL-01..04): COL-BLOCK-OBLIG, COL-CONF-CONF-LEVEL,
-    coexistência válida, COL-BLOCK-ROUTE;
+  4 colisões (TC-COL-01..04): coexistência válida (fatos distintos),
+    COL-CONF-CONF-LEVEL, coexistência sugestão+obrigação, COL-BLOCK-ROUTE;
   4 regressões (TC-REG-01..04): RC-INV-03/04/05/01 verificados;
   2 casos de ordem/composição T3.3 (TC-ORD-01..02);
   2 casos de validador T3.4 (TC-VAL-01..02);
@@ -1382,6 +1395,12 @@ Há lacuna remanescente?:               não —
   validação cruzada T3.1/T3.2/T3.3/T3.4/T2 em 18 linhas (§11);
   8 anti-padrões de teste AP-ST-01..08;
   cobertura das 5 microetapas T3 (§13).
+
+Revisão pós-abertura (2026-04-25):
+  TC-COL-01 corrigido — COL-BLOCK-OBLIG removida para fatos distintos;
+    collisions[] vazio; obrigação mantida em decisions[].
+  TC-COL-04 corrigido — roteamento removido de decisions[];
+    decisions_dropped[] registra o roteamento suprimido; COL-BLOCK-ROUTE preservada.
 
 Há item parcial/inconclusivo bloqueante?:  não.
 Fechamento permitido nesta PR?:            sim
@@ -1410,6 +1429,15 @@ R_ESTRANGEIRO_SEM_RNM só bloqueia com nationality=confirmed (RC-INV-05). TC-REG
 nenhum payload contém reply_text (RC-INV-01). Todas as 4 regressões críticas formalmente declaradas.
 
 **P-T3.5-05:** §13 declara cobertura das 5 microetapas T3 com casos específicos. CA-09 cumprido.
+
+**P-T3-CORR-03 (revisão pós-abertura):** TC-COL-01 corrigido — COL-BLOCK-OBLIG aplicava-se
+incorretamente a `fact_rnm_status` (bloqueio) e `fact_process_mode` (obrigação), que são
+fact_keys distintas. T3.3 §5 define COL-BLOCK-OBLIG apenas quando bloqueio e obrigação apontam
+para o **mesmo** `fact_key`; com fatos distintos, collisions[] fica vazio e ambas as decisões
+coexistem sem colisão. TC-COL-04 corrigido — roteamento suprimido foi incorretamente mantido em
+`decisions[]`; T3.3 §5 exige que o roteamento suprimido vá exclusivamente para
+`CollisionRecord.decisions_dropped[]` e nunca apareça em `decisions[]`. Ambos os critérios de
+aceite atualizados com asserção FAIL explícita para o padrão incorreto.
 
 ### Conformidade com adendos
 
