@@ -2774,33 +2774,111 @@ Estado permitido após esta PR:         PR-T3.3 CONCLUÍDA; PR-T3.4 desbloqueada
 Próxima PR autorizada:                 PR-T3.4 — Veto suave + validador pós-resposta/pré-persistência
 ```
 
-### Estado atual do repositorio
+### Estado atual do repositorio (após PR-T3.4)
 
-- Fase macro: **T3** — em execução; PR-T3.4 próxima.
+- Fase macro: **T3** — em execução; PR-T3.5 próxima.
 - G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: aberto.
 - T3_CLASSES_POLITICA.md: **publicado**.
 - T3_REGRAS_CRITICAS_DECLARATIVAS.md: **publicado**.
 - T3_ORDEM_AVALIACAO_COMPOSICAO.md: **publicado**.
-- T3_VETO_SUAVE_VALIDADOR.md: pendente (PR-T3.4).
+- T3_VETO_SUAVE_VALIDADOR.md: **publicado** (PR-T3.4).
 - T3_SUITE_TESTES_REGRAS.md: pendente (PR-T3.5).
 - READINESS_G3.md: pendente (PR-T3.R).
 - Runtime: inalterado.
 
+---
+
+## Atualizacao 2026-04-25 — PR-T3.4: veto suave + validador pós-resposta/pré-persistência
+
+### Objetivo executado
+
+Criar `schema/implantation/T3_VETO_SUAVE_VALIDADOR.md` com:
+- Definição formal de veto suave e distinção de bloqueio em 7 dimensões.
+- Shape `VetoSuaveRecord` com 5 tipos de risco, 3 resoluções, escalada condicional para bloqueio.
+- Extensão do `PolicyDecisionSet` com `soft_vetos[]` e invariante de separação.
+- Validador posicionado como passo 4 de 6 no pipeline de turno.
+- Checklist VC-01..VC-08 (8 itens — 5 critical, 3 advisory) com severity e ação por item.
+- Lógica de decisão APPROVE / REJECT / REQUIRE_REVISION / PREVENT_PERSISTENCE.
+- 10 cenários SC-VS-01..SC-VS-10; validação cruzada T3.1/T3.2/T3.3/T2; 10 anti-padrões; 10 regras invioláveis.
+- Todas as 5 microetapas T3 cobertas (§8).
+
+### O que foi feito
+
+- Criado `schema/implantation/T3_VETO_SUAVE_VALIDADOR.md`:
+  - §1 VetoSuaveRecord: 5 condições de disparo (dado_insuficiente, risco_de_limite,
+    inconsistencia_soft, colisao_latente, risco_de_promessa); 3 resoluções (orientar, confirmar,
+    escalate_to_bloqueio); tabela formal bloqueio × veto suave em 7 dimensões; ciclo de vida com
+    acknowledged; extensão PolicyDecisionSet com soft_vetos[] (invariante de separação declarado);
+  - §2 Validador: posição passo 4/6 no pipeline; shapes ValidationContext (com LLMResponseMeta)
+    + ValidationResult (com safe_fields/blocked_fields); checklist VC-01..VC-08 (VC-01 soberania
+    fala, VC-02 promessa prematura, VC-03 fase+bloqueio, VC-04 colisão registrada, VC-05
+    confiança mínima, VC-06 veto acknowledged, VC-07 captured→confirmed, VC-08 objetivo/stage);
+    lógica agregada; tabela efeito×decisão×validation_log;
+  - §3 Relação com as 5 classes canônicas;
+  - §4 10 cenários SC-VS-01..10;
+  - §5 Validação cruzada T3.1/T3.2/T3.3/T2 em 13 linhas;
+  - §6 10 anti-padrões AP-VS-01..10;
+  - §7 10 regras invioláveis RC-VS-01..10;
+  - §8 Cobertura de microetapas: todas as 5 microetapas T3 cobertas;
+  - Bloco E com 4 provas (P-T3.4-01..04).
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: última tarefa = PR-T3.4.
+- Atualizado `schema/contracts/_INDEX.md`: T3 PR atual = PR-T3.4; entrada de sync adicionada.
+- Atualizado `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo).
+
+### O que não foi feito
+
+- Não criou T3_SUITE_TESTES_REGRAS.md (escopo PR-T3.5).
+- Não criou READINESS_G3.md (escopo PR-T3.R).
+- Não implementou motor real em src/.
+- Não alterou package.json, wrangler.toml.
+- Não criou regras de negócio novas.
+- G3 não fechado.
+
+### Provas entregues
+
+- **P-T3.4-01:** nenhum campo de fala (`reply_text`, `mensagem_usuario`, etc.) em nenhum shape.
+- **P-T3.4-02:** todas as `fact_key` referenciadas existem em T2_DICIONARIO_FATOS.
+- **P-T3.4-03:** microetapa 5 declarada COBERTA em §8; todas as 5 microetapas T3 cobertas.
+- **P-T3.4-04:** CA-04 cumprido (7 dimensões de distinção bloqueio×veto); CA-05 cumprido
+  (checklist 8 itens > contrato ≥6).
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — validador opera sobre estado, nunca sobre `reply_text`.
+- A00-ADENDO-02: confirmada — mecanismos orientam sem engessar o LLM; veto suave é orientação
+  de risco, não casca mecânica.
+- A00-ADENDO-03: confirmada — Bloco E presente.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T3_VETO_SUAVE_VALIDADOR.md
+PR que fecha:                          PR-T3.4 (veto suave + validador pós-resposta/pré-persistência)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — VetoSuaveRecord com 5 tipos de risco e 3 resoluções;
+                                       validador checklist VC-01..VC-08; 4 decisões do validador;
+                                       10 cenários SC-VS-01..10; validação cruzada T3.1/T3.2/T3.3/T2;
+                                       10 anti-padrões; 10 regras invioláveis; 5 microetapas T3 cobertas.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T3.4 CONCLUÍDA; PR-T3.5 desbloqueada.
+Próxima PR autorizada:                 PR-T3.5 — Suíte de testes de regras críticas
+```
+
 ### Proximo passo autorizado
 
-- **`PR-T3.4`** — Veto suave + validador pós-resposta/pré-persistência.
+- **`PR-T3.5`** — Suíte de testes de regras críticas (`T3_SUITE_TESTES_REGRAS.md`).
 
-### Leituras obrigatorias para PR-T3.4
+### Leituras obrigatorias para PR-T3.5
 
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-04/CA-05, §16 T3.4)
-2. `schema/implantation/T3_CLASSES_POLITICA.md` (distinção bloqueio vs veto suave — §2.5)
-3. `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md` (regras críticas — base de validação)
-4. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (pipeline e shape do PolicyDecisionSet)
-5. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.4)
-6. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 5)
-7. **L17** — Final Operacional (veto na fase final)
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§7 CA-06/CA-10, §16 PR-T3.5)
+2. `schema/implantation/T3_CLASSES_POLITICA.md`
+3. `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md`
+4. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md`
+5. `schema/implantation/T3_VETO_SUAVE_VALIDADOR.md`
+6. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.5)
+7. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — todas microetapas)
 8. `schema/implantation/T2_LEAD_STATE_V1.md`
-9. `schema/implantation/T2_POLITICA_CONFIANCA.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
