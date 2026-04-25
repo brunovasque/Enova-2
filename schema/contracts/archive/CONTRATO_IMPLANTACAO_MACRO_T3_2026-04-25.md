@@ -11,8 +11,8 @@
 | Blocos legados obrigatórios       | L03                                                                                           |
 | Blocos legados complementares     | L05, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17, L19                             |
 | Ordem mínima de leitura da frente | L03 → L07–L10 (estado civil / composição) → L11–L14 (regime / renda) → L19 (perfil MCMV)    |
-| Status                            | **encerrado** — PR-T3.R executada em 2026-04-25; arquivado em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md` |
-| Última atualização                | 2026-04-25                                                                                    |
+| Status                            | **aberto** — PR-T3.0 executada em 2026-04-24                                                  |
+| Última atualização                | 2026-04-24                                                                                    |
 
 ---
 
