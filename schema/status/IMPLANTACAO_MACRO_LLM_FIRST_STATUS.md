@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T4 — Orquestrador de turno LLM-first (contrato aberto; PR-T4.1 desbloqueada).
+Fase macro ativa: T4 — Orquestrador de turno LLM-first (em execução; PR-T4.2 desbloqueada).
 
 Gate anterior: G3 — APROVADO em 2026-04-25 via PR-T3.R.
 
 Gate aberto: G4 — orquestrador funcional (bloqueado até PR-T4.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (aberto — PR-T4.0 executada em 2026-04-25).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (em execução — PR-T4.1 executada em 2026-04-25).
 
 Contrato T3 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
 
@@ -20,7 +20,16 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T4.0` — Abertura formal do contrato T4 (Orquestrador de turno LLM-first):
+`PR-T4.1` — Padronização da entrada do turno:
+`schema/implantation/T4_ENTRADA_TURNO.md` criado: shape `TurnoEntrada` com 6 campos
+obrigatórios (turn_id, case_id, message_text, channel, lead_state, current_objective);
+4 campos opcionais (attachments, prior_decisions, soft_vetos_ctx, context_override);
+sequência de validação V1–V6; montagem de `ContextoTurno`; 13+ campos proibidos com
+códigos TE-*; 10 regras invioláveis TE-INV-01..10; 12 anti-padrões AP-TE;
+5 exemplos sintéticos; validação cruzada T1/T2/T3; microetapa 1 coberta; Bloco E.
+PR-T4.2 desbloqueada.
+
+`PR-T4.0` — Abertura formal do contrato T4 (anteriormente):
 `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` preenchido com corpo completo
 (§1–§17 + Bloco E): objetivo do orquestrador de turno; shapes TurnoEntrada e TurnoSaida;
 pipeline 8 etapas; 10 critérios de aceite CA-01..CA-10; quebra de PRs T4.0–T4.R;
@@ -255,6 +264,50 @@ PR-T2.R desbloqueada.
 - Nao criou schema Supabase (escopo T2).
 - Nao criou policy engine (escopo T3).
 - Nao alterou `src/`, `package.json`, `wrangler.toml`.
+
+## O que a PR-T4.1 fechou
+
+- Criou `schema/implantation/T4_ENTRADA_TURNO.md` com:
+  - §1 Shape `TurnoEntrada` com 6 campos obrigatórios e 4 opcionais; `ChannelEnum`; invariante global LLM-first;
+  - §2 Definição detalhada de cada campo obrigatório: turn_id, case_id, message_text, channel, lead_state, current_objective — com origem, semântica, validação, tratamento de ausência, proibições;
+  - §3 Campos opcionais: attachments, prior_decisions, soft_vetos_ctx, context_override — com shapes e regras;
+  - §4 13 campos explicitamente proibidos com códigos de erro TE-* canônicos;
+  - §5 Sequência de validação V1–V6 com tabela de erros fatais/não-fatais e shapes ValidationError/ValidationWarning;
+  - §6 Montagem de `ContextoTurno`: 10 componentes obrigatórios, 5 condicionais, proibições de contexto, shape completo de ContextoTurno;
+  - §7 Tabela consolidada de campos ausentes com ação e código;
+  - §8 Posição no pipeline do orquestrador (Etapas 1–2 de 5);
+  - §9 10 regras invioláveis TE-INV-01..10;
+  - §10 12 anti-padrões proibidos AP-TE-01..12;
+  - §11 5 exemplos sintéticos (primeiro turno, intermediário, objective ausente, campo proibido, vetos suaves);
+  - §12 Cobertura de microetapa 1 confirmada;
+  - §13 Validação cruzada T1/T2/T3 em 14 dimensões;
+  - Bloco E: PR-T4.2 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: T4 status → em execução; PR atual → PR-T4.1; próximo → PR-T4.2.
+
+## O que a PR-T4.1 nao fechou
+
+- T4_PIPELINE_LLM.md (microetapa 2 — PR-T4.2).
+- T4_VALIDACAO_PERSISTENCIA.md (microetapa 3 — PR-T4.3).
+- T4_RESPOSTA_RASTRO_METRICAS.md (microetapa 4 — PR-T4.4).
+- T4_FALLBACKS.md (microetapa 5 — PR-T4.5).
+- T4_BATERIA_E2E.md e READINESS_G4.md.
+- Não implementou orquestrador real em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não fechado.
+
+## Proximo passo autorizado
+
+PR-T4.2 — Pipeline LLM com contrato único (`T4_PIPELINE_LLM.md`).
+
+Leituras obrigatórias para PR-T4.2:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S2, §7 CA-03, §16 PR-T4.2)
+2. `schema/implantation/T4_ENTRADA_TURNO.md` (shape ContextoTurno; montagem de entrada)
+3. `schema/implantation/T1_CONTRATO_SAIDA.md` (TurnoSaida shape — o que o LLM deve produzir)
+4. `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` (identidade e papel do LLM)
+5. `schema/implantation/T2_LEAD_STATE_V1.md` (estado que o prompt incorpora)
+6. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+7. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+8. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 
 ## O que a PR-T4.0 fechou
 

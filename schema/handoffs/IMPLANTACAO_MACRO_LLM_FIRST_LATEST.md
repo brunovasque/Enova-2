@@ -3160,3 +3160,111 @@ Próxima PR autorizada:                 PR-T4.1 — Padronização da entrada do
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+---
+
+## Atualizacao 2026-04-25 — PR-T4.1: Padronização da entrada do turno
+
+### Objetivo executado
+
+Criar `schema/implantation/T4_ENTRADA_TURNO.md` com o shape canônico `TurnoEntrada`,
+regras de validação de presença, montagem de contexto mínimo e travas LLM-first na entrada.
+
+### O que foi feito
+
+- Criado `schema/implantation/T4_ENTRADA_TURNO.md` com:
+  - §1 Shape canônico `TurnoEntrada`: 6 campos obrigatórios + 4 opcionais; `ChannelEnum`
+    (5 valores); invariante global LLM-first; proibição absoluta de `reply_text` na entrada;
+  - §2 Campos obrigatórios — definição completa de `turn_id`, `case_id`, `message_text`,
+    `channel`, `lead_state`, `current_objective` com origem, semântica, tratamento de ausência
+    e proibições específicas;
+  - §3 Campos opcionais — `attachments`, `prior_decisions`, `soft_vetos_ctx`,
+    `context_override` com shapes e regras;
+  - §4 13 campos explicitamente proibidos com códigos de erro TE-* canônicos e ação de
+    fallback `formato_invalido`;
+  - §5 Sequência de validação V1–V6 com tabela completa (fatal/não-fatal/default);
+    shapes `ValidationError` e `ValidationWarning`;
+  - §6 Montagem de `ContextoTurno`: 10 componentes obrigatórios, 5 condicionais, proibições
+    de contexto (reply_text anterior, templates, score_llm, L4 automático), shape completo
+    `ContextoTurno` com `OperationalContext`;
+  - §7 Tabela consolidada de tratamento de ausência por campo;
+  - §8 Posição no pipeline (Etapas 1–2 de 5) com diagrama ASCII;
+  - §9 10 regras invioláveis TE-INV-01..10;
+  - §10 12 anti-padrões proibidos AP-TE-01..12;
+  - §11 5 exemplos sintéticos (E1 primeiro turno, E2 intermediário, E3 objective ausente,
+    E4 campo proibido rejeitado, E5 vetos suaves propagados);
+  - §12 Cobertura de microetapa 1 confirmada;
+  - §13 Validação cruzada em 14 dimensões (T1/T2/T3/adendos);
+  - Bloco E com PR-T4.2 desbloqueada.
+- Atualizado `schema/contracts/_INDEX.md`: T4 status → em execução; PR-T4.1; próximo → PR-T4.2.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: última tarefa = PR-T4.1;
+  próximo = PR-T4.2.
+
+### O que não foi feito
+
+- Não criou T4_PIPELINE_LLM.md (microetapa 2 — PR-T4.2).
+- Não montou prompt nem executou LLM.
+- Não implementou orquestrador real em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não fechado.
+
+### Provas entregues
+
+- **P-T4.1-01:** Shape `TurnoEntrada` com 6 campos obrigatórios mínimos — CA-02 cumprido.
+- **P-T4.1-02:** Nenhum campo carrega `reply_text`; §4 declara campo proibido com código TE-REPLY-TEXT-PROIBIDO — CA-01 preservado.
+- **P-T4.1-03:** `ContextoTurno` extrai apenas campos canônicos de T2_LEAD_STATE_V1 e T1_CONTRATO_SAIDA; validação cruzada §13 em 14 dimensões.
+- **P-T4.1-04:** Microetapa 1 do mestre T4 coberta — "Padronizar a entrada (mensagem, anexos, canal, contexto resumido, estado, políticas, objetivo)".
+- **P-T4.1-05:** Bloco E presente; evidência completa; zero lacunas bloqueantes.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — §1.3 proíbe reply_text na entrada; §4 lista campos proibidos; TE-INV-01/02; AP-TE-01/06.
+- A00-ADENDO-02: confirmada — TurnoEntrada posicionada como interface de entrada, não como casca dominante; prior_decisions não substitui policy engine (TE-INV-10).
+- A00-ADENDO-03: confirmada — Bloco E presente; evidência completa; microetapa 1 coberta.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T4_ENTRADA_TURNO.md
+PR que fecha:                          PR-T4.1 (Padronização da entrada do turno)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — shape TurnoEntrada completo; validação V1–V6;
+                                       ContextoTurno especificado; campos proibidos com
+                                       códigos TE-*; TE-INV-01..10; 12 anti-padrões;
+                                       5 exemplos; microetapa 1 coberta; cross-ref T1/T2/T3.
+                                       Pipeline LLM (T4.2) e demais são PRs subsequentes.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T4.1 CONCLUÍDA; T4_ENTRADA_TURNO.md publicado;
+                                       PR-T4.2 desbloqueada.
+Próxima PR autorizada:                 PR-T4.2 — Pipeline LLM com contrato único
+```
+
+### Estado atual do repositorio (após PR-T4.1)
+
+- Fase macro: **T4** — em execução; PR-T4.2 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: **APROVADO**. G4: aberto.
+- CONTRATO_IMPLANTACAO_MACRO_T4.md: **aberto / em execução** (PR-T4.0 + PR-T4.1).
+- T4_ENTRADA_TURNO.md: **publicado** (PR-T4.1).
+- T4_PIPELINE_LLM.md: pendente (PR-T4.2).
+- T4_VALIDACAO_PERSISTENCIA.md: pendente (PR-T4.3).
+- T4_RESPOSTA_RASTRO_METRICAS.md: pendente (PR-T4.4).
+- T4_FALLBACKS.md: pendente (PR-T4.5).
+- T4_BATERIA_E2E.md: pendente (PR-T4.6).
+- READINESS_G4.md: pendente (PR-T4.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T4.2`** — Pipeline LLM com contrato único (`T4_PIPELINE_LLM.md`).
+
+### Leituras obrigatorias para PR-T4.2
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S2, §7 CA-03, §16 PR-T4.2)
+2. `schema/implantation/T4_ENTRADA_TURNO.md` (ContextoTurno — input do pipeline LLM)
+3. `schema/implantation/T1_CONTRATO_SAIDA.md` (TurnoSaida shape — output esperado)
+4. `schema/implantation/T1_SYSTEM_PROMPT_CANONICO.md` (identidade e papel do LLM)
+5. `schema/implantation/T2_LEAD_STATE_V1.md` (campos que compõem o prompt)
+6. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção K — PR-T4.2)
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
