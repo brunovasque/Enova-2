@@ -8,7 +8,7 @@ Gate anterior: G2 — APROVADO em 2026-04-24 via PR-T2.R.
 
 Gate aberto: G3 — policy engine funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (em execução — PR-T3.2 executada em 2026-04-24).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (em execução — PR-T3.3 executada em 2026-04-25).
 
 Contrato T2 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
 
@@ -18,17 +18,18 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T3.2` — codificação declarativa das regras críticas: `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md`
-criado com 4 regras críticas (R_CASADO_CIVIL_CONJUNTO, R_AUTONOMO_IR, R_SOLO_BAIXA_COMPOSICAO,
-R_ESTRANGEIRO_SEM_RNM); cada regra especificada com rule_id canônico, fatos de entrada (apenas
-chaves T2), condição de disparo, classes emitidas, payloads mínimos, severidade, condições de ativação
-por status de fato, e efeito no lead_state v1; invariante central: nenhum payload de `action` contém
-`reply_text`; 3 regras usam exclusivamente confirmação/obrigação/sugestão_mandatória; bloqueio
-emitido apenas por R_ESTRANGEIRO_SEM_RNM e somente quando `nationality.status="confirmed"`;
-R_SOLO_BAIXA_COMPOSICAO NUNCA emite bloqueio e NUNCA seta `elegibility_status="ineligible"`;
-tabela de validação cruzada (§6); 14 chaves canônicas verificadas contra T2_DICIONARIO_FATOS (§7);
-10 anti-padrões AP-RC-01..10 (§8); 10 regras invioláveis RC-INV-01..10 (§9); microetapa 1 do
-mestre T3 coberta. PR-T3.3 desbloqueada.
+`PR-T3.3` — ordem de avaliação e composição de políticas: `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md`
+criado com pipeline numerado de 6 estágios (1 reconciliação prévia, 2 bloqueios, 3 confirmações,
+4 obrigações, 5 sugestões, 6 roteamentos); matriz de composição 5×5 entre classes (§3.2);
+regra de desempate em 4 níveis (priority → criticidade do fato → stage → alfabética); lista
+canônica de criticidade de fato; 8 combinações específicas detalhadas (bloqueio+obrigação,
+bloqueio+confirmação, bloqueio+roteamento, obrigação+confirmação, obrigação+sugestão, múltiplas
+obrigações, múltiplas confirmações, múltiplos roteamentos); política de colisão com 10 códigos
+canônicos (COL-BLOCK-OBLIG, COL-BLOCK-ROUTE, COL-OBLIG-ROUTE, COL-CONF-ROUTE, COL-CONF-OBLIG,
+COL-ROUTING-MULTI, etc.); proibição absoluta de colisão silenciosa; shape `PolicyDecisionSet`
+com `decisions[]` + `collisions[]` + `evaluation_meta`; 10 cenários sintéticos SC-01..10
+cobrindo todos os exigidos; validação cruzada T3.1/T3.2/T2 (§8); 12 anti-padrões AP-OC-01..12;
+12 regras invioláveis RC-INV-01..12; microetapas 3 e 4 do mestre T3 cobertas. PR-T3.4 desbloqueada.
 
 ## O que a PR-T2.R fechou
 
@@ -230,19 +231,63 @@ PR-T2.R desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T3.3 — Ordem de avaliação e composição de políticas.
+PR-T3.4 — Veto suave + validador pós-resposta/pré-persistência.
 
-Leituras obrigatórias para PR-T3.3:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-03/CA-05, §16 T3.3)
-2. `schema/implantation/T3_CLASSES_POLITICA.md` (prioridade entre classes — §7)
-3. `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md` (regras declaradas — base para composição)
-4. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.3)
-5. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapas 3 e 4)
-6. `schema/implantation/T2_LEAD_STATE_V1.md`
-7. `schema/implantation/T2_POLITICA_CONFIANCA.md`
-8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+Leituras obrigatórias para PR-T3.4:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-04/CA-05, §16 T3.4)
+2. `schema/implantation/T3_CLASSES_POLITICA.md` (distinção bloqueio vs veto suave — §2.5)
+3. `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md` (regras críticas — base de validação)
+4. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (pipeline e shape do PolicyDecisionSet)
+5. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.4)
+6. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 5)
+7. **L17** — Final Operacional (veto na fase final)
+8. `schema/implantation/T2_LEAD_STATE_V1.md`
+9. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+## O que a PR-T3.3 fechou
+
+- Criou `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` com:
+  - §1 Visão geral do pipeline com 6 estágios numerados (reconciliação → bloqueios →
+    confirmações → obrigações → sugestões → roteamentos);
+  - §2 Especificação detalhada de cada estágio com pré-condições, regras candidatas,
+    ordenação interna e saídas;
+  - §3 Princípios canônicos de composição (RC-COMP-01..10) + matriz 5×5 entre classes +
+    tabela de prioridade global + lista canônica de criticidade de fato (13 níveis) +
+    regra de desempate residual;
+  - §4 Oito combinações específicas detalhadas (bloqueio+obrigação, bloqueio+confirmação,
+    bloqueio+roteamento, obrigação+confirmação, obrigação+sugestão, múltiplas obrigações,
+    múltiplas confirmações, múltiplos roteamentos);
+  - §5 Política de colisão com 10 códigos canônicos (COL-BLOCK-OBLIG, COL-BLOCK-ROUTE,
+    COL-OBLIG-ROUTE, COL-CONF-ROUTE, COL-CONF-OBLIG, COL-ROUTING-MULTI, COL-OBLIG-OBLIG-PRIO,
+    COL-CONF-CONF-LEVEL, COL-RECONCILE-FAIL, COL-INVALID-PHASE) + shape `CollisionRecord` +
+    proibição absoluta de colisão silenciosa;
+  - §6 Shape `PolicyDecisionSet` com `decisions[]`, `collisions[]`, `evaluation_meta` e
+    invariantes;
+  - §7 10 cenários sintéticos SC-01..10 (todos os exigidos pelo escopo: casado civil + solo +
+    renda baixa, autônomo + IR ausente + renda baixa, estrangeiro sem RNM + outra regra,
+    renda fraca + composição sugerida, P3 entrando depois de solo, restrição vs avanço,
+    duas obrigações simultâneas, duas confirmações simultâneas, bloqueio + roteamento,
+    sugestão competindo com obrigação);
+  - §8 Validação cruzada com T3.1, T3.2 e T2 (classes, prioridade, regras críticas, chaves
+    canônicas, status, OperationalState);
+  - §9 12 anti-padrões AP-OC-01..12 (incluindo AP-OC-10: proibição de inventar regra nova
+    nesta camada);
+  - §10 Cobertura: microetapas 3 e 4 do mestre T3 cobertas; 1, 2 e 5 declaradas como escopo
+    de outras PRs;
+  - §11 12 regras invioláveis RC-INV-01..12 (incluindo RC-INV-08: autônomo sem IR não é
+    inelegível automático; RC-INV-10: solo baixa nunca emite bloqueio nem seta inelegível);
+  - Bloco E: PR-T3.3 fechada; PR-T3.4 desbloqueada.
+
+## O que a PR-T3.3 nao fechou
+
+- T3_VETO_SUAVE_VALIDADOR.md (microetapa 5 — escopo PR-T3.4).
+- T3_SUITE_TESTES_REGRAS.md (escopo PR-T3.5).
+- READINESS_G3.md (escopo PR-T3.R).
+- Nenhuma implementação real em src/. Nenhuma alteração em package.json, wrangler.toml.
+- G3 não fechado.
 
 ## O que a PR-T3.2 fechou
 

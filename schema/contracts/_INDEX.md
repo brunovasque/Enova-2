@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T3 — Policy engine v1 e guardrails declarativos | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` | em execução | G2 aprovado; G3 — policy engine funcional | 2026-04-24 | PR-T3.2 executada | PR-T3.3 |
+| T3 — Policy engine v1 e guardrails declarativos | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` | em execução | G2 aprovado; G3 — policy engine funcional | 2026-04-24 | PR-T3.3 executada | PR-T3.4 |
 
 ## Contratos encerrados
 
@@ -158,3 +158,4 @@ schema/contracts/
 - 2026-04-24 — PR-T3.0 executada. Contrato T3 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: §1–§17 + Bloco E (objetivo, escopo, fora de escopo, dependências, entradas, saídas S1–S6, critérios CA-01..CA-10, provas P-T3-01..05, bloqueios B-01..05, quebra PRs T3.0–T3.R, gate G3). PR-T3.1 desbloqueada. Próximo passo: PR-T3.1.
 - 2026-04-25 — PR-T3.1 executada. T3_CLASSES_POLITICA.md criado: 5 classes canônicas (bloqueio, obrigação, confirmação, sugestão_mandatória, roteamento); shape PolicyDecision com invariante sem reply_text; prioridade entre classes; 4 efeitos operacionais formais (§8); integração lead_state v1 + política de confiança; 5 exemplos sintéticos; 10 anti-padrões AP-CP-01..10; 10 regras CP-01..10; microetapa 2 coberta. PR-T3.2 desbloqueada. Próximo passo: PR-T3.2.
 - 2026-04-24 — PR-T3.2 executada. T3_REGRAS_CRITICAS_DECLARATIVAS.md criado: 4 regras críticas (R_CASADO_CIVIL_CONJUNTO, R_AUTONOMO_IR, R_SOLO_BAIXA_COMPOSICAO, R_ESTRANGEIRO_SEM_RNM); payloads declarativos sem reply_text; bloqueio somente em R_ESTRANGEIRO_SEM_RNM (nationality confirmed + RNM inválido); R_SOLO_BAIXA_COMPOSICAO nunca emite bloqueio; tabela validação cruzada §6; 14 chaves verificadas contra T2_DICIONARIO_FATOS; 10 anti-padrões AP-RC-01..10; 10 regras RC-INV-01..10; microetapa 1 coberta. PR-T3.3 desbloqueada. Próximo passo: PR-T3.3.
+- 2026-04-25 — PR-T3.3 executada. T3_ORDEM_AVALIACAO_COMPOSICAO.md criado: pipeline 6 estágios numerados (reconciliação → bloqueios → confirmações → obrigações → sugestões → roteamentos); matriz de composição 5×5; regra de desempate em 4 níveis; 8 combinações específicas detalhadas; política de colisão com 10 códigos canônicos (COL-*) + proibição de colisão silenciosa; shape PolicyDecisionSet com decisions/collisions/evaluation_meta; 10 cenários sintéticos SC-01..10; validação cruzada T3.1/T3.2/T2; 12 anti-padrões AP-OC-01..12; 12 regras RC-INV-01..12; microetapas 3 e 4 cobertas. PR-T3.4 desbloqueada. Próximo passo: PR-T3.4.

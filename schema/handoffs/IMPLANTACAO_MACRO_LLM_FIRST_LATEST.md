@@ -2681,3 +2681,126 @@ Próxima PR autorizada:                 PR-T3.3 — Ordem de avaliação e compo
 8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+---
+
+## Atualizacao 2026-04-25 — PR-T3.3 — Ordem de avaliação e composição de políticas
+
+### O que foi feito
+
+- Criou `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` com:
+  - §1 Visão geral do pipeline numerado de 6 estágios sequenciais (reconciliação prévia →
+    bloqueios → confirmações → obrigações → sugestões → roteamentos);
+  - §2 Especificação detalhada de cada estágio: pré-condições, regras candidatas, ordenação
+    interna, restrições e saídas; Estágio 1 invoca obrigatoriamente `T2_RECONCILIACAO`;
+  - §3 Princípios canônicos de composição RC-COMP-01..10 + matriz 5×5 entre classes (§3.2) +
+    tabela de prioridade global (§3.3) + lista canônica de criticidade de fato em 13 níveis
+    (§3.4) + regra de desempate residual em 3 níveis (§3.5);
+  - §4 Oito combinações específicas detalhadas: bloqueio+obrigação, bloqueio+confirmação,
+    bloqueio+roteamento, obrigação+confirmação, obrigação+sugestão, múltiplas obrigações,
+    múltiplas confirmações, múltiplos roteamentos;
+  - §5 Política de colisão com 10 códigos canônicos: COL-BLOCK-OBLIG, COL-BLOCK-ROUTE,
+    COL-OBLIG-ROUTE, COL-CONF-ROUTE, COL-CONF-OBLIG, COL-ROUTING-MULTI, COL-OBLIG-OBLIG-PRIO,
+    COL-CONF-CONF-LEVEL, COL-RECONCILE-FAIL, COL-INVALID-PHASE; shape `CollisionRecord`
+    com invariante `decisions_kept ∪ decisions_dropped = involved_rules`; proibição absoluta
+    de colisão silenciosa;
+  - §6 Shape `PolicyDecisionSet` com `decisions[]`, `collisions[]`, `evaluation_meta`;
+    invariantes: ordem canônica 1→5; aborted ⇒ decisions vazias; toda supressão refletida em
+    collisions[];
+  - §7 Dez cenários sintéticos SC-01..SC-10 (todos os exigidos pelo escopo): casado civil +
+    solo + renda baixa, autônomo + IR ausente + renda baixa, estrangeiro sem RNM + outra
+    regra, renda fraca + composição sugerida, P3 entrando depois de solo, restrição vs avanço
+    de fase, duas obrigações simultâneas, duas confirmações simultâneas, bloqueio + roteamento,
+    sugestão competindo com obrigação;
+  - §8 Validação cruzada com T3.1, T3.2 e T2: classes, prioridade, invariante action,
+    chaves de fato, derivados, status canônicos, OperationalState, anti-padrões reforçados;
+  - §9 12 anti-padrões AP-OC-01..AP-OC-12 (incluindo AP-OC-10 contra inventar regra nova
+    nesta camada e AP-OC-12 contra reordenar estágios);
+  - §10 Cobertura: microetapas 3 (ordem estável) e 4 (composição) cobertas; 1, 2 e 5
+    declaradas como escopo de outras PRs;
+  - §11 12 regras invioláveis RC-INV-01..RC-INV-12 (incluindo RC-INV-08: autônomo sem IR
+    nunca é inelegível automático; RC-INV-10: solo baixa nunca emite bloqueio nem seta
+    inelegível; RC-INV-09: regra terminal exige fato em confirmed);
+  - Bloco E: PR-T3.3 fechada; PR-T3.4 desbloqueada.
+
+### O que não foi feito
+
+- Não criou T3_VETO_SUAVE_VALIDADOR.md (microetapa 5 — escopo PR-T3.4).
+- Não criou T3_SUITE_TESTES_REGRAS.md (escopo PR-T3.5).
+- Não criou READINESS_G3.md (escopo PR-T3.R).
+- Não implementou motor real em src/.
+- Não alterou package.json, wrangler.toml.
+- Não inventou regras novas (escopo desta PR é ordem e composição apenas).
+- G3 não fechado.
+
+### Provas entregues
+
+- **P-T3-01:** inspeção do documento — nenhum payload de `action`, `decisions` ou estágio
+  contém `reply_text`, `mensagem_usuario`, `texto_cliente`, `resposta` ou `frase`. Estágios
+  produzem apenas `PolicyDecision` estruturadas e `CollisionRecord`. Menções a `reply_text`
+  no documento aparecem exclusivamente em proibições/anti-padrões/declarações canônicas
+  (linhas 33, 657, 684, 716, 736).
+- **P-T3-02:** todas as `fact_key` (`fact_nationality`, `fact_rnm_status`,
+  `fact_credit_restriction`, `fact_restriction_regularization_status`, `fact_estado_civil`,
+  `fact_process_mode`, `fact_composition_actor`, `fact_work_regime_p1`,
+  `fact_autonomo_has_ir_p1`, `fact_monthly_income_p1`, `fact_has_multi_income_p1`,
+  `fact_p3_required`, `fact_current_intent`, `fact_channel_origin`) e `derived_*`
+  (`derived_composition_needed`, `derived_rnm_required`) referenciam chaves canônicas
+  presentes em `T2_DICIONARIO_FATOS`. Nenhuma chave inventada.
+- **P-T3-03:** microetapas 3 (ordem estável) e 4 (composição) do mestre T3 cobertas em
+  §10; declaração explícita por microetapa.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — soberania do LLM na fala preservada; nenhum estágio escreve fala.
+- A00-ADENDO-02: confirmada — identidade MCMV preservada; ordem e composição orientam sem
+  engessar conduta.
+- A00-ADENDO-03: confirmada — Bloco E presente.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md
+PR que fecha:                          PR-T3.3 (ordem de avaliação e composição de políticas)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — pipeline 6 estágios numerados; matriz 5×5; regra
+                                       de desempate 4 níveis; 8 combinações específicas;
+                                       10 códigos de colisão; shape PolicyDecisionSet;
+                                       10 cenários SC-01..10 cobrindo todos os exigidos;
+                                       validação cruzada T3.1/T3.2/T2; 12 anti-padrões;
+                                       12 regras invioláveis; microetapas 3 e 4 cobertas.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T3.3 CONCLUÍDA; PR-T3.4 desbloqueada.
+Próxima PR autorizada:                 PR-T3.4 — Veto suave + validador pós-resposta/pré-persistência
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T3** — em execução; PR-T3.4 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: aberto.
+- T3_CLASSES_POLITICA.md: **publicado**.
+- T3_REGRAS_CRITICAS_DECLARATIVAS.md: **publicado**.
+- T3_ORDEM_AVALIACAO_COMPOSICAO.md: **publicado**.
+- T3_VETO_SUAVE_VALIDADOR.md: pendente (PR-T3.4).
+- T3_SUITE_TESTES_REGRAS.md: pendente (PR-T3.5).
+- READINESS_G3.md: pendente (PR-T3.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T3.4`** — Veto suave + validador pós-resposta/pré-persistência.
+
+### Leituras obrigatorias para PR-T3.4
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-04/CA-05, §16 T3.4)
+2. `schema/implantation/T3_CLASSES_POLITICA.md` (distinção bloqueio vs veto suave — §2.5)
+3. `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md` (regras críticas — base de validação)
+4. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (pipeline e shape do PolicyDecisionSet)
+5. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.4)
+6. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 5)
+7. **L17** — Final Operacional (veto na fase final)
+8. `schema/implantation/T2_LEAD_STATE_V1.md`
+9. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
