@@ -2301,3 +2301,100 @@ Próxima PR autorizada:                 PR-T2.R — Readiness/Closeout G2
 11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 13. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-24 — readiness e closeout G2 (PR-T2.R)
+
+### Objetivo executado
+
+`PR-T2.R` — criar `schema/implantation/READINESS_G2.md`: smoke documental de PR-T2.0 a PR-T2.5,
+verificação de coerência entre artefatos, 3 cenários sintéticos de validação, verificação dos
+8 critérios de aceite do contrato T2, decisão formal G2, encerramento de contrato T2 e skeleton T3.
+
+### Estado herdado
+
+- Branch `feat/t2-pr2r-readiness-g2` criada limpa a partir de main pós-PR-T2.5.
+- Todos os 6 artefatos T2 publicados (T2.0→T2.5): contrato + dicionário + lead_state +
+  política + reconciliação + resumo.
+- G1 APROVADO em 2026-04-23 (READINESS_G1.md).
+
+### O que foi feito
+
+- Criou `schema/implantation/READINESS_G2.md` com:
+  - **§1** Smoke documental PR-T2.0 a PR-T2.5 — 6/6 PASS com evidências detalhadas por artefato.
+  - **§2** Verificação de coerência em 8 dimensões: dict↔lead_state↔política↔reconciliação↔resumo;
+    nomes canônicos; separação tipos; LLM-first (tabela artefato×regra); snapshot≠lead_state;
+    sobrescrita silenciosa; inferência≠confirmed; E1≠arquitetura.
+  - **§3** 3 cenários sintéticos: V1 (conflito texto vs. documento), V2 (áudio ruim + confirmed),
+    V3 (snapshot antigo + approval_prohibited) — todos PASS.
+  - **§4** Verificação 8/8 critérios de aceite do contrato T2 §7 — todos CUMPRIDOS.
+  - **§5** Lacunas: 5 não bloqueantes com justificativa; zero bloqueantes.
+  - **§6** Decisão formal: G2 APROVADO.
+  - **§7** Encerramento de contrato T2 (checklist CONTRACT_CLOSEOUT_PROTOCOL.md completo).
+  - **§8** Bloco E: fechamento permitido; PR-T3.0 desbloqueada.
+- Atualizou `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`: status → ENCERRADO.
+- Arquivou contrato T2 em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
+- Criou skeleton `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md`.
+- Atualizou `schema/contracts/_INDEX.md`: T2 encerrado/arquivado; T3 skeleton ativo; PR-T3.0 próximo.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: gate G2 aprovado; G3 aberto; T3 skeleton.
+
+### O que nao foi feito
+
+- Contrato T3 com corpo não preenchido (PR-T3.0 preencherá).
+- Nenhuma implementação de policy engine (T3+).
+- G3 não aberto (requer PR-T3.R após execução de T3).
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/READINESS_G2.md
+PR que fecha:                          PR-T2.R (gate G2 + contrato T2)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — smoke 6/6 PASS; critérios 8/8 CUMPRIDOS;
+                                       8 dimensões de coerência verificadas; 3 cenários
+                                       sintéticos PASS; zero violações LLM-first;
+                                       5 limitações residuais declaradas como não bloqueantes
+                                       com justificativa objetiva.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         G2 APROVADO; contrato T2 ENCERRADO e arquivado;
+                                       skeleton T3 criado; PR-T3.0 desbloqueada.
+Próxima PR autorizada:                 PR-T3.0 — Abertura do contrato de Policy Engine v1 (T3)
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T3** — skeleton ativo; PR-T3.0 próxima.
+- G0: APROVADO. G1: APROVADO (2026-04-23). G2: **APROVADO (2026-04-24)**. G3: aberto — aguardando PR-T3.R.
+- T2_DICIONARIO_FATOS.md: publicado.
+- T2_LEAD_STATE_V1.md: publicado.
+- T2_POLITICA_CONFIANCA.md: publicado.
+- T2_RECONCILIACAO.md: publicado.
+- T2_RESUMO_PERSISTIDO.md: publicado.
+- READINESS_G2.md: **publicado**.
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T3.0`** — Abertura formal do contrato de Policy Engine v1 (T3).
+
+### Leituras obrigatorias para PR-T3.0
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (skeleton — a preencher)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T3.0)
+3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3)
+4. `schema/implantation/READINESS_G2.md` (evidência G2 aprovado)
+5. `schema/implantation/T2_RECONCILIACAO.md`
+6. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+7. `schema/implantation/T2_LEAD_STATE_V1.md`
+8. `schema/implantation/T2_DICIONARIO_FATOS.md`
+9. `schema/CONTRACT_SCHEMA.md` (formato canônico de contrato)
+10. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+11. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+12. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+13. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+14. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+15. `schema/CODEX_WORKFLOW.md`
