@@ -13,7 +13,11 @@ separados para as etapas seguintes do pipeline.
 > O LLM é a única origem de `reply_text`.
 > `reply_text` nunca é sobrescrito depois do LLM.
 > O orquestrador monta o contexto — o LLM decide o que dizer.
-> Policy engine, validador e reconciliador operam sobre estado — nunca sobre fala.
+> Policy engine e reconciliador operam sobre estado — nunca sobre `reply_text` bruto.
+> O validador T4.3 recebe `LLMResponseMeta` (sinais estruturados extraídos pelo mecânico),
+> nunca o texto bruto de `reply_text`.
+> Imutabilidade ≠ entrega garantida: se `ValidationResult = REJECT`, `reply_text` não é
+> enviado ao canal — o pipeline aciona T4.5 sem reescrever o texto capturado.
 
 **Pré-requisitos obrigatórios:**
 
@@ -41,9 +45,13 @@ separados para as etapas seguintes do pipeline.
 
 > 1. O LLM é soberano na fala — `reply_text` vem exclusivamente do LLM.
 > 2. O orquestrador monta o contexto — nunca redige nem sugere resposta.
-> 3. Policy engine, reconciliador e validador operam sobre estado — nunca sobre `reply_text`.
-> 4. `reply_text` capturado é imutável a partir da captura — nenhuma etapa pós-LLM pode
->    alterá-lo, complementá-lo ou substituí-lo.
+> 3. Policy engine e reconciliador operam sobre estado — nunca sobre `reply_text` bruto.
+>    O validador T4.3 recebe `LLMResponseMeta` (sinais estruturados extraídos pelo mecânico
+>    a partir de `reply_text`) — nunca o texto bruto da resposta.
+> 4. `reply_text` capturado é imutável — nenhuma etapa pós-LLM pode alterá-lo,
+>    complementá-lo ou substituí-lo. Imutabilidade não equivale a entrega garantida:
+>    se `ValidationResult = REJECT`, `reply_text` não é enviado ao canal — o pipeline
+>    aciona fallback T4.5 sem reescrever o texto capturado.
 
 **Base soberana:**
 
@@ -394,6 +402,32 @@ ParseError {
 | `needs_confirmation` | **Mecânico** — avalia conflitos | Etapa 4 |
 | `flags` | **Mecânico** — roteamento e telemetria | Etapa 4 |
 
+### 5.4 `LLMResponseMeta` — sinais estruturados extraídos de `reply_text`
+
+Antes de enviar `LLMResult` para T4.3, o mecânico extrai `LLMResponseMeta` a partir de
+`reply_text`. **`LLMResponseMeta` nunca expõe o texto bruto de `reply_text`** ao validador
+ou a qualquer outro componente mecânico downstream.
+
+Shape canônico (definido em `T3_VETO_SUAVE_VALIDADOR.md §2.3`):
+
+```
+LLMResponseMeta {
+  contains_approval_promise:    boolean  — mecânico detectou linguagem de promessa de aprovação
+  contains_ineligibility_claim: boolean  — mecânico detectou afirmação de inelegibilidade
+  contains_mechanical_template: boolean  — mecânico detectou estrutura rígida/template na resposta
+                                           (ex.: lista numerada de perguntas, linguagem formatada
+                                           fixa, ausência de adaptação ao contexto do lead)
+  objective_referenced:         string?  — objetivo referenciado na resposta (se detectável)
+  vetos_acknowledged:           string[] — IDs de VetoSuaveRecord que o LLM reconheceu
+}
+```
+
+`LLMResponseMeta` é o **único canal** pelo qual informações derivadas de `reply_text`
+chegam ao validador T4.3. O validador VC-01..VC-09 usa esses sinais — nunca o texto bruto.
+
+A extração é executada pelo mecânico (análise estrutural/lexical simples) **após** a
+captura de `reply_text` e **antes** da chamada ao validador. Não é uma nova chamada ao LLM.
+
 ---
 
 ## §6 Captura de `reply_text`
@@ -421,10 +455,18 @@ LLMOutputRaw.text
 Após a captura em `LLMResult.reply_text`:
 
 1. **Nenhuma etapa downstream pode alterar `reply_text`.**
-2. T4.3 (policy + reconciliação + persistência) opera sobre `facts_updated_candidates` e `lead_state_delta` — nunca sobre `reply_text`.
-3. T4.3 (validador VC-01..VC-09) pode **bloquear a persistência** e acionar `REQUIRE_REVISION` ou `PREVENT_PERSISTENCE` — mas **não pode alterar `reply_text`**.
-4. T4.4 (resposta + rastro) entrega `reply_text` ao canal exatamente como capturado.
-5. T4.5 (fallbacks) só é acionado quando `reply_text` não foi capturado ou o turno falhou antes — nunca para substituir `reply_text` capturado.
+2. T4.3 (policy + reconciliação + persistência) opera sobre `facts_updated_candidates` e
+   `lead_state_delta` — nunca sobre `reply_text` bruto.
+3. T4.3 (validador VC-01..VC-09) **não lê `reply_text` bruto**. O mecânico extrai
+   `LLMResponseMeta` (sinais estruturados — §5.4) a partir de `reply_text` antes da
+   validação. O validador usa esses sinais para verificar conformidade — sem acesso ao texto.
+4. T4.4 (resposta + rastro) entrega `reply_text` ao canal **somente quando `ValidationResult`
+   permite envio seguro** (`APPROVE`, `REQUIRE_REVISION`, `PREVENT_PERSISTENCE`).
+   Se `ValidationResult = REJECT`, `reply_text` **não** é enviado — o pipeline aciona T4.5.
+5. T4.5 (fallbacks) é acionado em dois casos distintos:
+   - **(a)** `reply_text` não foi capturado (erro fatal de parse/chamada LLM);
+   - **(b)** `ValidationResult = REJECT` — nesse caso T4.5 produz resposta segura *nova*,
+     sem reescrever `reply_text` capturado (que permanece imutável no registro do TurnoRastro).
 
 ### 6.3 Casos onde `reply_text` não é capturado
 
@@ -546,34 +588,58 @@ downstream:
 ```
 LLMResult
     │
-    ├── reply_text ─────────────────────────────────────────────────────→ T4.4 (entrega ao canal)
-    │                                                                      [IMUTÁVEL — não passa por T4.3]
+    ├── reply_text ──────────────────────────────────────────────────→ [IMUTÁVEL — texto bruto]
+    │       │                                                           Nunca lido por T4.3 diretamente.
+    │       │                                                           Entrega condicional ao ValidationResult:
+    │       │                                                             APPROVE/REQUIRE_REVISION/PREVENT_PERSISTENCE
+    │       │                                                               → T4.4 (entrega ao canal)
+    │       │                                                             REJECT
+    │       │                                                               → T4.5 (fallback/revisão)
+    │       │
+    │       └── [mecânico extrai] LLMResponseMeta ────────────────→ T4.3 (validador VC-01..VC-09)
+    │                              (sinais estruturados;               [texto bruto nunca exposto
+    │                               nunca o texto bruto)               ao validador]
     │
-    ├── facts_updated_candidates ─────────────────────────────────────→ T4.3 (validação + reconciliação)
-    │                                                                      [T4.3 valida, confirma, reconcilia]
+    ├── facts_updated_candidates ─────────────────────────────────→ T4.3 (validação + reconciliação)
+    │                                                                  [T4.3 valida, confirma, reconcilia]
     │
-    ├── confidence ──────────────────────────────────────────────────→ T4.4 (rastro) + T4.3 (contexto)
+    ├── confidence ──────────────────────────────────────────────→ T4.4 (rastro) + T4.3 (contexto)
     │
-    ├── next_objective_candidate ─────────────────────────────────────→ T4.3 (mecânico valida ou substitui)
+    ├── next_objective_candidate ─────────────────────────────────→ T4.3 (mecânico valida ou substitui)
     │
-    ├── parse_errors (não-fatais) ─────────────────────────────────→ T4.4 (rastro — validation_warnings)
+    ├── parse_errors (não-fatais) ─────────────────────────────→ T4.4 (rastro — validation_warnings)
     │
-    └── latency_ms, tokens_used, call_timestamp ──────────────────→ T4.4 (métricas do TurnoRastro)
+    └── latency_ms, tokens_used, call_timestamp ──────────────→ T4.4 (métricas do TurnoRastro)
 ```
 
 ### 9.1 Rota de `reply_text`
 
-`reply_text` tem rota direta para T4.4 — **não transita por T4.3**.
+`reply_text` é **imutável** após captura — mas não circula por T4.3 como texto bruto.
+A separação é em dois níveis:
 
-T4.3 recebe `LLMResult` mas usa apenas `facts_updated_candidates`, `confidence` e
-`next_objective_candidate`. Nunca lê `reply_text` para modificá-lo.
+**Nível 1 — `reply_text` bruto vs. `LLMResponseMeta`:**
 
-**Por que `reply_text` não passa por T4.3:**
-- T4.3 valida se o estado pode ser persistido — não avalia o texto da resposta.
-- O validador VC-01..VC-09 (T3_VETO_SUAVE_VALIDADOR) verifica se `facts_updated_candidates`
-  são seguros para persistir — não verifica o que o LLM disse.
-- Se T4.3 bloquear persistência (`PREVENT_PERSISTENCE`), `reply_text` ainda é entregue ao
-  cliente — o lead merece uma resposta. O que muda é o estado persistido, não a fala.
+- `reply_text` bruto: **não entra em T4.3** — não é lido pelo validador, policy engine nem
+  reconciliador. Fica registrado em `LLMResult` e no `TurnoRastro`.
+- `LLMResponseMeta` (§5.4): sinais estruturados extraídos pelo mecânico a partir de
+  `reply_text`. É o único canal pelo qual o validador VC-01..VC-09 acessa informações
+  derivadas da resposta do LLM — nunca o texto livre.
+
+**Por que `reply_text` bruto não transita por T4.3:**
+- Expor texto livre ao validador (componente mecânico) criaria risco de o validador se tornar
+  árbitro de conteúdo de fala — violação de A00-ADENDO-01.
+- A informação que interessa ao validador é estrutural: "a resposta contém promessa de
+  aprovação?" ou "é um template rígido?" — não o texto livre em si.
+- `LLMResponseMeta` captura exatamente esses sinais sem violar a soberania do LLM.
+
+**Nível 2 — Entrega de `reply_text` ao canal é condicional ao `ValidationResult`:**
+
+| `ValidationResult` | Persistência | `reply_text` entregue ao canal? | Rota |
+|--------------------|-------------|--------------------------------|------|
+| `APPROVE` | Delta aplicado integralmente | **Sim** | T4.4 → canal |
+| `REQUIRE_REVISION` | Apenas `safe_fields` aplicados | **Sim** — persistência parcial; fala não afetada | T4.4 → canal |
+| `PREVENT_PERSISTENCE` | Nenhuma persistência | **Sim** — estado não avança; lead recebe resposta | T4.4 → canal |
+| `REJECT` | Delta descartado; `lead_state` revertido | **Não** — reply_text não enviado | T4.5 fallback |
 
 ### 9.2 Rota de `facts_updated_candidates`
 
@@ -598,25 +664,39 @@ Em T4.3:
 
 ### 10.2 Tabela de conformidade por componente
 
-| Componente | Pode ler `reply_text`? | Pode alterar `reply_text`? | Violação se alterar |
-|------------|----------------------|--------------------------|---------------------|
-| Orquestrador (Etapa 3) | Sim — para capturar | **Não** após captura | LLP-INV-05 |
-| Policy engine T3 (via T4.3) | Não | **Não** | LLP-INV-05 |
-| Reconciliador T2 (via T4.3) | Não | **Não** | LLP-INV-05 |
-| Validador VC-01..09 (via T4.3) | Não | **Não** | LLP-INV-05 |
-| Etapa T4.4 (resposta + rastro) | Sim — para entregar | **Não** | LLP-INV-05 |
-| Etapa T4.5 (fallbacks) | Apenas se `reply_text` ausente | Produz `reply_text` de fallback apenas quando LLM falhou | Permitido apenas nesse caso |
-| Canal (gateway) | Sim — para exibir | **Não** | Fora do escopo T4 |
+| Componente | Pode ler `reply_text` bruto? | Pode alterar `reply_text`? | Violação se alterar |
+|------------|------------------------------|--------------------------|---------------------|
+| Orquestrador (Etapa 3) | Sim — para capturar e extrair `LLMResponseMeta` | **Não** após captura | LLP-INV-05 |
+| Policy engine T3 (via T4.3) | **Não** | **Não** | LLP-INV-05 / LLP-INV-11 |
+| Reconciliador T2 (via T4.3) | **Não** | **Não** | LLP-INV-05 / LLP-INV-11 |
+| Validador VC-01..09 (via T4.3) | **Não** — recebe `LLMResponseMeta` (sinais estruturados), nunca o texto bruto | **Não** | LLP-INV-05 / LLP-INV-11 |
+| Etapa T4.4 (resposta + rastro) | Sim — **somente quando** `ValidationResult` permite envio seguro | **Não** | LLP-INV-05 |
+| Etapa T4.5 (fallbacks) | Não (registrado no TurnoRastro, mas T4.5 não o reutiliza) | **Não** — produz resposta de fallback *nova*, separada | LLP-INV-05 se tentar reescrever |
+| Canal (gateway) | Sim — para exibir (quando entregue por T4.4) | **Não** | Fora do escopo T4 |
 
-### 10.3 Caso especial: T4.3 bloqueia persistência (`PREVENT_PERSISTENCE` ou `REJECT`)
+### 10.3 Comportamento de `reply_text` por resultado de validação (T4.3)
 
-Quando o validador (T4.3) emite `PREVENT_PERSISTENCE` ou `REJECT`:
-- `reply_text` já foi capturado — **é entregue ao canal normalmente**.
-- O `lead_state` não é atualizado com os `facts_updated_candidates` deste turno.
-- O `TurnoRastro` registra `validation_result = REJECT/PREVENT_PERSISTENCE`.
-- O turno é tecnicamente "concluído com ressalva" — o lead vê a resposta, mas o estado não avança.
+`reply_text` é **imutável em todos os casos** — nunca reescrito. O que varia é a rota de
+entrega ao canal.
 
-Isso preserva a soberania do LLM (o cliente sempre recebe uma resposta) e a integridade do estado (dados inseguros não são persistidos).
+| `ValidationResult` | Persistência | `reply_text` enviado ao canal? | Rota de entrega |
+|--------------------|-------------|-------------------------------|-----------------|
+| `APPROVE` | Delta aplicado integralmente | **Sim** | T4.4 → canal |
+| `REQUIRE_REVISION` | Apenas `safe_fields` aplicados; `blocked_fields` descartados | **Sim** — persistência é parcial; a fala não é afetada | T4.4 → canal |
+| `PREVENT_PERSISTENCE` | Nenhuma persistência; `lead_state` inalterado | **Sim** — o lead recebe a resposta; apenas o estado não avança | T4.4 → canal |
+| `REJECT` | Delta descartado; `lead_state` revertido ao `prior_lead_state` | **Não** — `reply_text` não é enviado | T4.5 fallback/revisão |
+
+**Distinção canônica entre `PREVENT_PERSISTENCE` e `REJECT`:**
+
+- **`PREVENT_PERSISTENCE`**: a resposta do LLM é segura para o cliente — apenas dados
+  específicos são inseguros para persistir (ex.: fato com `confidence = low` abaixo do
+  limiar VC-05). O lead recebe a fala. Estado não avança nos campos bloqueados.
+- **`REJECT`**: a resposta do LLM é inaceitável como um todo — ex.: `proposed_state_delta`
+  contém campo com semântica de `reply_text` (VC-01 critical), colisão não registrada
+  (VC-04 critical). O lead não recebe essa fala. T4.5 produz resposta segura *nova*.
+
+**`reply_text` permanece imutável em ambos os casos.** T4.5 produz uma resposta de fallback
+independente — não uma versão editada de `reply_text` capturado.
 
 ---
 
@@ -628,12 +708,13 @@ Isso preserva a soberania do LLM (o cliente sempre recebe uma resposta) e a inte
 | **LLP-INV-02** | §SYS (system prompt) é imutável dentro de um turno; nenhum campo de TurnoEntrada ou ContextoTurno pode alterar o conteúdo de §SYS. |
 | **LLP-INV-03** | Exatamente uma chamada LLM por turno. Saída malformada → fallback imediato, nunca segunda chamada. |
 | **LLP-INV-04** | Saída malformada com erro fatal → fallback imediato (T4.5). Nunca improviso, nunca correção heurística. |
-| **LLP-INV-05** | `reply_text` capturado em `LLMResult` é imutável. Nenhum componente downstream pode alterá-lo. |
+| **LLP-INV-05** | `reply_text` capturado em `LLMResult` é imutável. Nenhum componente downstream pode alterá-lo. Imutabilidade não equivale a entrega garantida: se `ValidationResult = REJECT`, `reply_text` não é enviado ao canal — T4.5 produz resposta de fallback nova sem reescrevê-lo. |
 | **LLP-INV-06** | O prompt (§CTX, §POL, §OUT) nunca contém texto pré-redigido dirigido ao cliente. |
 | **LLP-INV-07** | `reply_text` de turnos anteriores nunca aparece no prompt como "exemplo" ou "modelo de resposta". |
 | **LLP-INV-08** | Campos declarados pelo LLM em `facts_updated` são sempre candidatos com `source: "llm_collected"` e `confirmed: false` até validação em T4.3. |
 | **LLP-INV-09** | `LLMResult.facts_updated_candidates` com chave desconhecida é descartado com aviso — nunca persistido. |
 | **LLP-INV-10** | O bloco §OUT instrui formato — nunca conteúdo. Nenhuma frase de exemplo para `reply_text` pode aparecer em §OUT. |
+| **LLP-INV-11** | O validador T4.3 nunca recebe `reply_text` bruto. O mecânico extrai `LLMResponseMeta` (sinais estruturados) a partir de `reply_text` antes da validação. `reply_text` bruto nunca transita por componentes mecânicos de T4.3. |
 
 ---
 
@@ -653,6 +734,8 @@ Isso preserva a soberania do LLM (o cliente sempre recebe uma resposta) e a inte
 | AP-LLP-10 | Incluir identificadores internos legíveis no texto do prompt dirigido ao cliente (`fact_*`, `OBJ_*`, `COL-*`, etc.) | T1_SYSTEM_PROMPT_CANONICO §3 proibição 5 |
 | AP-LLP-11 | Construir o prompt com dados fora do `ContextoTurno` (ex.: dados de outro case, dados de cache não reconciliado) | LLP-INV-02; integridade do ContextoTurno |
 | AP-LLP-12 | Omitir o bloco §SYS para "economizar tokens" | LLP-INV-01; LLP-INV-02; A00-ADENDO-01 |
+| AP-LLP-13 | Expor `reply_text` bruto ao validador T4.3 diretamente (sem extração de `LLMResponseMeta`), tornando o validador árbitro de conteúdo de fala | LLP-INV-11; A00-ADENDO-01; separa mecânico/LLM |
+| AP-LLP-14 | Assumir que `reply_text` é sempre entregue ao canal independente do `ValidationResult` — ignorar o caso `REJECT` | LLP-INV-05; §10.3 |
 
 ---
 
@@ -803,7 +886,7 @@ pelo LLM com base em sua expertise (T1_SYSTEM_PROMPT_CANONICO §4 — QUANDO aut
 
 ---
 
-### E5 — `reply_text` capturado; validador bloqueia persistência em T4.3
+### E5a — `reply_text` capturado; `REQUIRE_REVISION` — reply_text entregue
 
 **Situação:** LLM coletou `fact_estado_civil = "casado_civil"` contradizendo fato anterior
 `"solteiro"` confirmado.
@@ -814,15 +897,61 @@ reply_text: "Ah, casado no civil — então precisaremos incluir o seu cônjuge 
 facts_updated_candidates: { fact_estado_civil: { value: "casado_civil", source: "llm_collected", confirmed: false } }
 ```
 
+**`LLMResponseMeta` extraído pelo mecânico:**
+```
+LLMResponseMeta {
+  contains_approval_promise:    false
+  contains_ineligibility_claim: false
+  contains_mechanical_template: false
+  objective_referenced:         "OBJ_COLETAR"
+  vetos_acknowledged:           []
+}
+```
+
 **Em T4.3:**
 - Reconciliação detecta contradição: `fact_estado_civil` era `"solteiro"` (confirmed)
-- `ValidationResult = REQUIRE_REVISION` com conflito registrado
-- `facts_updated_candidates` não persistidos neste turno — aguardam confirmação
+- Validador VC-07 FAIL (advisory) — fato não transitou; conflito registrado
+- `ValidationResult = REQUIRE_REVISION`; `facts_updated_candidates` bloqueados
 
 **Rota de `reply_text`:**
-- `reply_text` é entregue ao canal **normalmente** — o lead recebe a resposta
+- `ValidationResult = REQUIRE_REVISION` → `reply_text` **entregue ao canal** (T4.4)
 - O estado não é atualizado até confirmação do conflito
 - `TurnoRastro` registra `validation_result = REQUIRE_REVISION`
+
+---
+
+### E5b — `reply_text` capturado; `REJECT` — reply_text NOT entregue
+
+**Situação:** Lead com colisão detectável (dois roteamentos contraditórios), mas
+`proposed_state_delta` não registrou a colisão — VC-04 critical FAIL.
+
+**LLMResult:**
+```
+reply_text: "Ótimo, vou te encaminhar para nosso especialista de financiamento simultaneamente ao processo de documentação."
+facts_updated_candidates: {}
+```
+
+**`LLMResponseMeta` extraído pelo mecânico:**
+```
+LLMResponseMeta {
+  contains_approval_promise:    false
+  contains_ineligibility_claim: false
+  contains_mechanical_template: false
+  objective_referenced:         "OBJ_ROTEAR"
+  vetos_acknowledged:           []
+}
+```
+
+**Em T4.3:**
+- Validador detecta colisão `COL-ROUTING-MULTI` não registrada em `collisions[]`
+- VC-04 FAIL (critical) → `ValidationResult = REJECT`
+- `proposed_state_delta` descartado; `lead_state` revertido ao `prior_lead_state`
+
+**Rota de `reply_text`:**
+- `ValidationResult = REJECT` → `reply_text` **não é enviado ao canal**
+- Pipeline aciona **T4.5** — que produz resposta de fallback *nova*, segura
+- `reply_text` original permanece **imutável** no `TurnoRastro` (registro auditável)
+- `TurnoRastro` registra `validation_result = REJECT`, `blocking_items = ["VC-04"]`
 
 ---
 
@@ -852,6 +981,8 @@ facts_updated_candidates: { fact_estado_civil: { value: "casado_civil", source: 
 | `T2_RESUMO_PERSISTIDO.md §1.1` | L1 aparece no §CTX apenas como entrada do lead + campos coletados — nunca reply_text de turnos anteriores | **PASS** — §3.2.1; LLP-INV-07 |
 | `T3_CLASSES_POLITICA.md §1` | `prior_decisions` em §POL apresentados como orientação de raciocínio — sem reply_text em action | **PASS** — §3.3 |
 | `T3_VETO_SUAVE_VALIDADOR.md §2` | `soft_vetos` em §POL como orientação de risco — sem prescrição de fala | **PASS** — §3.3.1 |
+| `T3_VETO_SUAVE_VALIDADOR.md §2.3` | `LLMResponseMeta` shape canônico: `contains_approval_promise`, `contains_ineligibility_claim`, `contains_mechanical_template`, `objective_referenced`, `vetos_acknowledged`; validador nunca expõe `reply_text` bruto | **PASS** — §5.4, §9.1, LLP-INV-11, AP-LLP-13 |
+| `T3_VETO_SUAVE_VALIDADOR.md §2.5` | `REJECT` resulta em descarte de delta + lead_state revertido — `reply_text` não entregue ao canal nesse caso | **PASS** — §10.3, LLP-INV-05, AP-LLP-14 |
 | `T4_ENTRADA_TURNO.md §6.4` | `ContextoTurno` é a base de todos os blocos do prompt; campos mapeados fielmente | **PASS** — §3.2.1 |
 | `T4_ENTRADA_TURNO.md §6.3` | reply_text de turnos anteriores proibido no contexto — reafirmado aqui | **PASS** — LLP-INV-07; AP-LLP-01 |
 | `T4_CONTRATO.md §7 CA-01` | Orquestrador não produz reply_text; LLM é única origem | **PASS** — §6, §10, LLP-INV-05 |
@@ -866,24 +997,28 @@ facts_updated_candidates: { fact_estado_civil: { value: "casado_civil", source: 
 ```
 --- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
 Documento-base da evidência:           schema/implantation/T4_PIPELINE_LLM.md (este documento)
-PR que fecha:                          PR-T4.2 (Pipeline LLM com contrato único)
+PR que fecha:                          PR-T4.2 (Pipeline LLM com contrato único — corrigido)
 Estado da evidência:                   completa
 Há lacuna remanescente?:               não — shape PipelinePrompt com 4 blocos; montagem §CTX
-                                       com 7 subseções; contrato de chamada única §4; shape
-                                       LLMCallContract + LLMOutputRaw + LLMResult; captura de
-                                       reply_text §6 com invariante de imutabilidade §10;
-                                       extração estruturada §7; tratamento de malformado §8
-                                       com 5 condições de fallback; separação de componentes §9;
-                                       LLP-INV-01..10; 12 anti-padrões AP-LLP; 5 exemplos;
-                                       microetapa 2 coberta; cross-ref T1/T2/T3/T4.1 em 17
-                                       dimensões. Policy + reconciliação + persistência
-                                       (T4.3) são escopos de PR-T4.3 — não são lacunas.
+                                       com 7 subseções; contrato de chamada única §4; shapes
+                                       LLMCallContract + LLMOutputRaw + LLMResult; LLMResponseMeta
+                                       (§5.4) com sinais canônicos de T3.4; captura de reply_text
+                                       §6 com invariante de imutabilidade §10; entrega condicional
+                                       por ValidationResult (APPROVE/REQUIRE_REVISION/
+                                       PREVENT_PERSISTENCE → T4.4; REJECT → T4.5); separação
+                                       de componentes §9; LLP-INV-01..11; 14 anti-padrões AP-LLP;
+                                       6 exemplos (E1–E4, E5a, E5b); microetapa 2 coberta;
+                                       cross-ref T1/T2/T3/T4.1 em 19 dimensões.
+                                       Policy + reconciliação + persistência (T4.3) são escopos
+                                       de PR-T4.3 — não são lacunas.
 Há item parcial/inconclusivo bloqueante?: não — todos os shapes têm definição completa;
                                        invariante de unicidade de chamada LLM declarada;
-                                       reply_text imutável após captura; saída malformada com
+                                       reply_text imutável e entrega condicional declaradas;
+                                       LLMResponseMeta conforme T3.4; saída malformada com
                                        tratamento declarativo; zero runtime implementado.
 Fechamento permitido nesta PR?:        sim
-Estado permitido após esta PR:         PR-T4.2 CONCLUÍDA; T4_PIPELINE_LLM.md publicado;
+Estado permitido após esta PR:         PR-T4.2 CONCLUÍDA; T4_PIPELINE_LLM.md publicado
+                                       e corrigido (LLMResponseMeta + entrega condicional);
                                        PR-T4.3 desbloqueada.
 Próxima PR autorizada:                 PR-T4.3 — Validação policy engine + reconciliação antes de persistir
 ```
