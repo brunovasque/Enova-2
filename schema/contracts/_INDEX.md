@@ -27,12 +27,13 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T2 — Estado estruturado, memória e reconciliação | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` | em execução | G1 aprovado; G2 — estado estruturado funcional | 2026-04-23 | PR-T2.5 executada | PR-T2.R |
+| T3 — Policy engine v1 e guardrails declarativos | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` | skeleton | G2 aprovado; G3 — policy engine funcional | 2026-04-24 | PR-T2.R executada | PR-T3.0 |
 
 ## Contratos encerrados
 
 | Fase | Contrato arquivado | Status | Gate | Data de encerramento | PR que encerrou |
 |------|-------------------|--------|------|----------------------|-----------------|
+| T2 — Estado estruturado, memória e reconciliação | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md` | encerrado | G2 — APROVADO | 2026-04-24 | PR-T2.R |
 | T1 — Constituição do agente e contrato cognitivo canônico | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md` | encerrado | G1 — APROVADO | 2026-04-23 | PR-T1.R |
 | T0 — Congelamento, inventario e mapa do legado vivo | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T0_2026-04-23.md` | encerrado | G0 — aprovado | 2026-04-23 | PR-T0.R |
 
@@ -153,3 +154,4 @@ schema/contracts/
 - 2026-04-24 — PR-T2.3 executada. T2_POLITICA_CONFIANCA.md criado: 6 origens canônicas (EXPLICIT_TEXT, INDIRECT_TEXT, AUDIO_TRANSCRIPT/3 níveis, DOCUMENT, INFERENCE/2 tipos, OPERATOR_NOTE); mapa de transição por origem; 12 fatos críticos; condições de confirmação/conflito/bloqueio; 9 source values; 5 casos sintéticos; 12 regras PC-01..PC-12. PR-T2.4 desbloqueada. Próximo passo: PR-T2.4.
 - 2026-04-24 — PR-T2.4 executada. T2_RECONCILIACAO.md criado: tipologia formal 7 estados (hypothesis/captured/inferred/confirmed/contradicted/pending/obsolete); protocolo reconciliação 7 etapas; hierarquia de prioridade por origem; 10 domínios específicos (renda, estado civil, regime, composição/P2, IR autônomo, restrição, RNM, áudio ruim, Vasques vs confirmed, doc ilegível); 10 casos sintéticos RC-01..RC-10; tabela de transições; 12 anti-padrões AP-01..AP-12; 10 regras RC-01..RC-10. PR-T2.5 desbloqueada. Próximo passo: PR-T2.5.
 - 2026-04-24 — PR-T2.5 executada. T2_RESUMO_PERSISTIDO.md criado: 4 camadas de memória (L1/L2/L3/L4); protocolo de snapshot com 7 triggers e shape SnapshotExecutivo completo; regras anti-contaminação RC-AN-01..07; memória Vasques RV-01..07; aprendizado sem script RA-01..05; tabela E1→E2 (27 campos + 7 descartados + stages); 10 casos sintéticos SP-01..SP-10; 12 anti-padrões AP-RP-01..12; 10 regras RP-01..10. PR-T2.R desbloqueada. Próximo passo: PR-T2.R.
+- 2026-04-24 — PR-T2.R executada. READINESS_G2.md criado: smoke 6/6 PASS; critérios 8/8 CUMPRIDOS; coerência verificada em 8 dimensões; cenários V1/V2/V3 PASS; zero violações LLM-first; zero lacunas bloqueantes. G2 APROVADO. Contrato T2 ENCERRADO e arquivado em archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md. Skeleton T3 criado em active/. PR-T3.0 desbloqueada. Próximo passo: PR-T3.0.

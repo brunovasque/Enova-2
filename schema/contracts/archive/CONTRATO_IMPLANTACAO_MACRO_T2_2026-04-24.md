@@ -11,8 +11,8 @@
 | Blocos legados obrigatórios       | L03                                                                                                                                                                            |
 | Blocos legados complementares     | L05, L19, L04, L07–L17 (por microetapa)                                                                                                                                        |
 | Ordem mínima de leitura da frente | L03 → L05 → L19                                                                                                                                                                |
-| Status                            | **ENCERRADO** — G2 APROVADO em 2026-04-24 via PR-T2.R                                                                                                                         |
-| Última atualização                | 2026-04-24                                                                                                                                                                     |
+| Status                            | **aberto** — PR-T2.0 executada em 2026-04-23                                                                                                                                   |
+| Última atualização                | 2026-04-23                                                                                                                                                                     |
 
 ---
 

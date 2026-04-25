@@ -4,17 +4,51 @@
 
 Fase macro ativa: T2 — Estado estruturado, memória e reconciliação.
 
-Gate anterior: G1 — APROVADO em 2026-04-23 via PR-T1.R.
+Gate anterior: G2 — APROVADO em 2026-04-24 via PR-T2.R.
 
-Gate aberto: G2 — estado estruturado funcional.
+Gate aberto: G3 — policy engine funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (em execução — PR-T2.5 executada; aguardando PR-T2.R).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (skeleton — G2 APROVADO; aguardando PR-T3.0 para abertura formal).
+
+Contrato T2 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
 
 Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
 
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T2.R` — readiness e closeout G2: `schema/implantation/READINESS_G2.md` criado com smoke
+6/6 PASS, critérios 8/8 CUMPRIDOS, coerência entre artefatos verificada em 8 dimensões,
+3 cenários sintéticos PASS, zero violações LLM-first, zero lacunas bloqueantes. G2 APROVADO.
+Contrato T2 ENCERRADO e arquivado. Skeleton T3 criado. PR-T3.0 desbloqueada.
+
+## O que a PR-T2.R fechou
+
+- Criou `schema/implantation/READINESS_G2.md` com:
+  - §1 Smoke documental PR-T2.0 a PR-T2.5 — 6/6 PASS;
+  - §2 Verificação de coerência em 8 dimensões (dict↔lead_state↔política↔reconciliação↔resumo;
+    nomes canônicos; separação tipos; LLM-first; snapshot≠lead_state; sobrescrita silenciosa;
+    inferência≠confirmed; E1≠arquitetura);
+  - §3 Cenários sintéticos V1/V2/V3 (conflito origem, áudio ruim, snapshot vs. fact) — 3/3 PASS;
+  - §4 Verificação dos 8 critérios de aceite do contrato T2 — 8/8 CUMPRIDOS;
+  - §5 Lacunas identificadas: 5 não bloqueantes declaradas com justificativa; zero bloqueantes;
+  - §6 Decisão formal G2 APROVADO;
+  - §7 Encerramento de contrato T2 (checklist CONTRACT_CLOSEOUT_PROTOCOL);
+  - §8 Bloco E: fechamento permitido; PR-T3.0 desbloqueada.
+- Arquivou contrato T2 em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
+- Atualizou status do contrato T2 ativo para ENCERRADO.
+- Criou skeleton T3 em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md`.
+- Atualizou `schema/contracts/_INDEX.md`: T2 encerrado/arquivado; T3 skeleton ativo; PR-T3.0 próximo passo.
+
+## O que a PR-T2.R nao fechou
+
+- Contrato T3 com corpo (PR-T3.0 preencherá).
+- Nenhuma implementação T3 (policy engine real, regras, guardrails).
+- G3 não aberto.
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+
+## O que a PR-T2.5 fechou
 
 `PR-T2.5` — resumo persistido + compatibilidade E1→E2: `schema/implantation/T2_RESUMO_PERSISTIDO.md`
 criado com 4 camadas de memória (L1 curto prazo / L2 factual estruturada / L3 snapshot executivo /
@@ -189,22 +223,24 @@ PR-T2.R desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T2.R — Readiness/Closeout G2 (READINESS_G2.md).
+PR-T3.0 — Abertura formal do contrato T3 (Policy Engine v1).
 
-Leituras obrigatórias para PR-T2.R:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (contrato em execução)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.R)
-3. `schema/implantation/T2_RESUMO_PERSISTIDO.md` (base obrigatória)
-4. `schema/implantation/T2_RECONCILIACAO.md`
-5. `schema/implantation/T2_POLITICA_CONFIANCA.md`
-6. `schema/implantation/T2_LEAD_STATE_V1.md`
-7. `schema/implantation/T2_DICIONARIO_FATOS.md`
-8. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
-9. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-10. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-13. `schema/CODEX_WORKFLOW.md`
+Leituras obrigatórias para PR-T3.0:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (skeleton — a preencher)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T3.0)
+3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3)
+4. `schema/implantation/READINESS_G2.md` (evidência do G2 aprovado)
+5. `schema/implantation/T2_RECONCILIACAO.md`
+6. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+7. `schema/implantation/T2_LEAD_STATE_V1.md`
+8. `schema/implantation/T2_DICIONARIO_FATOS.md`
+9. `schema/CONTRACT_SCHEMA.md` (formato canônico de contrato)
+10. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+11. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+12. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+13. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+14. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+15. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 
