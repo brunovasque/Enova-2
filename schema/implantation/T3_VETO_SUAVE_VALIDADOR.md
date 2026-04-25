@@ -205,7 +205,7 @@ TURNO ATIVO
 [4] ══════════════════════════════════════════════════════
     VALIDADOR PÓS-RESPOSTA / PRÉ-PERSISTÊNCIA          ← aqui
     Recebe: ValidationContext
-    Executa: checklist VC-01..VC-08
+    Executa: checklist VC-01..VC-09
     Emite: ValidationResult {decision, checklist_results, ...}
     ══════════════════════════════════════════════════════
    │
@@ -236,13 +236,17 @@ ValidationContext {
 LLMResponseMeta {
   contains_approval_promise:    boolean  — engine detectou linguagem de promessa de aprovação
   contains_ineligibility_claim: boolean  — engine detectou afirmação de inelegibilidade
+  contains_mechanical_template: boolean  — mecânico detectou resposta com estrutura rígida/template
+                                           (ex.: lista numerada de perguntas, linguagem formatada
+                                           fixa, ausência de adaptação ao contexto do lead);
+                                           extraído pelo mecânico sem expor reply_text ao validador
   objective_referenced:         string?  — objetivo referenciado na resposta (se detectável)
   vetos_acknowledged:           string[] — IDs de VetoSuaveRecord que o LLM reconheceu
                                            (extraídos por mecânico antes da validação)
 }
 ```
 
-### 2.4 Checklist mínimo do validador (VC-01..VC-08)
+### 2.4 Checklist mínimo do validador (VC-01..VC-09)
 
 O validador executa os seguintes itens em ordem. Cada item tem:
 - `id`: código canônico
@@ -339,6 +343,23 @@ O validador executa os seguintes itens em ordem. Cada item tem:
 
 ---
 
+**VC-09 — Resposta sem padrão mecânico/template rígido** (`severity: advisory`)
+
+> `llm_response_meta.contains_mechanical_template = false`.
+>
+> Template rígido detectado pelo mecânico (estrutura fixa, perguntas enumeradas, linguagem
+> padronizada sem adaptação ao contexto do lead) indica que a resposta pode não ter incorporado
+> as orientações do `PolicyDecisionSet` com naturalidade — mesmo que `decisions[]` estejam
+> corretas e as regras de negócio estejam completas.
+
+- PASS: `contains_mechanical_template = false`.
+- FAIL → `REQUIRE_REVISION`. O validador **não reescreve a fala** (soberania LLM inviolável —
+  RC-VS-03). A resposta já foi entregue ao cliente; o flag registra em `validation_log` que a
+  persistência operacional requer revisão, sinalizando ao turno seguinte que a condução precisa
+  de ajuste. O mecânico detecta o padrão sem expor `reply_text` ao validador.
+
+---
+
 ### 2.5 Lógica de decisão agregada
 
 O validador aplica a seguinte lógica após executar todos os itens:
@@ -368,9 +389,9 @@ senão
 ```
 ValidationResult {
   decision:          enum       — "APPROVE" | "REJECT" | "REQUIRE_REVISION" | "PREVENT_PERSISTENCE"
-  checklist_results: ChecklistItemResult[]   — resultado de cada VC-01..VC-08
+  checklist_results: ChecklistItemResult[]   — resultado de cada VC-01..VC-09
   blocking_items:    string[]   — IDs dos itens critical que falharam (ex.: ["VC-03", "VC-05"])
-  advisory_items:    string[]   — IDs dos itens advisory que falharam (ex.: ["VC-06"])
+  advisory_items:    string[]   — IDs dos itens advisory que falharam (ex.: ["VC-06", "VC-09"])
   reason:            string     — justificativa legível consolidada
   safe_fields:       string[]   — caminhos de campo seguros para persistir
                                   (relevante quando decision = "REQUIRE_REVISION")
@@ -565,6 +586,43 @@ severity: "warning", resolution: "confirmar"}`.
 
 ---
 
+### SC-VS-11 — Resposta natural com policy correta: validador aprova
+
+**Contexto:** engine emite `obrigação` de coletar `fact_monthly_income_p1`. LLM conduz turno
+perguntando sobre renda de forma contextualizada e natural, sem estrutura de lista ou template
+fixo. `llm_response_meta.contains_mechanical_template = false`.
+
+**Validador:** VC-09 PASS (`contains_mechanical_template = false`). Todos os demais itens PASS
+(sem bloqueio ativo, sem promessa, fato ausente não transita de status, colisões ausentes
+registradas).
+
+**Resultado:** `APPROVE`. Persistência do delta prossegue normalmente. Condução natural
+é o comportamento esperado e correto.
+
+---
+
+### SC-VS-12 — Resposta em template rígido apesar de policy correta: REQUIRE_REVISION
+
+**Contexto:** engine emite `obrigação` de coletar `fact_autonomo_has_ir_p1`. PolicyDecisionSet
+correto — decisions[], collisions[] e soft_vetos[] todos coerentes. Lead identificado como
+autônomo. LLM gera resposta com estrutura de lista fixa enumerada (ex.: "1. Informe seu CPF;
+2. Informe sua renda; 3. Envie seus documentos") sem qualquer adaptação ao contexto do lead.
+`llm_response_meta.contains_mechanical_template = true`.
+
+**Validador:** VC-09 FAIL (advisory) — `contains_mechanical_template = true` apesar de
+decisions[] corretas. Itens VC-01..VC-08 todos PASS (policy em ordem, sem bloqueio ativo,
+sem promessa de aprovação, sem transição de fato indevida).
+
+**Resultado:** `REQUIRE_REVISION`. Validador não reescreve a fala (soberania LLM — RC-VS-03).
+Resposta já entregue ao cliente. `validation_log` registra VC-09 FAIL com razão
+"template_rigido_detectado". `advisory_items = ["VC-09"]`. Turno seguinte orientado a
+conduzir com naturalidade; `safe_fields` do delta são persistidos normalmente.
+
+**Invariante verificado:** VC-09 nunca cancela policy correta nem inverte decisions[].
+A correção é de condução — não de regra de negócio.
+
+---
+
 ## 5. Validação cruzada
 
 | Artefato | Campo/conceito | Conformidade verificada neste documento |
@@ -582,6 +640,7 @@ severity: "warning", resolution: "confirmar"}`.
 | T2_LEAD_STATE §3.3 `OperationalState` | `blocked_by`, `current_phase`, etc. | VC-03, VC-08 referenciam campos canônicos do OperationalState |
 | T2_POLITICA_CONFIANCA | Nível mínimo por origem | VC-05: transição de status de fato validada contra política de confiança |
 | T2_DICIONARIO_FATOS | 50 chaves canônicas | `trigger_fact` em VetoSuaveRecord referencia apenas chaves de T2_DICIONARIO_FATOS |
+| A00-ADENDO-02 — identidade MCMV / fala natural | VC-09 detecta template mecânico via `LLMResponseMeta.contains_mechanical_template`; validador não reescreve a fala (RC-VS-03); sinaliza REQUIRE_REVISION para orientar turno seguinte | SC-VS-11 (natural → APPROVE) e SC-VS-12 (template → REQUIRE_REVISION) |
 
 ---
 
@@ -630,6 +689,13 @@ REJECT descarta o `proposed_state_delta` — mas não o log da validação. O re
 (com `blocking_items` e razão) **deve** ser persistido em `validation_log` mesmo quando o
 delta é descartado.
 
+**AP-VS-11 — VC-09 reescrevendo ou bloqueando policy correta**
+VC-09 detecta padrão de template rígido na condução do LLM — não avalia nem cancela a policy.
+Se `contains_mechanical_template = true` mas `decisions[]` estão corretas, o resultado é
+`REQUIRE_REVISION` (advisory), nunca `REJECT`. As decisions[], collisions[] e safe_fields do
+delta são preservados. O validador sinaliza que a *condução* precisa de ajuste no turno
+seguinte — não que a *política* está errada.
+
 ---
 
 ## 7. Regras invioláveis (RC-VS)
@@ -660,6 +726,11 @@ exclusivos dentro do `PolicyDecisionSet`. A separação não é opcional.
 **RC-VS-10** — Veto suave de turno anterior com `acknowledged = false` e `severity = "warning"`
 deve resultar em pelo menos VC-06 FAIL no validador do turno atual (REQUIRE_REVISION mínimo).
 
+**RC-VS-11** — `contains_mechanical_template = true` deve resultar em VC-09 FAIL
+(REQUIRE_REVISION mínimo). O validador não modifica a fala do LLM, não cancela as decisions[]
+e não impede a persistência dos `safe_fields` — registra apenas em `validation_log` e orienta
+o turno seguinte. Regra de negócio correta + template rígido = policy válida, condução a ajustar.
+
 ---
 
 ## 8. Cobertura de microetapas
@@ -689,22 +760,35 @@ Há lacuna remanescente?:               não —
     escalada para bloqueio, ciclo de vida e invariantes;
   § 1.2 tabela formal bloqueio × veto suave em 7 dimensões;
   § 2 posiciona validador no pipeline de turno (passo 4 de 6);
-  § 2.4 checklist VC-01..VC-08 (8 itens > contrato ≥6) com severity e ação por item;
+  § 2.3 LLMResponseMeta com contains_mechanical_template (sem expor reply_text);
+  § 2.4 checklist VC-01..VC-09 (9 itens > contrato ≥6) com severity e ação por item;
+    VC-09 cobre template mecânico apesar de policy correta → REQUIRE_REVISION;
   § 2.5 lógica de decisão agregada com prioridade REJECT > PREVENT_PERSISTENCE > REQUIRE_REVISION;
   § 2.6 shape ValidationResult completo;
   § 2.7 tabela efeito×decisão×validation_log;
-  § 4 10 cenários SC-VS-01..SC-VS-10 cobrindo veto orientador, autônomo sem IR, solo baixa,
+  § 4 12 cenários SC-VS-01..SC-VS-12 cobrindo veto orientador, autônomo sem IR, solo baixa,
     bloqueio+avanço, promessa prematura, inferred→confirmed, P3, colisão silenciosa, escalada,
-    casado civil;
-  § 5 validação cruzada T3.1/T3.2/T3.3/T2 em 13 linhas;
-  § 6 10 anti-padrões AP-VS-01..AP-VS-10;
-  § 7 10 regras invioláveis RC-VS-01..RC-VS-10;
+    casado civil, resposta natural aprovada, template rígido→REQUIRE_REVISION;
+  § 5 validação cruzada T3.1/T3.2/T3.3/T2 + A00-ADENDO-02 em 14 linhas;
+  § 6 11 anti-padrões AP-VS-01..AP-VS-11;
+  § 7 11 regras invioláveis RC-VS-01..RC-VS-11;
   § 8 cobertura de microetapas: todas as 5 microetapas T3 cobertas.
 
 Há item parcial/inconclusivo bloqueante?:  não.
 Fechamento permitido nesta PR?:            sim
-Estado permitido após esta PR:             PR-T3.4 CONCLUÍDA; PR-T3.5 desbloqueada.
+Estado permitido após esta PR:             PR-T3.4 CONCLUÍDA (revisão pós-abertura aplicada);
+                                           PR-T3.5 desbloqueada.
 Próxima PR autorizada:                     PR-T3.5 — Suíte de testes de regras críticas
+
+Revisão pós-abertura (2026-04-25):        Correção aplicada no mesmo branch (PR #102):
+  — LLMResponseMeta.contains_mechanical_template adicionado
+  — VC-09 adicionado (template rígido apesar de policy correta → REQUIRE_REVISION)
+  — SC-VS-11 (natural → APPROVE) e SC-VS-12 (template → REQUIRE_REVISION) adicionados
+  — AP-VS-11 e RC-VS-11 adicionados
+  — Validação cruzada expandida com linha A00-ADENDO-02
+  Prova P-T3-CORR-02: inspeção pós-correção — VC-09 opera exclusivamente sobre campo
+  boolean de LLMResponseMeta; reply_text nunca acessado pelo validador (RC-VS-03
+  intacto); AP-VS-11 confirma que policy correta não é cancelada por template detectado.
 ```
 
 ### Provas entregues
@@ -724,7 +808,14 @@ proibições e anti-padrões (AP-VS-03, AP-VS-09, RC-VS-03, VC-01).
 Todas as 5 microetapas T3 estão cobertas após esta PR (§8 tabela completa).
 
 **P-T3.4-04:** distinção bloqueio × veto suave declarada em 7 dimensões em §1.2 (CA-04 cumprido).
-Checklist tem 8 itens verificáveis (CA-05 exige ≥3; contrato ≥6: cumprido com margem).
+Checklist tem 9 itens verificáveis após revisão pós-abertura (CA-05 exige ≥3; contrato ≥6:
+cumprido com margem). VC-09 adicionado para template mecânico — advisory, nunca cancela policy.
+
+**P-T3-CORR-02 (revisão pós-abertura):** `LLMResponseMeta.contains_mechanical_template` é
+campo boolean extraído pelo mecânico sem expor `reply_text` ao validador. VC-09 opera
+exclusivamente sobre este flag. `reply_text` não aparece em nenhum shape operacional do
+validador. AP-VS-11 e RC-VS-11 confirmam que policy correta não é cancelada por template
+detectado — REQUIRE_REVISION (advisory) preserva `safe_fields` e decisions[].
 
 ### Conformidade com adendos
 
