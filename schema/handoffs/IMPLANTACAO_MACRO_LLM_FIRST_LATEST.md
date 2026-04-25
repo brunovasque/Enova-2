@@ -2486,3 +2486,101 @@ Próxima PR autorizada:                 PR-T3.1 — Classes canônicas de polít
 10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+---
+
+## Atualizacao 2026-04-25 — PR-T3.1: Classes canônicas de política
+
+### Objetivo executado
+
+Criar `schema/implantation/T3_CLASSES_POLITICA.md` com as cinco classes canônicas do policy
+engine v1, seus payloads mínimos, prioridade entre classes, definições formais dos quatro
+efeitos operacionais (microetapa 2 do mestre T3) e integração com lead_state v1.
+
+### O que foi feito
+
+- Criou `schema/implantation/T3_CLASSES_POLITICA.md` com:
+  - Shape `PolicyDecision` com invariante global: `action` nunca contém `reply_text` (CP-01);
+  - §2 Classe BLOQUEIO — "bloquear avanço": `BloqueioAction` com `advance_allowed=false`; distinção formal de veto suave;
+  - §3 Classe OBRIGAÇÃO — "exigir ação": `ObrigacaoAction`; afeta `must_ask_now` mas não `blocked_by`;
+  - §4 Classe CONFIRMAÇÃO — "pedir confirmação": `ConfirmacaoAction`; não persiste dado automaticamente;
+  - §5 Classe SUGESTÃO MANDATÓRIA — "apenas orientar": `SugestaoMandatoriaAction`; insumo de raciocínio, nunca script;
+  - §6 Classe ROTEAMENTO — "desviar objetivo": `RoteamentoAction`; só executado sem bloqueio ativo;
+  - §7 Prioridade: bloqueio(1) > obrigação(2) > confirmação(3) > sugestão_mandatória(4) > roteamento(5);
+  - §8 Definições formais dos 4 efeitos operacionais (microetapa 2 T3 coberta);
+  - §9 Integração com 10 campos do lead_state v1 — quais classes os modificam;
+  - §10 5 regras de integração com política de confiança (PC-INT-01..05);
+  - §11 10 anti-padrões AP-CP-01..10;
+  - §12 5 exemplos sintéticos (um por classe);
+  - §13 Cobertura de microetapas: microetapa 2 coberta; 1/3/4/5 delegadas;
+  - §14 10 regras invioláveis CP-01..10;
+  - Bloco E: PR-T3.2 desbloqueada.
+
+### O que não foi feito
+
+- Não criou T3_REGRAS_CRITICAS_DECLARATIVAS.md (escopo PR-T3.2).
+- Não implementou motor real em src/.
+- Não alterou package.json, wrangler.toml.
+- G3 não fechado.
+
+### Provas entregues
+
+- **P-T3-01:** grep de `reply_text`, `mensagem_usuario`, `texto_cliente` em payloads de `action` — ausência confirmada.
+- **P-T3-02:** todas as fact_keys referenciadas existem em T2_DICIONARIO_FATOS §3 (verificadas: `fact_rnm_status`, `fact_monthly_income_p1`, `fact_nationality`, `fact_work_regime_p1`, `fact_estado_civil`, `fact_process_mode`, `fact_p3_required`, `fact_has_multi_income_p1`, `fact_current_intent`, `fact_channel_origin`).
+- **P-T3-03:** microetapa 2 do mestre T3 coberta em §8; §13 declara cobertura explícita por microetapa.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — engine emite `PolicyDecision` estruturado; LLM soberano na fala.
+- A00-ADENDO-02: confirmada — identidade MCMV preservada; engine orienta sem engessar fala.
+- A00-ADENDO-03: confirmada — Bloco E presente.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T3_CLASSES_POLITICA.md
+PR que fecha:                          PR-T3.1 (classes canônicas de política)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — 5 classes definidas; payloads sem reply_text;
+                                       prioridade entre classes definida; 4 efeitos formais (§8);
+                                       integração lead_state v1 (§9) e confiança (§10);
+                                       10 anti-padrões; 5 exemplos; 10 regras; microetapa 2
+                                       coberta; provas P-T3-01/02/03 presentes no Bloco E.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T3.1 CONCLUÍDA; PR-T3.2 desbloqueada.
+Próxima PR autorizada:                 PR-T3.2 — Codificação declarativa das regras críticas
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T3** — em execução; PR-T3.2 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: aberto.
+- T3_CLASSES_POLITICA.md: **publicado**.
+- T3_REGRAS_CRITICAS_DECLARATIVAS.md: pendente (PR-T3.2).
+- T3_ORDEM_AVALIACAO_COMPOSICAO.md: pendente (PR-T3.3).
+- T3_VETO_SUAVE_VALIDADOR.md: pendente (PR-T3.4).
+- T3_SUITE_TESTES_REGRAS.md: pendente (PR-T3.5).
+- READINESS_G3.md: pendente (PR-T3.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T3.2`** — Codificação declarativa das regras críticas.
+
+### Leituras obrigatorias para PR-T3.2
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-02, §16 T3.2)
+2. `schema/implantation/T3_CLASSES_POLITICA.md` (classes e payloads)
+3. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.2)
+4. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 1)
+5. **L03** — Mapa Canônico do Funil (obrigatório)
+6. L07–L08 — Estado Civil (casado civil→conjunto)
+7. L09–L10 — Composição Familiar (solo baixa→composição)
+8. L11–L12 — Regime e Renda (autônomo→IR)
+9. L19 — Memorial MCMV (estrangeiro sem RNM→bloqueio)
+10. `schema/implantation/T2_LEAD_STATE_V1.md`
+11. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+12. `schema/implantation/T2_DICIONARIO_FATOS.md`
+13. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+14. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+15. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
