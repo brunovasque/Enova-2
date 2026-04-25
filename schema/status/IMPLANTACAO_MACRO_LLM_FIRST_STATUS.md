@@ -2,13 +2,15 @@
 
 ## Estado atual
 
-Fase macro ativa: T3 — Policy engine v1 e guardrails declarativos.
+Fase macro ativa: T4 — Orquestrador de turno LLM-first (skeleton aberto; PR-T4.0 desbloqueada).
 
-Gate anterior: G2 — APROVADO em 2026-04-24 via PR-T2.R.
+Gate anterior: G3 — APROVADO em 2026-04-25 via PR-T3.R.
 
-Gate aberto: G3 — policy engine funcional.
+Gate aberto: G4 — orquestrador funcional (bloqueado até PR-T4.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (em execução — PR-T3.5 executada em 2026-04-25).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (skeleton — aguardando PR-T4.0).
+
+Contrato T3 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
 
 Contrato T2 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
 
@@ -18,16 +20,37 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T3.5` — suíte de testes declarativos de regras críticas:
-`schema/implantation/T3_SUITE_TESTES_REGRAS.md` criado com 24 casos (mínimo: 20, CA-06
-cumprido): 4 positivos (TC-POS-01..04, uma regra crítica cada); 4 negativos (TC-NEG-01..04,
-regra não dispara); 4 ambíguos (TC-AMB-01..04, dado incerto → confirmação, nunca decisão
-final); 4 colisões (TC-COL-01..04, COL-BLOCK-OBLIG, coexistência, COL-CONF-CONF-LEVEL,
-COL-BLOCK-ROUTE); 4 regressões (TC-REG-01..04, RC-INV-01/03/04/05 verificados); 2 de
-ordem/composição T3.3 (TC-ORD-01..02); 2 de validador T3.4 (TC-VAL-01..02); tabela geral
-de cobertura; 11 critérios PASS globais + 9 falhas críticas; validação cruzada
-T3.1/T3.2/T3.3/T3.4/T2 em 18 linhas; 8 anti-padrões AP-ST-01..08; cobertura das 5
-microetapas T3. PR-T3.R desbloqueada.
+`PR-T3.R` — Readiness/Closeout de G3:
+`schema/implantation/READINESS_G3.md` criado: smoke documental S1–S5 (5/5 PASS);
+coerência verificada em 11 dimensões; cenários sintéticos V1/V2/V3 (3/3 PASS);
+critérios CA-01..CA-10 (10/10 CUMPRIDOS); zero lacunas bloqueantes; 5 lacunas
+não bloqueantes (LNB-01..05) declaradas e justificadas. G3 APROVADO.
+Contrato T3 ENCERRADO e arquivado. Skeleton T4 criado. PR-T4.0 desbloqueada.
+
+## O que a PR-T3.R fechou
+
+- Criou `schema/implantation/READINESS_G3.md` com:
+  - §1 Smoke documental S1–S5 — 5/5 PASS (T3_CLASSES, T3_REGRAS_CRITICAS, T3_ORDEM,
+    T3_VETO_SUAVE, T3_SUITE_TESTES);
+  - §2 Coerência verificada em 11 dimensões (classes↔regras, fact_keys↔dicionário,
+    política_confiança↔disparo, pipeline↔prioridade, colisões↔regras, PolicyDecisionSet,
+    ValidationContext↔lead_state, cobertura_cruzada, LLM-first, soberania_LLM, MCMV);
+  - §3 Cenários sintéticos V1/V2/V3 (4 regras simultâneas, validador VC-09, RC-INV-03) — 3/3 PASS;
+  - §4 Critérios de aceite CA-01..CA-10 — 10/10 CUMPRIDOS;
+  - §5 Lacunas: zero bloqueantes; 5 não bloqueantes (LNB-01..05) declaradas e justificadas;
+  - §6 Decisão formal G3 APROVADO;
+  - §7 Encerramento de contrato T3 (checklist CONTRACT_CLOSEOUT_PROTOCOL);
+  - §8 Skeleton T4; §9 Conformidade com adendos; Bloco E.
+- Arquivou contrato T3 em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
+- Criou skeleton T4 em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md`.
+- Atualizou `schema/contracts/_INDEX.md`: T3 encerrado/arquivado; T4 skeleton ativo; PR-T4.0 próximo passo.
+
+## O que a PR-T3.R nao fechou
+
+- Não abriu T4 com corpo (skeleton criado — PR-T4.0 preencherá).
+- Não implementou orquestrador de turno.
+- Não alterou `src/`, `package.json`, `wrangler.toml`.
+- G4 não aberto.
 
 ## O que a PR-T2.R fechou
 
@@ -229,21 +252,21 @@ PR-T2.R desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T3.4 — Veto suave + validador pós-resposta/pré-persistência.
+PR-T4.0 — Abertura formal do contrato T4 (Orquestrador de turno LLM-first).
 
-Leituras obrigatórias para PR-T3.4:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-04/CA-05, §16 T3.4)
-2. `schema/implantation/T3_CLASSES_POLITICA.md` (distinção bloqueio vs veto suave — §2.5)
-3. `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md` (regras críticas — base de validação)
-4. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (pipeline e shape do PolicyDecisionSet)
-5. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.4)
-6. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 5)
-7. **L17** — Final Operacional (veto na fase final)
-8. `schema/implantation/T2_LEAD_STATE_V1.md`
-9. `schema/implantation/T2_POLITICA_CONFIANCA.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+Leituras obrigatórias para PR-T4.0:
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T4 — microetapas obrigatórias)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção K — PR-T4.0)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (skeleton a ser preenchido)
+4. `schema/implantation/READINESS_G3.md` (gate G3 APROVADO — evidência de entrada T4)
+5. `schema/implantation/T3_CLASSES_POLITICA.md` (saídas do policy engine que T4 consome)
+6. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (pipeline T3 que T4 orquestra)
+7. `schema/implantation/T3_VETO_SUAVE_VALIDADOR.md` (validador que T4 aciona)
+8. `schema/implantation/T2_LEAD_STATE_V1.md` (lead_state que T4 lê e atualiza)
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+12. `schema/CONTRACT_SCHEMA.md` (formato obrigatório do contrato T4)
 
 ## O que a PR-T3.3 fechou
 

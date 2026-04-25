@@ -2963,3 +2963,95 @@ Próxima PR autorizada:                 PR-T3.R — Readiness/Closeout G3
 9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+---
+
+## Atualizacao 2026-04-25 — PR-T3.R: Readiness/Closeout G3
+
+### Objetivo executado
+
+Criar `schema/implantation/READINESS_G3.md`, executar smoke documental S1–S5, verificar
+CA-01..CA-10, declarar G3 APROVADO, encerrar contrato T3 e criar skeleton T4.
+
+### O que foi feito
+
+- Criado `schema/implantation/READINESS_G3.md`:
+  - §1 Smoke documental S1–S5 — 5/5 PASS;
+  - §2 Coerência verificada em 11 dimensões (11/11 PASS);
+  - §3 Cenários sintéticos V1/V2/V3 — 3/3 PASS;
+  - §4 Critérios de aceite CA-01..CA-10 — 10/10 CUMPRIDOS;
+  - §5 Lacunas: 0 bloqueantes, 5 não bloqueantes (LNB-01..05);
+  - §6 Decisão formal G3 APROVADO;
+  - §7 Encerramento contrato T3 (CONTRACT_CLOSEOUT_PROTOCOL);
+  - §8 Skeleton T4; §9 Adendos; Bloco E.
+- Arquivado `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` →
+  `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
+- Criado skeleton `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md`.
+- Atualizado `schema/contracts/_INDEX.md`: T3 encerrado; T4 skeleton ativo; PR-T4.0 próximo.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: fase=T4; G3=APROVADO.
+
+### O que não foi feito
+
+- Não criou contrato T4 com corpo (skeleton — PR-T4.0 preencherá).
+- Não implementou orquestrador de turno.
+- Não alterou src/, package.json, wrangler.toml.
+- G4 não aberto.
+
+### Provas entregues
+
+- **P-T3.R-01:** Smoke 5/5 PASS (S1–S5) com seções, invariantes e Bloco E verificados.
+- **P-T3.R-02:** Coerência 11/11 PASS — classes↔regras, fact_keys↔T2, política_confiança↔disparo, pipeline↔prioridade, colisões↔regras, PolicyDecisionSet, ValidationContext, cobertura_cruzada, LLM-first, soberania_LLM, MCMV.
+- **P-T3.R-03:** Cenários V1/V2/V3 — 3/3 PASS (4 regras simultâneas; validador VC-09; RC-INV-03).
+- **P-T3.R-04:** CA-01..CA-10 — 10/10 CUMPRIDOS com evidência por critério.
+- **P-T3.R-05:** G3 APROVADO em §6 com justificativa; 0 lacunas bloqueantes.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — nenhum artefato S1–S5 produz reply_text em saídas do engine.
+- A00-ADENDO-02: confirmada — R_SOLO nunca bloqueia (RC-INV-04); R_AUTONOMO nunca inelegível (RC-INV-03).
+- A00-ADENDO-03: confirmada — Bloco E presente; evidência completa; zero lacunas bloqueantes.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/READINESS_G3.md
+PR que fecha:                          PR-T3.R (Readiness/Closeout G3)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — 0 lacunas bloqueantes; 5 não bloqueantes
+                                       (LNB-01..05) declaradas e justificadas.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T3.R CONCLUÍDA; G3 APROVADO; T3 ENCERRADO;
+                                       PR-T4.0 desbloqueada.
+Próxima PR autorizada:                 PR-T4.0 — Abertura formal do contrato T4
+```
+
+### Estado atual do repositorio (após PR-T3.R)
+
+- Fase macro: **T4** — skeleton aberto; PR-T4.0 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: **APROVADO** (2026-04-25).
+- T3_CLASSES_POLITICA.md: **publicado**.
+- T3_REGRAS_CRITICAS_DECLARATIVAS.md: **publicado**.
+- T3_ORDEM_AVALIACAO_COMPOSICAO.md: **publicado**.
+- T3_VETO_SUAVE_VALIDADOR.md: **publicado**.
+- T3_SUITE_TESTES_REGRAS.md: **publicado**.
+- READINESS_G3.md: **publicado** (PR-T3.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T4.0`** — Abertura formal do contrato T4 (Orquestrador de turno LLM-first).
+
+### Leituras obrigatorias para PR-T4.0
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T4 — microetapas obrigatórias)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção K — PR-T4.0)
+3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (skeleton a preencher)
+4. `schema/implantation/READINESS_G3.md` (evidência de G3 APROVADO)
+5. `schema/implantation/T3_CLASSES_POLITICA.md`
+6. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md`
+7. `schema/implantation/T3_VETO_SUAVE_VALIDADOR.md`
+8. `schema/implantation/T2_LEAD_STATE_V1.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+12. `schema/CONTRACT_SCHEMA.md`
