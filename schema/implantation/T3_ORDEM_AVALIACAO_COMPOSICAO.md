@@ -278,24 +278,30 @@ contrário, retorna lista vazia e registra que o roteamento foi suprimido por bl
 A matriz abaixo declara o resultado quando duas decisões de classes diferentes apontam para o
 mesmo `target` (`fact_key`, `current_phase` ou bloco operacional) no mesmo turno.
 
-| ↓ Já presente \\ → Nova decisão | bloqueio | obrigação | confirmação | sugestão_mandatória | roteamento |
+| ↓ Já presente \\ → Nova decisão | bloqueio | confirmação | obrigação | sugestão_mandatória | roteamento |
 |---|---|---|---|---|---|
-| **bloqueio** | acumular: ambos vão para `blocked_by` | descartar nova obrigação (RC-COMP-03); registrar `COL-BLOCK-OBLIG` | manter ambos: confirmação fica pendente, mas não desbloqueia | manter ambos: sugestão fica registrada como contexto auxiliar | **suprimir roteamento** (RC-COMP-01); registrar `COL-BLOCK-ROUTE` |
-| **obrigação** | promover para bloqueio: descartar obrigação prévia; manter bloqueio | acumular ordenadas por priority/criticidade | confirmação tem precedência: obrigação fica em standby até confirmação resolver | manter ambos: sugestão paralela | suprimir roteamento se obrigação refere-se ao mesmo fato sustentador; registrar `COL-OBLIG-ROUTE` |
-| **confirmação** | promover para bloqueio só se fato confirmado contradizer; senão manter ambos | manter ambos: confirmação primeiro (estágio 3), obrigação no estágio 4 sobre o mesmo dado fica em standby | acumular: ordenadas por confirmation_level e criticidade | manter ambos: sugestão fica como contexto de raciocínio | suprimir roteamento se a confirmação afeta `fact_key` que sustentaria o roteamento; registrar `COL-CONF-ROUTE` |
-| **sugestão_mandatória** | manter ambos: bloqueio dominante; sugestão fica registrada | manter ambos: obrigação dominante; sugestão paralela | manter ambos: confirmação dominante; sugestão paralela | acumular: ordenadas por urgency/criticidade | manter ambos: roteamento dominante; sugestão informa conduta da transição |
-| **roteamento** | suprimir roteamento existente; emitir bloqueio (RC-COMP-01); registrar `COL-BLOCK-ROUTE` | suprimir roteamento se obrigação refere-se ao fato sustentador (RC-COMP-02 estendida); registrar `COL-OBLIG-ROUTE` | suprimir roteamento e priorizar confirmação; registrar `COL-CONF-ROUTE` | manter ambos: sugestão informa transição | colisão `COL-ROUTING-MULTI` — suprimir todos os roteamentos do turno (RC-COMP-07) |
+| **bloqueio** | acumular: ambos vão para `blocked_by` | manter ambos: confirmação fica pendente, mas não desbloqueia | descartar nova obrigação (RC-COMP-03); registrar `COL-BLOCK-OBLIG` | manter ambos: sugestão fica registrada como contexto auxiliar | **suprimir roteamento** (RC-COMP-01); registrar `COL-BLOCK-ROUTE` |
+| **confirmação** | promover para bloqueio só se fato confirmado contradizer; senão manter ambos | acumular: ordenadas por confirmation_level e criticidade | mesmo fato: confirmação primeiro, obrigação em standby (`COL-CONF-OBLIG`); fatos distintos: confirmação no estágio 3 e obrigação no estágio 4 coexistem, confirmação antes na saída final | manter ambos: sugestão fica como contexto de raciocínio | suprimir roteamento se a confirmação afeta `fact_key` que sustentaria o roteamento; registrar `COL-CONF-ROUTE` |
+| **obrigação** | promover para bloqueio: descartar obrigação prévia; manter bloqueio | mesmo fato: confirmação tem precedência, obrigação fica em standby (`COL-CONF-OBLIG`); fatos distintos: ambas coexistem, confirmação antes da obrigação na ordem canônica (§3.3) | acumular ordenadas por priority/criticidade | manter ambos: sugestão paralela | suprimir roteamento se obrigação refere-se ao mesmo fato sustentador; registrar `COL-OBLIG-ROUTE` |
+| **sugestão_mandatória** | manter ambos: bloqueio dominante; sugestão fica registrada | manter ambos: confirmação dominante; sugestão paralela | manter ambos: obrigação dominante; sugestão paralela | acumular: ordenadas por urgency/criticidade | manter ambos: roteamento dominante; sugestão informa conduta da transição |
+| **roteamento** | suprimir roteamento existente; emitir bloqueio (RC-COMP-01); registrar `COL-BLOCK-ROUTE` | suprimir roteamento e priorizar confirmação; registrar `COL-CONF-ROUTE` | suprimir roteamento se obrigação refere-se ao fato sustentador (RC-COMP-02 estendida); registrar `COL-OBLIG-ROUTE` | manter ambos: sugestão informa transição | colisão `COL-ROUTING-MULTI` — suprimir todos os roteamentos do turno (RC-COMP-07) |
 
 **Leitura da matriz:** linha = decisão **já presente** no `PolicyDecisionSet` corrente; coluna =
 **nova** decisão sendo considerada. A célula descreve o resultado da composição.
 
 ### 3.3 Tabela de prioridade global (resumo executivo)
 
+> **Esta tabela é a ordem operacional canônica única de T3.3.** Ela alinha estritamente com o
+> pipeline numerado (§1, §2): a posição de cada classe é a mesma do estágio em que é avaliada.
+> Confirmação vem antes de obrigação porque um fato ainda em `captured`/`inferred` com confiança
+> baixa não pode sustentar coleta/ação mandatória dependente — sem confirmação, qualquer
+> obrigação derivada estaria assentada em evidência insuficiente.
+
 | Prioridade | Classe | Estágio canônico | Sobreposição permitida sobre as inferiores |
 |------------|--------|------------------|--------------------------------------------|
 | 1 | `bloqueio` | Estágio 2 | Suprime roteamento (RC-COMP-01); descarta obrigação que aponta o mesmo fato |
-| 2 | `obrigação` | Estágio 4 | Coloca confirmação dependente em standby até resolução; não toca bloqueio |
-| 3 | `confirmação` | Estágio 3 | Suspende obrigação dependente do mesmo fato; suprime roteamento dependente |
+| 2 | `confirmação` | Estágio 3 | Suspende obrigação dependente do mesmo fato; suprime roteamento dependente; em fatos distintos, coexiste com obrigação |
+| 3 | `obrigação` | Estágio 4 | Subordinada a confirmação quando ambas apontam o mesmo fato (fica em standby); em fatos distintos, coexiste; não toca bloqueio |
 | 4 | `sugestão_mandatória` | Estágio 5 | Não suprime nada — atua paralelamente |
 | 5 | `roteamento` | Estágio 6 | Subordinado a 1, 2 e 3; emite só se nenhum dos anteriores impede |
 
@@ -362,10 +368,15 @@ Esta seção detalha as oito combinações exigidas pelo escopo da PR-T3.3.
 
 ### 4.4 obrigação + confirmação
 
-- **Resultado:** confirmação tem precedência operacional sobre obrigação **se ambas apontam o
-  mesmo `fact_key` ou o fato sustentador da obrigação**. A obrigação fica em standby (não
-  emitida no turno); o LLM busca a confirmação primeiro. Se apontam fatos distintos, ambas
-  coexistem (estágios 3 e 4), ordenadas por seus respectivos critérios.
+- **Princípio de classe:** confirmação tem precedência **de classe** sobre obrigação na
+  ordenação final do `PolicyDecisionSet` (ordem 2 antes de 3 — §3.3). Fato ainda inconfirmado
+  com confiança baixa não sustenta coleta/ação mandatória derivada.
+- **Mesmo fato (ou fato sustentador da obrigação):** a obrigação fica em **standby** — não é
+  emitida no turno. Registrar `COL-CONF-OBLIG`. O LLM busca a confirmação primeiro; a obrigação
+  reentra em turno futuro depois que a confirmação for resolvida.
+- **Fatos distintos:** ambas **coexistem** no `PolicyDecisionSet`. A confirmação é emitida no
+  Estágio 3 e a obrigação no Estágio 4; na saída final, a confirmação aparece antes da
+  obrigação por força da ordem canônica de classe (§3.3).
 - **Justificativa contratual:** RC-COMP-02; PC-INT-02 (T3.1).
 
 ### 4.5 obrigação + sugestão mandatória
@@ -456,8 +467,8 @@ metadados de avaliação.
 ```
 PolicyDecisionSet {
   decisions: PolicyDecision[]      — decisões mantidas após composição
-                                     (ordenadas: bloqueio → obrigação → confirmação →
-                                      sugestão_mandatória → roteamento)
+                                     (ordenadas: bloqueio → confirmação → obrigação →
+                                      sugestão_mandatória → roteamento — ordem canônica §3.3)
   collisions: CollisionRecord[]    — registro explícito de toda colisão detectada
   evaluation_meta: {
     evaluated_at_turn:  integer
@@ -474,7 +485,8 @@ PolicyDecisionSet {
 
 **Invariantes do set:**
 
-- `decisions` em ordem canônica de classe (1→5 da §3.3); decisões da mesma classe ordenadas pelo
+- `decisions` em ordem canônica de classe (1→5 da §3.3 — `bloqueio` → `confirmação` →
+  `obrigação` → `sugestão_mandatória` → `roteamento`); decisões da mesma classe ordenadas pelo
   critério do estágio correspondente.
 - `aborted = true` ⇒ `decisions = []` e `collisions` contém o `CollisionRecord` que justifica o
   abort.
@@ -653,7 +665,7 @@ elas coexistem como contexto auxiliar para o LLM. Sem colisão.
 | Item | Origem | Verificação |
 |------|--------|-------------|
 | Classes citadas (`bloqueio`, `obrigação`, `confirmação`, `sugestão_mandatória`, `roteamento`) | T3.1 §1 | 5/5 presentes; nenhuma classe extra inventada |
-| Prioridade entre classes | T3.1 §7 | §3.3 reproduz a mesma ordem 1–5 |
+| Ordem operacional canônica final | §3.3 desta especificação | T3.3 estabelece a ordem operacional única alinhada ao pipeline (§1, §2): `bloqueio → confirmação → obrigação → sugestão_mandatória → roteamento`. Esta é a ordem definitiva de saída do `PolicyDecisionSet` (microetapa 4 do mestre T3). |
 | Invariante `action` sem `reply_text` | T3.1 §1 e CP-01 | Nenhum payload citado neste documento contém esses campos |
 | Regras críticas referenciadas | T3.2 §1 | `R_CASADO_CIVIL_CONJUNTO`, `R_AUTONOMO_IR`, `R_SOLO_BAIXA_COMPOSICAO`, `R_ESTRANGEIRO_SEM_RNM` — 4/4 |
 | Variantes de cada regra | T3.2 §2–§5 | Confirmação prévia (estado civil), obrigação/confirmação/sugestão (autônomo), sugestão+obrigação (solo baixa), confirmação/obrigação/bloqueio (estrangeiro) — todas honradas em §2 |
@@ -726,9 +738,10 @@ elas coexistem como contexto auxiliar para o LLM. Sem colisão.
 | Executor | Claude Code (claude-sonnet-4-6) |
 | Artefatos produzidos | `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (este documento) |
 | Status | CONCLUÍDA |
+| Revisão pós-abertura | Correção aplicada no mesmo branch (PR #101) — eliminou inconsistência entre o pipeline (§2: confirmação no Estágio 3 antes de obrigação no Estágio 4) e a tabela de prioridade global. Ordem operacional canônica única passa a ser: **bloqueio → confirmação → obrigação → sugestão_mandatória → roteamento**. Ajustes em §3.2 (matriz reordenada), §3.3 (tabela de prioridade), §4.4 (regra mesmo-fato/fatos-distintos explícita), §6 (`PolicyDecisionSet.decisions` na nova ordem) e §8 (linha de ordem canônica reescrita). Regra preservada: confirmação e obrigação coexistem em fatos distintos; mesma chave de fato faz a obrigação ficar em standby até a confirmação resolver (`COL-CONF-OBLIG`). |
 | Documento-base da evidência | `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` |
 | Estado da evidência | completa |
-| Há lacuna remanescente? | não — 6 estágios numerados (§2); matriz de composição 5×5 (§3.2); regra de desempate em 4 níveis (§3.4–§3.5); 8 combinações específicas (§4); política de colisão com 10 códigos canônicos (§5); shape `PolicyDecisionSet` (§6); 10 cenários sintéticos SC-01..10 (§7); validação cruzada T3.1/T3.2/T2 (§8); 12 anti-padrões AP-OC-01..12 (§9); 12 regras invioláveis RC-INV-01..12 (§11); microetapas 3 e 4 cobertas (§10) |
+| Há lacuna remanescente? | não — 6 estágios numerados (§2); matriz de composição 5×5 reordenada (§3.2); regra de desempate em 4 níveis (§3.4–§3.5); 8 combinações específicas (§4); política de colisão com 10 códigos canônicos (§5); shape `PolicyDecisionSet` (§6); 10 cenários sintéticos SC-01..10 (§7); validação cruzada T3.1/T3.2/T2 (§8); 12 anti-padrões AP-OC-01..12 (§9); 12 regras invioláveis RC-INV-01..12 (§11); microetapas 3 e 4 cobertas (§10); ordem operacional canônica única consistente em §2/§3.2/§3.3/§4.4/§6/§8 |
 | Há item parcial/inconclusivo bloqueante? | não |
 | Fechamento permitido nesta PR? | sim |
 | Estado permitido após esta PR | PR-T3.3 CONCLUÍDA; PR-T3.4 desbloqueada |
@@ -736,6 +749,7 @@ elas coexistem como contexto auxiliar para o LLM. Sem colisão.
 | Prova P-T3-01 | Inspeção do documento: nenhum payload de `action`, `decisions` ou estágio contém `reply_text`, `mensagem_usuario`, `texto_cliente`, `resposta` ou `frase`. Estágios produzem apenas `PolicyDecision` estruturadas e `CollisionRecord`. |
 | Prova P-T3-02 | Todas as `fact_key` (`fact_nationality`, `fact_rnm_status`, `fact_credit_restriction`, `fact_restriction_regularization_status`, `fact_estado_civil`, `fact_process_mode`, `fact_composition_actor`, `fact_work_regime_p1`, `fact_autonomo_has_ir_p1`, `fact_monthly_income_p1`, `fact_has_multi_income_p1`, `fact_p3_required`, `fact_current_intent`, `fact_channel_origin`) e `derived_*` (`derived_composition_needed`, `derived_rnm_required`) referenciam chaves canônicas existentes em `T2_DICIONARIO_FATOS`. Nenhuma chave inventada. |
 | Prova P-T3-03 | Microetapas 3 (ordem estável) e 4 (composição) cobertas — declaração explícita em §10. |
+| Prova P-T3-CORR-01 | Coerência interna: pipeline (§1, §2), tabela de prioridade global (§3.3), matriz de composição (§3.2), shape `PolicyDecisionSet` (§6) e validação cruzada (§8) declaram a mesma ordem operacional única `bloqueio → confirmação → obrigação → sugestão_mandatória → roteamento`. Nenhum trecho remanescente coloca obrigação antes de confirmação na ordem geral. |
 | Conformidade CA-03 | Confirmada — ordem estável numerada (§2) e proibição de colisão silenciosa (§5) |
 | Conformidade CA-07 | Confirmada — todos os campos referenciam `T2_LEAD_STATE_V1` e `T2_DICIONARIO_FATOS` |
 | Conformidade CA-08 | Confirmada — engine apenas estrutura e ordena `PolicyDecision`; LLM permanece soberano na fala |
