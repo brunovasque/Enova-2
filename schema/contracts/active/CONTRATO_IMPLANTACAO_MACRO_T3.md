@@ -75,11 +75,11 @@ O policy engine **decide mas não fala**. Toda fala permanece sob soberania do L
 
 ### Dependências de artefato (entregues em T2)
 - `schema/implantation/T2_DICIONARIO_FATOS.md` — vocabulário canônico de fatos; base de toda interpretação de `lead_state`.
-- `schema/implantation/T2_LEAD_STATE_SCHEMA_V1.md` — schema dos 11 blocos canônicos; estrutura que o policy engine consome.
-- `schema/implantation/T2_POLITICA_CONFIANCA_ORIGEM.md` — política de confiança por origem; determina quando um fato está apto a disparar uma regra.
-- `schema/implantation/T2_RECONCILIACAO_CONFLITOS.md` — protocolo de reconciliação; resolve conflitos antes que o policy engine avalie.
+- `schema/implantation/T2_LEAD_STATE_V1.md` — schema dos 11 blocos canônicos; estrutura que o policy engine consome.
+- `schema/implantation/T2_POLITICA_CONFIANCA.md` — política de confiança por origem; determina quando um fato está apto a disparar uma regra.
+- `schema/implantation/T2_RECONCILIACAO.md` — protocolo de reconciliação; resolve conflitos antes que o policy engine avalie.
 - `schema/implantation/T2_RESUMO_PERSISTIDO.md` — camadas de memória, snapshot e regras anti-contaminação.
-- `schema/implantation/T2_POLITICA_AUDITORIA_ORIGEM.md` — rastreabilidade de origem; auditoria de aplicação de regras.
+
 
 ### Dependências de frente
 - T1 concluída (G1 APROVADO em 2026-04-23) — dicionário de fatos base disponível.
@@ -96,9 +96,9 @@ Antes de iniciar qualquer PR de T3, devem existir e estar acessíveis:
 | E1 | Readiness G2 | `schema/implantation/READINESS_G2.md` | Status: G2 APROVADO, Bloco E presente |
 | E2 | Contrato T2 arquivado | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md` | Status: ENCERRADO |
 | E3 | Contrato T3 aberto | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` | Status: aberto (este documento) |
-| E4 | Schema lead_state v1 | `schema/implantation/T2_LEAD_STATE_SCHEMA_V1.md` | 11 blocos canônicos definidos |
+| E4 | Schema lead_state v1 | `schema/implantation/T2_LEAD_STATE_V1.md` | 11 blocos canônicos definidos |
 | E5 | Dicionário de fatos | `schema/implantation/T2_DICIONARIO_FATOS.md` | Vocabulário canônico disponível |
-| E6 | Política de confiança | `schema/implantation/T2_POLITICA_CONFIANCA_ORIGEM.md` | Níveis de confiança por origem definidos |
+| E6 | Política de confiança | `schema/implantation/T2_POLITICA_CONFIANCA.md` | Níveis de confiança por origem definidos |
 | E7 | Bíblia Canônica §J | `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` seção J | PRs T3.0–T3.R mapeadas |
 | E8 | Legado mestre T3 | `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` seção T3 | Microetapas do mestre acessíveis |
 
@@ -129,7 +129,7 @@ Ao final de T3, os seguintes artefatos devem existir, ser coerentes entre si e c
 | CA-04 | Veto suave está definido e é distinto de bloqueio | S4 diferencia veto suave (orientar + registrar) de bloqueio (impedir avanço); condições de cada um são não-ambíguas |
 | CA-05 | Validador pós-resposta/pré-persistência existe e tem checklist | S4 inclui checklist mínimo com ≥3 itens verificáveis antes de qualquer persistência |
 | CA-06 | Suíte de testes cobre positivo, negativo, ambíguo, colisão e regressão | S5 tem ≥1 caso por categoria por regra crítica; total ≥20 casos |
-| CA-07 | Todos os artefatos T3 são coerentes com lead_state v1 | Campos de condição de disparo em S2–S4 referenciam apenas chaves canônicas do T2_LEAD_STATE_SCHEMA_V1 |
+| CA-07 | Todos os artefatos T3 são coerentes com lead_state v1 | Campos de condição de disparo em S2–S4 referenciam apenas chaves canônicas do T2_LEAD_STATE_V1 |
 | CA-08 | LLM-first preservado em todas as PRs | Nenhuma PR de T3 cria mecanismo que escreva fala autonomamente; policy engine emite apenas classes/payloads estruturados |
 | CA-09 | Cinco microetapas do mestre T3 cobertas | S1 (microetapas 2), S2 (microetapa 1), S3 (microetapas 3 e 4), S4 (microetapa 5) — cada seção declara qual microetapa cobre |
 | CA-10 | G3 decidido com Bloco E e evidência formal | READINESS_G3.md contém smoke de S1–S5, critérios CA-01–CA-09 verificados, decisão G3 APROVADO ou REPROVADO, Bloco E presente |
@@ -143,7 +143,7 @@ Cada PR de T3 deve apresentar:
 | Prova | Descrição |
 |-------|-----------|
 | P-T3-01 | Diff do artefato criado — inspeção linha a linha que confirma ausência de `reply_text` ou `mensagem_usuario` em qualquer saída do engine |
-| P-T3-02 | Referências cruzadas — cada campo de condição de disparo citado aponta a chave canônica existente em T2_LEAD_STATE_SCHEMA_V1 |
+| P-T3-02 | Referências cruzadas — cada campo de condição de disparo citado aponta a chave canônica existente em T2_LEAD_STATE_V1 |
 | P-T3-03 | Cobertura das microetapas — declaração explícita em cada PR de qual(is) microetapa(s) do mestre T3 é coberta |
 | P-T3-04 | Contagem de casos de teste (PR-T3.5) — total ≥20; breakdown por categoria (positivo/negativo/ambíguo/colisão/regressão) |
 | P-T3-05 | Smoke coerência (PR-T3.R) — checklist de 5 artefatos S1–S5 com status PASS/FAIL + justificativa por dimensão |
@@ -212,10 +212,10 @@ Cada PR de T3 deve apresentar:
 | `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md` | Regras de execução contratual — imutabilidade de escopo |
 | `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md` | Protocolo formal de encerramento — obrigatório em PR-T3.R |
 | `schema/implantation/READINESS_G2.md` | Gate de entrada T3 — G2 APROVADO com Bloco E |
-| `schema/implantation/T2_LEAD_STATE_SCHEMA_V1.md` | Entrada do policy engine — 11 blocos canônicos |
+| `schema/implantation/T2_LEAD_STATE_V1.md` | Entrada do policy engine — 11 blocos canônicos |
 | `schema/implantation/T2_DICIONARIO_FATOS.md` | Vocabulário de fatos que o engine interpreta |
-| `schema/implantation/T2_POLITICA_CONFIANCA_ORIGEM.md` | Confiança por origem — pré-condição para disparo de regras |
-| `schema/implantation/T2_RECONCILIACAO_CONFLITOS.md` | Reconciliação antes do engine avaliar estado |
+| `schema/implantation/T2_POLITICA_CONFIANCA.md` | Confiança por origem — pré-condição para disparo de regras |
+| `schema/implantation/T2_RECONCILIACAO.md` | Reconciliação antes do engine avaliar estado |
 | `schema/ADENDO_CANONICO_SOBERANIA_IA.md` | A00-ADENDO-01 — LLM soberano na fala; engine não fala |
 | `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` | A00-ADENDO-02 — identidade MCMV; travas de interpretação |
 | `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` | A00-ADENDO-03 — Bloco E obrigatório em toda PR que fecha etapa |
@@ -257,9 +257,9 @@ Antes de executar qualquer PR de T3, ler nesta ordem:
 
 1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` seção T3 — microetapas canônicas
 2. **L03** — Mapa Canônico do Funil (obrigatório, leitura completa)
-3. `schema/implantation/T2_LEAD_STATE_SCHEMA_V1.md` — estrutura de entrada do engine
-4. `schema/implantation/T2_POLITICA_CONFIANCA_ORIGEM.md` — confiança por origem
-5. `schema/implantation/T2_RECONCILIACAO_CONFLITOS.md` — pré-condição de estado limpo
+3. `schema/implantation/T2_LEAD_STATE_V1.md` — estrutura de entrada do engine
+4. `schema/implantation/T2_POLITICA_CONFIANCA.md` — confiança por origem
+5. `schema/implantation/T2_RECONCILIACAO.md` — pré-condição de estado limpo
 6. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` §J — sequência de PRs
 
 Para PR-T3.2 (regras críticas), adicionar à sequência:
@@ -291,7 +291,7 @@ Para PR-T3.4 (veto suave), adicionar:
 - Tocar `src/`, `package.json`, `wrangler.toml`
 - Abrir T4 antes de G3 APROVADO
 - Criar `reply_text` em qualquer saída do policy engine
-- Referenciar chaves de fato não presentes em `T2_LEAD_STATE_SCHEMA_V1.md`
+- Referenciar chaves de fato não presentes em `T2_LEAD_STATE_V1.md`
 
 ---
 

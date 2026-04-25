@@ -231,8 +231,8 @@ Leituras obrigatórias para PR-T3.1:
 2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.1)
 3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 2: "bloquear", "desviar", "confirmar", "orientar")
 4. `schema/legacy/INDEX_LEGADO_MESTRE.md` → L03 (obrigatório); L14 (complementar para bloqueio)
-5. `schema/implantation/T2_LEAD_STATE_SCHEMA_V1.md`
-6. `schema/implantation/T2_POLITICA_CONFIANCA_ORIGEM.md`
+5. `schema/implantation/T2_LEAD_STATE_V1.md`
+6. `schema/implantation/T2_POLITICA_CONFIANCA.md`
 7. `schema/implantation/READINESS_G2.md`
 8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
 9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
