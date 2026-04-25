@@ -2198,3 +2198,106 @@ Próxima PR autorizada:                 PR-T2.5 — Resumo persistido (T2_RESUMO
 10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 12. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-24 — resumo persistido e compatibilidade E1→E2 (PR-T2.5)
+
+### Objetivo executado
+
+`PR-T2.5` — criar `schema/implantation/T2_RESUMO_PERSISTIDO.md`: mecanismo canônico de resumo
+persistido para conversas longas (4 camadas de memória, protocolo de snapshot, regras anti-
+contaminação) e mapa completo de compatibilidade transitória E1→E2 (campos, stages, vícios).
+
+### Estado herdado
+
+- Branch `feat/t2-pr25-resumo-persistido` criada limpa a partir de main pós-PR-T2.4.
+- `T2_RECONCILIACAO.md` publicado (7 estados, protocolo 7 etapas, 10 domínios).
+- `T2_POLITICA_CONFIANCA.md` publicado (6 origens, 12 regras PC-01..PC-12).
+- `T2_LEAD_STATE_V1.md` publicado (HistorySummary com 4 camadas e SnapshotExecutivo).
+- `T2_DICIONARIO_FATOS.md` publicado (50 chaves, tabela E1→E2 base).
+
+### O que foi feito
+
+- Criou `schema/implantation/T2_RESUMO_PERSISTIDO.md` com:
+  - **§1** Quatro camadas de memória (L1/L2/L3/L4): definições, limites, regras de acesso;
+    L1 = últimos 5 turnos; L2 = lead_state.facts (verdade canônica); L3 = snapshot executivo
+    (1 ativo por case); L4 = histórico frio (imutável, auditável, só sob demanda).
+  - **§2** Protocolo de snapshot: 7 eventos de trigger (stage_advance, conflict_resolved,
+    session_end, handoff, retorno ≥24h, override_priority, eligibility_change); shape completo
+    SnapshotExecutivo com 12 campos incluindo `approval_prohibited = true` invariante; lista
+    canônica de inclusões e exclusões (RP-SN-01..07).
+  - **§3** Regras anti-contaminação (RC-AN-01..07): resumo não promove status, L4 não reabre
+    conflitos, snapshot não substitui reconciliação; hierarquia de precedência de leitura.
+  - **§4** Memória Vasques: 4 tipos de nota, 7 regras de limite (RV-01..07).
+  - **§5** Aprendizado por atendimento: 5 regras RA-01..05; padrão vs. script; formas válidas
+    e proibidas.
+  - **§6** Compatibilidade transitória E1→E2: 7 princípios (RB-01..07); tabela 27 campos com
+    treatment (status de entrada, ação de migração); 7 campos E1 descartados com motivo;
+    tabela de mapeamento stages E1 → current_phase E2; como preservar sem manter vício.
+  - **§7** Cobertura das 5 microetapas do mestre (microetapas 4 e 5 cobertas aqui).
+  - **§8** 10 casos sintéticos SP-01..SP-10.
+  - **§9** 12 anti-padrões AP-RP-01..AP-RP-12.
+  - **§10** 10 regras invioláveis RP-01..RP-10.
+  - **§11** Amarração campo por campo ao lead_state v1.
+  - **§12** Bloco E: fechamento permitido; PR-T2.R desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR-T2.5 executada; próximo PR-T2.R.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que nao foi feito
+
+- READINESS_G2.md não criado (escopo PR-T2.R).
+- G2 não fechado (requer PR-T2.R).
+- Skeleton T3 não criado (requer G2 aprovado).
+- Nenhuma implementação Supabase real.
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T2_RESUMO_PERSISTIDO.md
+PR que fecha:                          PR-T2.5
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — 4 camadas de memória; protocolo snapshot completo;
+                                       RC-AN-01..07; RV-01..07; RA-01..05; tabela E1→E2
+                                       (27 campos + 7 descartados + stages); SP-01..SP-10;
+                                       AP-RP-01..12; RP-01..10; cobertura microetapas 4 e 5
+                                       do mestre; soberania LLM-first verificada.
+Há item parcial bloqueante?:           não — READINESS_G2.md é escopo PR-T2.R.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T2.5 encerrada; T2_RESUMO_PERSISTIDO.md publicado;
+                                       PR-T2.R desbloqueada
+Próxima PR autorizada:                 PR-T2.R — Readiness/Closeout G2
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T2** — em execução; PR-T2.R próxima.
+- G0: APROVADO. G1: APROVADO em 2026-04-23. G2: aberto — aguardando PR-T2.R.
+- T2_DICIONARIO_FATOS.md: publicado.
+- T2_LEAD_STATE_V1.md: publicado.
+- T2_POLITICA_CONFIANCA.md: publicado.
+- T2_RECONCILIACAO.md: publicado.
+- T2_RESUMO_PERSISTIDO.md: **publicado**.
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T2.R`** — Readiness/Closeout G2 (smoke documental 6/6 artefatos + decisão formal G2 + skeleton T3).
+
+### Leituras obrigatorias para PR-T2.R
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.R)
+3. `schema/implantation/T2_RESUMO_PERSISTIDO.md` (base obrigatória)
+4. `schema/implantation/T2_RECONCILIACAO.md`
+5. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+6. `schema/implantation/T2_LEAD_STATE_V1.md`
+7. `schema/implantation/T2_DICIONARIO_FATOS.md`
+8. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
+9. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+10. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+13. `schema/CODEX_WORKFLOW.md`

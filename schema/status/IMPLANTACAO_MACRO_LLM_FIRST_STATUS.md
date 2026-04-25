@@ -8,7 +8,7 @@ Gate anterior: G1 — APROVADO em 2026-04-23 via PR-T1.R.
 
 Gate aberto: G2 — estado estruturado funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (em execução — PR-T2.4 executada; aguardando PR-T2.5).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (em execução — PR-T2.5 executada; aguardando PR-T2.R).
 
 Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2026-04-23.md`.
 
@@ -16,12 +16,41 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T2.4` — reconciliação e tipologia: `schema/implantation/T2_RECONCILIACAO.md` criado com
-tipologia formal de 7 estados (hypothesis/captured/inferred/confirmed/contradicted/pending/obsolete);
-protocolo de reconciliação em 7 etapas com fluxograma; hierarquia de prioridade por origem;
-10 domínios específicos (renda, estado civil, regime, composição/P2, IR autônomo, restrição, RNM,
-áudio ruim, Vasques vs confirmed, documento ilegível); 10 casos sintéticos; tabela de transições;
-12 anti-padrões AP-01..AP-12; 10 regras invioláveis RC-01..RC-10. PR-T2.5 desbloqueada.
+`PR-T2.5` — resumo persistido + compatibilidade E1→E2: `schema/implantation/T2_RESUMO_PERSISTIDO.md`
+criado com 4 camadas de memória (L1 curto prazo / L2 factual estruturada / L3 snapshot executivo /
+L4 histórico frio); protocolo de snapshot com 7 eventos de trigger, shape completo SnapshotExecutivo,
+o que entra/não entra; 7 regras anti-contaminação (RC-AN-01..07); memória Vasques (RV-01..07);
+aprendizado sem script (RA-01..05); tabela E1→E2 (27 campos + 7 descartados + stages);
+10 casos sintéticos SP-01..SP-10; 12 anti-padrões AP-RP-01..12; 10 regras RP-01..10.
+PR-T2.R desbloqueada.
+
+## O que a PR-T2.5 fechou
+
+- Criou `schema/implantation/T2_RESUMO_PERSISTIDO.md` com:
+  - §1 Quatro camadas de memória (L1/L2/L3/L4) com definições, limites e regras;
+  - §2 Protocolo de snapshot: 7 eventos de trigger, o que entra/não entra, shape completo
+    SnapshotExecutivo com `approval_prohibited = true` invariante;
+  - §3 Regras anti-contaminação de facts (RC-AN-01..07) + hierarquia de precedência de leitura;
+  - §4 Memória Vasques — 4 tipos, 7 regras de limite e auditabilidade (RV-01..07);
+  - §5 Aprendizado por atendimento — 5 regras RA-01..05, como existe sem virar script;
+  - §6 Compatibilidade transitória E1→E2: 7 princípios (RB-01..07), tabela 27 campos,
+    7 campos descartados, tabela de stages E1→current_phase E2, como preservar sem manter vício;
+  - §7 Cobertura das 5 microetapas do mestre (§4 e §5 cobertas aqui);
+  - §8 10 casos sintéticos SP-01..SP-10 (conversa longa, retorno tardio, snapshot conflitante,
+    campo sem equivalente E2, campo derivável, L4 auditoria, Vasques prioridade, aprendizado,
+    resumo com aprovação bloqueada, migração sem vício);
+  - §9 12 anti-padrões AP-RP-01..AP-RP-12;
+  - §10 10 regras invioláveis RP-01..RP-10;
+  - §11 Amarração ao lead_state v1 e artefatos T2;
+  - §12 Bloco E: fechamento permitido; PR-T2.R desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: PR atual → PR-T2.5 executada; próximo passo PR-T2.R.
+
+## O que a PR-T2.5 nao fechou
+
+- READINESS_G2.md — smoke documental de todos os 6 artefatos T2 e decisão formal G2 — escopo PR-T2.R.
+- Nenhuma implementação Supabase real.
+- Nenhuma alteração em `src/`, `package.json`, `wrangler.toml`.
+- G2 não fechado (requer PR-T2.R).
 
 ## O que a PR-T2.4 fechou
 
@@ -160,21 +189,22 @@ protocolo de reconciliação em 7 etapas com fluxograma; hierarquia de prioridad
 
 ## Proximo passo autorizado
 
-PR-T2.5 — Resumo persistido (T2_RESUMO_PERSISTIDO.md).
+PR-T2.R — Readiness/Closeout G2 (READINESS_G2.md).
 
-Leituras obrigatórias para PR-T2.5:
+Leituras obrigatórias para PR-T2.R:
 1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` (contrato em execução)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.5)
-3. `schema/implantation/T2_RECONCILIACAO.md` (base obrigatória)
-4. `schema/implantation/T2_POLITICA_CONFIANCA.md`
-5. `schema/implantation/T2_LEAD_STATE_V1.md`
-6. `schema/implantation/T2_DICIONARIO_FATOS.md`
-7. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T2 — resumo e persistência)
-8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-12. `schema/CODEX_WORKFLOW.md`
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T2.R)
+3. `schema/implantation/T2_RESUMO_PERSISTIDO.md` (base obrigatória)
+4. `schema/implantation/T2_RECONCILIACAO.md`
+5. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+6. `schema/implantation/T2_LEAD_STATE_V1.md`
+7. `schema/implantation/T2_DICIONARIO_FATOS.md`
+8. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
+9. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+10. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+13. `schema/CODEX_WORKFLOW.md`
 
 ## Mudancas em dados persistidos
 

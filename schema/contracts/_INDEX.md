@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T2 — Estado estruturado, memória e reconciliação | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` | em execução | G1 aprovado; G2 — estado estruturado funcional | 2026-04-23 | PR-T2.4 executada | PR-T2.5 |
+| T2 — Estado estruturado, memória e reconciliação | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T2.md` | em execução | G1 aprovado; G2 — estado estruturado funcional | 2026-04-23 | PR-T2.5 executada | PR-T2.R |
 
 ## Contratos encerrados
 
@@ -152,3 +152,4 @@ schema/contracts/
 - 2026-04-24 — PR-T2.2 executada. T2_LEAD_STATE_V1.md criado: 11 blocos canônicos (CaseMeta, OperationalState/11 campos, FactBlock/35 fact_*, DerivedBlock/9 derived_*, Pending/6 PEND_*, Conflicts/4 CONF_*, SignalBlock/6 signal_*, HistorySummary/4 camadas+snapshot, VasquesNotes, NormativeContext); 12 regras LS-01..LS-12; mapeamento campo↔fato↔regra T0; compatibilidade E1→E2. PR-T2.3 desbloqueada. Próximo passo: PR-T2.3.
 - 2026-04-24 — PR-T2.3 executada. T2_POLITICA_CONFIANCA.md criado: 6 origens canônicas (EXPLICIT_TEXT, INDIRECT_TEXT, AUDIO_TRANSCRIPT/3 níveis, DOCUMENT, INFERENCE/2 tipos, OPERATOR_NOTE); mapa de transição por origem; 12 fatos críticos; condições de confirmação/conflito/bloqueio; 9 source values; 5 casos sintéticos; 12 regras PC-01..PC-12. PR-T2.4 desbloqueada. Próximo passo: PR-T2.4.
 - 2026-04-24 — PR-T2.4 executada. T2_RECONCILIACAO.md criado: tipologia formal 7 estados (hypothesis/captured/inferred/confirmed/contradicted/pending/obsolete); protocolo reconciliação 7 etapas; hierarquia de prioridade por origem; 10 domínios específicos (renda, estado civil, regime, composição/P2, IR autônomo, restrição, RNM, áudio ruim, Vasques vs confirmed, doc ilegível); 10 casos sintéticos RC-01..RC-10; tabela de transições; 12 anti-padrões AP-01..AP-12; 10 regras RC-01..RC-10. PR-T2.5 desbloqueada. Próximo passo: PR-T2.5.
+- 2026-04-24 — PR-T2.5 executada. T2_RESUMO_PERSISTIDO.md criado: 4 camadas de memória (L1/L2/L3/L4); protocolo de snapshot com 7 triggers e shape SnapshotExecutivo completo; regras anti-contaminação RC-AN-01..07; memória Vasques RV-01..07; aprendizado sem script RA-01..05; tabela E1→E2 (27 campos + 7 descartados + stages); 10 casos sintéticos SP-01..SP-10; 12 anti-padrões AP-RP-01..12; 10 regras RP-01..10. PR-T2.R desbloqueada. Próximo passo: PR-T2.R.
