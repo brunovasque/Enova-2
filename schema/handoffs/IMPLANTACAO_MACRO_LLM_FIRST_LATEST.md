@@ -3055,3 +3055,108 @@ Próxima PR autorizada:                 PR-T4.0 — Abertura formal do contrato 
 10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 12. `schema/CONTRACT_SCHEMA.md`
+
+---
+
+## Atualizacao 2026-04-25 — PR-T4.0: Abertura formal do contrato T4
+
+### Objetivo executado
+
+Preencher `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` com corpo completo
+(§1–§17 + Bloco E), declarar quebra de PRs T4.0–T4.R, definir gate G4, e desbloquear PR-T4.1.
+
+### O que foi feito
+
+- Preenchido `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` com:
+  - §1 Objetivo: orquestrador coordena e nunca fala; reply_text exclusivamente do LLM;
+  - §2 Escopo: 6 saídas verificáveis (T4_ENTRADA_TURNO, T4_PIPELINE_LLM, T4_VALIDACAO_PERSISTENCIA,
+    T4_RESPOSTA_RASTRO_METRICAS, T4_FALLBACKS, READINESS_G4);
+  - §3 Fora de escopo: src/, regras de política (T3), schema de estado (T2), speech/canal;
+  - §4 Dependências: G3 APROVADO + T2_LEAD_STATE_V1 + 5 artefatos T3 + T1_CONTRATO_SAIDA;
+  - §5 Entradas: TurnoEntrada `{message_text, channel, lead_state, turn_id, case_id, current_objective}`;
+  - §6 Saídas S1–S6 com caminho, PR criadora e conteúdo mínimo;
+  - §7 Critérios de aceite CA-01..CA-10:
+      CA-01 orquestrador mudo; CA-02 entrada padronizada; CA-03 pipeline LLM contrato único;
+      CA-04 policy integrado; CA-05 validador pós-LLM; CA-06 reconciliação antes de persistir;
+      CA-07 rastro TurnoRastro; CA-08 fallbacks (4 cenários); CA-09 ≥10 E2E; CA-10 Bloco E G4;
+  - §8 Provas P-T4-01..P-T4-05;
+  - §9 Bloqueios B-01..B-05 (B-01/B-02 desbloqueados; B-03/B-04/B-05 bloqueados até PRs criarem artefatos);
+  - §10 Próximo passo: PR-T4.1;
+  - §11 A01: T4 semanas 7–8, prioridade 5, G3→G4;
+  - §12 Legados com PRs criadoras;
+  - §13 12 referências;
+  - §14 Blocos legados obrigatórios/complementares;
+  - §15 Ordem mínima de leitura por PR;
+  - §16 Quebra PRs T4.0–T4.R com artefato/dependência/microetapa;
+  - §17 Gate G4: condições (S1–S6 smoke PASS + CA-01..CA-10 + ≥10 E2E + pipeline completo +
+    fallbacks cobertos + Bloco E em READINESS_G4); consequência: T5 autorizado;
+  - Bloco E com PR-T4.1 desbloqueada.
+- Atualizado `schema/contracts/_INDEX.md`: T4 status → aberto; PR atual → PR-T4.0; próximo → PR-T4.1.
+- Atualizado `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: última tarefa = PR-T4.0; próximo = PR-T4.1.
+
+### O que não foi feito
+
+- Não criou T4_ENTRADA_TURNO.md (escopo PR-T4.1).
+- Não implementou orquestrador real em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não aberto.
+
+### Provas entregues
+
+- **P-T4.0-01:** Contrato T4 preenchido com §1–§17 + Bloco E conforme CONTRACT_SCHEMA.md.
+- **P-T4.0-02:** TurnoEntrada shape declarado com 6 campos canônicos; TurnoSaida referenciado de T1_CONTRATO_SAIDA.
+- **P-T4.0-03:** Pipeline 8 etapas numeradas; 1 chamada LLM por turno; reply_text nunca sobrescrito.
+- **P-T4.0-04:** Gate G4 com condições verificáveis (S1–S6 + CA-01..CA-10 + ≥10 E2E + Bloco E).
+- **P-T4.0-05:** Quebra de 8 PRs com artefatos, dependências e microetapas mapeadas.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — CA-01 proíbe orquestrador de produzir reply_text; CA-03 LLM único.
+- A00-ADENDO-02: confirmada — MCMV não é escopo de T4; identidade preservada via T1_SYSTEM_PROMPT.
+- A00-ADENDO-03: confirmada — Bloco E presente; contrato T4 aberto com evidência de G3 APROVADO.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md
+PR que fecha:                          PR-T4.0 (abertura formal do contrato T4)
+Estado da evidência:                   completa — contrato T4 com §1–§17 + Bloco E;
+                                       shapes TurnoEntrada/TurnoSaida declarados;
+                                       pipeline 8 etapas; gate G4 definido; quebra 8 PRs.
+Há lacuna remanescente?:               não — contrato de abertura; artefatos técnicos são
+                                       escopo das PRs T4.1–T4.6 e T4.R.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T4.0 CONCLUÍDA; contrato T4 ABERTO; PR-T4.1 desbloqueada.
+Próxima PR autorizada:                 PR-T4.1 — Padronização da entrada do turno
+```
+
+### Estado atual do repositorio (após PR-T4.0)
+
+- Fase macro: **T4** — contrato aberto; PR-T4.1 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: **APROVADO**. G4: aberto.
+- CONTRATO_IMPLANTACAO_MACRO_T4.md: **aberto** (PR-T4.0).
+- T4_ENTRADA_TURNO.md: pendente (PR-T4.1).
+- T4_PIPELINE_LLM.md: pendente (PR-T4.2).
+- T4_VALIDACAO_PERSISTENCIA.md: pendente (PR-T4.3).
+- T4_RESPOSTA_RASTRO_METRICAS.md: pendente (PR-T4.4).
+- T4_FALLBACKS.md: pendente (PR-T4.5).
+- T4_BATERIA_E2E.md: pendente (PR-T4.6).
+- READINESS_G4.md: pendente (PR-T4.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T4.1`** — Padronização da entrada do turno (`T4_ENTRADA_TURNO.md`).
+
+### Leituras obrigatorias para PR-T4.1
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§5 entradas, §7 CA-01/CA-02, §16 PR-T4.1)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção K — PR-T4.1)
+3. `schema/implantation/T1_CONTRATO_SAIDA.md` (TurnoSaida — shape canônico de saída)
+4. `schema/implantation/T2_LEAD_STATE_V1.md` (lead_state que entra no turno)
+5. `schema/implantation/T3_CLASSES_POLITICA.md` (classes que o pipeline consume)
+6. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (pipeline T3 que T4 orquestra)
+7. `schema/implantation/READINESS_G3.md` (evidência de G3 APROVADO)
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
