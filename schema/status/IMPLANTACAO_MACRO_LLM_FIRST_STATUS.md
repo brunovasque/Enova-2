@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T4 — Orquestrador de turno LLM-first (skeleton aberto; PR-T4.0 desbloqueada).
+Fase macro ativa: T4 — Orquestrador de turno LLM-first (contrato aberto; PR-T4.1 desbloqueada).
 
 Gate anterior: G3 — APROVADO em 2026-04-25 via PR-T3.R.
 
 Gate aberto: G4 — orquestrador funcional (bloqueado até PR-T4.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (skeleton — aguardando PR-T4.0).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (aberto — PR-T4.0 executada em 2026-04-25).
 
 Contrato T3 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
 
@@ -20,7 +20,13 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T3.R` — Readiness/Closeout de G3:
+`PR-T4.0` — Abertura formal do contrato T4 (Orquestrador de turno LLM-first):
+`schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` preenchido com corpo completo
+(§1–§17 + Bloco E): objetivo do orquestrador de turno; shapes TurnoEntrada e TurnoSaida;
+pipeline 8 etapas; 10 critérios de aceite CA-01..CA-10; quebra de PRs T4.0–T4.R;
+gate G4 definido; fallbacks documentados; Bloco E aplicado. PR-T4.1 desbloqueada.
+
+`PR-T3.R` — Readiness/Closeout de G3 (anteriormente):
 `schema/implantation/READINESS_G3.md` criado: smoke documental S1–S5 (5/5 PASS);
 coerência verificada em 11 dimensões; cenários sintéticos V1/V2/V3 (3/3 PASS);
 critérios CA-01..CA-10 (10/10 CUMPRIDOS); zero lacunas bloqueantes; 5 lacunas
@@ -250,23 +256,53 @@ PR-T2.R desbloqueada.
 - Nao criou policy engine (escopo T3).
 - Nao alterou `src/`, `package.json`, `wrangler.toml`.
 
+## O que a PR-T4.0 fechou
+
+- Preencheu `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` com corpo completo (CONTRACT_SCHEMA.md):
+  - §1 Objetivo: orquestrador coordena, nunca fala; reply_text exclusivamente do LLM;
+  - §2 Escopo: 6 saídas verificáveis (T4_ENTRADA, T4_PIPELINE_LLM, T4_VALIDACAO, T4_RESPOSTA,
+    T4_FALLBACKS, READINESS_G4);
+  - §3 Fora de escopo: src/, regras de política (T3), schema de estado (T2), speech, canais;
+  - §4 Dependências: G3 APROVADO (desbloqueado) + 5 artefatos T3 + TurnoSaida T1;
+  - §5 Entradas: TurnoEntrada shape + 5 artefatos de contexto;
+  - §6 Saídas S1–S6 com caminho, PR criadora e conteúdo mínimo;
+  - §7 Critérios de aceite CA-01..CA-10 (orquestrador mudo, entrada padronizada, LLM único,
+    policy integrado, validador pós-LLM, reconciliação antes de persistir, rastro, fallbacks,
+    ≥10 E2E, Bloco E em G4);
+  - §8 Provas P-T4-01..P-T4-05;
+  - §9 Bloqueios B-01..B-05 (B-01/B-02 desbloqueados);
+  - §10 Próximo passo: PR-T4.1;
+  - §11 A01: T4 semanas 7–8, prioridade 5, G3→G4;
+  - §12 Legados aplicáveis com PRs criadoras;
+  - §13 Referências: 12 documentos;
+  - §14 Blocos legados obrigatórios/complementares;
+  - §15 Ordem mínima de leitura por PR;
+  - §16 Quebra PRs T4.0–T4.R: 8 PRs com artefato/dependência/microetapa;
+  - §17 Gate G4: condições aprovação/reprovação, consequências, artefato READINESS_G4.
+  - Bloco E: PR-T4.1 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: T4 aberto; PR-T4.0 executada; PR-T4.1 próximo passo.
+
+## O que a PR-T4.0 nao fechou
+
+- Não criou T4_ENTRADA_TURNO.md (escopo T4.1).
+- Não implementou orquestrador real em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não fechado.
+
 ## Proximo passo autorizado
 
-PR-T4.0 — Abertura formal do contrato T4 (Orquestrador de turno LLM-first).
+PR-T4.1 — Padronização da entrada do turno (`T4_ENTRADA_TURNO.md`).
 
-Leituras obrigatórias para PR-T4.0:
-1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T4 — microetapas obrigatórias)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção K — PR-T4.0)
-3. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (skeleton a ser preenchido)
-4. `schema/implantation/READINESS_G3.md` (gate G3 APROVADO — evidência de entrada T4)
-5. `schema/implantation/T3_CLASSES_POLITICA.md` (saídas do policy engine que T4 consome)
-6. `schema/implantation/T3_ORDEM_AVALIACAO_COMPOSICAO.md` (pipeline T3 que T4 orquestra)
-7. `schema/implantation/T3_VETO_SUAVE_VALIDADOR.md` (validador que T4 aciona)
-8. `schema/implantation/T2_LEAD_STATE_V1.md` (lead_state que T4 lê e atualiza)
-9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-12. `schema/CONTRACT_SCHEMA.md` (formato obrigatório do contrato T4)
+Leituras obrigatórias para PR-T4.1:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§5 entradas, §7 CA-01/CA-02)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção K — PR-T4.1)
+3. `schema/implantation/T1_CONTRATO_SAIDA.md` (TurnoSaida — shape canônico de saída)
+4. `schema/implantation/T2_LEAD_STATE_V1.md` (lead_state que entra no turno)
+5. `schema/implantation/T3_CLASSES_POLITICA.md` (classes que o pipeline usa)
+6. `schema/implantation/READINESS_G3.md` (evidência de G3)
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 
 ## O que a PR-T3.3 fechou
 
