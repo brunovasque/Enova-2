@@ -27,7 +27,7 @@ regras, ordem de avaliação, veto suave, validador e suíte de testes).
 |-------|----------|
 | Artefato | `schema/implantation/T3_CLASSES_POLITICA.md` |
 | Status | PRESENTE E COMPLETO |
-| Seções verificadas | §1 PolicyDecision shape com invariante global; §2 classe bloqueio; §3 classe obrigação; §4 classe confirmação; §5 classe sugestão_mandatória; §6 classe roteamento; §7 prioridade bloqueio(1)>obrigação(2)>confirmação(3)>sugestão(4)>roteamento(5); §8 4 efeitos operacionais formais; §9 integração lead_state v1; §10 integração política de confiança; §11 anti-padrões AP-CP-01..10; §12 exemplos sintéticos; §13 cobertura microetapas; §14 regras CP-01..10; Bloco E |
+| Seções verificadas | §1 PolicyDecision shape com invariante global; §2 classe bloqueio; §3 classe obrigação; §4 classe confirmação; §5 classe sugestão_mandatória; §6 classe roteamento; §7 prioridade bloqueio(1)>confirmação(2)>obrigação(3)>sugestão_mandatória(4)>roteamento(5); §8 4 efeitos operacionais formais; §9 integração lead_state v1; §10 integração política de confiança; §11 anti-padrões AP-CP-01..10; §12 exemplos sintéticos; §13 cobertura microetapas; §14 regras CP-01..10; Bloco E |
 | Classes declaradas | 5/5 — bloqueio, obrigação, confirmação, sugestão_mandatória, roteamento |
 | `reply_text` em payloads | AUSENTE — todos os 6 usos são em proibições/invariantes (CP-01, AP-CP-01) |
 | Invariante global | `PolicyDecision.action` jamais contém `reply_text`, `mensagem_usuario`, `texto_cliente` ou equivalente — explícito em §1 e §14 CP-01 |
@@ -120,7 +120,7 @@ regras, ordem de avaliação, veto suave, validador e suíte de testes).
 | **S1 ↔ S2** Classes usadas nas regras | As 4 regras críticas de S2 emitem exclusivamente classes definidas em S1 (bloqueio, obrigação, confirmação, sugestão_mandatória) — nenhuma classe inventada | **PASS** |
 | **S2 ↔ T2_DICIONARIO_FATOS** Fact_keys | 14 chaves de S2 verificadas contra dicionário T2 em §7 de S2 — zero chaves fora do dicionário | **PASS** |
 | **S2 ↔ T2_POLITICA_CONFIANCA** Status de disparo | R_ESTRANGEIRO_SEM_RNM exige `nationality.status = "confirmed"` para emitir bloqueio — alinhado com hierarquia de confiança de T2.3 | **PASS** |
-| **S3 ↔ S1** Prioridade de classes | Ordem do pipeline de S3 (bloqueios antes de confirmações antes de obrigações) é coerente com prioridade de S1 (bloqueio 1 > obrigação 2 > confirmação 3 > sugestão 4 > roteamento 5) | **PASS** |
+| **S3 ↔ S1** Prioridade de classes | Ordem do pipeline de S3 (bloqueios antes de confirmações antes de obrigações) é coerente com prioridade de S1 (bloqueio 1 > confirmação 2 > obrigação 3 > sugestão_mandatória 4 > roteamento 5) | **PASS** |
 | **S3 ↔ S2** Colisões com regras reais | COL-BLOCK-OBLIG, COL-BLOCK-ROUTE e outros códigos de S3 são verificados nos casos de colisão de S5 com as regras reais de S2; TC-COL-01 e TC-COL-04 corrigidos para aderir a T3.3 §5 | **PASS** |
 | **S4 ↔ S3** Extensão do PolicyDecisionSet | S4 estende o shape de S3 com `soft_vetos[]` sem quebrar a invariante `decisions[]`/`collisions[]`; separação explícita confirmada | **PASS** |
 | **S4 ↔ T2_LEAD_STATE_V1** ValidationContext | ValidationContext consome `prior_lead_state` e `proposed_state_delta` — fields alinhados com 11 blocos do lead_state v1 de T2.2 | **PASS** |
@@ -135,10 +135,10 @@ regras, ordem de avaliação, veto suave, validador e suíte de testes).
 
 ### Cenário V1 — Casado civil + solo + renda baixa + estrangeiro sem RNM confirmado
 
-**Entrada:** `fact_estado_civil = "uniao_estavel", fact_process_mode = "solo", fact_monthly_income_p1 = 1800, fact_nationality = "estrangeiro" (confirmed), fact_rnm_status = null`
+**Entrada:** `fact_estado_civil = "casado_civil", fact_process_mode = "solo", fact_monthly_income_p1 = 1800, fact_nationality = "estrangeiro" (confirmed), fact_rnm_status = null`
 
 **Resultado esperado pelo policy engine:**
-- `decisions[]` = [bloqueio R_ESTRANGEIRO_SEM_RNM + obrigação R_CASADO_CIVIL_CONJUNTO + obrigação R_SOLO_BAIXA_COMPOSICAO]
+- `decisions[]` = [bloqueio R_ESTRANGEIRO_SEM_RNM + obrigação R_CASADO_CIVIL_CONJUNTO + sugestão_mandatória R_SOLO_BAIXA_COMPOSICAO]
 - `collisions[]` = [] — fatos distintos, sem COL-BLOCK-OBLIG
 - `soft_vetos[]` = [VS de colisao_latente sobre renda baixa]
 
@@ -340,6 +340,14 @@ Há lacuna remanescente?:               não —
   5 lacunas não bloqueantes declaradas formalmente em §5.2 (LNB-01..05);
   todas com justificativa de por que não impedem G3;
   zero lacunas bloqueantes.
+
+Revisão pós-abertura (2026-04-25):
+  Três correções aplicadas ao §1 e §3 do READINESS_G3.md:
+  (1) Ordem operacional em §1.1 corrigida para bloqueio(1)>confirmação(2)>obrigação(3)>
+      sugestão_mandatória(4)>roteamento(5) — alinhada com T3.3 pipeline.
+  (2) §2 coerência S3↔S1 atualizada com a mesma ordem corrigida.
+  (3) Cenário V1 em §3 corrigido: fact_estado_civil="casado_civil" (era "uniao_estavel");
+      R_SOLO_BAIXA_COMPOSICAO declarada como sugestão_mandatória (era obrigação).
 
 Há item parcial/inconclusivo bloqueante?:  não.
 Fechamento permitido nesta PR?:            sim
