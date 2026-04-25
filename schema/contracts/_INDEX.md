@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T3 — Policy engine v1 e guardrails declarativos | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` | skeleton | G2 aprovado; G3 — policy engine funcional | 2026-04-24 | PR-T2.R executada | PR-T3.0 |
+| T3 — Policy engine v1 e guardrails declarativos | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` | aberto | G2 aprovado; G3 — policy engine funcional | 2026-04-24 | PR-T3.0 executada | PR-T3.1 |
 
 ## Contratos encerrados
 
@@ -155,3 +155,4 @@ schema/contracts/
 - 2026-04-24 — PR-T2.4 executada. T2_RECONCILIACAO.md criado: tipologia formal 7 estados (hypothesis/captured/inferred/confirmed/contradicted/pending/obsolete); protocolo reconciliação 7 etapas; hierarquia de prioridade por origem; 10 domínios específicos (renda, estado civil, regime, composição/P2, IR autônomo, restrição, RNM, áudio ruim, Vasques vs confirmed, doc ilegível); 10 casos sintéticos RC-01..RC-10; tabela de transições; 12 anti-padrões AP-01..AP-12; 10 regras RC-01..RC-10. PR-T2.5 desbloqueada. Próximo passo: PR-T2.5.
 - 2026-04-24 — PR-T2.5 executada. T2_RESUMO_PERSISTIDO.md criado: 4 camadas de memória (L1/L2/L3/L4); protocolo de snapshot com 7 triggers e shape SnapshotExecutivo completo; regras anti-contaminação RC-AN-01..07; memória Vasques RV-01..07; aprendizado sem script RA-01..05; tabela E1→E2 (27 campos + 7 descartados + stages); 10 casos sintéticos SP-01..SP-10; 12 anti-padrões AP-RP-01..12; 10 regras RP-01..10. PR-T2.R desbloqueada. Próximo passo: PR-T2.R.
 - 2026-04-24 — PR-T2.R executada. READINESS_G2.md criado: smoke 6/6 PASS; critérios 8/8 CUMPRIDOS; coerência verificada em 8 dimensões; cenários V1/V2/V3 PASS; zero violações LLM-first; zero lacunas bloqueantes. G2 APROVADO. Contrato T2 ENCERRADO e arquivado em archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md. Skeleton T3 criado em active/. PR-T3.0 desbloqueada. Próximo passo: PR-T3.0.
+- 2026-04-24 — PR-T3.0 executada. Contrato T3 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: §1–§17 + Bloco E (objetivo, escopo, fora de escopo, dependências, entradas, saídas S1–S6, critérios CA-01..CA-10, provas P-T3-01..05, bloqueios B-01..05, quebra PRs T3.0–T3.R, gate G3). PR-T3.1 desbloqueada. Próximo passo: PR-T3.1.

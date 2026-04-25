@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T2 — Estado estruturado, memória e reconciliação.
+Fase macro ativa: T3 — Policy engine v1 e guardrails declarativos.
 
 Gate anterior: G2 — APROVADO em 2026-04-24 via PR-T2.R.
 
 Gate aberto: G3 — policy engine funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (skeleton — G2 APROVADO; aguardando PR-T3.0 para abertura formal).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (aberto — PR-T3.0 executada em 2026-04-24).
 
 Contrato T2 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
 
@@ -18,10 +18,11 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T2.R` — readiness e closeout G2: `schema/implantation/READINESS_G2.md` criado com smoke
-6/6 PASS, critérios 8/8 CUMPRIDOS, coerência entre artefatos verificada em 8 dimensões,
-3 cenários sintéticos PASS, zero violações LLM-first, zero lacunas bloqueantes. G2 APROVADO.
-Contrato T2 ENCERRADO e arquivado. Skeleton T3 criado. PR-T3.0 desbloqueada.
+`PR-T3.0` — abertura formal do contrato T3: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md`
+preenchido com corpo completo (§1–§17 + Bloco E): objetivo (policy engine decide, não fala),
+escopo (T3_CLASSES_POLITICA → T3_REGRAS_CRITICAS → T3_ORDEM_AVALIACAO → T3_VETO_SUAVE →
+T3_SUITE_TESTES → READINESS_G3), 10 critérios de aceite (CA-01..CA-10), 5 provas, 5 bloqueios,
+16 quebra de PRs (T3.0–T3.R), gate G3 definido formalmente. PR-T3.1 desbloqueada.
 
 ## O que a PR-T2.R fechou
 
@@ -223,24 +224,50 @@ PR-T2.R desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T3.0 — Abertura formal do contrato T3 (Policy Engine v1).
+PR-T3.1 — Classes canônicas de política.
 
-Leituras obrigatórias para PR-T3.0:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (skeleton — a preencher)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção PR-T3.0)
-3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3)
-4. `schema/implantation/READINESS_G2.md` (evidência do G2 aprovado)
-5. `schema/implantation/T2_RECONCILIACAO.md`
-6. `schema/implantation/T2_POLITICA_CONFIANCA.md`
-7. `schema/implantation/T2_LEAD_STATE_V1.md`
-8. `schema/implantation/T2_DICIONARIO_FATOS.md`
-9. `schema/CONTRACT_SCHEMA.md` (formato canônico de contrato)
-10. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-11. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-12. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-13. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-14. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-15. `schema/CODEX_WORKFLOW.md`
+Leituras obrigatórias para PR-T3.1:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (contrato T3 aberto — §1–§17)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.1)
+3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 2: "bloquear", "desviar", "confirmar", "orientar")
+4. `schema/legacy/INDEX_LEGADO_MESTRE.md` → L03 (obrigatório); L14 (complementar para bloqueio)
+5. `schema/implantation/T2_LEAD_STATE_SCHEMA_V1.md`
+6. `schema/implantation/T2_POLITICA_CONFIANCA_ORIGEM.md`
+7. `schema/implantation/READINESS_G2.md`
+8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+## O que a PR-T3.0 fechou
+
+- Preencheu `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` com corpo completo (CONTRACT_SCHEMA.md):
+  - §1 Objetivo: policy engine decide mas não fala; 5 entregas ao final de T3;
+  - §2 Escopo: 8 itens verificáveis (T3_CLASSES → T3_REGRAS → T3_ORDEM → T3_VETO → T3_SUITE → READINESS_G3);
+  - §3 Fora de escopo: src/, orquestrador T4, Supabase real, reply_text no engine;
+  - §4 Dependências: G2 APROVADO (desbloqueado) + T2 encerrado (desbloqueado) + 6 artefatos T2;
+  - §5 Entradas: 8 artefatos de entrada com condições;
+  - §6 Saídas: S1–S6 com caminho, PR criadora e conteúdo mínimo;
+  - §7 Critérios de aceite: CA-01..CA-10 (LLM-first, 4 regras, ordem estável, veto suave, validador, ≥20 testes, coerência lead_state, microetapas);
+  - §8 Provas: P-T3-01..P-T3-05;
+  - §9 Bloqueios: B-01..B-05 (B-01 e B-02 desbloqueados);
+  - §10 Próximo passo: PR-T3.1;
+  - §11 A01: T3 semanas 5–6, prioridade 4, G2→G3;
+  - §12 Legados: L03 obrigatório + 12 complementares com PR e contexto;
+  - §13 Referências: 14 documentos;
+  - §14 Blocos legados obrigatórios/complementares com quando consultar;
+  - §15 Ordem mínima de leitura por PR;
+  - §16 Quebra PRs T3.0–T3.R: 7 PRs com artefato/dependência/microetapa;
+  - §17 Gate G3: condições aprovação/reprovação, consequências, artefato READINESS_G3.
+  - Bloco E: PR-T3.1 desbloqueada.
+
+## O que a PR-T3.0 nao fechou
+
+- Não criou T3_CLASSES_POLITICA.md (escopo T3.1).
+- Não implementou nenhuma regra ou classe de política.
+- Não alterou src/, package.json, wrangler.toml.
+- G3 não fechado.
 
 ## Mudancas em dados persistidos
 
@@ -252,8 +279,9 @@ Nenhuma adicional.
 
 ## Bloqueios
 
-- G1 APROVADO. T2 autorizada.
-- G2 aberto — bloqueado até PR-T2.R (readiness de T2).
+- G1 APROVADO. G2 APROVADO. T3 aberta formalmente.
+- G3 aberto — bloqueado até PR-T3.R (readiness de T3).
+- PR-T3.1 desbloqueada. PRs T3.2–T3.R ainda bloqueadas.
 - Qualquer ativacao real externa permanece bloqueada ate fase e contrato correspondentes.
 
 ## O que a PR-T1.3 fechou (historico)

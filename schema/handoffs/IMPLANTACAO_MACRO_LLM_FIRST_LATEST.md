@@ -2398,3 +2398,91 @@ Próxima PR autorizada:                 PR-T3.0 — Abertura do contrato de Poli
 13. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 14. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 15. `schema/CODEX_WORKFLOW.md`
+
+---
+
+## Atualizacao 2026-04-24 — PR-T3.0: Abertura formal do contrato T3
+
+### Objetivo executado
+
+Preencher formalmente o skeleton T3 com o corpo completo do contrato, conforme CONTRACT_SCHEMA.md,
+sem implementar policy engine real.
+
+### O que foi feito
+
+- Preencheu `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` com §1–§17 + Bloco E:
+  - §1 Objetivo: policy engine decide mas não fala; cinco entregas canônicas ao final de T3;
+  - §2 Escopo: 8 itens (T3_CLASSES_POLITICA, T3_REGRAS_CRITICAS_DECLARATIVAS, T3_ORDEM_AVALIACAO_COMPOSICAO, T3_VETO_SUAVE_VALIDADOR, T3_SUITE_TESTES_REGRAS, READINESS_G3 + tracking);
+  - §3 Fora de escopo: src/, T4, Supabase real, reply_text no engine;
+  - §4 Dependências: G2 APROVADO (desbloqueado) + T2 encerrado (desbloqueado) + 6 artefatos T2;
+  - §5–§6 Entradas (8 artefatos com condições) e Saídas (S1–S6 com PR criadora e conteúdo mínimo);
+  - §7 Critérios de aceite CA-01..CA-10: LLM-first no engine, 4 regras codificadas, ordem estável, veto suave distinto, validador ≥3 itens, ≥20 testes, coerência com lead_state v1, 5 microetapas cobertas, G3 com Bloco E;
+  - §8 Provas P-T3-01..P-T3-05; §9 Bloqueios B-01..B-05 (B-01 e B-02 desbloqueados);
+  - §10 Próximo passo: PR-T3.1; §11 A01: T3 semanas 5–6 prioridade 4;
+  - §12 Legados: L03 obrigatório + 12 complementares (L05, L07–L17, L19) com PR e contexto;
+  - §13 Referências: 14 documentos; §14 Blocos obrigatórios/complementares com quando consultar;
+  - §15 Ordem mínima de leitura por PR; §16 Quebra T3.0–T3.R (7 PRs); §17 Gate G3 completo;
+  - Bloco E: PR-T3.1 desbloqueada.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`:
+  - Fase ativa: T3; contrato ativo: aberto — PR-T3.0 executada; próximo passo: PR-T3.1.
+- Atualizou `schema/contracts/_INDEX.md`:
+  - Row T3: status skeleton → aberto; PR atual → PR-T3.0 executada; próximo → PR-T3.1;
+  - Última sincronização: PR-T3.0 entrada adicionada.
+
+### O que não foi feito
+
+- Não criou T3_CLASSES_POLITICA.md (escopo PR-T3.1).
+- Não implementou nenhuma classe, regra ou validador.
+- Não alterou src/, package.json, wrangler.toml.
+- G3 não fechado.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — nenhum campo de saída do engine produz reply_text (CA-01, CA-08 declarados).
+- A00-ADENDO-02: confirmada — identidade MCMV preservada; L19 amarrado para regras de perfil.
+- A00-ADENDO-03: confirmada — Bloco E presente.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md
+PR que fecha:                          PR-T3.0 (abertura do contrato T3)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — §1–§17 preenchidos; skeleton substituído por corpo
+                                       formal; CA-01..CA-10 definidos; PRs T3.0–T3.R mapeadas;
+                                       gate G3 com condições objetivas; Bloco E presente.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         contrato T3 ABERTO; PR-T3.1 desbloqueada.
+Próxima PR autorizada:                 PR-T3.1 — Classes canônicas de política
+```
+
+### Estado atual do repositorio
+
+- Fase macro: **T3** — contrato aberto; PR-T3.1 próxima.
+- G0: APROVADO. G1: APROVADO (2026-04-23). G2: APROVADO (2026-04-24). G3: aberto.
+- T3_CLASSES_POLITICA.md: pendente (PR-T3.1).
+- T3_REGRAS_CRITICAS_DECLARATIVAS.md: pendente (PR-T3.2).
+- T3_ORDEM_AVALIACAO_COMPOSICAO.md: pendente (PR-T3.3).
+- T3_VETO_SUAVE_VALIDADOR.md: pendente (PR-T3.4).
+- T3_SUITE_TESTES_REGRAS.md: pendente (PR-T3.5).
+- READINESS_G3.md: pendente (PR-T3.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T3.1`** — Classes canônicas de política.
+
+### Leituras obrigatorias para PR-T3.1
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (contrato T3 — §1–§17)
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.1)
+3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 2)
+4. **L03** — Mapa Canônico do Funil (obrigatório)
+5. `schema/implantation/T2_LEAD_STATE_SCHEMA_V1.md`
+6. `schema/implantation/T2_POLITICA_CONFIANCA_ORIGEM.md`
+7. `schema/implantation/READINESS_G2.md`
+8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
