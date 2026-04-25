@@ -8,7 +8,7 @@ Gate anterior: G2 — APROVADO em 2026-04-24 via PR-T2.R.
 
 Gate aberto: G3 — policy engine funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (aberto — PR-T3.0 executada em 2026-04-24).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (em execução — PR-T3.1 executada em 2026-04-25).
 
 Contrato T2 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
 
@@ -18,11 +18,13 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T3.0` — abertura formal do contrato T3: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md`
-preenchido com corpo completo (§1–§17 + Bloco E): objetivo (policy engine decide, não fala),
-escopo (T3_CLASSES_POLITICA → T3_REGRAS_CRITICAS → T3_ORDEM_AVALIACAO → T3_VETO_SUAVE →
-T3_SUITE_TESTES → READINESS_G3), 10 critérios de aceite (CA-01..CA-10), 5 provas, 5 bloqueios,
-16 quebra de PRs (T3.0–T3.R), gate G3 definido formalmente. PR-T3.1 desbloqueada.
+`PR-T3.1` — classes canônicas de política: `schema/implantation/T3_CLASSES_POLITICA.md` criado
+com 5 classes (bloqueio, obrigação, confirmação, sugestão_mandatória, roteamento); shape
+`PolicyDecision` com invariante global sem `reply_text`; payload mínimo por classe;
+prioridade entre classes (bloqueio > obrigação > confirmação > sugestão > roteamento);
+4 efeitos operacionais formalmente definidos (§8); integração com lead_state v1 e política
+de confiança; 5 exemplos sintéticos; 10 anti-padrões AP-CP-01..10; 10 regras CP-01..10;
+microetapa 2 do mestre T3 coberta. PR-T3.2 desbloqueada.
 
 ## O que a PR-T2.R fechou
 
@@ -224,21 +226,52 @@ PR-T2.R desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T3.1 — Classes canônicas de política.
+PR-T3.2 — Codificação declarativa das regras críticas.
 
-Leituras obrigatórias para PR-T3.1:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (contrato T3 aberto — §1–§17)
-2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.1)
-3. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 2: "bloquear", "desviar", "confirmar", "orientar")
-4. `schema/legacy/INDEX_LEGADO_MESTRE.md` → L03 (obrigatório); L14 (complementar para bloqueio)
-5. `schema/implantation/T2_LEAD_STATE_V1.md`
-6. `schema/implantation/T2_POLITICA_CONFIANCA.md`
-7. `schema/implantation/READINESS_G2.md`
-8. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
-9. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
-10. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-11. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-12. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+Leituras obrigatórias para PR-T3.2:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-02, §16 T3.2)
+2. `schema/implantation/T3_CLASSES_POLITICA.md` (classes e payloads — base para codificação)
+3. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.2)
+4. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 1)
+5. **L03** — Mapa Canônico do Funil (obrigatório)
+6. L07–L08 — Estado Civil (casado civil→conjunto)
+7. L09–L10 — Composição Familiar (solo baixa→composição)
+8. L11–L12 — Regime e Renda (autônomo→IR)
+9. L19 — Memorial MCMV (estrangeiro sem RNM→bloqueio)
+10. `schema/implantation/T2_LEAD_STATE_V1.md`
+11. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+12. `schema/implantation/T2_DICIONARIO_FATOS.md`
+13. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+14. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+15. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+## O que a PR-T3.1 fechou
+
+- Criou `schema/implantation/T3_CLASSES_POLITICA.md` com:
+  - Shape `PolicyDecision` com invariante global (sem `reply_text` em nenhum payload de `action`);
+  - §2 Classe BLOQUEIO: "bloquear avanço" formal; payload `BloqueioAction`; distinção de veto suave;
+  - §3 Classe OBRIGAÇÃO: "exigir ação"; payload `ObrigacaoAction`; diferença de `blocked_by`;
+  - §4 Classe CONFIRMAÇÃO: "pedir confirmação"; payload `ConfirmacaoAction`; distinção de obrigação;
+  - §5 Classe SUGESTÃO MANDATÓRIA: "apenas orientar"; payload `SugestaoMandatoriaAction`;
+  - §6 Classe ROTEAMENTO: "desviar objetivo"; payload `RoteamentoAction`; efeito no lead_state;
+  - §7 Prioridade entre classes: bloqueio (1) > obrigação (2) > confirmação (3) > sugestão (4) > roteamento (5);
+  - §8 Definições formais dos 4 efeitos operacionais (microetapa 2 do mestre T3 coberta);
+  - §9 Integração com lead_state v1: 10 campos e quais classes os modificam;
+  - §10 Integração com política de confiança: regras PC-INT-01..05;
+  - §11 10 anti-padrões AP-CP-01..10;
+  - §12 5 exemplos sintéticos (bloqueio/obrigação/confirmação/sugestão/roteamento);
+  - §13 Cobertura de microetapas: microetapa 2 coberta; 1/3/4/5 delegadas;
+  - §14 10 regras invioláveis CP-01..10;
+  - Bloco E: fechamento PR-T3.1 permitido; PR-T3.2 desbloqueada.
+
+## O que a PR-T3.1 nao fechou
+
+- T3_REGRAS_CRITICAS_DECLARATIVAS.md (microetapa 1 — escopo PR-T3.2).
+- T3_ORDEM_AVALIACAO_COMPOSICAO.md (microetapas 3 e 4 — escopo PR-T3.3).
+- T3_VETO_SUAVE_VALIDADOR.md (microetapa 5 — escopo PR-T3.4).
+- T3_SUITE_TESTES_REGRAS.md (escopo PR-T3.5).
+- Nenhuma implementação real em src/. Nenhuma alteração em package.json, wrangler.toml.
+- G3 não fechado.
 
 ## O que a PR-T3.0 fechou
 
