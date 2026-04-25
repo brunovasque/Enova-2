@@ -8,7 +8,7 @@ Gate anterior: G2 — APROVADO em 2026-04-24 via PR-T2.R.
 
 Gate aberto: G3 — policy engine funcional.
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (em execução — PR-T3.1 executada em 2026-04-25).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (em execução — PR-T3.2 executada em 2026-04-24).
 
 Contrato T2 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T2_2026-04-24.md`.
 
@@ -18,13 +18,17 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T3.1` — classes canônicas de política: `schema/implantation/T3_CLASSES_POLITICA.md` criado
-com 5 classes (bloqueio, obrigação, confirmação, sugestão_mandatória, roteamento); shape
-`PolicyDecision` com invariante global sem `reply_text`; payload mínimo por classe;
-prioridade entre classes (bloqueio > obrigação > confirmação > sugestão > roteamento);
-4 efeitos operacionais formalmente definidos (§8); integração com lead_state v1 e política
-de confiança; 5 exemplos sintéticos; 10 anti-padrões AP-CP-01..10; 10 regras CP-01..10;
-microetapa 2 do mestre T3 coberta. PR-T3.2 desbloqueada.
+`PR-T3.2` — codificação declarativa das regras críticas: `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md`
+criado com 4 regras críticas (R_CASADO_CIVIL_CONJUNTO, R_AUTONOMO_IR, R_SOLO_BAIXA_COMPOSICAO,
+R_ESTRANGEIRO_SEM_RNM); cada regra especificada com rule_id canônico, fatos de entrada (apenas
+chaves T2), condição de disparo, classes emitidas, payloads mínimos, severidade, condições de ativação
+por status de fato, e efeito no lead_state v1; invariante central: nenhum payload de `action` contém
+`reply_text`; 3 regras usam exclusivamente confirmação/obrigação/sugestão_mandatória; bloqueio
+emitido apenas por R_ESTRANGEIRO_SEM_RNM e somente quando `nationality.status="confirmed"`;
+R_SOLO_BAIXA_COMPOSICAO NUNCA emite bloqueio e NUNCA seta `elegibility_status="ineligible"`;
+tabela de validação cruzada (§6); 14 chaves canônicas verificadas contra T2_DICIONARIO_FATOS (§7);
+10 anti-padrões AP-RC-01..10 (§8); 10 regras invioláveis RC-INV-01..10 (§9); microetapa 1 do
+mestre T3 coberta. PR-T3.3 desbloqueada.
 
 ## O que a PR-T2.R fechou
 
@@ -226,24 +230,49 @@ PR-T2.R desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T3.2 — Codificação declarativa das regras críticas.
+PR-T3.3 — Ordem de avaliação e composição de políticas.
 
-Leituras obrigatórias para PR-T3.2:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-02, §16 T3.2)
-2. `schema/implantation/T3_CLASSES_POLITICA.md` (classes e payloads — base para codificação)
-3. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.2)
-4. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapa 1)
-5. **L03** — Mapa Canônico do Funil (obrigatório)
-6. L07–L08 — Estado Civil (casado civil→conjunto)
-7. L09–L10 — Composição Familiar (solo baixa→composição)
-8. L11–L12 — Regime e Renda (autônomo→IR)
-9. L19 — Memorial MCMV (estrangeiro sem RNM→bloqueio)
-10. `schema/implantation/T2_LEAD_STATE_V1.md`
-11. `schema/implantation/T2_POLITICA_CONFIANCA.md`
-12. `schema/implantation/T2_DICIONARIO_FATOS.md`
-13. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-14. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-15. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+Leituras obrigatórias para PR-T3.3:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T3.md` (§2, §7 CA-03/CA-05, §16 T3.3)
+2. `schema/implantation/T3_CLASSES_POLITICA.md` (prioridade entre classes — §7)
+3. `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md` (regras declaradas — base para composição)
+4. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` (seção J — PR-T3.3)
+5. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` (seção T3 — microetapas 3 e 4)
+6. `schema/implantation/T2_LEAD_STATE_V1.md`
+7. `schema/implantation/T2_POLITICA_CONFIANCA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+9. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+10. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+## O que a PR-T3.2 fechou
+
+- Criou `schema/implantation/T3_REGRAS_CRITICAS_DECLARATIVAS.md` com:
+  - §1 Tabela-resumo dos 4 regras com rule_id, fatos de entrada, classes emitidas e severidade;
+  - §2 R_CASADO_CIVIL_CONJUNTO: fatos `fact_estado_civil` + `fact_process_mode`; 3 decisões
+    (confirmação baixa confiança + obrigação); NUNCA emite bloqueio; efeito: `must_ask_now`;
+  - §3 R_AUTONOMO_IR: fato `fact_work_regime_p1` + `fact_autonomo_has_ir_p1`; 3 variantes:
+    obrigação (ausente), confirmação (parcial/não_informado), sugestão_mandatória ("não" — não
+    automático inelegível); NUNCA declara inelegibilidade automática;
+  - §4 R_SOLO_BAIXA_COMPOSICAO: fatos `fact_process_mode` + `fact_monthly_income_p1` +
+    `derived_composition_needed`; INVARIANTE: NUNCA emite bloqueio; NUNCA seta
+    `elegibility_status="ineligible"`; classes: sugestão_mandatória + obrigação;
+  - §5 R_ESTRANGEIRO_SEM_RNM: fatos `fact_nationality` + `fact_rnm_status` + derivados;
+    3 decisões graduais — confirmação (captured), obrigação (RNM ausente), bloqueio
+    (somente quando `nationality.status="confirmed"` e RNM inválido); naturalizado excluído;
+  - §6 Tabela de validação cruzada: 10 variantes × fato→classe→efeito;
+  - §7 14 chaves canônicas verificadas contra T2_DICIONARIO_FATOS;
+  - §8 10 anti-padrões AP-RC-01..10;
+  - §9 10 regras invioláveis RC-INV-01..10;
+  - §10 Cobertura de microetapas: microetapa 1 coberta; 2/3/4/5 delegadas;
+  - Bloco E: PR-T3.2 fechada; PR-T3.3 desbloqueada.
+
+## O que a PR-T3.2 nao fechou
+
+- T3_ORDEM_AVALIACAO_COMPOSICAO.md (microetapas 3 e 4 — escopo PR-T3.3).
+- T3_VETO_SUAVE_VALIDADOR.md (microetapa 5 — escopo PR-T3.4).
+- T3_SUITE_TESTES_REGRAS.md (escopo PR-T3.5).
+- Nenhuma implementação real em src/. Nenhuma alteração em package.json, wrangler.toml.
+- G3 não fechado.
 
 ## O que a PR-T3.1 fechou
 
