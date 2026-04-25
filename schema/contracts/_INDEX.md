@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T4 — Orquestrador de turno LLM-first | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` | aberto | G3 aprovado; G4 — orquestrador funcional | 2026-04-25 | PR-T4.0 | PR-T4.1 |
+| T4 — Orquestrador de turno LLM-first | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` | em execução | G3 aprovado; G4 — orquestrador funcional | 2026-04-25 | PR-T4.1 | PR-T4.2 |
 
 ## Contratos encerrados
 
@@ -164,3 +164,4 @@ schema/contracts/
 - 2026-04-25 — PR-T3.5 executada. T3_SUITE_TESTES_REGRAS.md criado: 24 casos declarativos (mínimo 20, CA-06 cumprido): 4 positivos TC-POS-01..04; 4 negativos TC-NEG-01..04; 4 ambíguos TC-AMB-01..04; 4 colisões TC-COL-01..04 (COL-BLOCK-OBLIG, coexistência, COL-CONF-CONF-LEVEL, COL-BLOCK-ROUTE); 4 regressões TC-REG-01..04 (RC-INV-01/03/04/05); 2 ordem/composição TC-ORD-01..02; 2 validador TC-VAL-01..02; critérios PASS/FAIL globais (§10); validação cruzada T3.1/T3.2/T3.3/T3.4/T2 em 18 linhas; 8 anti-padrões AP-ST; 5 microetapas T3 cobertas. PR-T3.R desbloqueada. Próximo passo: PR-T3.R.
 - 2026-04-25 — PR-T3.R executada. READINESS_G3.md criado: smoke 5/5 PASS (S1–S5); coerência 11 dimensões PASS; cenários V1/V2/V3 PASS; critérios CA-01..CA-10 10/10 CUMPRIDOS; zero lacunas bloqueantes; 5 lacunas não bloqueantes (LNB-01..05) declaradas e justificadas. G3 APROVADO. Contrato T3 ENCERRADO e arquivado em archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md. Skeleton T4 criado em active/. PR-T4.0 desbloqueada. Próximo passo: PR-T4.0.
 - 2026-04-25 — PR-T4.0 executada. Contrato T4 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: §1–§17 + Bloco E (objetivo, escopo, fora de escopo, dependências, entradas, saídas S1–S6, critérios CA-01..CA-10, provas P-T4-01..05, bloqueios B-01..05, quebra PRs T4.0–T4.R, gate G4). TurnoEntrada e TurnoSaida como shapes canônicos; 8-step pipeline declarado; fallbacks documentados; Bloco E aplicado. PR-T4.1 desbloqueada. Próximo passo: PR-T4.1.
+- 2026-04-25 — PR-T4.1 executada. T4_ENTRADA_TURNO.md criado: shape TurnoEntrada com 6 campos obrigatórios (turn_id, case_id, message_text, channel, lead_state, current_objective) e 4 opcionais (attachments, prior_decisions, soft_vetos_ctx, context_override); sequência de validação V1–V6; montagem de ContextoTurno; 13 campos proibidos com códigos TE-*; TE-INV-01..10; 12 anti-padrões AP-TE; 5 exemplos sintéticos; validação cruzada T1/T2/T3; microetapa 1 coberta; Bloco E aplicado. PR-T4.2 desbloqueada. Próximo passo: PR-T4.2.
