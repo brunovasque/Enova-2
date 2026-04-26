@@ -2,13 +2,15 @@
 
 ## Estado atual
 
-Fase macro ativa: T4 — Orquestrador de turno LLM-first (em execução; PR-T4.R desbloqueada).
+Fase macro ativa: T5 — Migração do funil e integração de canal (skeleton; PR-T5.0 desbloqueada).
 
-Gate anterior: G3 — APROVADO em 2026-04-25 via PR-T3.R.
+Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
-Gate aberto: G4 — orquestrador funcional (bloqueado até PR-T4.R).
+Gate aberto: G5 — funil migrado (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (em execução — PR-T4.6 executada em 2026-04-25).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (skeleton — PR-T5.0 preencherá corpo completo).
+
+Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
 Contrato T3 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
 
@@ -19,6 +21,18 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T4.R` — Readiness/Closeout G4:
+`schema/implantation/READINESS_G4.md` criado: smoke S1–S6 (6/6 PASS);
+CA-01..CA-10 (10/10 CUMPRIDOS); 5 microetapas T4 cobertas; coerência
+cross-artefato verificada em 10 invariantes + 8 transições de pipeline;
+soberania LLM intacta (zero reply_text mecânico em qualquer artefato/resultado);
+fallback 4/4 com FB-INV-01..04 confirmados; bateria E2E 10 cenários (CA-09);
+zero lacunas bloqueantes; 5 lacunas não bloqueantes (LNB-G4-01..05) todas
+intencionais; decisão G4 APROVADO; contrato T4 encerrado via
+CONTRACT_CLOSEOUT_PROTOCOL e arquivado; skeleton T5 criado; PR-T5.0 desbloqueada.
+
+## Ultima tarefa anterior
 
 `PR-T4.6` — Bateria E2E sandbox + latência/custo:
 `schema/implantation/T4_BATERIA_E2E.md` criado: 10 cenários declarativos completos —
@@ -148,11 +162,33 @@ Contrato T3 ENCERRADO e arquivado. Skeleton T4 criado. PR-T4.0 desbloqueada.
   - Bloco E completo — PR-T4.R desbloqueada.
 - Atualizou `schema/contracts/_INDEX.md`: PR atual → PR-T4.6; próximo → PR-T4.R.
 
+## O que a PR-T4.R fechou
+
+- Criou `schema/implantation/READINESS_G4.md` com:
+  - §1 Smoke documental S1–S6 — 6/6 PASS;
+  - §2 CA-01..CA-10 — 10/10 CUMPRIDOS com evidência por critério;
+  - §3 Coerência cross-artefato: 8 transições de pipeline + 10 invariantes verificados;
+  - §4 Soberania LLM: intacta; zero reply_text mecânico em resultados E2E;
+  - §5 Zero lacunas bloqueantes; 5 não bloqueantes (LNB-G4-01..05);
+  - §6 Decisão formal G4 APROVADO;
+  - §7 Encerramento contrato T4 via CONTRACT_CLOSEOUT_PROTOCOL;
+  - §8 Conformidade A00-ADENDO-01/02/03; §9 Bloco E.
+- Arquivou contrato T4 em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
+- Criou skeleton T5 em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md`.
+- Atualizou `schema/contracts/_INDEX.md`: T4 encerrado/arquivado; T5 skeleton ativo; PR-T5.0 próximo passo.
+
+## O que a PR-T4.R não fechou
+
+- Não abriu T5 com corpo completo (skeleton criado — PR-T5.0 preencherá).
+- Não implementou orquestrador real em src/.
+- Não alterou package.json, wrangler.toml.
+- G5 não aberto.
+
 ## O que a PR-T4.6 não fechou
 
 - Readiness G4 → PR-T4.R.
 - Nenhum runtime/código (`src/`).
-- G4 não fechado.
+- G4 não fechado (encerrado por PR-T4.R).
 
 ## O que a PR-T4.5 não fechou
 
@@ -163,14 +199,15 @@ Contrato T3 ENCERRADO e arquivado. Skeleton T4 criado. PR-T4.0 desbloqueada.
 
 ## Proximo passo autorizado
 
-PR-T4.R — Readiness/Closeout G4 (`schema/implantation/READINESS_G4.md`).
+PR-T5.0 — Abertura formal do contrato T5 (`schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md`).
 
-Leituras obrigatórias para PR-T4.R:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§7 CA-01..CA-10; §17 gate G4)
-2. `schema/implantation/T4_BATERIA_E2E.md` (evidência E2E — CA-09)
-3. Todos os artefatos T4.1..T4.6
-4. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` §K PR-T4.R
-5. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03 — Bloco E obrigatório)
+Leituras obrigatórias para PR-T5.0:
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` seção T5
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` §L (PRs T5)
+3. `schema/contracts/_INDEX.md`
+4. `schema/implantation/READINESS_G4.md` (gate de entrada T5)
+5. `schema/CONTRACT_SCHEMA.md`
+6. Adendos A00-ADENDO-01/02/03
 
 ---
 

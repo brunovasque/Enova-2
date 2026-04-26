@@ -11,7 +11,7 @@
 | Blocos legados obrigatórios       | L03                                                                                           |
 | Blocos legados complementares     | L17, L18, L19                                                                                 |
 | Ordem mínima de leitura da frente | L03 → L17 (fase final/handoff) → L18 (QA/telemetria) → L19 (perfil MCMV)                    |
-| Status                            | **encerrado** — G4 APROVADO em 2026-04-25 por PR-T4.R; arquivado em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md` |
+| Status                            | **encerrado** — G4 APROVADO em 2026-04-25 por PR-T4.R; arquivado neste arquivo              |
 | Última atualização                | 2026-04-25 — encerrado por PR-T4.R                                                           |
 
 ---
@@ -364,9 +364,9 @@ Para PR-T4.6 (bateria E2E), adicionar:
 | PR | PR-T4.R — Readiness/Closeout G4 (PR #112) |
 | Data | 2026-04-25 |
 | Executor | Claude Code (claude-sonnet-4-6) |
-| Artefatos produzidos | `schema/implantation/READINESS_G4.md`; `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (skeleton); `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md` (arquivo) |
+| Artefatos produzidos | `schema/implantation/READINESS_G4.md`; `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (skeleton); este arquivo (arquivo histórico de T4) |
 | Status | CONCLUÍDA — contrato T4 ENCERRADO |
-| Evidência | Smoke S1–S6 PASS (6/6); CA-01..CA-10 CUMPRIDOS (10/10); 0 lacunas bloqueantes; 5 LNB documentadas; G4 APROVADO; contrato arquivado; T5 skeleton criado |
+| Evidência | Smoke S1–S6 PASS (6/6); CA-01..CA-10 CUMPRIDOS (10/10); 0 lacunas bloqueantes; 5 LNB documentadas; G4 APROVADO; contrato arquivado em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md` |
 | Cobertura de microetapas | N/A (PR de readiness/closeout — valida e encerra frente T4) |
 | Conformidade A00-ADENDO-01 | Confirmada — zero reply_text mecânico em todos os artefatos T4 verificados |
 | Conformidade A00-ADENDO-02 | Confirmada — orquestrador posicionado como coordenador em todos os artefatos S1–S6 |
