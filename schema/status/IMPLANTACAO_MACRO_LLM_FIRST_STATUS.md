@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T4 — Orquestrador de turno LLM-first (em execução; PR-T4.4 desbloqueada).
+Fase macro ativa: T4 — Orquestrador de turno LLM-first (em execução; PR-T4.5 desbloqueada).
 
 Gate anterior: G3 — APROVADO em 2026-04-25 via PR-T3.R.
 
 Gate aberto: G4 — orquestrador funcional (bloqueado até PR-T4.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (em execução — PR-T4.3 executada em 2026-04-25).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (em execução — PR-T4.4 executada em 2026-04-26).
 
 Contrato T3 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
 
@@ -19,6 +19,19 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T4.4` — Resposta final + rastro + métricas mínimas:
+`schema/implantation/T4_RESPOSTA_RASTRO_METRICAS.md` criado: regras de entrega condicional
+de `reply_text` (`reply_routing = "T4.4"` → entrega; `REJECT/T4.5"` → não entrega); T4.4
+nunca escreve/edita/substitui `reply_text`; shape `TurnoRastro` com 15 campos; métricas
+mínimas declarativas (latência total/LLM, tokens input/output/total, validation_result,
+persist_decision, facts_persisted_count, facts_blocked_count, reply_routing); camadas
+L1/L2/L3/L4 com regras de atualização pós-turno; TurnoRastro como auditoria pura (não
+fonte de fala); tratamento declarativo de erro de canal; RR-INV-01..12; 12 anti-padrões
+AP-RR; 5 exemplos sintéticos; microetapa 4 coberta; Bloco E.
+PR-T4.5 desbloqueada.
+
+## Ultima tarefa anterior
 
 `PR-T4.3` — Validação policy engine + reconciliação antes de persistir:
 `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` criado: `ProposedStateDelta` com regras
@@ -328,20 +341,56 @@ PR-T2.R desbloqueada.
 - Não alterou package.json, wrangler.toml.
 - G4 não fechado.
 
+## O que a PR-T4.4 fechou
+
+- Criou `schema/implantation/T4_RESPOSTA_RASTRO_METRICAS.md` com:
+  - §1 Posição no pipeline: Etapa 5 de 5; tabela entradas/saídas;
+  - §2 Regras de entrega condicional de `reply_text`: flowchart por `reply_routing`;
+    T4.4 não escreve/edita/substitui; tabela por ValidationResult; roteamento T4.5;
+    tratamento declarativo de erro de canal; RR-ROUT-01/02; RR-CANAL-01/02;
+  - §3 Shape `TurnoRastro` com 15 campos: turn_id, case_id, channel, validation_result
+    (ValidationResultSummary), persist_decision (PersistDecisionSummary),
+    policy_decisions_applied, facts_persisted, facts_blocked, conflicts_registered
+    (ConflictRef[]), reply_routing, channel_delivery_status, channel_error_code,
+    latency_ms, latency_llm_ms, tokens_input/output/total, timestamp,
+    turn_start_timestamp; RR-RAST-01/02 (`reply_text` nunca em campo operacional);
+  - §4 Métricas mínimas: tabela com 10 métricas, campo, origem, descrição; cálculo
+    latency_ms; shape TokensUsed; usos futuros declarados;
+  - §5 Camadas de memória pós-turno: L1 sempre (RR-L1-01), L2 condicional por
+    lead_state_action (RR-L2-01/02), L3 por evento de snapshot (RR-L3-01/02),
+    L4 arquivamento automático (RR-L4-01/02); ordem 8 passos pós-turno (§5.6);
+  - §6 Distinção TurnoRastro vs. TurnoSaida — artefatos complementares distintos;
+  - §7 RR-INV-01..12;
+  - §8 12 anti-padrões AP-RR-01..12;
+  - §9 5 exemplos sintéticos (APPROVE, REQUIRE_REVISION, PREVENT_PERSISTENCE,
+    REJECT não entregue T4.5, APPROVE com snapshot L3);
+  - §10 Microetapa 4 coberta;
+  - §11 Validação cruzada T1/T2/T3/T4.1/T4.2/T4.3 em 18 dimensões;
+  - Bloco E: PR-T4.5 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: T4 PR atual → PR-T4.4; próximo → PR-T4.5.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+## O que a PR-T4.4 nao fechou
+
+- T4_FALLBACKS.md (microetapa 5 — PR-T4.5).
+- T4_BATERIA_E2E.md e READINESS_G4.md.
+- Não implementou orquestrador real em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não fechado.
+
 ## Proximo passo autorizado
 
-PR-T4.4 — Resposta final + rastro + métricas (`T4_RESPOSTA_RASTRO_METRICAS.md`).
+PR-T4.5 — Fallbacks de segurança (`T4_FALLBACKS.md`).
 
-Leituras obrigatórias para PR-T4.4:
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S4, §7 CA-07, §16 PR-T4.4)
-2. `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` (PersistDecision + reply_routing)
-3. `schema/implantation/T4_PIPELINE_LLM.md` (reply_text capturado; LLMResult métricas)
-4. `schema/implantation/T4_ENTRADA_TURNO.md` (TurnoEntrada.turn_id/case_id)
-5. `schema/implantation/T1_CONTRATO_SAIDA.md` (TurnoSaida shape canônico — 13 campos)
-6. `schema/implantation/T2_RESUMO_PERSISTIDO.md` (L1/L2/L3 atualização pós-turno)
-7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+Leituras obrigatórias para PR-T4.5:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S5, §7 CA-08, §16 PR-T4.5)
+2. `schema/implantation/T4_RESPOSTA_RASTRO_METRICAS.md` (reply_routing T4.5; TurnoRastro)
+3. `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` (REJECT → T4.5; PersistDecision)
+4. `schema/implantation/T4_PIPELINE_LLM.md` (erros fatais; ParseError codes)
+5. `schema/implantation/T4_ENTRADA_TURNO.md` (erros de entrada → fallback)
+6. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+7. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+8. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 
 ## O que a PR-T4.2 fechou
 
