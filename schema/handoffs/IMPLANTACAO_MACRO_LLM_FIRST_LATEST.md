@@ -67,6 +67,46 @@ T0-PR2 — inventario legado vivo.
 - **Exceção contratual ativa?:** não.
 - A próxima PR (`PR-T0.1`) **deve declarar explicitamente** `Exceção contratual autorizada pelo Vasques?: não` no body (conforme `PR_EXECUTION_TEMPLATE.md`) e operar literalmente conforme o contrato T0.
 
+---
+
+## Atualizacao 2026-04-26 — PR-T5.0 — Abertura formal do contrato T5
+
+### ESTADO HERDADO
+
+- Fase: T5 skeleton; G4 APROVADO; T4 encerrado; PR-T5.0 desbloqueada.
+- Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (skeleton).
+- Última PR relevante: PR-T4.R (#112) MERGED em 2026-04-26.
+
+### ESTADO ENTREGUE
+
+O que foi feito nesta PR:
+- Skeleton T5 substituído por contrato completo §1–§17 + Bloco E.
+- Objetivo T5 declarado: migração declarativa do funil core por fatias controladas, sem if/else de fala.
+- 10 PRs mapeadas em §16: T5.0 (abertura), T5.1 (mapa fatias), T5.2–T5.6 (contratos de fatia), T5.7 (paridade), T5.8 (shadow/sandbox), T5.R (readiness G5).
+- Saídas S1–S9 declaradas (artefatos por PR).
+- CA-01..CA-10 definidos (incluindo CA-01: nenhuma fatia cria if/else de fala; CA-05: paridade funcional = cobertura de casos, não de fala).
+- B-01..B-10 declarados (B-04: if/else de fala = bloqueio permanente; B-07: Meta/WhatsApp proibido antes G5).
+- Gate G5 definido: paridade funcional dos fluxos prioritários.
+- Legados aplicáveis L03–L19 mapeados por PR.
+- _INDEX.md, STATUS e LATEST atualizados.
+
+O que foi fechado nesta PR: abertura formal do contrato T5; PR-T5.1 desbloqueada.
+
+O que continua pendente: execução das PRs T5.1–T5.R; criação dos artefatos de fatia.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.1 — Mapa de fatias do funil core e ordem de migração**
+- Artefato: `schema/implantation/T5_MAPA_FATIAS.md`
+- Leituras obrigatórias: CLAUDE.md, CODEX_WORKFLOW.md, CONTRATO_IMPLANTACAO_MACRO_T5.md, L03, LEGADO_MESTRE seção T5, PR_BIBLIA §L
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-0-abertura-contrato` → PR #113 aberta (aguardando merge)
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Gate G5: bloqueado até PR-T5.R
+- T6: bloqueado até G5 APROVADO
+
 ### Próximo passo (reafirmado)
 
 - `PR-T0.1 — Inventário de fluxos e estados vivos` (equivalente a `T0-PR2 — inventario legado vivo`).
