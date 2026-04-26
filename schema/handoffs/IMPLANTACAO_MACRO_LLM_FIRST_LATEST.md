@@ -110,10 +110,20 @@ O que continua pendente: execução das PRs T5.2–T5.R; contratos de fatia indi
 
 ### ESTADO ATUAL DO REPOSITÓRIO
 
-- Branch: `feat/t5-pr5-1-mapa-fatias` → PR a ser aberta
+- Branch: `feat/t5-pr5-1-mapa-fatias` → PR #114 aberta
 - Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
-- Artefato T5_MAPA_FATIAS.md: criado em `schema/implantation/`
+- Artefato T5_MAPA_FATIAS.md: criado em `schema/implantation/` (v2 — corrigido)
 - Gate G5: bloqueado até PR-T5.R
+
+### CORREÇÕES v2 (mesma PR #114)
+
+- Todos os `fact_*` inventados substituídos por chaves canônicas de T2_DICIONARIO_FATOS
+- 7 lacunas de schema futuras identificadas e marcadas (LF-01..LF-07)
+- Fase informativa expandida de 7 para 9 campos (adicionados `valor_fgts_informado` e `valor_entrada_informado` como lacunas informativas futuras)
+- `current_phase = encerramento` eliminado; substituído por `ACAO_INELEGIBILIDADE` → `elegibility_status = "ineligible"` (AP-10 adicionado)
+- Todas as menções a `T5_FATIA_F1.md` corrigidas para `T5_FATIA_TOPO_ABERTURA.md`
+- AP-11 adicionado (proibição de `fact_*` inventado)
+- Grupos T2 corrigidos em todos os §4.x.4
 
 ---
 
