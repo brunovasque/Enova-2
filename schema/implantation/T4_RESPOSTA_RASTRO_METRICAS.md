@@ -37,7 +37,8 @@ e como as camadas de memória/resumo são atualizadas ao final do turno.
 
 **Princípios canônicos (A00-ADENDO-01, A00-ADENDO-02 e A00-ADENDO-03):**
 
-> 1. T4.4 não produz `reply_text`, não reescreve `reply_text` e não entrega conteúdo de fala ao canal.
+> 1. T4.4 não produz nem reescreve conteúdo de fala; apenas entrega o `reply_text` capturado
+>    pelo LLM quando `reply_routing = "T4.4"`.
 > 2. A entrega de `reply_text` é condicional ao `PersistDecision.reply_routing`.
 > 3. `TurnoRastro` registra metadados de auditoria — nunca armazena `reply_text`
 >    como base de decisão mecânica nem como template de fala futura.
@@ -479,14 +480,23 @@ confirma o que T4.3 decidiu persistir.
 
 **Quem redige o `profile_summary` do snapshot:**
 
-> O LLM redige o `profile_summary` (RP-L3-04). O mecânico persiste sem alterar.
-> O snapshot não é redigido por T4.4 — é redigido pelo LLM no turno de criação.
+> O LLM produz o `profile_summary` via campo estruturado próprio
+> (`snapshot_candidate.profile_summary` ou equivalente definido no contrato aplicável) —
+> **nunca** extraído ou derivado de `reply_text`.
+> O mecânico persiste o campo estruturado sem alterar. Se o campo estruturado não estiver
+> disponível no contrato desta fase, `profile_summary` fica pendente para a etapa/fase que
+> definir snapshot estruturado. T4.4 não deriva snapshot de `reply_text`.
 
 **RR-L3-01:** `approval_prohibited = true` é invariante em todo snapshot (RP-L3-01).
 T4.4 não pode criar snapshot com `approval_prohibited = false` — violação contratual.
 
 **RR-L3-02:** Snapshot não armazena `reply_text` nem valores de fatos (RP-SN-01/02).
 T4.4 confirma que o mecânico não inclui esses campos ao criar o snapshot.
+
+**RR-L3-03:** `profile_summary` do snapshot nunca é derivado de `reply_text`. Deve vir de
+campo estruturado próprio definido no contrato aplicável (ex.: `snapshot_candidate.profile_summary`).
+Se ausente, `profile_summary` fica pendente para a fase/etapa que definir o campo estruturado
+— não é substituído por extração de fala ao cliente.
 
 ### 5.5 L4 — Histórico frio: arquivamento automático
 
@@ -571,6 +581,7 @@ Os campos de `TurnoSaida` que se tornaram fatos persistidos aparecem em `TurnoRa
 | **AP-RR-10** | Omitir `TurnoRastro` quando `ValidationResult = REJECT` | RR-INV-12; VP-INV-11 (T4.3) |
 | **AP-RR-11** | Atualizar L2 quando `lead_state_action = "revert"` | RR-INV-07; VP-INV-08 (T4.3) |
 | **AP-RR-12** | Usar `TurnoRastro` de turno anterior como contexto de fala para o LLM no próximo turno | RR-INV-05; A00-ADENDO-02 |
+| **AP-RR-13** | Derivar `profile_summary` do snapshot L3 de `reply_text` — usar fala ao cliente como fonte de memória executiva/snapshot | RR-L3-03; RR-INV-04; A00-ADENDO-01 |
 
 ---
 
@@ -727,12 +738,16 @@ actions_executed:  [{ type: "ACAO_AVANÇAR_STAGE", result: "current_phase = qual
 2. Montar e persistir `TurnoRastro`. ✓
 3. Atualizar L1. Atualizar L2 (`apply_full` → todos os campos aprovados). ✓
 4. Detectar evento de snapshot: `ACAO_AVANÇAR_STAGE` → `current_phase` mudou.
-5. LLM redigiu `profile_summary` no `reply_text` deste turno (disponível para snapshot).
+5. `profile_summary` do snapshot: obtido de campo estruturado candidato
+   (`snapshot_candidate.profile_summary`, se disponível no contrato aplicável).
+   **T4.4 não deriva `profile_summary` de `reply_text`.**
+   Se o campo estruturado não estiver disponível nesta fase, `profile_summary`
+   fica pendente para a etapa/fase que definir snapshot estruturado (RR-L3-03).
 6. Criar novo `SnapshotExecutivo` (L3):
 ```
 SnapshotExecutivo {
   milestone_trigger:     "stage_advance",
-  profile_summary:       "..." (redigido pelo LLM neste turno),
+  profile_summary:       "..." (de snapshot_candidate.profile_summary — não derivado de reply_text),
   confirmed_facts:       ["fact_estado_civil", "fact_work_regime_p1", ...],
   current_phase:         "qualification_special",
   approval_prohibited:   true    // INVARIANTE — sempre true
@@ -763,7 +778,7 @@ SnapshotExecutivo {
 | `T1_CONTRATO_SAIDA.md §3.1` | `reply_text` soberano do LLM; nunca redigido por mecânico | **PASS** — RR-INV-01; §2.2 trava absoluta |
 | `T1_CONTRATO_SAIDA.md §2.1` | Shape `TurnoSaida` com 13 campos; `reply_text` obrigatório | **PASS** — §6 distingue TurnoSaida de TurnoRastro |
 | `T2_RESUMO_PERSISTIDO.md §1` | Camadas L1/L2/L3/L4 com regras de atualização | **PASS** — §5 integra protocolo completo |
-| `T2_RESUMO_PERSISTIDO.md §2.2` | `reply_text` não entra em snapshot (RP-SN-01) | **PASS** — RR-INV-04; RR-L3-02 |
+| `T2_RESUMO_PERSISTIDO.md §2.2` | `reply_text` não entra em snapshot (RP-SN-01) | **PASS** — RR-INV-04; RR-L3-02; RR-L3-03; AP-RR-13 |
 | `T2_RESUMO_PERSISTIDO.md §1.3` | `approval_prohibited = true` invariante em snapshot | **PASS** — RR-INV-08; RR-L3-01 |
 | `T2_LEAD_STATE_V1.md §9` | `validation_log` registro auditável de decisões | **PASS** — §3.3 TurnoRastro complementa sem substituir |
 | `T3_VETO_SUAVE_VALIDADOR.md §2.6` | `ValidationResult` shape canônico | **PASS** — §3.3 ValidationResultSummary é projeção |
@@ -787,10 +802,12 @@ SnapshotExecutivo {
 --- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
 Documento-base da evidência:           schema/implantation/T4_RESPOSTA_RASTRO_METRICAS.md
 PR que fecha:                          PR-T4.4 (Resposta final + rastro + métricas mínimas)
-Estado da evidência:                   completa
+Estado da evidência:                   completa (inclui correções da revisão)
+Contrato ativo:                        schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md
 Há lacuna remanescente?:               não —
                                        regras de entrega condicional de reply_text (§2):
-                                         APPROVE/REQUIRE_REVISION/PREVENT_PERSISTENCE → T4.4;
+                                         APPROVE/REQUIRE_REVISION/PREVENT_PERSISTENCE → T4.4
+                                         (T4.4 não produz nem reescreve; apenas entrega);
                                          REJECT → T4.5 (reply_text NÃO enviado ao canal);
                                        T4.4 não escreve/edita/substitui reply_text (§2.2 + RR-INV-01);
                                        shape TurnoRastro completo com 15 campos (§3.2);
@@ -800,27 +817,35 @@ Há lacuna remanescente?:               não —
                                          reply_routing (§4.1);
                                        atualização camadas L1 (sempre), L2 (condicional),
                                          L3 (snapshot por evento), L4 (arquivamento) (§5);
+                                       profile_summary do snapshot vem de campo estruturado
+                                         (snapshot_candidate) — nunca derivado de reply_text
+                                         (RR-L3-03; AP-RR-13; E5 corrigido);
                                        TurnoRastro como auditoria pura — não fonte de fala (RR-INV-04..06);
                                        tratamento declarativo de erro de canal (§2.5);
-                                       RR-INV-01..12; 12 anti-padrões AP-RR;
-                                       5 exemplos sintéticos E1–E5;
+                                       RR-INV-01..12; RR-L3-03; 13 anti-padrões AP-RR (01..13);
+                                       5 exemplos sintéticos E1–E5 (E5 corrigido);
                                        microetapa 4 coberta; cross-ref T1/T2/T3/T4.1/T4.2/T4.3
                                        em 18 dimensões.
                                        Fallbacks (T4.5), E2E (T4.6), G4 (T4.R) são escopos
                                        de PRs subsequentes — não são lacunas.
 Há item parcial/inconclusivo bloqueante?: não —
-                                       T4.4 não reescreve reply_text (RR-INV-01);
+                                       T4.4 entrega reply_text (não "não entrega"); princípio
+                                         corrigido: "não produz nem reescreve; apenas entrega
+                                         quando reply_routing=T4.4" (§ princípios + RR-INV-01);
+                                       profile_summary não derivado de reply_text (RR-L3-03);
                                        REJECT não envia reply_text ao canal (RR-INV-03);
                                        TurnoRastro não vira fonte de fala futura (RR-INV-04..05);
                                        approval_prohibited invariante no snapshot (RR-INV-08);
                                        zero runtime implementado; zero alteração em src/.
 Fechamento permitido nesta PR?:        sim —
-                                       T4.4 não escreve reply_text: CONFIRMADO (§2.2 + RR-INV-01);
+                                       T4.4 não escreve/reescreve reply_text: CONFIRMADO (§2.2 + RR-INV-01);
+                                       T4.4 entrega reply_text quando reply_routing="T4.4": CONFIRMADO (§2.1);
                                        REJECT não envia reply_text: CONFIRMADO (§2.4 + RR-INV-03);
+                                       profile_summary não derivado de reply_text: CONFIRMADO (RR-L3-03 + AP-RR-13);
                                        TurnoRastro não é fonte mecânica de fala: CONFIRMADO (RR-INV-04..06);
                                        métricas mínimas todas declaradas (§4.1 — 10 métricas);
                                        sem runtime/código.
 Estado permitido após esta PR:         PR-T4.4 CONCLUÍDA; T4_RESPOSTA_RASTRO_METRICAS.md
                                        publicado; PR-T4.5 desbloqueada.
-Próxima PR autorizada:                 PR-T4.5 — Fallbacks de segurança (T4_FALLBACKS.md)
+Próximo passo autorizado:              PR-T4.5 — Fallbacks de segurança (T4_FALLBACKS.md)
 ```
