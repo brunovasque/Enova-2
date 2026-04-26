@@ -3755,17 +3755,113 @@ Próxima PR autorizada:                 PR-T4.6 — Bateria E2E sandbox + latên
 
 ### Proximo passo autorizado
 
-- **`PR-T4.6`** — Bateria E2E sandbox + latência/custo (`T4_BATERIA_E2E.md`).
+- **`PR-T4.R`** — Readiness/Closeout G4 (`READINESS_G4.md`).
 
-### Leituras obrigatorias para PR-T4.6
+### Leituras obrigatorias para PR-T4.R
 
-1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S6, §7 CA-09, §16 PR-T4.6)
-2. `schema/implantation/T4_FALLBACKS.md` (4 cenários para cobertura E2E)
-3. `schema/implantation/T4_RESPOSTA_RASTRO_METRICAS.md` (métricas e rastro)
-4. `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` (ValidationResult shapes)
-5. `schema/implantation/T4_PIPELINE_LLM.md` (pipeline completo)
-6. `schema/implantation/T4_ENTRADA_TURNO.md` (TurnoEntrada)
-7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
-8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
-9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
-10. L18 — Runner / QA / Telemetria (complementar)
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§7 CA-01..CA-10; §17 gate G4)
+2. `schema/implantation/T4_BATERIA_E2E.md` (evidência E2E — CA-09)
+3. Todos os artefatos T4.1..T4.5 (T4_ENTRADA_TURNO, T4_PIPELINE_LLM, T4_VALIDACAO_PERSISTENCIA,
+   T4_RESPOSTA_RASTRO_METRICAS, T4_FALLBACKS)
+4. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` §K PR-T4.R
+5. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03 — Bloco E obrigatório)
+
+---
+
+## Atualizacao 2026-04-25 — PR-T4.6: Bateria E2E sandbox + latência/custo
+
+### Objetivo executado
+
+Criar `schema/implantation/T4_BATERIA_E2E.md` — bateria declarativa de ≥10 cenários
+cobrindo o pipeline T4 completo (T4.1..T4.5), com métricas declarativas de latência/custo,
+matrizes de cobertura e Bloco E.
+
+### ESTADO HERDADO
+
+- PR-T4.5 concluída e mergeada.
+- `T4_FALLBACKS.md` publicado (4 cenários obrigatórios, FB-INV-01..12, FB-RETRY-01).
+- Artefatos T4.1..T4.5 todos publicados.
+- `T4_BATERIA_E2E.md` não existia.
+- PR-T4.R bloqueada até T4_BATERIA_E2E.md ser publicado.
+
+### ESTADO ENTREGUE
+
+- PR-T4.6 CONCLUÍDA. `T4_BATERIA_E2E.md` publicado.
+- 10 cenários declarativos completos:
+  - E2E-PC-01: pipeline_completo CLT → APPROVE apply_full → T4.4 ✓
+  - E2E-PC-02: pipeline_completo autônomo → REQUIRE_REVISION VC-06 apply_partial → T4.4 ✓
+  - E2E-PC-03: pipeline_completo confirmed indevido → PREVENT_PERSISTENCE VC-07 → T4.4 ✓
+  - E2E-PC-04: pipeline_completo colisão silenciosa → REJECT VC-04 revert → T4.5 ✓
+  - E2E-FB-01: fallback erro_modelo → retry_llm_safe único → success ✓
+  - E2E-FB-02: fallback formato_invalido → sem retry → request_reformulation ✓
+  - E2E-FB-03: fallback omissao_campos → request_reformulation ✓
+  - E2E-FB-04: fallback contradicao_seria → REJECT via T4.3→T4.4→T4.5 ✓
+  - E2E-BD-01: borda APPROVE + ACAO_AVANÇAR_STAGE + L3 snapshot via snapshot_candidate ✓
+  - E2E-BD-02: regressão VC-01 REJECT reply_text mecânico detectado ✓
+- Cada cenário contém prior_state, TurnoEntrada, LLMResult simulado, LLMResponseMeta,
+  ProposedStateDelta, PolicyDecisionSet, ValidationResult, PersistDecision, rota,
+  TurnoRastro/FallbackTrace esperado, métricas declarativas, critérios PASS.
+- Métricas declarativas (10 cenários): latency_ms 1650–3800; latency_llm_ms 800–1600;
+  tokens_total 228–1068.
+- §7 cobertura artefatos T4.1..T4.5 (5/5 cobertos).
+- §8 CA-01..09 9/9 cobertos.
+- §9 fallback 4/4 (todos os 4 triggers mandatórios presentes).
+- §12 cross-ref T1/T2/T3/T4.1..T4.5 em 20 dimensões.
+- PR-T4.R desbloqueada.
+
+### O que foi feito
+
+- Criou `schema/implantation/T4_BATERIA_E2E.md` com:
+  - §1 Tabela geral 10 cenários; §2 Convenções (métricas declarativas, G-01..G-08);
+  - §3 Estrutura de cada cenário; §4 pipeline_completo (§4.1..§4.4);
+  - §5 fallback (§5.1..§5.4); §6 borda/regressão (§6.1..§6.2);
+  - §7 cobertura artefatos; §8 CA-01..09; §9 fallback 4/4;
+  - §10 métricas declarativas consolidadas; §11 anti-padrões verificados;
+  - §12 cross-ref 20 dimensões; §13 microetapas cobertas; Bloco E.
+- Atualizou `schema/contracts/_INDEX.md`: PR atual → PR-T4.6; próximo → PR-T4.R.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que não foi feito
+
+- Não criou READINESS_G4.md (PR-T4.R).
+- Não implementou orquestrador em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não fechado.
+
+### Exceção contratual
+
+Exceção contratual ativa: não.
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T4_BATERIA_E2E.md
+PR que fecha:                          PR-T4.6 (Bateria E2E sandbox + latência/custo)
+Contrato ativo:                        schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — 10 cenários declarativos (≥10 exigidos; CA-09
+                                       cumprido); 4/4 fallbacks cobertos; 4 pipeline_completo;
+                                       2 borda/regressão; métricas declarativas em todos;
+                                       matrizes cobertura T4.1..T4.5; CA-01..09 9/9;
+                                       reply_text imutável verificado em todos os cenários
+                                       (AP-TE-12, AP-LLP-01, AP-VP-01, AP-RR-01, AP-FB-01);
+                                       profile_summary nunca de reply_text (RR-L3-03).
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T4.6 CONCLUÍDA; T4_BATERIA_E2E.md publicado;
+                                       PR-T4.R desbloqueada.
+Próxima PR autorizada:                 PR-T4.R — Readiness/Closeout G4
+```
+
+### Estado atual do repositorio (após PR-T4.6)
+
+- Fase macro: **T4** — em execução; PR-T4.R próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: **APROVADO**. G4: aberto.
+- T4_ENTRADA_TURNO.md: **publicado** (PR-T4.1).
+- T4_PIPELINE_LLM.md: **publicado** (PR-T4.2).
+- T4_VALIDACAO_PERSISTENCIA.md: **publicado** (PR-T4.3).
+- T4_RESPOSTA_RASTRO_METRICAS.md: **publicado** (PR-T4.4).
+- T4_FALLBACKS.md: **publicado** (PR-T4.5).
+- T4_BATERIA_E2E.md: **publicado** (PR-T4.6).
+- READINESS_G4.md: pendente (PR-T4.R).
+- Runtime: inalterado.
