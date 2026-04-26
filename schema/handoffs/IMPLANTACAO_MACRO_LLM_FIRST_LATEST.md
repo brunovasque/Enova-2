@@ -3768,6 +3768,111 @@ Próxima PR autorizada:                 PR-T4.6 — Bateria E2E sandbox + latên
 
 ---
 
+## Atualizacao 2026-04-25 — PR-T4.R: Readiness/Closeout G4
+
+### Objetivo executado
+
+Criar `schema/implantation/READINESS_G4.md`, executar o smoke documental S1–S6,
+verificar CA-01..CA-10, declarar G4 APROVADO, encerrar contrato T4, arquivar T4
+e criar skeleton T5.
+
+### ESTADO HERDADO
+
+- PR-T4.6 concluída e mergeada.
+- `T4_BATERIA_E2E.md` publicado (10 cenários declarativos, CA-09 cumprido).
+- Artefatos T4.1..T4.6 todos publicados.
+- `READINESS_G4.md` não existia.
+- T5 bloqueado até G4 APROVADO.
+
+### ESTADO ENTREGUE
+
+- PR-T4.R CONCLUÍDA. `READINESS_G4.md` publicado.
+- G4 APROVADO com justificativa formal.
+- Smoke S1–S6: 6/6 PASS.
+- CA-01..CA-10: 10/10 CUMPRIDOS.
+- 5 microetapas T4: 5/5 cobertas.
+- Coerência cross-artefato: verificada (10 invariantes + 8 transições).
+- Soberania LLM: intacta (zero reply_text mecânico).
+- Fallback 4/4 com invariantes confirmados.
+- Zero lacunas bloqueantes; 5 não bloqueantes (LNB-G4-01..05) — todas intencionais.
+- Contrato T4 encerrado e arquivado.
+- Skeleton T5 criado.
+- PR-T5.0 desbloqueada.
+
+### O que foi feito
+
+- Criou `schema/implantation/READINESS_G4.md` com:
+  - §1 Smoke S1–S6 (6/6 PASS); §2 CA-01..CA-10 (10/10);
+  - §3 Coerência cross-artefato; §4 Soberania LLM;
+  - §5 Lacunas (0 bloqueantes, 5 não bloqueantes);
+  - §6 Decisão formal G4 APROVADO; §7 Encerramento T4;
+  - §8 Conformidade adendos; §9 Bloco E.
+- Arquivou contrato T4: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
+- Criou skeleton T5: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md`.
+- Atualizou `schema/contracts/_INDEX.md`: T4 encerrado; T5 skeleton ativo; PR-T5.0 próximo passo.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que não foi feito
+
+- Não abriu T5 com corpo completo (skeleton criado — PR-T5.0 preencherá).
+- Não implementou orquestrador em src/.
+- Não alterou package.json, wrangler.toml.
+- G5 não aberto.
+
+### Exceção contratual
+
+Exceção contratual ativa: não.
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/READINESS_G4.md
+PR que fecha:                          PR-T4.R (Readiness/Closeout G4)
+Contrato ativo:                        schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — smoke 6/6; CA 10/10; micro 5/5;
+                                       soberania LLM intacta; fallback 4/4;
+                                       E2E 10 cenários; zero bloqueantes.
+Há item parcial/inconclusivo bloqueante?: não
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         G4 APROVADO; T4 ENCERRADO; T5 skeleton;
+                                       PR-T5.0 desbloqueada.
+Próxima PR autorizada:                 PR-T5.0 — Abertura formal do contrato T5
+```
+
+### Estado atual do repositorio (após PR-T4.R)
+
+- Fase macro: **T5** — skeleton; PR-T5.0 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: APROVADO. G4: **APROVADO**. G5: aberto.
+- T4_ENTRADA_TURNO.md: **publicado** (PR-T4.1).
+- T4_PIPELINE_LLM.md: **publicado** (PR-T4.2).
+- T4_VALIDACAO_PERSISTENCIA.md: **publicado** (PR-T4.3).
+- T4_RESPOSTA_RASTRO_METRICAS.md: **publicado** (PR-T4.4).
+- T4_FALLBACKS.md: **publicado** (PR-T4.5).
+- T4_BATERIA_E2E.md: **publicado** (PR-T4.6).
+- READINESS_G4.md: **publicado** (PR-T4.R).
+- CONTRATO_IMPLANTACAO_MACRO_T4.md: **arquivado** (archive/).
+- CONTRATO_IMPLANTACAO_MACRO_T5.md: **skeleton** (active/).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T5.0`** — Abertura formal do contrato T5.
+
+### Leituras obrigatorias para PR-T5.0
+
+1. `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md` seção T5
+2. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` §L (PRs T5)
+3. `schema/contracts/_INDEX.md`
+4. `schema/implantation/READINESS_G4.md` (gate de entrada T5)
+5. `schema/CONTRACT_SCHEMA.md`
+6. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+7. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+8. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+---
+
 ## Atualizacao 2026-04-25 — PR-T4.6: Bateria E2E sandbox + latência/custo
 
 ### Objetivo executado
