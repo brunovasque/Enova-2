@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T4 — Orquestrador de turno LLM-first (em execução; PR-T4.3 desbloqueada).
+Fase macro ativa: T4 — Orquestrador de turno LLM-first (em execução; PR-T4.4 desbloqueada).
 
 Gate anterior: G3 — APROVADO em 2026-04-25 via PR-T3.R.
 
 Gate aberto: G4 — orquestrador funcional (bloqueado até PR-T4.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (em execução — PR-T4.2 executada em 2026-04-25).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (em execução — PR-T4.3 executada em 2026-04-25).
 
 Contrato T3 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
 
@@ -20,7 +20,17 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
-`PR-T4.2` — Pipeline LLM com contrato único:
+`PR-T4.3` — Validação policy engine + reconciliação antes de persistir:
+`schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` criado: `ProposedStateDelta` com regras
+de construção (VP-DELTA-01..05); reconciliação T2.4 integrada com `ConflictRecord` canônico;
+`ValidationContext` montado com `LLMResponseMeta` (nunca `reply_text` bruto); validador
+VC-01..09 executado em totalidade; `PersistDecision` com 4 resultados; `safe_fields`/
+`blocked_fields` por regra de confiança/VC; REJECT→revert+T4.5; PREVENT_PERSISTENCE→campos
+bloqueados+reply_text entregue via T4.4; T4.3 não reescreve nem entrega reply_text;
+VP-INV-01..12; 12 anti-padrões AP-VP; 5 exemplos sintéticos; microetapa 3 coberta; Bloco E.
+PR-T4.4 desbloqueada.
+
+`PR-T4.2` — Pipeline LLM com contrato único (anteriormente):
 `schema/implantation/T4_PIPELINE_LLM.md` criado: shape `PipelinePrompt` com 4 blocos
 (§SYS, §CTX com 7 subseções, §POL opcional, §OUT); invariante de ordem dos blocos;
 `LLMCallContract` com única chamada LLM por turno; `LLMResult` com `reply_text` IMUTÁVEL
@@ -274,6 +284,64 @@ PR-T2.R desbloqueada.
 - Nao criou schema Supabase (escopo T2).
 - Nao criou policy engine (escopo T3).
 - Nao alterou `src/`, `package.json`, `wrangler.toml`.
+
+## O que a PR-T4.3 fechou
+
+- Criou `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` com:
+  - §1 Posição no pipeline: Etapa 4 de 5 (pós-LLM, pré-resposta); tabela de entradas/saídas;
+  - §2 Shape `ProposedStateDelta`: `FactDeltaEntry[]`, regras VP-DELTA-01..05;
+    nunca `confirmed` de `llm_collected`; nunca `reply_text` no delta;
+  - §3 Reconciliação T2.4 integrada: protocolo por fato, `ConflictRecord` gerado para
+    `confirmed` contradito, sem sobrescrita silenciosa, VP-CONFL-01..04;
+  - §4 Montagem de `ValidationContext`: shapes canônicos de T3.4; `LLMResponseMeta`
+    sem `reply_text` bruto; `PolicyDecisionSet` pré-computado (sem re-execução T3);
+    VP-VC-01..05;
+  - §5 Execução validador VC-01..09: tabela resumo severidade/FAIL; ordem sequencial;
+    lógica de decisão agregada REJECT > PREVENT_PERSISTENCE > REQUIRE_REVISION > APPROVE;
+  - §6 `PersistDecision` + `ValidationResult`: shape completo; mapeamento decision→action;
+    `reply_routing` (`REJECT→T4.5`; demais→T4.4);
+  - §7 `safe_fields` / `blocked_fields`: regras de determinação; VP-STATUS-01/02;
+    elevação para `confirmed` só em turno subsequente com origem ≥ EXPLICIT_TEXT;
+  - §8 Conflitos (§8.1) e colisões (§8.2): ConflictRecord para fatos `confirmed` contraditos;
+    VP-COL-01/02 para colisões não registradas → REJECT;
+  - §9 Aplicação de `PersistDecision` ao `lead_state`: fluxo por decision; REJECT→revert;
+    `validation_log` como registro auditável;
+  - §10 `reply_text` não reescrito: T4.3 não lê, não reescreve, não entrega; tabela por
+    componente; rota determinada por `PersistDecision.reply_routing`;
+  - §11 Quando `lead_state` pode ser atualizado: condições suficientes e condições de bloqueio;
+  - §12 VP-INV-01..12;
+  - §13 12 anti-padrões proibidos AP-VP-01..12;
+  - §14 5 exemplos sintéticos (APPROVE, REQUIRE_REVISION/VC-06, PREVENT_PERSISTENCE/VC-07,
+    REJECT/VC-04 colisão silenciosa, PREVENT_PERSISTENCE/VC-05 confiança baixa);
+  - §15 Microetapa 3 coberta;
+  - §16 Validação cruzada T2/T3/T4.1/T4.2 em 18 dimensões;
+  - Bloco E: PR-T4.4 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: T4 PR atual → PR-T4.3; próximo → PR-T4.4.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+## O que a PR-T4.3 nao fechou
+
+- T4_RESPOSTA_RASTRO_METRICAS.md (microetapa 4 — PR-T4.4).
+- T4_FALLBACKS.md (microetapa 5 — PR-T4.5).
+- T4_BATERIA_E2E.md e READINESS_G4.md.
+- Não implementou orquestrador real em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não fechado.
+
+## Proximo passo autorizado
+
+PR-T4.4 — Resposta final + rastro + métricas (`T4_RESPOSTA_RASTRO_METRICAS.md`).
+
+Leituras obrigatórias para PR-T4.4:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S4, §7 CA-07, §16 PR-T4.4)
+2. `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` (PersistDecision + reply_routing)
+3. `schema/implantation/T4_PIPELINE_LLM.md` (reply_text capturado; LLMResult métricas)
+4. `schema/implantation/T4_ENTRADA_TURNO.md` (TurnoEntrada.turn_id/case_id)
+5. `schema/implantation/T1_CONTRATO_SAIDA.md` (TurnoSaida shape canônico — 13 campos)
+6. `schema/implantation/T2_RESUMO_PERSISTIDO.md` (L1/L2/L3 atualização pós-turno)
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
 
 ## O que a PR-T4.2 fechou
 
