@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T5 — Migração do funil e integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` | skeleton | G4 aprovado; G5 — funil migrado | 2026-04-25 | — | PR-T5.0 |
+| T5 — Migração do funil core e integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` | **aberto** | G4 APROVADO; G5 — paridade funcional | 2026-04-26 | PR-T5.0 | PR-T5.1 |
 
 ## Contratos encerrados
 
@@ -172,3 +172,4 @@ schema/contracts/
 - 2026-04-25 — PR-T4.5 executada. T4_FALLBACKS.md criado: 4 cenários obrigatórios (erro_modelo, formato_invalido, omissao_campos, contradicao_seria); shapes FallbackContext, FallbackDecision, FallbackTrace; retry único apenas para erro_modelo (FB-RETRY-01); FB-INV-01..12; 13 anti-padrões AP-FB; 5 exemplos sintéticos FB-E1..E5; microetapa 5 coberta; Bloco E. PR-T4.6 desbloqueada. Próximo passo: PR-T4.6.
 - 2026-04-25 — PR-T4.6 executada. T4_BATERIA_E2E.md criado: 10 cenários declarativos (E2E-PC-01..04 pipeline_completo, E2E-FB-01..04 fallback 4/4, E2E-BD-01 borda stage+L3, E2E-BD-02 regressão VC-01); métricas declarativas 10 cenários; matriz cobertura artefatos T4.1..T4.5; CA-01..09 9/9; fallback 4/4; 20 dimensões cross-ref; Bloco E. PR-T4.R desbloqueada. Próximo passo: PR-T4.R.
 - 2026-04-25 — PR-T4.R executada. READINESS_G4.md criado: smoke S1–S6 6/6 PASS; CA-01..CA-10 10/10 CUMPRIDOS; 5 microetapas cobertas; coerência cross-artefato verificada; soberania LLM intacta; zero reply_text mecânico; zero lacunas bloqueantes; 5 não bloqueantes (LNB-G4-01..05). G4 APROVADO. Contrato T4 ENCERRADO e arquivado em archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md. Skeleton T5 criado em active/CONTRATO_IMPLANTACAO_MACRO_T5.md. PR-T5.0 desbloqueada. Próximo passo: PR-T5.0.
+- 2026-04-26 — PR-T5.0 executada. Contrato T5 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: §1–§17 + Bloco E (objetivo, escopo, fora de escopo, dependências, entradas, saídas S1–S9, critérios CA-01..CA-10, provas P-T5-01..05, bloqueios B-01..B-10, quebra PRs T5.0–T5.R, gate G5). 10 PRs mapeadas: T5.0 (abertura), T5.1 (mapa fatias), T5.2–T5.6 (contratos de fatia), T5.7 (paridade), T5.8 (shadow), T5.R (readiness G5). PR-T5.1 desbloqueada. Próximo passo: PR-T5.1.

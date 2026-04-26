@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil e integração de canal (skeleton; PR-T5.0 desbloqueada).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.1 desbloqueada).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
-Gate aberto: G5 — funil migrado (bloqueado até PR-T5.R).
+Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (skeleton — PR-T5.0 preencherá corpo completo).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.0 concluída em 2026-04-26; PR-T5.1 autorizada).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,19 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.0` — Abertura formal do contrato T5:
+`schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` substituído:
+skeleton → contrato completo com §1–§17 + Bloco E; objetivo T5: migração do
+funil core por fatias declarativas sem if/else de fala; 10 PRs mapeadas
+(T5.0–T5.8 + T5.R); saídas S1–S9 declaradas; CA-01..CA-10 definidos;
+B-01..B-10 (bloqueios incluindo B-04 if/else de fala = não conformidade
+imediata e B-07 Meta/WhatsApp proibido antes G5); gate G5 (paridade
+funcional = cobertura de casos, não paridade de fala); conformidade
+A00-ADENDO-01/02/03 declarada; _INDEX, STATUS e LATEST atualizados.
+PR-T5.1 desbloqueada.
+
+## Ultima tarefa anterior
 
 `PR-T4.R` — Readiness/Closeout G4:
 `schema/implantation/READINESS_G4.md` criado: smoke S1–S6 (6/6 PASS);
