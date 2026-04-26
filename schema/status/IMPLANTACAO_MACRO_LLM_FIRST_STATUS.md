@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.2 desbloqueada).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.3 desbloqueada).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.1 concluída em 2026-04-26; PR-T5.2 autorizada).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 concluída em 2026-04-26; PR-T5.3 autorizada).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,22 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.2` — Contrato da fatia F1 topo/abertura/primeira intenção:
+`schema/implantation/T5_FATIA_TOPO_ABERTURA.md` criado: contrato declarativo completo da
+fatia F1 (current_phase: discovery); 7 stages legados cobertos (inicio..inicio_tem_validade);
+6 fatos/derived T2 canônicos (fact_lead_name, fact_customer_goal, fact_nationality,
+fact_rnm_status, derived_rnm_required, derived_rnm_block); LF-01 declarada (data validade
+RNM — lacuna de schema futura; fact_rnm_status="vencido" captura o efeito);
+5 classes de política T3 (4 obrigações, 3 confirmações, 1 bloqueio hard BLQ-F1-01
+R_ESTRANGEIRO_SEM_RNM, 3 sugestões mandatórias, 1 roteamento);
+3 vetos suaves (VS-F1-01..03); 6 critérios de saída mensuráveis;
+relação completa com pipeline T4; 10 classes de risco; 10 anti-padrões;
+7 cenários sintéticos (SYN-F1-01..07);
+validação cruzada 18 itens confirmados; Bloco E + provas P-T5-01..03 PASS.
+PR-T5.3 desbloqueada.
+
+## Ultima tarefa anterior
 
 `PR-T5.1` — Mapa de fatias do funil core e ordem de migração:
 `schema/implantation/T5_MAPA_FATIAS.md` criado: 45 stages legados mapeados para 5 fatias core

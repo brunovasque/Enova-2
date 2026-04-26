@@ -69,6 +69,51 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-26 — PR-T5.2 — Contrato da fatia F1: topo/abertura/primeira intenção
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.1 merged (#114); PR-T5.2 desbloqueada.
+- Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto).
+- Artefato base: `schema/implantation/T5_MAPA_FATIAS.md` — §4.1 define F1.
+
+### ESTADO ENTREGUE
+
+O que foi feito nesta PR:
+- Criado `schema/implantation/T5_FATIA_TOPO_ABERTURA.md` — contrato declarativo da fatia F1.
+- 7 stages legados cobertos: `inicio`, `inicio_decisao`, `inicio_nome`, `inicio_programa`, `inicio_nacionalidade`, `inicio_rnm`, `inicio_tem_validade`.
+- 6 fatos/derived T2 canônicos: `fact_lead_name`, `fact_customer_goal`, `fact_nationality`, `fact_rnm_status`, `derived_rnm_required`, `derived_rnm_block`.
+- LF-01 declarada: data exata de validade do RNM é lacuna de schema futura; efeito operacional capturado via `fact_rnm_status = "vencido"`.
+- Políticas T3: 4 obrigações (OBR-F1-01..04), 3 confirmações (CONF-F1-01..03), 1 bloqueio (BLQ-F1-01 R_ESTRANGEIRO_SEM_RNM), 3 sugestões mandatórias (SGM-F1-01..03), 1 roteamento (ROT-F1-01).
+- 3 vetos suaves (VS-F1-01..03).
+- 6 critérios de saída mensuráveis; relação completa com pipeline T4.
+- 10 classes de risco (CR-F1-01..10); 10 anti-padrões (AP-F1-01..10).
+- 7 cenários sintéticos declarativos (SYN-F1-01..07).
+- Validação cruzada T2/T3/T4/T5.1 (18 itens — todos confirmados).
+- Bloco E + provas P-T5-01..03 PASS.
+- _INDEX.md, STATUS e LATEST atualizados.
+
+O que foi fechado: PR-T5.2 — contrato F1 entregue; PR-T5.3 desbloqueada.
+
+O que continua pendente: execução das PRs T5.3–T5.R.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.3 — Contrato da fatia qualificação inicial**
+- Artefato: `schema/implantation/T5_FATIA_QUALIFICACAO_INICIAL.md`
+- 7 stages: `estado_civil`, `confirmar_casamento`, `interpretar_composicao`, `confirmar_avo_familiar`, `dependente`, `financiamentos_conjunto`, `quem_pode_somar`
+- `current_phase: qualification`
+- Legados obrigatórios: L03, L07, L08
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-2-fatia-topo-abertura` → PR a ser aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Artefato T5_FATIA_TOPO_ABERTURA.md: criado em `schema/implantation/`
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-26 — PR-T5.1 — Mapa de fatias do funil core
 
 ### ESTADO HERDADO
