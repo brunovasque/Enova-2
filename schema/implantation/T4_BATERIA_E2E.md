@@ -435,12 +435,15 @@ TurnoEntrada {
 **LLMResult (simulado):**
 ```
 LLMResult {
-  reply_text: "Entendido, vou registrar que você é casado. Qual é a renda
-               da sua cônjuge?",
+  reply_text: "Entendi que você mencionou ser casado — mas preciso confirmar
+               esse dado antes de prosseguir. Pode me confirmar seu estado civil?",
+  // Fala segura: reconhece a informação sem afirmar registro;
+  // não avança para pergunta dependente (renda do cônjuge);
+  // aguarda confirmação explícita antes de persistir.
   TurnoSaida: {
     facts_updated_candidates: [
       { fact_key: "fact_estado_civil",      value: "casado_civil", status: "confirmed",
-        source: "llm_collected", confirmed: true  },  // ← PROBLEMA: confirmed sem coleta explícita
+        source: "llm_collected", confirmed: true  },  // ← PROBLEMA detectado pelo VC-07: confirmed sem coleta explícita
       { fact_key: "fact_monthly_income_p1", value: 3200, status: "captured",
         source: "llm_collected", confirmed: false }
     ]
@@ -738,15 +741,15 @@ FallbackTrace {
   stage_advanced:       false,
   response_delivered:   true,
   attempted_reply_ref:  null,
-  latency_ms:           3.800,   // inclui timeout (30s) + retry
-  partial_latency_ms:   30.000   // latência até a falha
+  latency_ms:           33.800,  // timeout (30.000ms) + retry bem-sucedido (~3.800ms)
+  partial_latency_ms:   30.000   // latência até a falha (timeout)
 }
 ```
 
 **Métricas declarativas:**
 ```
-latency_ms:           3.800   // após retry bem-sucedido
-partial_latency_ms:  30.000   // timeout
+latency_ms:          33.800   // timeout (30.000ms) + retry bem-sucedido (~3.800ms)
+partial_latency_ms:  30.000   // até a falha (timeout LLM original)
 tokens_input:          200    // prompt simplificado do retry
 tokens_output:          28
 tokens_total:          228
@@ -1287,7 +1290,7 @@ latency_llm_ms:   800   tokens_output:  72
 | E2E-PC-02 | 2.350 | 1.380 | 920 | 105 | 1.025 |
 | E2E-PC-03 | 2.520 | 1.460 | 890 | 112 | 1.002 |
 | E2E-PC-04 | 2.890 | 1.510 | 850 | 98 | 948 |
-| E2E-FB-01 | 3.800 | — (timeout) | 200 (retry) | 28 | 228 |
+| E2E-FB-01 | 33.800 | — (timeout+retry) | 200 (retry) | 28 | 228 |
 | E2E-FB-02 | 1.820 | 1.600 | 880 | 140 | 1.020 |
 | E2E-FB-03 | 1.650 | 1.120 | 720 | 8 | 728 |
 | E2E-FB-04 | 2.750 | 1.480 | 870 | 88 | 958 |
@@ -1368,6 +1371,11 @@ Há lacuna remanescente?:               não —
                                          4 fallback (FB-01..04) — 1 por trigger obrigatório;
                                          1 borda (BD-01: stage advance + L3 snapshot);
                                          1 regressão (BD-02: VC-01 LLM-first);
+                                       E2E-PC-03: reply_text corrigido — fala segura sem
+                                         afirmar registro de campo bloqueado (VC-07);
+                                         não avança para pergunta dependente do cônjuge;
+                                       E2E-FB-01: latência corrigida — latency_ms=33.800ms
+                                         (timeout 30.000ms + retry ~3.800ms) ≥ partial (30s);
                                        matriz de cobertura T4.1..T4.5 (§7) — 5/5 artefatos;
                                        matriz CA-01..09 — 9/9 critérios cobertos (§8);
                                        matriz de fallbacks 4/4 (§9);
@@ -1381,6 +1389,8 @@ Há lacuna remanescente?:               não —
 Há item parcial/inconclusivo bloqueante?: não —
                                        ≥10 cenários: CONFIRMADO (10);
                                        4 fallbacks obrigatórios: CONFIRMADO (4/4);
+                                       E2E-PC-03 reply_text coerente com PREVENT_PERSISTENCE: CONFIRMADO;
+                                       E2E-FB-01 latency_ms ≥ partial_latency_ms: CONFIRMADO (33.800 ≥ 30.000);
                                        zero reply_text mecânico: CONFIRMADO;
                                        zero fallback usando reply_text rejeitado: CONFIRMADO;
                                        zero runtime/integração real: CONFIRMADO;
@@ -1389,6 +1399,8 @@ Fechamento permitido nesta PR?:        sim —
                                        CA-09 cumprido (≥10 cenários): CONFIRMADO;
                                        CA-08 coberto (4 fallbacks): CONFIRMADO;
                                        CA-01 verificado (regressão BD-02): CONFIRMADO;
+                                       E2E-PC-03 reply_text coerente: CONFIRMADO;
+                                       E2E-FB-01 latência coerente: CONFIRMADO;
                                        zero reply_text mecânico: CONFIRMADO;
                                        zero runtime: CONFIRMADO.
 Estado permitido após esta PR:         PR-T4.6 CONCLUÍDA; T4_BATERIA_E2E.md publicado;
