@@ -69,6 +69,54 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-26 — PR-T5.1 — Mapa de fatias do funil core
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.0 concluída (contrato T5 completo §1–§17); PR-T5.1 desbloqueada.
+- Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto).
+- Última PR relevante: PR-T5.0 (#113) MERGED em 2026-04-26.
+
+### ESTADO ENTREGUE
+
+O que foi feito nesta PR:
+- Criado `schema/implantation/T5_MAPA_FATIAS.md` — mapa canônico de fatias do funil core.
+- 45 stages legados mapeados para 5 fatias core (F1: 7, F2: 7, F3: 21, F4: 5, F5: 5).
+- Fase informativa/comercial transversal (FI) — 7 campos: 2 fact_keys T2 confirmadas
+  (`fact_has_fgts`, `fact_entry_reserve_signal`); 5 lacunas informativas futuras identificadas.
+- Por fatia: current_phase, fatos mínimos T2, políticas T3 aplicáveis, critérios de entrada/saída,
+  relação com pipeline T4.
+- 8 correções de tipo semântico: legacy `expected = NUMBER` → boolean/enum correto para
+  inicio_decisao, inicio_programa, regime_trabalho, ctps_36, ctps_36_parceiro, ir_declarado,
+  restricao, dependente.
+- 10 anti-padrões proibidos (AP-01..AP-10).
+- Validação cruzada T2/T3/T4 (15 entradas).
+- Grafo de dependências de migração T5.2 → T5.3 → T5.4 → T5.5 → T5.6 → T5.7 → T5.8 → T5.R.
+- _INDEX.md, STATUS e LATEST atualizados.
+
+O que foi fechado nesta PR: PR-T5.1 — mapa de fatias entregue; PR-T5.2 desbloqueada.
+
+O que continua pendente: execução das PRs T5.2–T5.R; contratos de fatia individuais.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.2 — Contrato de fatia F1: Abertura / topo**
+- Artefato: `schema/implantation/T5_FATIA_F1.md`
+- 7 stages: `inicio`, `inicio_decisao`, `inicio_nome`, `inicio_programa`, `inicio_nacionalidade`,
+  `inicio_rnm`, `inicio_tem_validade`
+- current_phase: `discovery`
+- Leituras obrigatórias: CLAUDE.md, CONTRATO_IMPLANTACAO_MACRO_T5.md, T5_MAPA_FATIAS.md,
+  T2_LEAD_STATE_V1.md, T3_CLASSES_POLITICA.md, T4_PIPELINE_LLM.md
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-1-mapa-fatias` → PR a ser aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Artefato T5_MAPA_FATIAS.md: criado em `schema/implantation/`
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-26 — PR-T5.0 — Abertura formal do contrato T5
 
 ### ESTADO HERDADO

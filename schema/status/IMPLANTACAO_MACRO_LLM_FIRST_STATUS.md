@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.1 desbloqueada).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.2 desbloqueada).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.0 concluída em 2026-04-26; PR-T5.1 autorizada).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.1 concluída em 2026-04-26; PR-T5.2 autorizada).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,19 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.1` — Mapa de fatias do funil core e ordem de migração:
+`schema/implantation/T5_MAPA_FATIAS.md` criado: 45 stages legados mapeados para 5 fatias core
+(F1: 7 stages / discovery, F2: 7 stages / qualification, F3: 21 stages /
+qualification+qualification_special, F4: 5 stages / elegibilidade, F5: 5 stages /
+docs+handoff); fase informativa/comercial transversal (7 campos — 2 com fact_key T2
+confirmada: fact_has_fgts + fact_entry_reserve_signal; 5 lacunas informativas futuras);
+critérios de entrada/saída por fatia; fatos mínimos T2 + políticas T3 + relação T4 por
+fatia; 8 correções de tipo semântico (legacy expected NUMBER → boolean/enum correto);
+10 anti-padrões proibidos (AP-01..AP-10); validação cruzada T2/T3/T4 (15 entradas);
+grafo de dependências de migração; Bloco E completo. PR-T5.2 desbloqueada.
+
+## Ultima tarefa anterior
 
 `PR-T5.0` — Abertura formal do contrato T5:
 `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` substituído:
