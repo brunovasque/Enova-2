@@ -3419,3 +3419,122 @@ Próxima PR autorizada:                 PR-T4.3 — Validação policy engine + 
 9. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 10. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 11. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+---
+
+## Atualizacao 2026-04-25 — PR-T4.3: Validação policy engine + reconciliação antes de persistir
+
+### Objetivo executado
+
+Criar `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` com o fluxo completo da Etapa 4:
+construção do `ProposedStateDelta`, reconciliação T2.4, montagem de `ValidationContext`,
+execução do validador VC-01..09 e `PersistDecision` com 4 resultados canônicos.
+
+### Estado herdado
+
+- PR-T4.2 CONCLUÍDA. `T4_PIPELINE_LLM.md` publicado com `LLMResult`, `LLMResponseMeta`,
+  entrega condicional de `reply_text` (REJECT→T4.5; demais→T4.4).
+- T4_VALIDACAO_PERSISTENCIA.md: **pendente** → esta PR entrega.
+
+### Estado entregue
+
+- PR-T4.3 CONCLUÍDA. `T4_VALIDACAO_PERSISTENCIA.md` publicado.
+- `ProposedStateDelta`, `PersistDecision`, `ValidationResult` especificados.
+- `reply_text` não reescrito por T4.3; T4.3 não entrega ao canal.
+- PR-T4.4 desbloqueada.
+
+### O que foi feito
+
+- Criado `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` com:
+  - §1 Posição no pipeline: Etapa 4 de 5; tabela entradas/saídas;
+  - §2 `ProposedStateDelta`: shape `FactDeltaEntry[]`; VP-DELTA-01..05;
+    `llm_collected` → máximo `captured`; sem `reply_text` no delta;
+  - §3 Reconciliação T2.4: protocolo por fato; `ConflictRecord` para `confirmed` contradito;
+    VP-CONFL-01..04; conflito bloqueia o campo afetado;
+  - §4 Montagem de `ValidationContext`: shapes canônicos de T3.4; `LLMResponseMeta` (sem
+    `reply_text` bruto); `PolicyDecisionSet` pré-computado; VP-VC-01..05;
+  - §5 Validador VC-01..09: tabela resumo; ordem sequencial; lógica de decisão agregada;
+  - §6 `PersistDecision` + `ValidationResult`: shapes; mapeamento decision→lead_state_action;
+    `reply_routing` (REJECT→T4.5, demais→T4.4);
+  - §7 `safe_fields` / `blocked_fields`: condições suficientes; VP-STATUS-01/02;
+  - §8 Conflitos (§8.1) e colisões (§8.2): sem silêncio;
+  - §9 Aplicação ao `lead_state`: fluxo por decision; REJECT→revert; `validation_log`;
+  - §10 `reply_text` não reescrito: T4.3 não acessa, não modifica, não entrega;
+  - §11 Quando `lead_state` é atualizado: condições suficientes e de bloqueio;
+  - §12 VP-INV-01..12;
+  - §13 12 anti-padrões AP-VP-01..12;
+  - §14 5 exemplos (APPROVE, REQUIRE_REVISION/VC-06, PREVENT_PERSISTENCE/VC-07,
+    REJECT/VC-04, PREVENT_PERSISTENCE/VC-05);
+  - §15 Microetapa 3 coberta;
+  - §16 Validação cruzada T2/T3/T4.1/T4.2 em 18 dimensões;
+  - Bloco E: PR-T4.4 desbloqueada.
+- Atualizou `schema/contracts/_INDEX.md`: T4 PR atual → PR-T4.3; próximo → PR-T4.4.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`: PR-T4.3 seção.
+
+### O que não foi feito
+
+- Não criou T4_RESPOSTA_RASTRO_METRICAS.md (PR-T4.4).
+- Não criou T4_FALLBACKS.md (PR-T4.5).
+- Não implementou orquestrador em src/.
+- Não alterou package.json, wrangler.toml.
+- G4 não fechado.
+
+### Provas entregues
+
+- **P-T4.3-01:** `ProposedStateDelta` com VP-DELTA-01 — `llm_collected` nunca `confirmed` — CA-06 cumprido.
+- **P-T4.3-02:** `ValidationContext` sem `reply_text` bruto; usa `LLMResponseMeta` — LLP-INV-11 preservado.
+- **P-T4.3-03:** VP-INV-02/03 — T4.3 não reescreve nem entrega `reply_text`.
+- **P-T4.3-04:** VP-INV-04/05 — colisão e conflito nunca silenciosos.
+- **P-T4.3-05:** Microetapa 3 coberta; Bloco E presente; zero lacunas bloqueantes.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — VP-INV-02/03; §10.1; AP-VP-04.
+- A00-ADENDO-02: confirmada — T4.3 conecta, não invade papéis de T2/T3; VP-INV-10.
+- A00-ADENDO-03: confirmada — Bloco E presente; evidência completa; microetapa 3 coberta.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T4_VALIDACAO_PERSISTENCIA.md
+PR que fecha:                          PR-T4.3 (Validação policy engine + reconciliação)
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — ProposedStateDelta; reconciliação T2.4;
+                                       ValidationContext; VC-01..09; PersistDecision;
+                                       safe_fields/blocked_fields; REJECT→revert+T4.5;
+                                       reply_text não reescrito; VP-INV-01..12; 12 AP-VP;
+                                       5 exemplos; microetapa 3 coberta; 18 cross-refs.
+Há item parcial/inconclusivo bloqueante?: não.
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T4.3 CONCLUÍDA; T4_VALIDACAO_PERSISTENCIA.md
+                                       publicado; PR-T4.4 desbloqueada.
+Próxima PR autorizada:                 PR-T4.4 — Resposta final + rastro + métricas
+```
+
+### Estado atual do repositorio (após PR-T4.3)
+
+- Fase macro: **T4** — em execução; PR-T4.4 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: **APROVADO**. G4: aberto.
+- T4_ENTRADA_TURNO.md: **publicado** (PR-T4.1).
+- T4_PIPELINE_LLM.md: **publicado** (PR-T4.2).
+- T4_VALIDACAO_PERSISTENCIA.md: **publicado** (PR-T4.3).
+- T4_RESPOSTA_RASTRO_METRICAS.md: pendente (PR-T4.4).
+- T4_FALLBACKS.md: pendente (PR-T4.5).
+- T4_BATERIA_E2E.md: pendente (PR-T4.6).
+- READINESS_G4.md: pendente (PR-T4.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T4.4`** — Resposta final + rastro + métricas (`T4_RESPOSTA_RASTRO_METRICAS.md`).
+
+### Leituras obrigatorias para PR-T4.4
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S4, §7 CA-07, §16 PR-T4.4)
+2. `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` (PersistDecision + reply_routing)
+3. `schema/implantation/T4_PIPELINE_LLM.md` (reply_text capturado; LLMResult métricas)
+4. `schema/implantation/T4_ENTRADA_TURNO.md` (TurnoEntrada.turn_id/case_id)
+5. `schema/implantation/T1_CONTRATO_SAIDA.md` (TurnoSaida shape — 13 campos canônicos)
+6. `schema/implantation/T2_RESUMO_PERSISTIDO.md` (L1/L2/L3 atualização pós-turno)
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
