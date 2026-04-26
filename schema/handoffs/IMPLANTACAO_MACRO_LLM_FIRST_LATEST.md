@@ -69,6 +69,75 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-26 — PR-T5.3 — Contrato da fatia F2: qualificação inicial / composição familiar
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.2 (#115) + PR-T5.2-fix (#116) merged; `T5_FATIA_TOPO_ABERTURA.md` (v2) vigente.
+- Próximo passo autorizado: PR-T5.3 — Contrato declarativo da fatia F2.
+- Branch base: `main` (após pull pós-merge de #116).
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` criado — contrato declarativo completo da fatia F2.
+
+**7 stages cobertos:**
+1. `estado_civil` — identificação do estado civil do lead (solteiro, casado civil, união estável, divorciado, viúvo)
+2. `confirmar_casamento` — casamento civil → financiamento obrigatoriamente em conjunto (P2 obrigatório)
+3. `interpretar_composicao` — definição do process_mode (solo vs. duo vs. P3) + derived_composition_needed
+4. `confirmar_avo_familiar` — entrada de avô/avó familiar + alerta de risco etário CEF (67 anos)
+5. `dependente` — coleta condicional: duo → skip; solo < R$4k → perguntar; solo > R$4k → skip
+6. `financiamentos_conjunto` — SEMPRE financiamento ATUAL em conjunto; NUNCA histórico de financiamentos
+7. `quem_pode_somar` — mapeamento de quem entra no processo; insumo para F3
+
+**8 fatos canônicos T2 (Groups III e VIII):**
+- `fact_estado_civil` (gate obrigatório)
+- `fact_process_mode` (gate obrigatório)
+- `fact_composition_actor` (se process_mode != solo)
+- `fact_p3_required` (calculado — sempre)
+- `fact_dependente` (condicional — solo + renda)
+- `fact_dependents_count` (condicional — se dependente = true)
+- `derived_composition_needed` (derived)
+- `derived_dependents_applicable` (derived)
+
+**5 lacunas de schema futuras declaradas (LF-01..05):**
+- LF-01: `fact_financiamento_conjunto_atual` (histórico vs. atual em conjunto)
+- LF-02: estado civil do familiar que compõe (cascata P3)
+- LF-03: cônjuge do familiar que compõe (P3)
+- LF-04: idade do familiar/avô/avó (risco CEF 67 anos)
+- LF-05: base normativa MCMV/CEF (não existe no repo ainda)
+
+**9 regras comerciais Vasques documentadas em §5** (sem reply_text).
+
+**Políticas T3 declaradas:**
+- OBR-F2-01..03 (obrigações de coleta)
+- CONF-F2-01/02 (confirmações hard)
+- Nota BLQ LF-01 (bloqueio sem fact_* impossível por ora)
+- SGM-F2-01..05 (sugestões mandatórias)
+- ROT-F2-01 (p3_required=false → qualification)
+- ROT-F2-02 (p3_required=true → qualification_special)
+
+**Nenhum fact_* novo criado.** Lacunas apenas declaradas.
+
+O que esta PR fecha: F2 coberta com contrato declarativo completo; PR-T5.4 desbloqueada após merge.
+O que esta PR não fecha: F3, F4, F5; merge não autorizado pelo executor.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.4 — Contrato da fatia renda/regime/composição** (após merge desta PR-T5.3)
+- Artefato: `schema/implantation/T5_FATIA_RENDA_REGIME_COMPOSICAO.md`
+- 21 stages: F3 completa
+- `current_phase: qualification` e `qualification_special`
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-3-fatia-composicao-familiar` → PR aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Artefato `T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md`: criado (entregue)
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-26 — PR-T5.2-fix — Correção premissas topo e RNM
 
 ### ESTADO HERDADO
