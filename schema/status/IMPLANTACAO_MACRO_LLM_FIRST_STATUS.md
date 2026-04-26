@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.3 desbloqueada).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.2-fix em andamento; PR-T5.3 desbloqueada após merge da fix).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 concluída em 2026-04-26; PR-T5.3 autorizada).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 concluída + PR-T5.2-fix corretiva aberta em 2026-04-26; PR-T5.3 autorizada após merge da fix).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,20 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.2-fix` — Correção das premissas de topo e RNM em T5_FATIA_TOPO_ABERTURA.md:
+`schema/implantation/T5_FATIA_TOPO_ABERTURA.md` corrigido (v2): (1) removida premissa de
+"confirmar intenção de compra" — F1 identifica contexto inicial suficiente; curiosidade,
+simulação e dúvida são entradas válidas; fact_customer_goal status mínimo = captured;
+(2) regra RNM corrigida — apenas validade indeterminada (sem data de vencimento) aceita
+para financiamento; validade determinada (com data, mesmo não expirada) = bloqueio;
+LF-02 declarada para distinção determinada/indeterminada (sem criar fact_*);
+(3) CONF-F1-01 rebaixada de hard para soft; OBR-F1-02 ajustada;
+(4) SYN-F1-03/05/06 reescritos; BLQ-F1-01 nota LF-02 adicionada;
+(5) 2 novas provas P-T5-04/05; 3 novos itens §13.
+PR-T5.3 desbloqueada após merge.
+
+## Ultima tarefa anterior (PR-T5.2)
 
 `PR-T5.2` — Contrato da fatia F1 topo/abertura/primeira intenção:
 `schema/implantation/T5_FATIA_TOPO_ABERTURA.md` criado: contrato declarativo completo da

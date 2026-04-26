@@ -69,6 +69,63 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-26 — PR-T5.2-fix — Correção premissas topo e RNM
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.2 merged (#115).
+- Artefato corrigido: `schema/implantation/T5_FATIA_TOPO_ABERTURA.md`.
+- Dois problemas identificados por Vasques: (1) premissa de "confirmar intenção de compra" incorreta; (2) regra RNM incompleta — validade determinada (com data) também bloqueia financiamento.
+
+### ESTADO ENTREGUE
+
+Correções aplicadas em `T5_FATIA_TOPO_ABERTURA.md` (v2):
+
+**Correção 1 — Remoção da premissa de "confirmar intenção de compra":**
+- §1: enunciado reescrito — F1 identifica contexto inicial suficiente, não "intenção de compra confirmada"
+- §2.1: nota operacional explícita — todo lead que entrou já é oportunidade; F1 não pergunta "você quer comprar?"; curiosidade/simulação/dúvida são entradas válidas
+- §2 inicio_decisao: "Confirmar decisão / intenção de compra" → "Identificar contexto inicial de interesse"
+- §3 fact_customer_goal: status mínimo `captured` (antes: `confirmed` como gate)
+- CONF-F1-01: rebaixada de `hard` para `soft`; não é gate de saída de F1
+- OBR-F1-02: só dispara se fact_customer_goal totalmente ausente (não em hypothesis)
+- §8: gate `fact_customer_goal = confirmed` removido; substituído por `captured` mínimo
+- §8.1: nota explícita — fact_customer_goal captured não impede avanço
+- CR-F1-06: reescrita — proibição é persistir "intenção de compra confirmada" sem base, não bloquear simulação
+- AP-F1-06: reescrita — simulação/curiosidade não são "intenção de compra"
+- VS-F1-02/03: atualizados — curiosidade e simulação são válidas
+- SYN-F1-05: reescrito — objetivo apenas capturado pode avançar
+- SYN-F1-06: reescrito — "quero simular" = entrada válida para F1
+
+**Correção 2 — Regra RNM corrigida:**
+- §2.2: reescrito — regra explícita: apenas validade indeterminada aceita; validade determinada (com data, mesmo não expirada) = bloqueio
+- §3.1: tabela RNM atualizada — "válido" marcado com LF-02; nota de que T2 não distingue determinada de indeterminada
+- §4: LF-02 declarada — tipo de validade do RNM (indeterminada vs determinada); sem criar fact_*
+- BLQ-F1-01: resolução atualizada + nota LF-02 extensa
+- SYN-F1-03: atualizado para refletir que "válido" deve ser validade indeterminada
+- §13: 3 novos itens de validação cruzada (LF-02, regra RNM, gate fact_customer_goal)
+- Bloco E: atualizado com v2; 2 novas provas P-T5-04/05
+
+**Nenhum fact_* novo criado.** LF-02 declarada como lacuna de schema futura.
+
+O que foi fechado: PR-T5.2-fix entregue; PR-T5.3 desbloqueada após merge.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.3 — Contrato da fatia qualificação inicial** (após merge desta fix)
+- Artefato: `schema/implantation/T5_FATIA_QUALIFICACAO_INICIAL.md`
+- 7 stages: `estado_civil`, `confirmar_casamento`, `interpretar_composicao`, `confirmar_avo_familiar`, `dependente`, `financiamentos_conjunto`, `quem_pode_somar`
+- `current_phase: qualification`
+- Legados obrigatórios: L03, L07, L08
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-fix-t52-premissas-rnm` → PR aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Artefato T5_FATIA_TOPO_ABERTURA.md: corrigido (v2)
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-26 — PR-T5.2 — Contrato da fatia F1: topo/abertura/primeira intenção
 
 ### ESTADO HERDADO
