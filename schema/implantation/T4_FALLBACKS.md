@@ -711,10 +711,11 @@ timeout após 30s. Primeira ocorrência de fallback neste turno.
 ```
 
 **T4.5 executa:**
-1. Sem retry (FB-RETRY-01).
-2. Tenta retry LLM seguro com prompt simplificado (única tentativa — FB-RETRY-02).
-   Ou diretamente `request_reformulation` se retry não aplicável.
-3. Registra `FallbackTrace` com `trigger: "formato_invalido"`, `lead_state_preserved: true`.
+1. Sem retry (FB-RETRY-01) — saída malformada descartada imediatamente; nenhum reprocessamento.
+2. `reply_text` parcial (se capturado antes do ParseError) descartado — não entregue ao canal,
+   não consultado (FB-FI-03; FB-INV-01).
+3. `FallbackDecision.action = "request_reformulation"` → entregar resposta segura mínima ao lead.
+4. Registra `FallbackTrace` com `trigger: "formato_invalido"`, `lead_state_preserved: true`.
 
 **Resultado:** Lead recebe pedido simples de reenvio. Lead_state preservado. Nenhum dado parcial capturado.
 
@@ -861,7 +862,7 @@ Estado civil não confirmado erroneamente. LLM-first preservado no próximo turn
 Documento-base da evidência:           schema/implantation/T4_FALLBACKS.md
 PR que fecha:                          PR-T4.5 (Fallbacks de segurança)
 Contrato ativo:                        schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md
-Estado da evidência:                   completa
+Estado da evidência:                   completa (inclui correção de FB-E2)
 Há lacuna remanescente?:               não —
                                        4 cenários obrigatórios cobertos:
                                          erro_modelo (§4.1): com retry seguro único (LLM);
@@ -890,6 +891,8 @@ Há lacuna remanescente?:               não —
                                        Bateria E2E (T4.6), Readiness G4 (T4.R):
                                        escopos de PRs subsequentes — não são lacunas.
 Há item parcial/inconclusivo bloqueante?: não —
+                                       FB-E2 corrigido: formato_invalido sem retry —
+                                         contradição com FB-RETRY-01 removida (revisão);
                                        fallback não usa reply_text rejeitado: CONFIRMADO;
                                        fallback não promete aprovação: CONFIRMADO;
                                        fallback não avança stage: CONFIRMADO;
