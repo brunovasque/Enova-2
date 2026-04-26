@@ -11,8 +11,8 @@
 | Blocos legados obrigatórios       | L03                                                                                           |
 | Blocos legados complementares     | L17, L18, L19                                                                                 |
 | Ordem mínima de leitura da frente | L03 → L17 (fase final/handoff) → L18 (QA/telemetria) → L19 (perfil MCMV)                    |
-| Status                            | **aberto** — PR-T4.0 executada em 2026-04-25                                                 |
-| Última atualização                | 2026-04-25                                                                                    |
+| Status                            | **encerrado** — G4 APROVADO em 2026-04-25 por PR-T4.R; arquivado em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md` |
+| Última atualização                | 2026-04-25 — encerrado por PR-T4.R                                                           |
 
 ---
 
@@ -191,13 +191,24 @@ Cada PR de T4 deve apresentar:
 
 ---
 
-## §10 Próximo passo autorizado
+## §10 Sequência T4 — ENCERRADA
 
-**PR-T4.1 — Padronização da entrada do turno**
+**Todas as PRs da frente T4 foram concluídas e G4 foi aprovado.**
 
-- Artefato: `schema/implantation/T4_ENTRADA_TURNO.md`
-- Escopo: definir `TurnoEntrada` shape completo; montar contexto mínimo a partir de `lead_state` + `policy_decisions` + `history` + `objective`; travas LLM-first na entrada; regras de quais campos são obrigatórios vs. opcionais; como informação faltante é tratada
-- Referência: `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` §K, PR-T4.1
+| PR | Status | Artefato |
+|----|--------|----------|
+| PR-T4.0 (#105) | MERGED | `CONTRATO_IMPLANTACAO_MACRO_T4.md` |
+| PR-T4.1 (#106) | MERGED | `T4_ENTRADA_TURNO.md` |
+| PR-T4.2 (#107) | MERGED | `T4_PIPELINE_LLM.md` |
+| PR-T4.3 (#108) | MERGED | `T4_VALIDACAO_PERSISTENCIA.md` |
+| PR-T4.4 (#109) | MERGED | `T4_RESPOSTA_RASTRO_METRICAS.md` |
+| PR-T4.5 (#110) | MERGED | `T4_FALLBACKS.md` |
+| PR-T4.6 (#111) | MERGED | `T4_BATERIA_E2E.md` |
+| PR-T4.R (#112) | MERGED | `READINESS_G4.md` |
+
+**Próximo contrato autorizado: PR-T5.0 — Abertura formal do contrato T5**
+- Skeleton: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md`
+- Referência: `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` §L
 
 ---
 
@@ -343,3 +354,21 @@ Para PR-T4.6 (bateria E2E), adicionar:
 | Conformidade A00-ADENDO-02 | Confirmada — orquestrador posicionado como coordenador, não casca dominante; identidade MCMV preservada; B-06 proíbe violação de soberania |
 | Conformidade A00-ADENDO-03 | Confirmada — Bloco E presente |
 | Próxima PR autorizada | **PR-T4.1 — Padronização da entrada do turno** |
+
+---
+
+## Bloco E — PR-T4.R (Encerramento)
+
+| Campo | Valor |
+|-------|-------|
+| PR | PR-T4.R — Readiness/Closeout G4 (PR #112) |
+| Data | 2026-04-25 |
+| Executor | Claude Code (claude-sonnet-4-6) |
+| Artefatos produzidos | `schema/implantation/READINESS_G4.md`; `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (skeleton); `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md` (arquivo) |
+| Status | CONCLUÍDA — contrato T4 ENCERRADO |
+| Evidência | Smoke S1–S6 PASS (6/6); CA-01..CA-10 CUMPRIDOS (10/10); 0 lacunas bloqueantes; 5 LNB documentadas; G4 APROVADO; contrato arquivado; T5 skeleton criado |
+| Cobertura de microetapas | N/A (PR de readiness/closeout — valida e encerra frente T4) |
+| Conformidade A00-ADENDO-01 | Confirmada — zero reply_text mecânico em todos os artefatos T4 verificados |
+| Conformidade A00-ADENDO-02 | Confirmada — orquestrador posicionado como coordenador em todos os artefatos S1–S6 |
+| Conformidade A00-ADENDO-03 | Confirmada — Bloco E presente em READINESS_G4.md e neste encerramento |
+| Próxima PR autorizada | **PR-T5.0 — Abertura formal do contrato T5** |

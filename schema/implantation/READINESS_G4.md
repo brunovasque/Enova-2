@@ -311,9 +311,9 @@ Fora de escopo respeitado?:             sim — nenhuma alteração em src/, pac
 Pendências remanescentes:               nenhuma bloqueante — 5 não bloqueantes LNB-G4-01..05
                                           (implementação runtime, Supabase real, LLM real,
                                           métricas reais, skeleton T5 a ser preenchido)
-Evidências / provas do encerramento:    PR #106 (PR-T4.0), PR #106 (T4.1), PR #107 (T4.2),
-                                          PR #108 (T4.3), PR #109 (T4.4), PR #110 (T4.5),
-                                          PR #111 (T4.6), PR-T4.R (esta PR);
+Evidências / provas do encerramento:    PR #105 (PR-T4.0), PR #106 (PR-T4.1), PR #107 (PR-T4.2),
+                                          PR #108 (PR-T4.3), PR #109 (PR-T4.4), PR #110 (PR-T4.5),
+                                          PR #111 (PR-T4.6), PR #112 (PR-T4.R, esta PR);
                                           smoke S1–S6 PASS neste documento;
                                           CA-01..CA-10 verificados neste documento
 Data de encerramento:                   2026-04-25
