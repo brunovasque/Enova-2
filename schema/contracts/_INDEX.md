@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T4 — Orquestrador de turno LLM-first | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` | em execução | G3 aprovado; G4 — orquestrador funcional | 2026-04-25 | PR-T4.4 | PR-T4.5 |
+| T4 — Orquestrador de turno LLM-first | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` | em execução | G3 aprovado; G4 — orquestrador funcional | 2026-04-25 | PR-T4.5 | PR-T4.6 |
 
 ## Contratos encerrados
 

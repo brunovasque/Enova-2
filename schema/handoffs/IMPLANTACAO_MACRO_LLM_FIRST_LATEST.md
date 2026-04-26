@@ -3650,3 +3650,122 @@ Próxima PR autorizada:                 PR-T4.5 — Fallbacks de segurança
 6. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
 7. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
 8. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+
+---
+
+## Atualizacao 2026-04-26 — PR-T4.5: Fallbacks de segurança
+
+### Objetivo executado
+
+Criar `schema/implantation/T4_FALLBACKS.md` com os 4 cenários obrigatórios de fallback,
+shapes `FallbackContext`/`FallbackDecision`/`FallbackTrace`, regras de resposta segura,
+regra de não uso de `reply_text` rejeitado e rastro de falha.
+
+### Estado herdado
+
+- PR-T4.4 CONCLUÍDA e mergeada em 2026-04-26. `T4_RESPOSTA_RASTRO_METRICAS.md` publicado
+  com `TurnoRastro`, `reply_routing`, `RR-ROUT-02` (T4.4 não fornece `reply_text` para T4.5).
+- T4_FALLBACKS.md: **pendente** → esta PR entrega.
+
+### Estado entregue
+
+- PR-T4.5 CONCLUÍDA. `T4_FALLBACKS.md` publicado.
+- 4 cenários obrigatórios especificados: erro_modelo, formato_invalido, omissao_campos,
+  contradicao_seria.
+- Shapes FallbackContext (sem reply_text), FallbackDecision (lead_state_change="none"),
+  FallbackTrace (lead_state_preserved invariante).
+- Regra de não uso de reply_text rejeitado: FB-INV-01 + §7.
+- Fallback nunca promete aprovação (FB-INV-02), nunca avança stage (FB-INV-03),
+  nunca persiste fato confirmed (FB-INV-04).
+- PR-T4.6 desbloqueada.
+
+### O que foi feito
+
+- Criado `schema/implantation/T4_FALLBACKS.md` com:
+  - §1 Posição no pipeline (Etapa 6 de 6); caminhos de acionamento;
+  - §2 Condições de acionamento: 5 condições; caminhos direto T4.2→T4.5 e via T4.3/T4.4;
+  - §3 Shapes: FallbackTrigger (4 valores), FallbackAction (4 valores), FallbackContext,
+    FallbackDecision, ErrorDetail, ResponseStrategy, FallbackTrace;
+  - §4 Cenários obrigatórios (4): erro_modelo (§4.1 + retry único), formato_invalido
+    (§4.2 + sem retry), omissao_campos (§4.3), contradicao_seria (§4.4 via REJECT);
+  - §5 Resposta segura: retry LLM seguro único (FB-RETRY-01/02/03); escalação;
+    tabela proibições absolutas;
+  - §6 Rastro e métricas: FallbackTrace obrigatório (FB-INV-07); relação TurnoRastro↔FallbackTrace;
+  - §7 Regra de não uso de reply_text rejeitado (FB-INV-01; §7.3 o que T4.4 envia);
+  - §8 FB-INV-01..12; §9 AP-FB-01..13; §10 5 exemplos FB-E1..E5;
+  - §11 cross-ref T1/T2/T3/T4.1..T4.4 em 14 dimensões; §12 microetapa 5; Bloco E.
+- Atualizou `schema/contracts/_INDEX.md`: PR atual → PR-T4.5; próximo → PR-T4.6.
+- Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`.
+
+### O que não foi feito
+
+- Não criou T4_BATERIA_E2E.md (PR-T4.6).
+- Não implementou orquestrador em `src/`.
+- Não alterou `package.json`, `wrangler.toml`.
+- G4 não fechado.
+
+### Provas entregues
+
+- **P-T4.5-01:** §7 + FB-INV-01 — T4.5 nunca usa `reply_text` rejeitado — CA-08 + AP-FB-01.
+- **P-T4.5-02:** FB-INV-02/03/04 — sem aprovação, sem stage advance, sem fact confirmed.
+- **P-T4.5-03:** CA-08 cumprido — 4 cenários obrigatórios declarados em §4.1–4.4.
+- **P-T4.5-04:** AP-FB-06 + §5.1 — fallback não é template rígido dominante; mínimo e humano.
+- **P-T4.5-05:** Microetapa 5 coberta; Bloco E presente; zero lacunas bloqueantes.
+
+### Conformidade com adendos
+
+- A00-ADENDO-01: confirmada — FB-INV-01 (não usa reply_text); AP-FB-06 (não é template dominante);
+  fallback é rede de proteção mínima, não casca mecânica.
+- A00-ADENDO-02: confirmada — §5.1 "fallback é segurança — não novo funil"; identidade MCMV preservada.
+- A00-ADENDO-03: confirmada — Bloco E presente; evidência completa; microetapa 5 coberta.
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/implantation/T4_FALLBACKS.md
+PR que fecha:                          PR-T4.5 (Fallbacks de segurança)
+Contrato ativo:                        schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — 4 cenários obrigatórios (§4.1–4.4);
+                                       shapes completos (§3); FB-INV-01..12; AP-FB-01..13;
+                                       5 exemplos; 14 cross-refs; microetapa 5 coberta.
+Há item parcial/inconclusivo bloqueante?: não —
+                                       fallback não usa reply_text rejeitado (FB-INV-01);
+                                       fallback não promete aprovação (FB-INV-02);
+                                       fallback não avança stage (FB-INV-03);
+                                       fallback não persiste fato confirmed (FB-INV-04);
+                                       fallback não é template dominante (AP-FB-06 + §5.1).
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         PR-T4.5 CONCLUÍDA; T4_FALLBACKS.md publicado;
+                                       PR-T4.6 desbloqueada.
+Próxima PR autorizada:                 PR-T4.6 — Bateria E2E sandbox + latência/custo
+```
+
+### Estado atual do repositorio (após PR-T4.5)
+
+- Fase macro: **T4** — em execução; PR-T4.6 próxima.
+- G0: APROVADO. G1: APROVADO. G2: APROVADO. G3: **APROVADO**. G4: aberto.
+- T4_ENTRADA_TURNO.md: **publicado** (PR-T4.1).
+- T4_PIPELINE_LLM.md: **publicado** (PR-T4.2).
+- T4_VALIDACAO_PERSISTENCIA.md: **publicado** (PR-T4.3).
+- T4_RESPOSTA_RASTRO_METRICAS.md: **publicado** (PR-T4.4).
+- T4_FALLBACKS.md: **publicado** (PR-T4.5).
+- T4_BATERIA_E2E.md: pendente (PR-T4.6).
+- READINESS_G4.md: pendente (PR-T4.R).
+- Runtime: inalterado.
+
+### Proximo passo autorizado
+
+- **`PR-T4.6`** — Bateria E2E sandbox + latência/custo (`T4_BATERIA_E2E.md`).
+
+### Leituras obrigatorias para PR-T4.6
+
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (§6 S6, §7 CA-09, §16 PR-T4.6)
+2. `schema/implantation/T4_FALLBACKS.md` (4 cenários para cobertura E2E)
+3. `schema/implantation/T4_RESPOSTA_RASTRO_METRICAS.md` (métricas e rastro)
+4. `schema/implantation/T4_VALIDACAO_PERSISTENCIA.md` (ValidationResult shapes)
+5. `schema/implantation/T4_PIPELINE_LLM.md` (pipeline completo)
+6. `schema/implantation/T4_ENTRADA_TURNO.md` (TurnoEntrada)
+7. `schema/ADENDO_CANONICO_SOBERANIA_IA.md`
+8. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`
+9. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`
+10. L18 — Runner / QA / Telemetria (complementar)

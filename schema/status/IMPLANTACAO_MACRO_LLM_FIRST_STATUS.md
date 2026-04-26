@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T4 — Orquestrador de turno LLM-first (em execução; PR-T4.5 desbloqueada).
+Fase macro ativa: T4 — Orquestrador de turno LLM-first (em execução; PR-T4.6 desbloqueada).
 
 Gate anterior: G3 — APROVADO em 2026-04-25 via PR-T3.R.
 
 Gate aberto: G4 — orquestrador funcional (bloqueado até PR-T4.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (em execução — PR-T4.4 executada em 2026-04-26).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` (em execução — PR-T4.5 executada em 2026-04-26).
 
 Contrato T3 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md`.
 
@@ -20,6 +20,19 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
+`PR-T4.5` — Fallbacks de segurança:
+`schema/implantation/T4_FALLBACKS.md` criado: 4 cenários obrigatórios (erro_modelo,
+formato_invalido, omissao_campos, contradicao_seria); shapes `FallbackContext`,
+`FallbackDecision`, `FallbackTrace`; regra de não uso de `reply_text` rejeitado
+(FB-INV-01); fallback nunca promete aprovação (FB-INV-02), nunca avança stage
+(FB-INV-03), nunca persiste fato `confirmed` (FB-INV-04); retry seguro único apenas
+para `erro_modelo` (FB-RETRY-01); FallbackTrace obrigatório em todo acionamento
+(FB-INV-07); 13 anti-padrões AP-FB; 5 exemplos sintéticos FB-E1..FB-E5; microetapa 5
+coberta; Bloco E.
+PR-T4.6 desbloqueada.
+
+## Ultima tarefa anterior
+
 `PR-T4.4` — Resposta final + rastro + métricas mínimas:
 `schema/implantation/T4_RESPOSTA_RASTRO_METRICAS.md` criado: regras de entrega condicional
 de `reply_text` (`reply_routing = "T4.4"` → entrega; `REJECT/T4.5"` → não entrega); T4.4
@@ -27,7 +40,7 @@ nunca escreve/edita/substitui `reply_text`; shape `TurnoRastro` com 15 campos; m
 mínimas declarativas (latência total/LLM, tokens input/output/total, validation_result,
 persist_decision, facts_persisted_count, facts_blocked_count, reply_routing); camadas
 L1/L2/L3/L4 com regras de atualização pós-turno; TurnoRastro como auditoria pura (não
-fonte de fala); tratamento declarativo de erro de canal; RR-INV-01..12; 12 anti-padrões
+fonte de fala); tratamento declarativo de erro de canal; RR-INV-01..12; 13 anti-padrões
 AP-RR; 5 exemplos sintéticos; microetapa 4 coberta; Bloco E.
 PR-T4.5 desbloqueada.
 
@@ -74,6 +87,46 @@ coerência verificada em 11 dimensões; cenários sintéticos V1/V2/V3 (3/3 PASS
 critérios CA-01..CA-10 (10/10 CUMPRIDOS); zero lacunas bloqueantes; 5 lacunas
 não bloqueantes (LNB-01..05) declaradas e justificadas. G3 APROVADO.
 Contrato T3 ENCERRADO e arquivado. Skeleton T4 criado. PR-T4.0 desbloqueada.
+
+## O que a PR-T4.5 fechou
+
+- Criou `schema/implantation/T4_FALLBACKS.md` com:
+  - §2 Condições de acionamento: 5 triggers, caminhos direto (T4.2→T4.5) e via T4.4;
+  - §3 Shapes: `FallbackContext` (sem `reply_text`), `FallbackDecision` (lead_state_change="none"),
+    `FallbackTrace` (lead_state_preserved invariante), `ErrorDetail`, `ResponseStrategy`;
+  - §4 Cenários obrigatórios (4): `erro_modelo` (§4.1), `formato_invalido` (§4.2),
+    `omissao_campos` (§4.3), `contradicao_seria` (§4.4);
+  - §5 Resposta segura: retry LLM único apenas para `erro_modelo` (FB-RETRY-01);
+    proibições absolutas (aprovação, stage, confirmed, template dominante);
+  - §6 Rastro e métricas: `FallbackTrace` obrigatório (FB-INV-07); métricas mínimas;
+    relação com `TurnoRastro`;
+  - §7 Regra de não uso de `reply_text` rejeitado: FB-INV-01 + AP-FB-01 + §7.3;
+  - §8 FB-INV-01..12; §9 AP-FB-01..13; §10 5 exemplos FB-E1..E5;
+  - §11 Cross-ref T1/T2/T3/T4.1..T4.4 em 14 dimensões; §12 microetapa 5 coberta;
+  - Bloco E completo.
+- Atualizou `schema/contracts/_INDEX.md`: PR atual → PR-T4.5; próximo → PR-T4.6.
+
+## O que a PR-T4.5 não fechou
+
+- Bateria E2E sandbox → PR-T4.6.
+- Readiness G4 → PR-T4.R.
+- Nenhum runtime/código (`src/`).
+- G4 não fechado.
+
+## Proximo passo autorizado
+
+PR-T4.6 — Bateria E2E sandbox + latência/custo (`schema/implantation/T4_BATERIA_E2E.md`).
+
+Leituras obrigatórias para PR-T4.6:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T4.md` — §6 S6, §7 CA-09
+2. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+3. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+4. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` §K PR-T4.6
+5. Todos os artefatos T4.1..T4.5 (T4_ENTRADA_TURNO, T4_PIPELINE_LLM, T4_VALIDACAO_PERSISTENCIA,
+   T4_RESPOSTA_RASTRO_METRICAS, T4_FALLBACKS)
+6. L18 — Runner / QA / Telemetria (complementar para bateria E2E)
+
+---
 
 ## O que a PR-T3.R fechou
 
