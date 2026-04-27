@@ -69,6 +69,59 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-26 — PR-T5.4 — Contrato da fatia F3: renda / regime / composição
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.3 (#117) merged 2026-04-27T00:18:40Z.
+- Artefato base: `schema/implantation/T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` vigente.
+- Próximo passo autorizado: PR-T5.4 — Contrato declarativo da fatia F3.
+- Branch base: `main` (após pull pós-merge de #117).
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T5_FATIA_RENDA_REGIME_COMPOSICAO.md` criado — contrato declarativo completo da fatia F3.
+
+**21 stages cobertos:** `regime_trabalho`, `renda`, `ctps_36`, `ir_declarado`, `possui_renda_extra`,
+`inicio_multi_renda_pergunta`, `inicio_multi_renda_coletar`, `inicio_multi_regime_pergunta`,
+`inicio_multi_regime_coletar`, `renda_mista_detalhe`, `autonomo_compor_renda`, `parceiro_tem_renda`,
+`regime_trabalho_parceiro`, `regime_trabalho_parceiro_familiar`, `renda_parceiro`, `renda_parceiro_familiar`,
+`renda_familiar_valor`, `somar_renda_familiar`, `somar_renda_solteiro`, `sugerir_composicao_mista`,
+`ctps_36_parceiro`
+
+**16 fatos canônicos T2 (Groups IV–VIII + derived):**
+Groups IV (P1), V (P2), VI (P3), VII (benefícios/FGTS/reserva), VIII (dependente cross-fatia)
++ derived_subsidy_band_hint + derived_composition_needed + signal_multi_income_p1
+
+**9 lacunas de schema futuras (LF-01..09):**
+LF-01: valor segunda fonte renda P1; LF-02: IRPF P3; LF-03: CTPS P3;
+LF-04: tipo de pensão; LF-05: benefício não financiável; LF-06: pró-labore;
+LF-07: média renda variável; LF-08: CNPJ-only; LF-09: enum desempregado
+
+**18 regras comerciais Vasques (RC-F3-01..18)** documentadas sem reply_text.
+
+**Políticas T3:** OBR-F3-01..09 + CONF-F3-01..05 + SGM-F3-01..07 + ROT-F3-01..03 + VS-F3-01..06
+Cross-fatia F2→F3: OBR-F3-09 resolve dependente quando renda P1 confirmada.
+
+O que esta PR fecha: F3 coberta com contrato declarativo completo; PR-T5.5 desbloqueada após merge.
+O que esta PR não fecha: F4, F5, G5; merge não autorizado pelo executor.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.5 — Contrato da fatia elegibilidade / restrição** (após merge desta PR-T5.4)
+- Artefato: `schema/implantation/T5_FATIA_ELEGIBILIDADE_RESTRICAO.md`
+- 5 stages: restricao, regularizacao_restricao, fim_inelegivel, verificar_averbacao, verificar_inventario
+- `current_phase: qualification` ou `qualification_special`
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-4-fatia-renda-regime-composicao` → PR aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Artefato `T5_FATIA_RENDA_REGIME_COMPOSICAO.md`: criado (entregue)
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-26 — PR-T5.3 — Contrato da fatia F2: qualificação inicial / composição familiar
 
 ### ESTADO HERDADO
