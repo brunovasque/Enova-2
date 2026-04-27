@@ -552,6 +552,8 @@ F3 deve sugerir composição quando qualquer das seguintes condições se aplica
 - Autônomo sem IRPF está sozinho
 - Pessoa só recebe benefício social não financiável
 - Desempregado sem renda comprovável
+- Somente seguro-desemprego como renda declarada
+- Trabalho temporário como única fonte de renda sem outra renda comprovável
 - Renda por fora não formalizada não resolve sozinha
 - Renda formal abaixo de ~R$2.550 com apoio informal insuficiente
 - Cenário indica que processo solo ficará muito limitado
@@ -559,6 +561,31 @@ F3 deve sugerir composição quando qualquer das seguintes condições se aplica
 Sempre sugerir alternativa viável antes de tratar como inviável.
 Compositor deve ser maior de 18 anos; idealmente abaixo de 67 anos (risco etário Caixa,
 herdado de F2 — avô/avó com mais de 67 anos: alertar risco, não bloquear diretamente).
+
+### RC-F3-19 — Seguro-desemprego e trabalho temporário (regra obrigatória)
+
+Seguro-desemprego e trabalho temporário **NÃO entram como renda válida para financiamento Caixa/MCMV**.
+
+- **Seguro-desemprego:** renda temporária governamental; não é renda estável comprovável para o banco;
+  tratar como sem renda financiável (SGM-F3-03)
+- **Trabalho temporário:** vínculo precário e não permanente; Caixa tende a não aceitar como renda
+  comprovável estável para MCMV; não prometer aprovação
+- Se a pessoa tem apenas seguro-desemprego: tratar como sem renda financiável; buscar composição
+  com alguém que tenha renda válida (SGM-F3-03)
+- Se a pessoa tem apenas trabalho temporário: não prometer aprovação; verificar se há outra renda;
+  sugerir composição se for o único fonte de renda (SGM-F3-01 ou SGM-F3-03)
+- Se houver outra renda válida junto: separar cada fonte por dono, tipo e valor (RC-F3-01);
+  registrar a fonte não financiável como sinal apenas — não somar ao total financiável
+
+**Distinção obrigatória de fontes não financiáveis:**
+| Fonte | Válida para MCMV? | Nota |
+|---|---|---|
+| Bolsa Família / BPC / benefício assistencial | ❌ Não | RC-F3-08 |
+| Seguro-desemprego | ❌ Não | RC-F3-19 |
+| Trabalho temporário | ❌ Não | RC-F3-19 |
+| Pensão alimentícia | ❌ Não | RC-F3-07 |
+| Pensão por morte | ✅ Sim | RC-F3-07 |
+| CLT / servidor / autônomo com IRPF / aposentadoria | ✅ Sim (condições normais) | RC-F3-03 a RC-F3-06 |
 
 ---
 
@@ -604,9 +631,11 @@ Enquanto LF-05 não for resolvida, o LLM deve raciocinar a partir de:
 Se a pessoa tem apenas Bolsa Família/BPC, tratar como sem renda financiável e acionar SGM-F3-04 para buscar composição com pessoa maior de 18 anos, idealmente abaixo de 67 anos.
 Não criar bloqueio hard por `fact_benefits_signal` sem `fact_*` futuro de classificação.
 
-**Nota LF-09 — desempregado:**
+**Nota LF-09 — desempregado / seguro-desemprego:**
 Não existe enum `desempregado` em `fact_work_regime_p1`. Operacionalmente tratado via
 ausência de regime + `fact_monthly_income_p1` = 0 ou ausente + SGM-F3-03 disparada.
+Seguro-desemprego não cria enum diferente — também opera via `fact_monthly_income_p1` ausente
+ou zero (renda não financiável); RC-F3-19 aplicada; SGM-F3-03 disparada.
 
 ### 6.4 Sugestões mandatórias (SGM)
 
@@ -642,6 +671,8 @@ ausência de regime + `fact_monthly_income_p1` = 0 ou ausente + SGM-F3-03 dispar
 | VS-F3-04 | Lead diz que o bico/informal "conta também" | Não tratar renda informal não formalizada como renda formal; registrar e orientar RC-F3-10 |
 | VS-F3-05 | Consultor pergunta "você tem renda extra?" diretamente | Violação de RC-F3-02; o LLM deve abordar via contexto de "múltiplas fontes de renda" |
 | VS-F3-06 | Lead menciona pensão sem especificar tipo | Não assumir que qualquer pensão é válida; entender tipo (por morte vs alimentícia → RC-F3-07) |
+| VS-F3-07 | Lead menciona seguro-desemprego como renda principal | Não tratar como renda válida para financiamento; orientar RC-F3-19; acionar SGM-F3-03 |
+| VS-F3-08 | Lead menciona trabalho temporário como única fonte de renda | Não prometer aprovação; não tratar como renda estável para Caixa/MCMV; orientar RC-F3-19; verificar composição |
 
 ---
 
@@ -703,6 +734,7 @@ só ativa com status `confirmed` do fato bloqueante.
 | AP-F3-08 | Bloquear processo quando autônomo sem IRPF entra em conjunto com outra pessoa | Viola RC-F3-05 — não é impeditivo automático |
 | AP-F3-09 | Perguntar CTPS de P2 quando P1 já tem 36 meses confirmados | Viola RC-F3-12 — basta uma pessoa |
 | AP-F3-10 | Criar `reply_text` mecânico em qualquer política T3 desta fatia | Viola soberania LLM (A00-ADENDO-01) |
+| AP-F3-11 | Tratar seguro-desemprego ou trabalho temporário como renda válida para financiamento Caixa/MCMV | Viola RC-F3-19 |
 
 ---
 
@@ -720,6 +752,8 @@ só ativa com status `confirmed` do fato bloqueante.
 | RISCO-F3-08 (médio) | `fact_ctps_36m_p1 = false` + ninguém no processo verificado ainda | SGM-F3-06; perguntar P2 na sequência |
 | RISCO-F3-09 (baixo) | Pensão declarada sem tipo | VS-F3-06; entender tipo antes de registrar |
 | RISCO-F3-10 (baixo) | `fact_has_multi_income_p1` detectado como sinal mas não confirmado | `signal_multi_income_p1` ativo; OBR de multi-renda latente |
+| RISCO-F3-11 (alto) | Apenas seguro-desemprego detectado + sem renda formal | SGM-F3-03; RC-F3-19 aplicada; `derived_composition_needed = true` |
+| RISCO-F3-12 (médio) | Trabalho temporário como única fonte de renda | VS-F3-08; RC-F3-19 aplicada; verificar outra renda ou composição |
 
 ---
 
@@ -883,7 +917,7 @@ O que a última PR fechou: F2 coberta (composição familiar); PR-T5.3 merged
 O que a última PR NÃO fechou: F3, F4, F5; G5; runtime
 Por que esta tarefa existe: F2 determinou quem participa; F3 determina a renda e viabilidade de cada participante
 Esta tarefa está dentro ou fora do contrato ativo: dentro
-Objetivo desta tarefa: Criar contrato declarativo completo da F3 com 21 stages, 18 regras Vasques, facts T2, lacunas e políticas T3
+Objetivo desta tarefa: Criar contrato declarativo completo da F3 com 21 stages, 19 regras Vasques, facts T2, lacunas e políticas T3
 Escopo: schema/implantation/T5_FATIA_RENDA_REGIME_COMPOSICAO.md + live files
 Fora de escopo: src/, runtime, Supabase, migrations, T1/T2/T3/T4 aprovados, cálculo real, normativa MCMV além do validado
 Houve desvio de contrato?: não
@@ -908,25 +942,27 @@ Fontes de verdade consultadas:
 | 2 | Todos os 16 fatos/derived de saída de F3 declarados com condição | §3.1 |
 | 3 | Cross-fatia F2 → F3 documentada: dependente + process_mode + p3_required | §3.2 |
 | 4 | 9 lacunas de schema (LF-01..LF-09) declaradas sem criar fact_* | §4 |
-| 5 | 18 regras comerciais Vasques documentadas (RC-F3-01..18) | §5 |
+| 5 | 19 regras comerciais Vasques documentadas (RC-F3-01..19) | §5 |
 | 6 | Regra-mãe da renda: toda renda tem dono, regime, valor, comprovação, relação | RC-F3-01 |
 | 7 | "Renda extra" proibida como pergunta principal; multi-renda por contexto | RC-F3-02, AP-F3-02 |
 | 8 | Bolsa Família / BPC não é renda válida para MCMV | RC-F3-08, AP-F3-03 |
+| 8.1 | Seguro-desemprego não é renda válida para financiamento Caixa/MCMV | RC-F3-19, AP-F3-11 |
+| 8.2 | Trabalho temporário não é renda válida/estável para financiamento Caixa/MCMV | RC-F3-19, AP-F3-11 |
 | 9 | Pensão alimentícia não entra para MCMV; pensão por morte entra | RC-F3-07, AP-F3-04 |
 | 10 | CNPJ/PJ sozinho não serve para MCMV | RC-F3-06, AP-F3-05 |
 | 11 | Autônomo sem IRPF em conjunto: não é bloqueio automático | RC-F3-05, AP-F3-08 |
 | 12 | CTPS 36: ordem P1→P2→P3; basta uma pessoa; não é impeditivo | RC-F3-12, AP-F3-09 |
 | 13 | Dependente cross-fatia: resolvido quando renda P1 confirmada | §3.2, RC-F3-17, OBR-F3-09 |
-| 14 | 9 OBR, 5 CONF, 7 SGM, 3 ROT, 6 VS declarados — zero reply_text | §6, §7 |
+| 14 | 9 OBR, 5 CONF, 7 SGM, 3 ROT, 8 VS declarados — zero reply_text | §6, §7 |
 | 15 | 14 critérios de saída mensuráveis | §8 |
 | 16 | 8 critérios de não saída | §9 |
-| 17 | 10 anti-padrões (AP-F3-01..10) | §10 |
-| 18 | 10 classes de risco com condição e ação | §11 |
+| 17 | 11 anti-padrões (AP-F3-01..11) | §10 |
+| 18 | 12 classes de risco com condição e ação | §11 |
 | 19 | 26 itens de validação cruzada T2/T3/T4 | §14 |
 | 20 | 10 cenários sintéticos cobrindo todos os casos críticos | §13 |
 | 21 | Zero reply_text mecânico em qualquer política — soberania LLM intacta | §6, AP-F3-10 |
 | 22 | `derived_subsidy_band_hint` como sinal/faixa interna derivada de subsídio — hint interno, sem promessa e sem simulação; não calcula aprovação, não calcula crédito, não calcula subsídio final | §2.17, VS-F3-03 |
-| 23 | LF-01 cobre renda adicional; LF-05 cobre classificação de benefício social não financiável / assistencial; LF-09 cobre desempregado | §4 |
+| 23 | LF-01 cobre renda adicional; LF-05 cobre classificação de benefício social não financiável / assistencial; LF-09 cobre desempregado e seguro-desemprego | §4, §6.3 |
 
 ### Provas
 
@@ -937,7 +973,7 @@ Fontes de verdade consultadas:
 ```
 --- ESTADO ENTREGUE ---
 O que foi feito nesta PR: Criado T5_FATIA_RENDA_REGIME_COMPOSICAO.md — contrato declarativo completo da F3
-O que foi fechado nesta PR: F3 coberta com 21 stages, 18 regras, 9 lacunas, policies T3 completas
+O que foi fechado nesta PR: F3 coberta com 21 stages, 19 regras, 9 lacunas, policies T3 completas
 O que continua pendente: F4, F5, FP, FS; G5; runtime; merge autorizado apenas pelo Vasques
 O que ainda não foi fechado do contrato ativo: PR-T5.5..PR-T5.8, PR-T5.R, G5
 Recorte executado do contrato: T5 §6 S4 — contrato declarativo F3
