@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.4 aberta em 2026-04-26 — F3 renda / regime / composição; aguardando merge).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.5 aberta em 2026-04-26 — F4 elegibilidade / restrição; aguardando merge).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 merged; PR-T5.4 aberta em 2026-04-26; PR-T5.5 autorizada após merge da T5.4).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 merged; PR-T5.5 aberta em 2026-04-26; PR-T5.6 autorizada após merge da T5.5).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,20 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.5` — Contrato declarativo da fatia F4: elegibilidade / restrição:
+`schema/implantation/T5_FATIA_ELEGIBILIDADE_RESTRICAO.md` criado:
+contrato declarativo completo da fatia F4 (current_phase: qualification/qualification_special →
+docs_prep na saída positiva); 3 stages ativos cobertos (restricao, regularizacao_restricao,
+fim_inelegivel); 2 stages fora do recorte ativo documentados como opcionais/futuros
+(verificar_averbacao, verificar_inventario); 3 fatos T2 canônicos (Group VII + derived);
+8 lacunas de schema futuras (LF-01..08); 8 regras comerciais Vasques documentadas (RC-F4-01..08);
+regra canônica: restrição declarada NÃO é bloqueio automático; fim_inelegivel é temporário;
+divergência com mapa legado documentada e justificada (RC-F4-01 supersede mapa); 2 OBR +
+2 CONF + 3 SGM + 2 ROT + 6 VS; 10 anti-padrões; 7 cenários sintéticos; 15 validações cruzadas;
+Bloco E completo. PR-T5.6 desbloqueada após merge.
+
+## Ultima tarefa anterior (PR-T5.4)
 
 `PR-T5.4` — Contrato declarativo da fatia F3: renda / regime / composição:
 `schema/implantation/T5_FATIA_RENDA_REGIME_COMPOSICAO.md` criado:
