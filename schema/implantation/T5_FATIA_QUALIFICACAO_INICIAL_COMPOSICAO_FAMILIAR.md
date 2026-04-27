@@ -329,14 +329,9 @@ Atualmente **não existe** no repo uma base normativa completa do MCMV/CEF para 
 ### 6.3 Bloqueios — "bloquear avanço de `current_phase`"
 
 > F2 não possui bloqueio hard autônomo com condição diretamente avaliável por schema T2 atual.
-> O bloqueio de financiamento anterior (se aplicável) depende de LF-01 — regra documental
-> declarada mas não implementável sem `fact_*` canônico.
+> A fatia F2 organiza estado civil, modo de processo e composição familiar, mas não bloqueia elegibilidade por renda, crédito, documentação ou regra normativa completa.
 
-**Nota LF-01 — bloqueio de financiamento:** a regra comercial do MCMV pode implicar bloqueio
-para quem já possui financiamento MCMV ativo. Esta condição **não está capturada** no schema T2
-atual. LF-01 registra essa lacuna. Até a resolução: (a) o LLM deve obter essa informação
-conversacionalmente; (b) o mecânico não pode emitir bloqueio hard sem `fact_*` declarado;
-(c) a regra permanece como **restrição operacional documentada**.
+**Nota LF-01 — financiamento em conjunto atual:** LF-01 não representa financiamento anterior, histórico de financiamento ou posse de financiamento MCMV ativo. LF-01 representa apenas a lacuna de schema para registrar a intenção/estrutura de financiamento em conjunto atual, isto é, quem entra no processo agora como cônjuge, companheiro(a), namorado(a), familiar ou outro candidato à composição. Até existir `fact_*` canônico próprio, o efeito operacional deve ser refletido por `fact_process_mode`, `fact_composition_actor` e lacuna futura declarada, sem emissão de bloqueio hard.
 
 ### 6.4 Sugestões mandatórias — "apenas orientar"
 
