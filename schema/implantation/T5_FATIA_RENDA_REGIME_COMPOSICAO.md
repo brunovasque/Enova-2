@@ -45,7 +45,7 @@ Ele formaliza, sem prescrever fala:
 ### 1.1 Objetivo da F3
 
 Coletar e confirmar todos os dados de renda e regime de trabalho de cada pessoa do processo
-(P1, P2, P3), alimentar `derived_subsidy_band_hint` e determinar a viabilidade de composição,
+(P1, P2, P3), alimentar o hint interno de faixa de subsídio (`derived_subsidy_band_hint` — hint interno, sem promessa e sem simulação) e determinar a viabilidade de composição,
 deixando F4 com informação suficiente para avaliar elegibilidade e restrição.
 
 F3 cobre:
@@ -54,10 +54,10 @@ F3 cobre:
 - IRPF de autônomos (P1 e P2; P3 via LF-02)
 - CTPS 36 meses na ordem correta: P1 → P2 → P3 (P3 via LF-03)
 - Identificação de múltiplas fontes de renda e renda mista
-- Benefícios sociais (financiáveis e não financiáveis)
+- Benefícios sociais não financiáveis para renda de financiamento
 - Sugestão de composição quando renda é insuficiente
 - Resolução da pendência de `fact_dependente` herdada de F2, quando renda aparece
-- Cálculo de `derived_subsidy_band_hint`
+- Sinal/faixa interna derivada de subsídio (`derived_subsidy_band_hint` — hint interno, não calcula aprovação, não calcula crédito, não calcula subsídio final)
 
 ### 1.2 `current_phase` ativo
 
@@ -95,7 +95,7 @@ Ambos os valores são canônicos em `T2_LEAD_STATE_V1.md`. Nenhum valor novo de
 - "Desempregado" não tem valor canônico neste enum — ver LF-09
 - Lead que recebe apenas Bolsa Família ou BPC sem trabalho formal → registrar
   `fact_benefits_signal` (Group VII) como ancora; regime permanece ausente ou
-  `informal` provisoriamente; LF-05 declarada para classificação de financiabilidade
+  `informal` provisoriamente; LF-05 declarada para classificação de benefício social não financiável
 - `fact_work_regime_p1 = "múltiplo"` indica mais de um regime; `fact_has_multi_income_p1`
   deve ser confirmado em sequência
 - Aposentado entra normalmente; pensionista requer distinção de tipo → LF-04
@@ -271,12 +271,12 @@ um dos cônjuges tiver renda.
 
 ### 2.17 `renda_familiar_valor`
 
-**Objetivo:** Consolidar o valor de renda do grupo para cálculo de `derived_subsidy_band_hint`.
+**Objetivo:** Consolidar o valor de renda do grupo para sinalização da faixa interna de subsídio (`derived_subsidy_band_hint` — hint interno, não calcula aprovação, não calcula crédito, não calcula subsídio final).
 
 **Fatos envolvidos:** `fact_monthly_income_p3`, `derived_subsidy_band_hint`
 
-**Nota:** `derived_subsidy_band_hint` é recalculado aqui com a renda total do processo.
-Nunca prometer aprovação ou subsídio exato — é apenas uma estimativa de faixa.
+**Nota:** `derived_subsidy_band_hint` é o sinal/faixa interna derivada de subsídio atualizado aqui com a renda total do processo.
+Hint interno — não calcula aprovação, não calcula crédito, não calcula subsídio final.
 
 ### 2.18 `somar_renda_familiar`
 
@@ -374,7 +374,7 @@ novo nesta PR. São registradas para resolução futura.
 | 2 | LF-02 | `fact_autonomo_has_ir_p3` — IRPF do P3 autônomo | `regime_trabalho_parceiro_familiar` | Sem `fact_*` canônico para IRPF de P3; regra de autônomo sem IR aplica-se a P3 mas não pode ser persistida |
 | 3 | LF-03 | `fact_ctps_36m_p3` — CTPS 36 meses do P3 | `ctps_36_parceiro` (extensão P3) | Se P1 e P2 não têm 36 meses, P3 deveria ser perguntado; sem `fact_*` canônico para P3 |
 | 4 | LF-04 | Tipo de pensão recebida (por morte vs alimentícia) | `regime_trabalho`, `renda` | `fact_benefits_signal` é genérico; pensão alimentícia NÃO entra como renda para MCMV; distinção de tipo requer `fact_*` futuro |
-| 5 | LF-05 | `fact_benefit_financeable` — benefício social é financiável para MCMV | `regime_trabalho`, `renda` | `fact_benefits_signal` existe mas não classifica se Bolsa Família/BPC/benefício assistencial é ou não financiável para Caixa; classificação requer `fact_*` futuro |
+| 5 | LF-05 | Classificação de benefício social não financiável / benefício assistencial declarado | `regime_trabalho`, `renda` | `fact_benefits_signal` existe mas não classifica Bolsa Família/BPC/benefício assistencial como não financiável para Caixa; classificação requer `fact_*` futuro — **nenhum benefício social assistencial é financiável para MCMV** |
 | 6 | LF-06 | `fact_prolabore_signal` — pró-labore de empresário/CNPJ para MCMV | `ir_declarado`, `autonomo_compor_renda` | Empresário com CNPJ pode justificar renda via pró-labore (pessoa física); sem `fact_*` canônico para esse sinal |
 | 7 | LF-07 | `fact_income_average_p1` — média de renda variável calculada P1 | `renda`, `renda_mista_detalhe` | Autônomo sem IRPF ou CLT com variação usa média estimada; sem `fact_*` para armazenar valor calculado |
 | 8 | LF-08 | `fact_cnpj_only_signal` — lead declara renda exclusivamente de CNPJ/PJ | `ir_declarado`, `regime_trabalho` | CNPJ sozinho não serve para MCMV (PF); flag de "apenas PJ" requer `fact_*` futuro para acionar orientação correta |
@@ -594,13 +594,15 @@ herdado de F2 — avô/avó com mais de 67 anos: alertar risco, não bloquear di
 
 ### 6.3 Notas sobre lacunas e bloqueios
 
-**Nota LF-05 — benefício social:**
-Não existe `fact_*` canônico para classificar benefício social como "não financiável".
+**Nota LF-05 — benefício social não financiável:**
+Bolsa Família, BPC (Benefício de Prestação Continuada) e benefícios assistenciais semelhantes **não somam como renda para financiamento Caixa/MCMV** — nenhum benefício social assistencial é financiável para MCMV.
+Não existe `fact_*` canônico para persistir essa classificação de não financiável.
 Enquanto LF-05 não for resolvida, o LLM deve raciocinar a partir de:
 - `fact_benefits_signal` (Group VII) captura o sinal genérico
 - `fact_work_regime_p1` absente ou `= informal` + `fact_monthly_income_p1` muito baixo
 - Regra RC-F3-08 como contexto de negócio
-Não criar bloqueio hard por `fact_benefits_signal` sem `fact_benefit_financeable`.
+Se a pessoa tem apenas Bolsa Família/BPC, tratar como sem renda financiável e acionar SGM-F3-04 para buscar composição com pessoa maior de 18 anos, idealmente abaixo de 67 anos.
+Não criar bloqueio hard por `fact_benefits_signal` sem `fact_*` futuro de classificação.
 
 **Nota LF-09 — desempregado:**
 Não existe enum `desempregado` em `fact_work_regime_p1`. Operacionalmente tratado via
@@ -636,7 +638,7 @@ ausência de regime + `fact_monthly_income_p1` = 0 ou ausente + SGM-F3-03 dispar
 |---|---|---|
 | VS-F3-01 | Lead menciona renda de Bolsa Família como renda principal | Não tratar como renda válida para financiamento; orientar RC-F3-08 |
 | VS-F3-02 | Lead menciona "CNPJ" como renda para MCMV | Não aceitar como renda de PF; orientar RC-F3-06 |
-| VS-F3-03 | Lead pergunta se vai ser aprovado com base na renda declarada aqui | Nunca prometer aprovação; `derived_subsidy_band_hint` é estimativa de faixa, não aprovação |
+| VS-F3-03 | Lead pergunta se vai ser aprovado com base na renda declarada aqui | Nunca prometer aprovação; `derived_subsidy_band_hint` é hint interno, sem promessa e sem simulação — não calcula aprovação, não calcula crédito, não calcula subsídio final |
 | VS-F3-04 | Lead diz que o bico/informal "conta também" | Não tratar renda informal não formalizada como renda formal; registrar e orientar RC-F3-10 |
 | VS-F3-05 | Consultor pergunta "você tem renda extra?" diretamente | Violação de RC-F3-02; o LLM deve abordar via contexto de "múltiplas fontes de renda" |
 | VS-F3-06 | Lead menciona pensão sem especificar tipo | Não assumir que qualquer pensão é válida; entender tipo (por morte vs alimentícia → RC-F3-07) |
@@ -658,7 +660,7 @@ atendidos, sem `must_ask_now` de renda pendente e sem bloqueio ativo.
 | 6 | Renda P2 confirmada | `fact_monthly_income_p2` | `confirmed` — SE duo |
 | 7 | Regime P3 confirmado | `fact_work_regime_p3` | `confirmed` — SE P3 |
 | 8 | Renda P3 confirmada | `fact_monthly_income_p3` | `confirmed` — SE P3 |
-| 9 | `derived_subsidy_band_hint` calculado | `derived_subsidy_band_hint` | `calculated` |
+| 9 | Sinal/faixa interna de subsídio derivado | `derived_subsidy_band_hint` | `calculated` — hint interno, não cálculo final |
 | 10 | Multi-renda verificada | `fact_has_multi_income_p1` | `captured` ou descartada |
 | 11 | Benefício social verificado | `fact_benefits_signal` | `captured` SE declarado |
 | 12 | Dependente resolvido (se aplicável) | `fact_dependente` | `captured` ou skip justificado |
@@ -679,7 +681,7 @@ F3 NÃO está concluída se qualquer um dos bloqueios abaixo persistir:
 | `fact_monthly_income_p2` ausente E `process_mode != solo` | P2 presente sem renda declarada |
 | `fact_work_regime_p3` ausente E `p3_required = true` | P3 presente sem regime declarado |
 | `fact_monthly_income_p3` ausente E `p3_required = true` | P3 presente sem renda declarada |
-| `derived_subsidy_band_hint` não calculado | Saída obrigatória de F3 |
+| `derived_subsidy_band_hint` não sinalizado | Saída obrigatória de F3 — hint interno necessário |
 | `fact_dependente` ausente E solo E renda < ~R$4.000 confirmada | Cross-fatia F2 não resolvida |
 
 **Nota CP-09 (invariante herdada):** `hypothesis` nunca sustenta bloqueio hard; bloqueio
@@ -697,7 +699,7 @@ só ativa com status `confirmed` do fato bloqueante.
 | AP-F3-04 | Tratar pensão alimentícia como renda válida para MCMV | Viola RC-F3-07 |
 | AP-F3-05 | Aceitar CNPJ/PJ como renda válida para MCMV sem declaração de pessoa física | Viola RC-F3-06 |
 | AP-F3-06 | Chamar renda informal de "frágil" como classificação canônica | Viola RC-F3-10 |
-| AP-F3-07 | Prometer aprovação ou prever resultado do banco com base na renda declarada | Viola toda a fatia — `derived_subsidy_band_hint` é estimativa, não aprovação |
+| AP-F3-07 | Prometer aprovação ou prever resultado do banco com base na renda declarada | Viola toda a fatia — `derived_subsidy_band_hint` é hint interno, não calcula aprovação, não calcula crédito, não calcula subsídio final |
 | AP-F3-08 | Bloquear processo quando autônomo sem IRPF entra em conjunto com outra pessoa | Viola RC-F3-05 — não é impeditivo automático |
 | AP-F3-09 | Perguntar CTPS de P2 quando P1 já tem 36 meses confirmados | Viola RC-F3-12 — basta uma pessoa |
 | AP-F3-10 | Criar `reply_text` mecânico em qualquer política T3 desta fatia | Viola soberania LLM (A00-ADENDO-01) |
@@ -729,7 +731,7 @@ só ativa com status `confirmed` do fato bloqueante.
 | `TurnoEntrada.operational.must_ask_now` | Obrigações OBR-F3-01..09 preenchidas pelo mecânico antes de entregar ao LLM |
 | `TurnoEntrada.policy_context.prior_decisions` | Inclui decisões de F2 (process_mode, p3_required) + decisões acumuladas de F3 |
 | `TurnoEntrada.lead_state.derived.composition_needed` | Calculado pelo mecânico a partir de renda + process_mode; LLM recebe como insumo |
-| `TurnoEntrada.lead_state.derived.subsidy_band_hint` | Calculado em `renda_familiar_valor`; LLM recebe como orientação de faixa — nunca como promessa |
+| `TurnoEntrada.lead_state.derived.subsidy_band_hint` | Sinal/faixa interna derivada de subsídio atualizado em `renda_familiar_valor`; hint interno — LLM recebe como orientação de faixa, nunca como promessa; não calcula aprovação, não calcula crédito, não calcula subsídio final |
 | `TurnoSaida.extracted_facts` | Alimenta T4.3 para persistência de fact_work_regime_p*, fact_monthly_income_p*, fact_ctps_*, fact_autonomo_* |
 | `TurnoSaida.reply_text` | Exclusivamente do LLM — nenhuma política T3 produz texto; LLM raciocina com os insumos |
 | `signal_multi_income_p1` | Sinal perceptivo detectado em turno; alimenta `inicio_multi_renda_pergunta` |
@@ -765,7 +767,7 @@ Casal; ambos autônomos sem IRPF.
 - `fact_work_regime_p1 = autônomo` + `fact_work_regime_p2 = autônomo`
 - `fact_autonomo_has_ir_p1 = false` + `fact_autonomo_has_ir_p2 = false`
 - Não é bloqueio automático (RC-F3-05)
-- Segue processo; `derived_subsidy_band_hint` calculado com limitações
+- Segue processo; `derived_subsidy_band_hint` sinalizado com limitações — hint interno, não cálculo final
 - SGM-F3-07 para P2; SGM-F3-02 pode estar ativa para P1
 
 ### SYN-F3-04 — Aposentado querendo compor com filho
@@ -923,8 +925,8 @@ Fontes de verdade consultadas:
 | 19 | 26 itens de validação cruzada T2/T3/T4 | §14 |
 | 20 | 10 cenários sintéticos cobrindo todos os casos críticos | §13 |
 | 21 | Zero reply_text mecânico em qualquer política — soberania LLM intacta | §6, AP-F3-10 |
-| 22 | derived_subsidy_band_hint como estimativa de faixa, nunca promessa de aprovação | §2.17, VS-F3-03 |
-| 23 | LF-01 cobre renda adicional; LF-05 cobre benefício não financiável; LF-09 cobre desempregado | §4 |
+| 22 | `derived_subsidy_band_hint` como sinal/faixa interna derivada de subsídio — hint interno, sem promessa e sem simulação; não calcula aprovação, não calcula crédito, não calcula subsídio final | §2.17, VS-F3-03 |
+| 23 | LF-01 cobre renda adicional; LF-05 cobre classificação de benefício social não financiável / assistencial; LF-09 cobre desempregado | §4 |
 
 ### Provas
 
