@@ -69,6 +69,52 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-26 — PR-T5.5 — Contrato da fatia F4: elegibilidade / restrição
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.4 (#118) merged 2026-04-27T02:04:13Z.
+- Artefato base: `schema/implantation/T5_FATIA_RENDA_REGIME_COMPOSICAO.md` vigente.
+- Próximo passo autorizado: PR-T5.5 — Contrato declarativo da fatia F4.
+- Branch base: `main` (após pull pós-merge de #118).
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T5_FATIA_ELEGIBILIDADE_RESTRICAO.md` criado — contrato declarativo completo da fatia F4.
+
+**3 stages ativos:** `restricao`, `regularizacao_restricao`, `fim_inelegivel`
+**2 stages fora do recorte ativo:** `verificar_averbacao`, `verificar_inventario` — documentados como opcionais/futuros
+
+**Regra canônica central:** restrição declarada é sinal informativo, NUNCA bloqueio automático.
+`fim_inelegivel` = temporário, não definitivo. Divergência com mapa legado documentada (§1.5).
+
+**3 fatos T2 (Group VII + derived):** `fact_credit_restriction`, `fact_restriction_regularization_status`, `derived_eligibility_probable`
+
+**8 lacunas (LF-01..08):** origem dívida, valor dívida, incerteza sobre constar, status pós-banco, impacto confirmado, condição retorno, motivo inelegibilidade, prazo reabordagem.
+
+**Políticas T3:** OBR-F4-01..02 + CONF-F4-01..02 + SGM-F4-01..03 + ROT-F4-01..02 + VS-F4-01..06.
+
+**Roteamento de saída:** F4 completa → `current_phase = docs_prep` (ROT-F4-01).
+
+O que esta PR fecha: F4 coberta; PR-T5.6 desbloqueada após merge.
+O que esta PR não fecha: F5, G5; merge não autorizado pelo executor.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.6 — Contrato da fatia documentação / visita / handoff** (após merge desta PR-T5.5)
+- Artefato: `schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md`
+- 5 stages: envio_docs, agendamento_visita, aguardando_retorno_correspondente, finalizacao, finalizacao_processo
+- `current_phase: docs_prep` → `visit_conversion`
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-5-fatia-elegibilidade-restricao` → PR aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Artefato `T5_FATIA_ELEGIBILIDADE_RESTRICAO.md`: criado (entregue)
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-26 — PR-T5.4 — Contrato da fatia F3: renda / regime / composição
 
 ### ESTADO HERDADO
