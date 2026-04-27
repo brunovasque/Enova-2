@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.3 aberta em 2026-04-26 — F2 qualificação inicial / composição familiar; aguardando merge).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.4 aberta em 2026-04-26 — F3 renda / regime / composição; aguardando merge).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix merged; PR-T5.3 aberta em 2026-04-26; PR-T5.4 autorizada após merge da T5.3).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 merged; PR-T5.4 aberta em 2026-04-26; PR-T5.5 autorizada após merge da T5.4).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,19 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.4` — Contrato declarativo da fatia F3: renda / regime / composição:
+`schema/implantation/T5_FATIA_RENDA_REGIME_COMPOSICAO.md` criado:
+contrato declarativo completo da fatia F3 (current_phase: qualification / qualification_special);
+21 stages legados cobertos; 16 fatos/derived T2 canônicos (Groups IV–VIII); 9 lacunas de schema
+futuras (LF-01..09, incluindo LF-05 benefício não financiável, LF-09 desempregado enum gap);
+18 regras comerciais Vasques documentadas (RC-F3-01..18); 9 obrigações T3 (OBR-F3-01..09
+incluindo cross-fatia F2→F3 dependente); 5 confirmações (CONF-F3-01..05); 7 sugestões
+mandatórias (SGM-F3-01..07); 3 roteamentos (ROT-F3-01..03); 6 vetos suaves; 14 critérios
+de saída; 10 anti-padrões; 10 cenários sintéticos; 26 validações cruzadas; Bloco E completo.
+PR-T5.5 desbloqueada após merge.
+
+## Ultima tarefa anterior (PR-T5.3)
 
 `PR-T5.3` — Contrato declarativo da fatia F2: qualificação inicial / composição familiar:
 `schema/implantation/T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` criado:
