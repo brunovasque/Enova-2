@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.2-fix em andamento; PR-T5.3 desbloqueada após merge da fix).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.3 aberta em 2026-04-26 — F2 qualificação inicial / composição familiar; aguardando merge).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 concluída + PR-T5.2-fix corretiva aberta em 2026-04-26; PR-T5.3 autorizada após merge da fix).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix merged; PR-T5.3 aberta em 2026-04-26; PR-T5.4 autorizada após merge da T5.3).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,19 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.3` — Contrato declarativo da fatia F2: qualificação inicial / composição familiar:
+`schema/implantation/T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` criado:
+contrato declarativo completo da fatia F2 (current_phase: qualification); 7 stages legados
+cobertos (estado_civil, confirmar_casamento, interpretar_composicao, confirmar_avo_familiar,
+dependente, financiamentos_conjunto, quem_pode_somar); 8 fatos/derived T2 canônicos
+(Groups III e VIII); 5 lacunas de schema futuras (LF-01..05, incluindo LF-05 base normativa
+MCMV/CEF); 9 regras comerciais Vasques documentadas (§5); 5 classes de política T3
+(OBR-F2-01..03, CONF-F2-01/02, SGM-F2-01..05, ROT-F2-01/02); nota bloqueio LF-01;
+7 cenários sintéticos (SYN-F2-01..07); 21 itens de validação cruzada; Bloco E completo.
+PR-T5.4 desbloqueada após merge.
+
+## Ultima tarefa anterior (PR-T5.2-fix)
 
 `PR-T5.2-fix` — Correção das premissas de topo e RNM em T5_FATIA_TOPO_ABERTURA.md:
 `schema/implantation/T5_FATIA_TOPO_ABERTURA.md` corrigido (v2): (1) removida premissa de
