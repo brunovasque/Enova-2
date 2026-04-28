@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.8 (próxima) |
+| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.9 (próxima) |
 
 ## Contratos encerrados
 
