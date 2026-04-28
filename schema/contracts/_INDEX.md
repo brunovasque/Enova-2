@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T6 — Multimodal / Integração de canal | a criar na PR-T6.0 | **aguardando abertura** | G5 APROVADO; G6 — integração de canal real | — | PR-T6.0 (próxima — abertura formal T6) |
+| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **aberto** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.1 (pré-flight cirúrgico AT-01/03/04) |
 
 ## Contratos encerrados
 
@@ -175,3 +175,4 @@ schema/contracts/
 - 2026-04-25 — PR-T4.R executada. READINESS_G4.md criado: smoke S1–S6 6/6 PASS; CA-01..CA-10 10/10 CUMPRIDOS; 5 microetapas cobertas; coerência cross-artefato verificada; soberania LLM intacta; zero reply_text mecânico; zero lacunas bloqueantes; 5 não bloqueantes (LNB-G4-01..05). G4 APROVADO. Contrato T4 ENCERRADO e arquivado em archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md. Skeleton T5 criado em active/CONTRATO_IMPLANTACAO_MACRO_T5.md. PR-T5.0 desbloqueada. Próximo passo: PR-T5.0.
 - 2026-04-26 — PR-T5.0 executada. Contrato T5 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: §1–§17 + Bloco E (objetivo, escopo, fora de escopo, dependências, entradas, saídas S1–S9, critérios CA-01..CA-10, provas P-T5-01..05, bloqueios B-01..B-10, quebra PRs T5.0–T5.R, gate G5). 10 PRs mapeadas: T5.0 (abertura), T5.1 (mapa fatias), T5.2–T5.6 (contratos de fatia), T5.7 (paridade), T5.8 (shadow), T5.R (readiness G5). PR-T5.1 desbloqueada. Próximo passo: PR-T5.1.
 - 2026-04-28 — PR-T5.R executada. T5_READINESS_CLOSEOUT_G5.md criado: smoke S1–S8 8/8 PASS; CA-01..CA-10 10/10 CUMPRIDOS; CE-01..CE-09 9/9 satisfeitas; 4 atenções aceitas (AT-01/03/04/05 — não bloqueantes); 0 bloqueantes; veredito G5 PRONTO COM ATENÇÃO — APROVADO; inventário fora de escopo deliberado; soberania LLM verificada; zero fact_*/current_phase novos; zero src/runtime/Supabase/WhatsApp. Contrato T5 ENCERRADO e arquivado em archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md. G5 APROVADO. PR-T6.0 desbloqueada. Próximo passo: PR-T6.0.
+- 2026-04-28 — PR-T6.0 executada. Contrato T6 ABERTO formalmente. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` criado: §1–§17 + Bloco E; regra-mãe "T6 não cria outro cérebro"; 11 PRs (T6.0–T6.9–T6.R); CA-T6-01..10; B-T6-01..10 (incluindo B-T6-04 bloqueio permanente canal paralelo); gate G6 "multimodal sob mesma governança"; conformidade A00-ADENDO-01/02/03 declarada. PR-T6.1 desbloqueada. Próximo passo: PR-T6.1.
