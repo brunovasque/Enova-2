@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.3 (próxima) |
+| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.4 (próxima) |
 
 ## Contratos encerrados
 
@@ -136,6 +136,7 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
+- 2026-04-28 — PR-T6.3 executada: `schema/implantation/T6_CONTRATO_ANEXOS_DOCUMENTOS.md` criado — governança documental; 35+ tipos documentais; 11 estados documentais; associação P1/P2/P3; 18 perfis/regime; 14 finalidades; OCR como lacuna futura; 18 proibições PROB-AD-01..18; zero reply_text; zero fact_*; zero stage decision. PR-T6.4 desbloqueada.
 - 2026-04-28 — PR-T6.2 executada: `schema/implantation/T6_SURFACE_CANAL.md` criado — contrato declarativo da surface única de canal; 8 input_types; shape SurfaceEventNormalizado; 10 invariantes INV-SC-01..10; 13 proibições PROB-SC-01..13; routing → TurnoEntrada(T4.1); zero reply_text; zero fact_*; zero decisão de stage. PR-T6.3 desbloqueada.
 - 2026-04-28 — PR-T6.1 executada: `schema/implantation/T6_PREFLIGHT_RISCOS_T5.md` criado; AT-01/03/04 corrigidos cirurgicamente em T5; AT-05 lacuna planejada. PR-T6.2 desbloqueada.
 - 2026-04-28 — PR-T6.0 executada: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` criado; contrato T6 formalmente aberto. PR-T6.1 desbloqueada.

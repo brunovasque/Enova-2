@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.3 é o próximo passo autorizado).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.4 é o próximo passo autorizado).
 
 Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
@@ -21,6 +21,19 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T6.3` — Contrato de anexos e documentos:
+`schema/implantation/T6_CONTRATO_ANEXOS_DOCUMENTOS.md` criado — governança documental de anexos MCMV.
+35+ tipos documentais aceitos (identificação, residência, renda por regime, docs civis, regularização, informativos);
+11 estados documentais (received, classified_hypothesis, needs_owner, needs_review, accepted_for_dossier,
+rejected_unreadable, rejected_wrong_type, duplicate, expired_or_outdated, informational_only, pending_replacement);
+associação P1/P2/P3 + multi-renda/multi-regime (RC-F5-38); 18 perfis/regime documentados;
+14 finalidades documentais; regras de validade declarativa (prazo, legibilidade, completude);
+OCR e classificação automática declarados como lacunas futuras (T6-LF-01..07);
+18 proibições absolutas PROB-AD-01..18; 10 riscos com mitigação; 20 critérios de aceite.
+Zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime. PR-T6.4 desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.2)
 
 `PR-T6.2` — Surface única de canal:
 `schema/implantation/T6_SURFACE_CANAL.md` criado — contrato declarativo da camada de entrada única.
