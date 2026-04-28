@@ -69,6 +69,56 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-26 — PR-T5.6 — Contrato da fatia F5: documentação / dossiê / correspondente / visita / handoff
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.5 (#119) merged 2026-04-27T02:50:24Z.
+- Artefato base: `schema/implantation/T5_FATIA_ELEGIBILIDADE_RESTRICAO.md` vigente.
+- Próximo passo autorizado: PR-T5.6 — Contrato declarativo da fatia F5.
+- Branch base: `main` (após pull pós-merge de #119).
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` criado — contrato declarativo completo da fatia F5.
+
+**5 stages cobertos:** `envio_docs`, `agendamento_visita`, `aguardando_retorno_correspondente`, `finalizacao`, `finalizacao_processo`
+
+**current_phase sequence:** `docs_prep` → `docs_collection` → `broker_handoff` → `awaiting_broker` → `visit_conversion`
+
+**Regra-mãe F5:** Enova conduz o cliente para análise; não pede permissão. Coleta ativa, não passiva.
+3 follow-ups obrigatórios antes do plantão. Toda aprovação vira agendamento de visita com todos os decisores.
+Critério rigoroso para `finalizacao_processo` — respostas curtas ("ok"/"tá"/"blz") NUNCA disparam encerramento.
+
+**9 fatos T2 (Groups IX, X + derived):**
+`fact_doc_identity_status`, `fact_doc_income_status`, `fact_doc_residence_status`, `fact_doc_ctps_status`,
+`fact_docs_channel_choice` (Group IX); `fact_visit_interest`, `fact_current_intent` (Group X);
+`derived_doc_risk`, `derived_dossier_profile`
+
+**28 lacunas (LF-01..28):** documental, dossiê, canal, follow-up, silêncio, retorno correspondente,
+Registrato, bairros, entrada/FGTS, idade, visita, Vasques notificação, finalização.
+
+**33 regras comerciais Vasques (RC-F5-01..33)** documentadas sem reply_text.
+
+**Políticas T3:** OBR-F5-01..06 + CONF-F5-01..02 + SGM-F5-01..06 + ROT-F5-01..05 + VS-F5-01..10.
+**Anti-padrões:** AP-F5-01..15. **Cenários sintéticos:** SYN-F5-01..10. **Validação cruzada:** 18 items.
+
+O que esta PR fecha: F5 coberta com contrato declarativo completo; PR-T5.7 desbloqueada após merge.
+O que esta PR não fecha: paridade funcional, G5; merge não autorizado pelo executor.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.7 — Matriz de paridade funcional das fatias (F1–F5)** (após merge desta PR-T5.6)
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-6-fatia-documentacao-visita-handoff` → PR aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Artefato `T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md`: criado (entregue)
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-26 — PR-T5.5 — Contrato da fatia F4: elegibilidade / restrição
 
 ### ESTADO HERDADO
