@@ -69,6 +69,74 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.3 — Contrato de anexos e documentos
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.2 (#127) merged 2026-04-28T19:19:31Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- AT-01/03/04 corrigidos em T5 (PR-T6.1); AT-05 lacuna planejada.
+- Surface única de canal declarada (PR-T6.2): SurfaceEventNormalizado; 8 input_types; 10 invariantes.
+- Próximo passo autorizado: PR-T6.3 — Contrato de anexos e documentos.
+- Branch: `feat/t6-pr-t6-3-contrato-anexos-documentos`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_CONTRATO_ANEXOS_DOCUMENTOS.md` criado — contrato declarativo de governança documental.
+
+**Princípio-mãe:** "Documento é evidência de entrada. Não é verdade absoluta. Não escreve reply_text. Não decide stage."
+
+**§6 — Tipos documentais aceitos (35+):**
+Identificação (RG, CNH, passaporte, CPF); residência; renda CLT/holerite; renda servidor/contracheque;
+renda aposentado/extrato previdenciário; renda autônomo com IRPF; renda autônomo sem IRPF/extratos;
+documentos civis (certidão de casamento, averbação de divórcio, óbito do cônjuge, separado sem averbação);
+comprovantes de regularização (SPC/Serasa, Receita Federal, Registrato); FGTS; CNPJ contextual; informativos.
+
+**§7 — Tipos não comprobatórios / rejeitados:**
+Bolsa Família, BPC, seguro-desemprego, pensão alimentícia, trabalho temporário — informativos apenas.
+Imagem ilegível, documento cortado, arquivo corrompido, print sem contexto, PDF protegido — rejected.
+
+**§8 — 11 estados documentais:**
+received → classified_hypothesis → needs_owner → needs_review → accepted_for_dossier /
+rejected_unreadable / rejected_wrong_type / expired_or_outdated / informational_only / duplicate /
+pending_replacement. Transições declaradas. Zero enum runtime.
+
+**§9 — Associação P1/P2/P3:**
+Toda associação confirma com o lead; sem presunção automática.
+Multi-renda/multi-regime: cada fonte tem documento próprio (RC-F5-38).
+Estado civil: docs por estado (casado, divorciado, viúvo, separado sem averbação).
+
+**§10 — 18 perfis/regime com docs:**
+CLT, servidor, aposentado, pensionista, autônomo com/sem IRPF, MEI, empresário, informal,
+multi-renda, casado, divorciado, viúvo, separado, familiar/P3.
+
+**§11 — 14 finalidades documentais.**
+
+**§12 — Regras de validade declarativa:** prazo por tipo (holerite 3 meses, extrato 3 meses, etc.),
+legibilidade mínima (sem OCR), completude do dossiê mínimo (RC-F5-20).
+
+**§13 — OCR e automação como lacunas futuras:** T6-LF-01..07; sistema opera sem OCR obrigatório.
+
+**§14 — 18 proibições absolutas PROB-AD-01..18.**
+
+**Garantias:** zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime; zero canal real.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.4** — Pipeline de imagem/PDF/documento: como a surface entrega input_type=document ao T4;
+como o T4/LLM processa contexto documental; transições de estado; associação a perfil/regime/pessoa;
+limites sem OCR; relação com dossiê operacional (PR-T6.8).
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-3-contrato-anexos-documentos` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.3: CONCLUÍDA (governança documental)
+- PR-T6.4: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.2 — Surface única de canal
 
 ### ESTADO HERDADO
