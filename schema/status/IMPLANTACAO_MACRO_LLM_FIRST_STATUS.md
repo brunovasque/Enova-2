@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.4 é o próximo passo autorizado).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.5 é o próximo passo autorizado).
 
 Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
@@ -21,6 +21,19 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T6.4` — Pipeline de imagem/PDF/documento:
+`schema/implantation/T6_PIPELINE_IMAGEM_PDF.md` criado — pipeline declarativo de imagem/PDF/documento.
+Fluxo EP-01..EP-07: Recepção → Classificação hipotética → Associação P1/P2/P3 → Validação declarativa
+→ Estado documental → Contexto T4/LLM → Referência dossiê futuro;
+19+ tipos de entrada cobertos (imagens, PDFs, casos especiais); 11 estados de T6.3 reaproveitados;
+classificação hipotética com fontes e limites; 14 casos problemáticos tratados (ilegível, protegido,
+corrompido, duplicado, vencido, sem dono, CNPJ, benefício assistencial, etc.);
+relação com T6.8 (dossiê operacional); 20 proibições PROB-PIP-01..20;
+OCR como lacuna futura; Bloco E §19 com 26 evidências.
+Zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime; zero OCR real. PR-T6.5 desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.3)
 
 `PR-T6.3` — Contrato de anexos e documentos:
 `schema/implantation/T6_CONTRATO_ANEXOS_DOCUMENTOS.md` criado — governança documental de anexos MCMV.
