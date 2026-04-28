@@ -69,6 +69,77 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.8 — Dossiê operacional e link do correspondente
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.7 (#132) merged 2026-04-28T21:36:28Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- Adapter Meta/WhatsApp (T6.7): AdapterEventoBruto; IntencaoEnvioOutbound; SIG/IDP/DD/RTO; INV-AD-01..13.
+- Todos os tipos de entrada governados: T6.2–T6.7 concluídas.
+- Próximo passo autorizado: PR-T6.8 — Dossiê operacional e link do correspondente.
+- Branch: `feat/t6-pr-t6-8-dossie-operacional`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_DOSSIE_OPERACIONAL.md` criado — contrato declarativo do dossiê operacional MCMV.
+
+**Regra-mãe:** "Dossiê organiza, não decide. Dossiê não escreve reply_text, não decide stage, não cria fact_*, não aprova crédito, não envia documento sem condição, não expõe restrição. Só organiza."
+
+**§8 — Shape DossieOperacional (21 campos/blocos):**
+```
+DossieOperacional {
+  dossier_id, case_id, pre_cadastro_id, lead_external_id, created_at, updated_at,
+  dossier_status, pessoas[], documentos_recebidos[], documentos_pendentes[],
+  documentos_rejeitados[], documentos_informativos[], rendas[], composicao,
+  restricoes_informadas, observacoes_comerciais, link_correspondente,
+  correspondente_status, retorno_correspondente, visit_status, audit_trail[]
+}
+```
+
+**§9 — 14 estados do dossiê com transições; DS-01..08:**
+draft → collecting_documents → partial_documents → ready_for_review → ready_to_send →
+sent_to_correspondent → correspondent_received → correspondent_reviewing →
+approved → rejected → pending_regularization → visit_required → visit_scheduled → archived_temporarily.
+
+**§10 — Documentos mínimos por perfil:**
+CLT (holerite), servidor (contracheque), aposentado (extrato INSS), autônomo c/ IRPF (declaração + recibo),
+autônomo s/ IRPF (3 extratos — informativa/complementar), MEI (como autônomo), empresário (pró-labore + IRPF),
+informal (extratos informativos); estado civil: divorciado (certidão + averbação RC-F5-36),
+viúvo (certidão + óbito RC-F5-35), separado sem averbação (RC-F5-37); multi-renda RC-F5-38;
+benefícios não financiáveis: Bolsa Família, BPC/LOAS, assistencial, seguro-desemprego, temporário;
+CNPJ isolado → `nao_financiavel` ou `informativa`.
+
+**§14 — Informações comerciais (IC-01..06):** 16 campos; valores (entrada/FGTS/parcela) `null` — aguardando contrato de dados.
+**§15 — Link do correspondente (SL-01..10):** conceitual; `link_ref = "dossier/{pre_cadastro_id}/{dossier_id}"`; nenhuma URL real criada.
+**§17 — Condições de envio (ENV-01..08):** dossiê incompleto nunca enviado.
+**§18 — Retorno do correspondente (RET-01..08):** approved/rejected/pending_regularization; RET-03: condicionado → cliente vê apenas "aprovado".
+**§19 — Aprovação → visita (VIS-01..08):** notificar Vasques (runtime futuro); 2 slots; confirmação D-1 + dia (2h antes).
+**§20 — Reprovação → orientação (REP-01..08):** SCR/Bacen → Registrato; RF → regularização CPF; SPC/Serasa → prova; nunca fala mecânica.
+**§21 — 17 eventos de trilha de auditoria** (dossier.created .. dossier.visit_scheduled).
+**§22 — 20 proibições PROB-DOS-01..20.**
+**§23 — 10 riscos com mitigação R-DOS-01..10.**
+**§24 — 21 critérios CA-T6.8-01..21.**
+**§27 — Bloco E com 25 evidências.**
+
+**Garantias:** zero src/; zero fact_*; zero current_phase; zero reply_text; zero dossiê real; zero link real; zero runtime.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.9** — Suite de testes/sandbox multicanal: `schema/implantation/T6_SUITE_TESTES_SANDBOX.md`
+Cenários completos de validação da governança multicanal T6.2–T6.8; smoke tests declarativos;
+cobertura de todos os tipos de entrada e estados do dossiê; validação de invariantes.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-8-dossie-operacional` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.8: CONCLUÍDA (dossiê operacional e link do correspondente)
+- PR-T6.9: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.7 — Adapter Meta/WhatsApp governado
 
 ### ESTADO HERDADO
