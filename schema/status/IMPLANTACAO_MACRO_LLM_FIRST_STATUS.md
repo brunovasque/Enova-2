@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.6-fix aberta em 2026-04-27 — correção cirúrgica documentos civis F5; aguardando merge).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.7 aberta em 2026-04-27 — Matriz de paridade funcional F1–F5; aguardando merge).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 + PR-T5.5 + PR-T5.6 merged; PR-T5.6-fix aberta em 2026-04-27; PR-T5.7 autorizada após merge da T5.6-fix).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 + PR-T5.5 + PR-T5.6 + PR-T5.6-fix merged; PR-T5.7 aberta em 2026-04-27; PR-T5.8 / PR-T5.R autorizados após merge da T5.7 conforme contrato).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,16 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.7` — Matriz de paridade funcional F1–F5:
+`schema/implantation/T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md` criado:
+Validação declarativa cruzada de 43 stages (F1:7, F2:7, F3:21, F4:3, F5:5); 8/8 current_phase
+canônicos cobertos; 6 estados civis; 14 regimes + benefícios; dossiê completo (21 itens);
+correspondente/visita/finalização verificados; 54+ lacunas aceitas (F1-LF-01..02, F2-LF-01..05,
+F3-LF-01..09, F4-LF-01..08, F5-LF-01..35); 5 atenções identificadas (AT-01..05 — não bloqueantes);
+0 bloqueantes; veredito: PODE SEGUIR COM ATENÇÃO; PR-T5.8 / PR-T5.R autorizados.
+
+## Ultima tarefa anterior (PR-T5.6-fix)
 
 `PR-T5.6-fix` — Correção cirúrgica de documentos civis finos da fatia F5:
 `schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` corrigido:
