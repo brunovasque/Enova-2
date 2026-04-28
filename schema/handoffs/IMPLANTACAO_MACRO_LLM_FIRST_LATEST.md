@@ -69,6 +69,62 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-27 — PR-T5.8 — Plano declarativo de shadow/sandbox F1–F5
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.7 (#122) merged 2026-04-28T02:28:38Z.
+- Artefato base: `schema/implantation/T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md` vigente.
+- Veredito herdado: PODE SEGUIR COM ATENÇÃO; 5 atenções (AT-01..05); 0 bloqueantes.
+- Próximo passo autorizado: PR-T5.8 — Plano declarativo de shadow/sandbox F1–F5.
+- Branch base: `main` (após pull pós-merge de #122).
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T5_PLANO_SHADOW_SANDBOX.md` criado — plano declarativo de shadow/sandbox.
+
+**48 cenários mínimos declarados:**
+- Bloco A (F1): SHD-A-01..03 — abertura/topo (discovery)
+- Bloco B (F2): SHD-B-04..10 — qualificação/composição (qualification / qualification_special)
+- Bloco C (F3): SHD-C-11..26 — renda/regime/composição (qualification / qualification_special)
+- Bloco D (F4): SHD-D-27..29 — elegibilidade/restrição (qualification_special → docs_prep)
+- Bloco E (F5): SHD-E-30..48 — documentação/dossiê/visita/handoff (docs_prep → visit_conversion)
+
+**Pré-condições declarativas (PC-01..08):** verificadas; sem runtime real.
+
+**Matriz de evidências esperadas (15 campos):** fatos coletados, derived calculados, current_phase, lacunas acionadas, resultado esperado por cenário.
+
+**16 critérios de sucesso (CS-01..16)** + **8 critérios de falha/bloqueio (CF-01..08)**.
+
+**Atenções tratadas:**
+- AT-01: ponteiro F2 averbação → cenário de observação SHD-E-31 + ação corretiva recomendada
+- AT-03: separado sem averbação timing → cenário SHD-E-32 + ação corretiva recomendada
+- AT-04: regime múltiplo implícito → cenários SHD-C-19/20 + ação corretiva recomendada
+- AT-05: base normativa ausente → lacuna planejada, não bloqueante
+
+**9 condições de entrada para PR-T5.R (CE-01..09).**
+
+**Garantias:**
+- Zero runtime implementado
+- Zero `fact_*` inventado
+- Zero inventário (deliberadamente fora do recorte)
+- Zero regra comercial nova
+- Zero `reply_text` ou template mecânico
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.R** — Readiness / Closeout G5 (após merge desta T5.8 + verificação CE-01..CE-09).
+
+Recomendação adicional (não bloqueante): PR-fix-AT-01 + PR-fix-AT-03 + PR-fix-AT-04 antes ou junto de T5.R.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-8-plano-shadow-sandbox` → PR aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-27 — PR-T5.7 — Matriz de paridade funcional F1–F5
 
 ### ESTADO HERDADO

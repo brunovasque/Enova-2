@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.7 aberta em 2026-04-27 — Matriz de paridade funcional F1–F5; aguardando merge).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.8 aberta em 2026-04-27 — Plano declarativo de shadow/sandbox F1–F5; aguardando merge).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 + PR-T5.5 + PR-T5.6 + PR-T5.6-fix merged; PR-T5.7 aberta em 2026-04-27; PR-T5.8 / PR-T5.R autorizados após merge da T5.7 conforme contrato).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 + PR-T5.5 + PR-T5.6 + PR-T5.6-fix + PR-T5.7 merged; PR-T5.8 aberta em 2026-04-27; PR-T5.R autorizada após merge da T5.8 conforme contrato).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,18 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.8` — Plano declarativo de shadow/sandbox F1–F5:
+`schema/implantation/T5_PLANO_SHADOW_SANDBOX.md` criado:
+48 cenários declarativos (SHD-A-01..03 F1; SHD-B-04..10 F2; SHD-C-11..26 F3; SHD-D-27..29 F4;
+SHD-E-30..48 F5); pré-condições PC-01..08 (declarativas) + PC-F-01..06 (futuras runtime);
+matriz de evidências 15 campos; 16 critérios de sucesso (CS-01..16); 8 critérios de falha (CF-01..08);
+tratamento AT-01 (ponteiro F2 averbação), AT-03 (separado sem averbação timing), AT-04 (regime
+múltiplo implícito), AT-05 (base normativa — lacuna planejada, não bloqueante); 7 riscos controlados
+(RC-01..07); 8 riscos bloqueantes (RB-01..08); 9 condições de entrada para PR-T5.R (CE-01..09);
+zero runtime; zero fact_* inventado; zero inventário; zero regra comercial nova.
+
+## Ultima tarefa anterior (PR-T5.7)
 
 `PR-T5.7` — Matriz de paridade funcional F1–F5:
 `schema/implantation/T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md` criado:
