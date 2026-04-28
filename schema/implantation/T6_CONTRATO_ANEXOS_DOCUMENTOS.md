@@ -143,7 +143,7 @@ via canal digital (WhatsApp/Meta):
 | `T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` | Regras comerciais: quais docs exigir, por perfil, por regime |
 | `T6_SURFACE_CANAL.md` | Camada de normalização: recebe arquivo bruto → SurfaceEventNormalizado |
 | `T6_CONTRATO_ANEXOS_DOCUMENTOS.md` (este) | Governança documental: estados, associação, validade, proibições |
-| `T6_CONTRATO_PIPELINE_IMAGEM_PDF.md` (T6.4) | Pipeline técnico: como processar mídia documental passo a passo |
+| `T6_PIPELINE_IMAGEM_PDF.md` (T6.4) | Pipeline técnico: como processar mídia documental passo a passo |
 
 **Cross-references obrigatórios com F5:**
 - RC-F5-04: documentação básica para todos (P1/P2/P3)
@@ -235,7 +235,7 @@ O LLM pode sinalizar essa limitação ao lead sem impedir o envio do dossiê.
 | Documento | Sigla interna | Regra de uso | Referência F5 |
 |---|---|---|---|
 | Certidão de casamento | `doc_civil_certidao_casamento` | Casado civil (P1 e P2) | RC-F5-16 |
-| Certidão de casamento com averbação de divórcio | `doc_civil_certidao_casamento_averbaçao` | Divorciado(a) formal | RC-F5-36 |
+| Certidão de casamento com averbação de divórcio | `doc_civil_certidao_casamento_averbacao` | Divorciado(a) formal | RC-F5-36 |
 | Certidão de óbito do cônjuge | `doc_civil_certidao_obito_conjuge` | Viúvo(a) | RC-F5-35 |
 | Certidão de casamento sem averbação (separado) | `doc_civil_certidao_casamento_sem_averbacao` | Separado sem averbação — ver §9.4 | RC-F5-37 |
 
