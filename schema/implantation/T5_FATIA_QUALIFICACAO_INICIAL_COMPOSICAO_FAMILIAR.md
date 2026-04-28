@@ -180,14 +180,14 @@ e evitar retrabalho no final do processo.
 - Não redefine o enum de `fact_estado_civil` (sem valor `"separado_sem_averbacao"`)
 - Não reabre: união estável, P3/familiar casado civil, inventário
 
-**Referência detalhada:** F5 (RC-F5-37) contém a regra completa de tratamento documentarl de
+**Referência detalhada:** F5 (RC-F5-37) contém a regra completa de tratamento documental de
 separado(a) sem averbação para o dossiê. Esta nota serve exclusivamente como alerta preventivo
 em F2 para identificação antecipada.
 
 > **Lacuna de schema declarada:** `fact_estado_civil` não possui valor canônico
 > `"separado_sem_averbacao"`. Quando identificado, registrar como observação operacional /
 > `PEND_SLOT_VAZIO` na conversa. O `fact_estado_civil` retém o valor declarado pelo lead;
-> a decisão de tratamento documentral ocorre em F5. Sem `fact_*` novo nesta PR.
+> a decisão de tratamento documental ocorre em F5. Sem `fact_*` novo nesta PR.
 
 ---
 
