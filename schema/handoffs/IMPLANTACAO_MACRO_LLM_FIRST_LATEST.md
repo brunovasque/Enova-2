@@ -69,6 +69,80 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.0 — Abertura formal do contrato T6
+
+### ESTADO HERDADO
+
+- Fase: T5 ENCERRADA; G5 APROVADO via PR-T5.R (#124) merged.
+- Contrato T5 arquivado em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md`.
+- Gate G5 APROVADO com 4 atenções aceitas por Vasques (AT-01/03/04/05 — não bloqueantes).
+- Próximo passo autorizado: PR-T6.0 — Abertura formal do contrato T6.
+- Branch: `feat/t6-pr-t6-0-abertura-contrato`.
+
+### ESTADO ENTREGUE
+
+`schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` criado — contrato formal de abertura da fase T6 (Docs, multimodalidade e superfícies de canal).
+
+**Regra-mãe declarada:** "T6 não cria outro cérebro — tudo que entra por canal passa pela mesma governança T1→T2→T3→T4→T5."
+
+**§1 Objetivo:** canal como superfície de entrada, não como camada cognitiva; go-live controlado é T7.
+
+**§2 Escopo — 11 PRs:**
+| PR | Descrição |
+|----|-----------|
+| T6.0 | Abertura formal do contrato T6 (esta PR) |
+| T6.1 | Pré-flight cirúrgico — AT-01/03/04 + análise de riscos herdados |
+| T6.2 | Superfície de canal — contrato declarativo de entrada/saída |
+| T6.3 | Contrato de anexos — tipagem e validação de mídia |
+| T6.4 | Pipeline de imagem/PDF — contrato declarativo |
+| T6.5 | Pipeline de áudio — contrato declarativo STT |
+| T6.6 | Sticker e mídia inválida — contrato de rejeição graceful |
+| T6.7 | Adapter Meta/WhatsApp — contrato declarativo de integração |
+| T6.8 | Dossiê multimodal — contrato de coleta e associação a P1/P2/P3 |
+| T6.9 | Suite de testes de canal — bateria declarativa E2E |
+| T6.R | Readiness/Closeout G6 — veredito gate G6 |
+
+**CA-T6-01..CA-T6-10:** critérios de aceite declarados (governança de canal, soberania reply_text, áudio, imagem/PDF, associação fatos, mídia inválida, idempotência, dossiê, sandbox, G6).
+
+**B-T6-01..B-T6-10:** bloqueios declarados; B-T6-04 = **bloqueio permanente** — qualquer superfície que produza `reply_text` ou decida stage de forma autônoma.
+
+**Gate G6:** "Multimodal sob mesma governança" — T7 somente após G6 APROVADO.
+
+**Adendos conformidade:** A00-ADENDO-01/02/03 declarados em §17.
+
+**Riscos:** R-T6-01..R-T6-10 declarados.
+
+**AT-01/03/04:** designados para tratamento cirúrgico em PR-T6.1.
+
+**AT-05:** lacuna normativa planejada — permanece como não bloqueante através de todo T6.
+
+**Inventário:** explicitamente fora de escopo em §3.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.1** — Pré-flight cirúrgico: análise formal de AT-01/03/04 e documentação de riscos herdados do T5 antes de qualquer superfície de canal.
+
+Leituras obrigatórias para PR-T6.1:
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` (este contrato)
+2. `schema/implantation/T5_READINESS_CLOSEOUT_G5.md` (atenções AT-01/AT-03/AT-04/AT-05)
+3. `schema/implantation/T5_FATIA_TOPO_ABERTURA.md` (AT-01 — ponteiro F2 averbação)
+4. `schema/implantation/T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` (AT-03 — separado sem averbação)
+5. `schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` (AT-04 — regime múltiplo F5)
+6. `schema/ADENDO_CANONICO_SOBERANIA_IA.md` (A00-ADENDO-01)
+7. `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md` (A00-ADENDO-02)
+8. `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md` (A00-ADENDO-03)
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-0-abertura-contrato` → PR aberta
+- Contrato T6: **ABERTO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- Contrato T5: ENCERRADO — `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md`
+- Gate G5: APROVADO
+- Gate G6: aberto (bloqueado até PR-T6.R)
+- PR-T6.1: **DESBLOQUEADA**
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T5.R — Readiness / Closeout G5
 
 ### ESTADO HERDADO

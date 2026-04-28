@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato aguardando abertura; PR-T6.0 é o próximo passo autorizado).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato ABERTO; PR-T6.1 é o próximo passo autorizado).
 
 Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
@@ -21,6 +21,16 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T6.0` — Abertura formal do contrato T6:
+`schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` criado: §1–§17 + Bloco E;
+regra-mãe "T6 não cria outro cérebro — tudo que entra por canal passa pela mesma governança T1→T2→T3→T4→T5";
+11 PRs declaradas (T6.0–T6.9 + T6.R); CA-T6-01..10; B-T6-01..10 (B-T6-04 = bloqueio permanente canal paralelo);
+gate G6 "multimodal sob mesma governança"; riscos R-T6-01..10; conformidade A00-ADENDO-01/02/03 declarada;
+AT-01/03/04 a tratar em PR-T6.1 (pré-flight cirúrgico); AT-05 lacuna normativa planejada através de T6;
+inventário explicitamente fora de escopo. Contrato T6 ABERTO. PR-T6.1 desbloqueada.
+
+## Ultima tarefa anterior (PR-T5.R)
 
 `PR-T5.R` — Readiness / Closeout G5:
 `schema/implantation/T5_READINESS_CLOSEOUT_G5.md` criado:
