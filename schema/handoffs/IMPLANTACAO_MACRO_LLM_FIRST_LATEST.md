@@ -69,6 +69,60 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.2 — Surface única de canal
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.1 (#126) merged 2026-04-28T18:41:17Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- AT-01/03/04 corrigidos em T5 (PR-T6.1); AT-05 lacuna planejada.
+- Próximo passo autorizado: PR-T6.2 — Surface única de canal.
+- Branch: `feat/t6-pr-t6-2-surface-canal`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_SURFACE_CANAL.md` criado — contrato declarativo da surface única de canal.
+
+**Regra-mãe confirmada:** "T6 não cria outro cérebro. Canal é entrada, não cérebro. Surface não fala."
+
+**§5 — 8 input_types:**
+- `text`: mensagem de texto simples (sub: text_plain, text_with_caption)
+- `document`: PDF, DOCX, planilha (sub: pdf, docx, spreadsheet, other_document)
+- `image`: imagem/foto (sub: jpeg, png, webp, other_image)
+- `audio`: áudio/voz (sub: ogg_opus, mp4_audio, other_audio)
+- `sticker`: sticker animado/estático (sub: webp_static, webp_animated)
+- `button_or_link`: botão de lista ou link clicado (sub: list_reply, button_reply, url_click)
+- `system_event`: evento de sistema/status (sub: read_receipt, delivery_status, opt_in, opt_out)
+- `unknown_or_invalid`: input não reconhecível (sub: corrupt_payload, unsupported_type)
+
+**§6 — Shape SurfaceEventNormalizado:**
+Campos: surface_event_id, channel, channel_message_id, lead_external_id, received_at, processed_at, input_type, input_subtype, confidence_hint, raw_payload_ref, text_content, media_ref, media_mime_type, media_filename, media_size_bytes, caption, sender_role, dedupe_key, normalized_turn_input, handoff_to_t4, surface_warnings.
+Sub-shape NormalizedInput: text_for_llm, media_hint, event_type, context_notes.
+
+**§9 — 10 invariantes INV-SC-01..10:**
+INV-SC-01: surface NÃO grava reply_text. INV-SC-02: surface NÃO grava fact_*. INV-SC-03: surface NÃO decide next_stage. INV-SC-04: surface NÃO substitui T3 (policy). INV-SC-05: surface NÃO substitui T2 (estado). INV-SC-06: surface NÃO altera regras T5. INV-SC-07: normalized_turn_input é insumo, não decisão. INV-SC-08: toda mensagem recebida gera exatamente 1 SurfaceEventNormalizado. INV-SC-09: surface NÃO transcreve áudio para reply_text. INV-SC-10: surface NÃO cria pipeline paralelo de resposta.
+
+**§10 — Routing:**
+Canal bruto → Surface → SurfaceEventNormalizado → TurnoEntrada(T4.1) → T4_PIPELINE_LLM → T4_VALIDACAO_PERSISTENCIA → T4_RESPOSTA_RASTRO_METRICAS → T4_FALLBACKS.
+
+**§14 — 13 proibições absolutas PROB-SC-01..13.**
+
+**Garantias:** zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime; zero decisão de stage.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.3** — Contrato de anexos e documentos: governança documental para documentos exigidos pelo dossiê MCMV, tipos aceitos/rejeitados, associação ao lead e à pessoa correta, e estados do documento.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-2-surface-canal` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.2: CONCLUÍDA (surface única de canal)
+- PR-T6.3: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.1 — Pré-flight cirúrgico de riscos herdados T5
 
 ### ESTADO HERDADO

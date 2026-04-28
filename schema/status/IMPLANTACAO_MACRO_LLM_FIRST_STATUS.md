@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.2 é o próximo passo autorizado).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.3 é o próximo passo autorizado).
 
 Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
@@ -21,6 +21,18 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T6.2` — Surface única de canal:
+`schema/implantation/T6_SURFACE_CANAL.md` criado — contrato declarativo da camada de entrada única.
+8 input_types: text, document, image, audio, sticker, button_or_link, system_event, unknown_or_invalid;
+shape SurfaceEventNormalizado com ~20 campos + sub-shape NormalizedInput;
+10 invariantes INV-SC-01..10 (sem reply_text, sem fact_*, sem decisão de stage, sem T3/T2/T5 paralelos);
+13 proibições absolutas PROB-SC-01..13;
+routing: Canal bruto → Surface → SurfaceEventNormalizado → TurnoEntrada(T4.1) → T4_PIPELINE_LLM;
+regra-mãe confirmada: "T6 não cria outro cérebro".
+Zero src/; zero fact_*; zero runtime; zero reply_text; zero decisão de stage. PR-T6.3 desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.1)
 
 `PR-T6.1` — Pré-flight cirúrgico de riscos herdados T5:
 `schema/implantation/T6_PREFLIGHT_RISCOS_T5.md` criado:
