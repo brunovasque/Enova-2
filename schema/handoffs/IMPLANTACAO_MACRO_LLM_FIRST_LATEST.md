@@ -69,6 +69,48 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-27 — PR-T5.7 — Matriz de paridade funcional F1–F5
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.6-fix (#121) merged 2026-04-28T01:33:38Z.
+- Artefatos base: F1–F5 todos vigentes; fix civis F5 vigente.
+- Próximo passo autorizado: PR-T5.7 — Matriz de paridade funcional F1-F5.
+- Branch base: `main` (após pull pós-merge de #121).
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md` criado — validação declarativa cruzada.
+
+**Veredito:** PODE SEGUIR COM ATENÇÃO
+
+**43 stages verificados:** F1:7 ✅ | F2:7 ✅ | F3:21 ✅ | F4:3 ✅ | F5:5 ✅
+
+**8/8 `current_phase` canônicos cobertos:** discovery → qualification → qualification_special → docs_prep → docs_collection → broker_handoff → awaiting_broker → visit_conversion
+
+**5 atenções identificadas (não bloqueantes):**
+- AT-01: Ponteiro F2 "averbação → F4" desatualizado; real é F5 RC-F5-36
+- AT-02: Inventário sem cobertura declarada no funil F1-F5
+- AT-03: Gap de timing para descoberta de "separado sem averbação" em F2
+- AT-04: Docs para regime múltiplo são implícitos em F5, não explícitos
+- AT-05: Base normativa MCMV/CEF ausente (LF-05)
+
+**0 bloqueantes encontrados.**
+
+O que esta PR fecha: Paridade funcional declarativa F1-F5 validada; PR-T5.8 / PR-T5.R autorizados.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T5.8 ou PR-T5.R** conforme contrato T5. Com recomendação de 5 PR-fixes antes de T5.R.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-7-matriz-paridade-funcional` → PR aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-27 — PR-T5.6-fix — Correção cirúrgica: documentos civis finos da F5
 
 ### ESTADO HERDADO
