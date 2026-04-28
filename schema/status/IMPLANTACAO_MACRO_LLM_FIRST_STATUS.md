@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.6 aberta em 2026-04-26 — F5 documentação / dossiê / correspondente / visita / handoff; aguardando merge).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.6-fix aberta em 2026-04-27 — correção cirúrgica documentos civis F5; aguardando merge).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 + PR-T5.5 merged; PR-T5.6 aberta em 2026-04-26; PR-T5.7 autorizada após merge da T5.6).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 + PR-T5.5 + PR-T5.6 merged; PR-T5.6-fix aberta em 2026-04-27; PR-T5.7 autorizada após merge da T5.6-fix).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,17 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.6-fix` — Correção cirúrgica de documentos civis finos da fatia F5:
+`schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` corrigido:
+3 regras comerciais adicionadas (RC-F5-35: viúvo/certidão de óbito; RC-F5-36: divorciado/certidão
+com averbação; RC-F5-37: separado sem averbação/dois caminhos — regularizar ou seguir em conjunto);
+4 lacunas declaradas (LF-32: certidão de óbito; LF-33: certidão com averbação; LF-34: separado
+sem averbação; LF-35: regularização pendente); 2 VS + 3 AP + 3 SYN + 4 validações cruzadas;
+Bloco E atualizado; zero fact_* criado; inventário não incluído; união estável e P3/familiar
+não reabertos. PR-T5.7 autorizada após merge.
+
+## Ultima tarefa anterior (PR-T5.6)
 
 `PR-T5.6` — Contrato declarativo da fatia F5: documentação / dossiê / correspondente / visita / handoff:
 `schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` criado:
