@@ -69,6 +69,62 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.4 — Pipeline de imagem/PDF/documento
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.3 (#128) merged 2026-04-28T19:39:58Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- Surface única de canal (T6.2): SurfaceEventNormalizado; 8 input_types.
+- Contrato de anexos (T6.3): 35+ tipos documentais; 11 estados; associação P1/P2/P3.
+- Próximo passo autorizado: PR-T6.4 — Pipeline de imagem/PDF/documento.
+- Branch: `feat/t6-pr-t6-4-pipeline-imagem-pdf`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_PIPELINE_IMAGEM_PDF.md` criado — pipeline declarativo de imagem/PDF/documento.
+
+**Regra-mãe:** "Imagem/PDF/documento é entrada documental. Não é verdade absoluta. Não escreve reply_text. Não decide stage."
+
+**§8 — Fluxo declarativo (9 passos):**
+Canal → Surface (SurfaceEventNormalizado) → EP-01 Recepção → EP-02 Classificação hipotética →
+EP-03 Associação P1/P2/P3 → EP-04 Validação declarativa → EP-05 Estado documental →
+EP-06 Contexto T4/LLM → EP-07 Referência dossiê futuro T6.8.
+
+**§9 — EP-01..EP-07 declaradas em detalhe.**
+
+**§7 — 19+ tipos de entrada:** fotos de documento, PDFs, prints, casos especiais (MIME divergente, arquivo pesado, sem caption, sem nome útil, duplicado, enviado sem dizer de quem é).
+
+**§10 — 11 estados documentais reaproveitados de T6.3 — zero novos criados.**
+
+**§11 — Associação P1/P2/P3:** geral; multi-renda (RC-F5-38) com `(pessoa, regime, fonte)`; docs civis por estado civil (AT-01/03).
+
+**§12 — Classificação hipotética limitada:** fontes por confiança; o que pode e o que nunca pode ser inferido; OCR futuro = insumo hipotético.
+
+**§13 — 14 casos problemáticos tratados:** ilegível, cortado, PDF protegido/corrompido, duplicado, muito pesado, MIME divergente, print sem contexto, CNPJ isolado, benefício assistencial, holerite vencido, extrato incompleto, sem dono, tipo errado.
+
+**§14 — Relação com T6.8 (dossiê operacional):** responsabilidades separadas — T6.4 prepara referências; T6.8 monta dossiê e envia ao correspondente.
+
+**§15 — 20 proibições absolutas PROB-PIP-01..20.**
+
+**Garantias:** zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime; zero OCR real; zero canal real.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.5** — Áudio no mesmo cérebro conversacional: como `input_type=audio` é recebido;
+transcrição como hipótese; confiança de transcrição; extração de fatos via LLM; tratamento
+de áudio ruim; confirmação de informações; limites sem avanço autônomo de stage.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-4-pipeline-imagem-pdf` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.4: CONCLUÍDA (pipeline imagem/PDF)
+- PR-T6.5: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.3 — Contrato de anexos e documentos
 
 ### ESTADO HERDADO
