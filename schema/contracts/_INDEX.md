@@ -27,12 +27,13 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.R (próxima) |
+| T7 — Shadow, canary, cutover e rollback | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` | **skeleton — aguardando PR-T7.0** | G6 APROVADO; G7 — go-live controlado | 2026-04-28 | PR-T7.0 — Abertura formal do contrato T7 |
 
 ## Contratos encerrados
 
 | Fase | Contrato arquivado | Status | Gate | Data de encerramento | PR que encerrou |
 |------|-------------------|--------|------|----------------------|-----------------|
+| T6 — Docs, multimodalidade e superfícies de canal | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md` | encerrado | G6 — APROVADO em 2026-04-28 | 2026-04-28 | PR-T6.R |
 | T5 — Migração do funil core e integração de canal | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md` | encerrado | G5 — APROVADO com atenções aceitas | 2026-04-28 | PR-T5.R |
 | T4 — Orquestrador de turno LLM-first | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md` | encerrado | G4 — APROVADO | 2026-04-25 | PR-T4.R |
 | T3 — Policy engine v1 e guardrails declarativos | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T3_2026-04-25.md` | encerrado | G3 — APROVADO | 2026-04-25 | PR-T3.R |
