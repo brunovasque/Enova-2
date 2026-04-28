@@ -24,13 +24,13 @@ correção civil F5-fix) e valida se o contrato documental declarativo está coe
 > **PODE SEGUIR COM ATENÇÃO**
 
 Nenhum bloqueante foi encontrado. O funil F1–F5 está coberto de forma coerente. Foram identificadas
-**5 atenções** que não impedem avanço mas devem virar PR-fix antes de PR-T5.R ou antes do runtime.
+**4 atenções** que não impedem avanço mas devem virar PR-fix antes de PR-T5.R ou antes do runtime.
 Lacunas futuras aceitas (LFs declaradas nas fatias) são intencionais e estão corretamente sinalizadas.
 
 | Categoria | Quantidade |
 |---|---|
 | Bloqueantes | 0 |
-| Atenções / PR-fix recomendadas | 5 |
+| Atenções / PR-fix recomendadas | 4 |
 | Lacunas futuras aceitas (LFs) | 35+ (distribuídas F1–F5) |
 | Stages verificados | 43 (F1:7, F2:7, F3:21, F4:3, F5:5) |
 | `current_phase` values usados | 8 de 8 canônicos |
@@ -192,9 +192,9 @@ derived_eligibility_probable ─────────────────
 | Stage | Status | Observação |
 |---|---|---|
 | `verificar_averbacao` | Fora do recorte | F2 aponta para F4; F4 declara fora do escopo; averbação coberta em F5 (RC-F5-36) → ver Atenção AT-01 |
-| `verificar_inventario` | Fora do recorte | F2 aponta para F4; F4 e F5 declaram fora do escopo → ver Atenção AT-02 |
+| `verificar_inventario` | Fora do recorte | F2 aponta para F4; F4 e F5 declaram fora do escopo → **fora de escopo deliberado / não aplicável nesta T5** |
 
-**F4 status: ✅ 3/3 stages ativos cobertos. 8 lacunas futuras aceitas (LF-01..08). 2 atenções (AT-01, AT-02).**
+**F4 status: ✅ 3/3 stages ativos cobertos. 8 lacunas futuras aceitas (LF-01..08). 1 atenção (AT-01).**
 
 ### F5 — Documentação / Dossiê / Correspondente / Visita / Handoff (5 stages)
 
@@ -231,7 +231,7 @@ derived_eligibility_probable ─────────────────
 | Casado civil | ✅ Obrigatoriamente em conjunto; dois cônjuges entram | ✅ RC-F5-16: certidão de casamento + docs cônjuge | Obrigatória | ✅ OK |
 | União estável | ✅ Não equipara a casamento; não obriga conjunto; pode ser solo ou composição voluntária | — (sem doc civil específico de UE em F5) | Opcional | ✅ OK |
 | Divorciado(a) | ✅ Solo por padrão; F2 aponta averbação para "F4" (texto desatualizado) | ✅ RC-F5-36: certidão com averbação quando aplicável | Solo ou voluntária | ✅ OK c/ AT-01 |
-| Viúvo(a) | ✅ Solo por padrão; F2 aponta inventário para "F4" (texto desatualizado) | ✅ RC-F5-35: certidão de óbito obrigatória; inventário fora do escopo | Solo ou voluntária | ✅ OK c/ AT-02 |
+| Viúvo(a) | ✅ Solo por padrão; F2 aponta inventário para "F4" (texto desatualizado) | ✅ RC-F5-35: certidão de óbito obrigatória; inventário fora do escopo deliberado | Solo ou voluntária | ✅ OK |
 | Separado(a) sem averbação | ⚠️ Não tem valor específico no enum; tratado como `"casado"` → duo obrigatório (LF-34) | ✅ RC-F5-37: dois caminhos — regularizar ou seguir com cônjuge | Obrigatória (enquanto legalmente casado) | ✅ OK c/ AT-03 |
 | Familiar/P3 casado civil | ✅ SGM-F2-04; cônjuge de P3 entra (P3 cascading) | ✅ RC-F5-17 + RC-F5-16 | Cônjuge de P3 obrigatório | ✅ OK |
 
@@ -322,7 +322,7 @@ derived_eligibility_probable ─────────────────
 | Se possui FGTS + valor disponível | F3 `fact_has_fgts` + LF-20 | ✅ OK c/ LF |
 | Parcela mensal pretendida / máxima confortável | F5 RC-F5-34 + LF-29/30 | ✅ OK |
 | Observações comerciais | F5 RC-F5-19 | ✅ OK |
-| Inventário | **Fora do escopo declarado** (F4 §1.4 + F5 RC-F5-35) | ✅ OK c/ AT-02 |
+| Inventário | **Fora de escopo deliberado** (F4 §1.4 + F5 RC-F5-35) — não aplicável nesta T5 | ✅ OK |
 
 ---
 
@@ -463,29 +463,19 @@ corrigir a nota de "divorciado" de "F4" para "F5" (RC-F5-36). Não bloqueia T5.R
 
 ---
 
-### AT-02 — Inventário sem cobertura declarada no funil F1–F5
+### Nota: Inventário — Fora de escopo deliberado / não aplicável nesta T5
 
-**Artefatos afetados:** `T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md §3.1`,
+**Artefatos consultados:** `T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md §3.1`,
 `T5_FATIA_ELEGIBILIDADE_RESTRICAO.md §1.4`,
 `T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md RC-F5-35`
 
-**Descrição:**
-A tabela de valores de `fact_estado_civil` em F2 lista:
-> `"viúvo"` → "Solo por padrão; verificação de inventário em F4 (fora do escopo de F2)"
+Inventário de bens está **fora de escopo deliberado** nesta T5. F4 e F5 excluem inventário
+explicitamente do recorte ativo. Esta decisão foi validada pelo Vasques nas PRs anteriores.
+Não constitui lacuna a corrigir nem requer PR-fix nesta T5.
 
-F4 declara `verificar_inventario` fora do recorte ativo. F5 (RC-F5-35, PR-T5.6-fix) corretamente
-**exclui inventário** do escopo de F5, pedindo apenas a certidão de óbito.
-
-**Resultado:** Inventário não tem cobertura declarada em nenhuma fatia ativa do funil F1–F5.
-
-**Impacto:** Para viúvo(a) que precisa de inventário para regularizar a posse do imóvel anterior
-(se aplicável), o funil atual não tem fluxo declarado para isso. A certidão de óbito cobre o
-estado civil para o financiamento. A necessidade de inventário é um caso jurídico separado,
-potencialmente anterior ao financiamento.
-
-**Ação recomendada:** PR futura separada para declarar a cobertura de inventário (ou declarar
-explicitamente que está fora do escopo completo da Enova, com orientação para o lead buscar
-assessoria jurídica). Também corrigir o ponteiro em F2 (que aponta para F4).
+O ponteiro textual de F2 ("inventário → F4") está desatualizado, mas esse problema de texto
+é coberto pelo AT-01 (averbação) — a mesma tabela também aponta para F4 incorretamente.
+Ambos os ponteiros podem ser corrigidos em conjunto pela PR-fix-AT-01 se o time assim preferir.
 
 ---
 
@@ -581,16 +571,16 @@ virando agendamento, ou finalização prematura possível pelo contrato declarat
 | Finalização com critério rigoroso | ✅ RC-F5-32; AP-F5-10; resposta curta não encerra |
 | Docs por regime F3→F5 coerentes | ✅ 9 regimes mapeados; múltiplo implícito (AT-04) |
 | Estado civil completo | ✅ 6 casos cobertos; separado sem averbação com dois caminhos (RC-F5-37) |
-| Inventário | ✅ Fora do escopo declarado; certidão de óbito cobre estado civil (AT-02 para PR futura) |
+| Inventário | ✅ Fora de escopo deliberado — decisão de negócio validada; certidão de óbito cobre estado civil |
 | Benefícios não financiáveis | ✅ BF, BPC, seguro-desemprego, trabalho temporário, pensão alimentícia — todos declarados |
 | CTPS/FGTS/Entrada | ✅ F3 captura; F5 usa; FGTS só se for usar |
 | Parcela mensal confortável | ✅ RC-F5-34: informativa; não é simulação/aprovação/promessa |
 | Bloqueantes | ✅ 0 encontrados |
-| Atenções antes de T5.R | ⚠️ 5 atenções (AT-01..05) — não bloqueiam T5.8 |
+| Atenções antes de T5.R | ⚠️ 4 atenções (AT-01, AT-03..05) — não bloqueiam T5.8 |
 
 ### Pré-condições para avançar além de T5.R
 
-Antes de abrir PR-T5.R (readiness / closeout G5), as atenções AT-01..AT-04 devem ser
+Antes de abrir PR-T5.R (readiness / closeout G5), as atenções AT-01, AT-03 e AT-04 devem ser
 resolvidas em PRs-fix cirúrgicas, ou o time deve documentar formalmente a aceitação do risco.
 AT-05 (base normativa) pode seguir como lacuna aceita para T5.R se o time aceitar o risco
 de respostas sobre casos normativos específicos.
@@ -605,9 +595,8 @@ de respostas sobre casos normativos específicos.
 
 **PR-T5.R — Readiness / Closeout G5** (conforme contrato `CONTRATO_IMPLANTACAO_MACRO_T5.md`)
 
-Com recomendação de abrir as 5 PR-fixes de atenção antes de PR-T5.R:
+Com recomendação de abrir as 4 PR-fixes de atenção antes de PR-T5.R:
 - **PR-fix-AT-01:** Corrigir ponteiro "averbação → F4" para "averbação → F5 RC-F5-36" em F2
-- **PR-fix-AT-02:** Declarar escopo de inventário (cobertura ou descarte explícito)
 - **PR-fix-AT-03:** Adicionar nota em F2 sobre "separado sem averbação → orientar caminhos F5 RC-F5-37"
 - **PR-fix-AT-04:** Adicionar regra explícita em F5 sobre docs para regime múltiplo
 - **PR-fix-AT-05:** PR futura de base normativa MCMV/CEF (ou aceitar lacuna formalmente)
@@ -664,7 +653,7 @@ Fontes de verdade consultadas:
 | 8 | Visita / agendamento: 8 pontos verificados | §11 |
 | 9 | Finalização: 6 pontos verificados | §12 |
 | 10 | Lacunas futuras aceitas: 54+ LFs catalogadas (F1:2, F2:5, F3:9, F4:8, F5:35) | §13 |
-| 11 | 5 atenções identificadas com artefato afetado e ação recomendada | §14 |
+| 11 | 4 atenções identificadas com artefato afetado e ação recomendada | §14 |
 | 12 | 0 bloqueantes | §15 |
 | 13 | Veredito explícito: PODE SEGUIR COM ATENÇÃO | §16 |
 | 14 | Próxima PR autorizada declarada | §17 |
@@ -677,13 +666,13 @@ Fontes de verdade consultadas:
 
 - **P-T5.7-01:** arquivo `schema/implantation/T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md` criado; `git diff --stat` confirma novo artefato
 - **P-T5.7-02:** Cruzamento de 43 stages declarados vs. artefatos F1-F5 lidos integralmente; nenhum stage sem cobertura encontrado
-- **P-T5.7-03:** Veredito fundamentado em auditoria de 5 fatias + 35 fatos T2 canônicos + 8 current_phase values + 54+ lacunas aceitas; 0 bloqueantes; 5 atenções documentadas com artefato, impacto e ação
+- **P-T5.7-03:** Veredito fundamentado em auditoria de 5 fatias + 35 fatos T2 canônicos + 8 current_phase values + 54+ lacunas aceitas; 0 bloqueantes; 4 atenções documentadas com artefato, impacto e ação
 
 ```
 --- ESTADO ENTREGUE ---
-O que foi feito nesta PR: Criado T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md — matriz declarativa cruzada de 43 stages, 6 estados civis, 14 regimes, dossiê, correspondente, visita, finalização; 5 atenções identificadas; 0 bloqueantes; veredito: PODE SEGUIR COM ATENÇÃO
+O que foi feito nesta PR: Criado T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md — matriz declarativa cruzada de 43 stages, 6 estados civis, 14 regimes, dossiê, correspondente, visita, finalização; 4 atenções identificadas; 0 bloqueantes; veredito: PODE SEGUIR COM ATENÇÃO
 O que foi fechado nesta PR: Paridade funcional declarativa F1-F5 validada; PR-T5.8 ou PR-T5.R autorizada conforme contrato
-O que continua pendente: 5 PR-fixes de atenção (AT-01..05); T5.8 / T5.R; G5; runtime
+O que continua pendente: 4 PR-fixes de atenção (AT-01, AT-03..05); T5.8 / T5.R; G5; runtime
 O que ainda não foi fechado do contrato ativo: PR-T5.8 / PR-T5.R; G5; shadow; readiness
 Recorte executado do contrato: T5 — PR-T5.7 — Validação declarativa F1-F5
 Houve desvio de contrato?: não
