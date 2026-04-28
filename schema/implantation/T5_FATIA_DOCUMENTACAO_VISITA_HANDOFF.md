@@ -470,6 +470,40 @@ Não entram como renda válida no dossiê:
 Podem aparecer como contexto/observação.
 Se for única fonte: buscar composição.
 
+### RC-F5-38 — Multi-renda / multi-regime *(AT-04 — PR-T6.1)*
+
+Quando o lead possuir **mais de uma fonte de renda ou mais de um regime de trabalho**, os documentos
+devem ser solicitados **separadamente por fonte/regime** — nunca somados como valor único
+sem identificar o dono e o tipo de cada fonte.
+
+**Regra:** cada fonte de renda deve manter individualmente no dossiê:
+- Dono da renda (P1, P2 ou P3)
+- Regime/fonte (CLT, servidor, aposentado, autônomo, MEI, informal, benefício)
+- Valor informado
+- Documento comprobatório específico conforme regime (ver RC-F5-06..14)
+- Classificação: renda financiável / complementar / apenas observação
+
+**Combinações frequentes e documentação esperada:**
+
+| Combinação | Documentação |
+|---|---|
+| CLT + bico (renda informal) | Holerite CLT (RC-F5-06) + 3 extratos bancários da renda informal (RC-F5-14); renda informal não é formalizada — marcar no dossiê |
+| CLT + CLT (dois vínculos) | Holerite de cada vínculo separado; CTPS completa se aplicável para cada; ambas financiáveis — manter separadas |
+| Aposentado + CLT | Extrato aposentadoria (RC-F5-08) + holerite CLT (RC-F5-06); ambas financiáveis — documentar por regime |
+| Autônomo + CLT | IRPF ou extratos do autônomo (RC-F5-10/11) + holerite CLT (RC-F5-06); documentar limitação do autônomo sem IRPF quando aplicável |
+| MEI + renda informal | Tratamento MEI (RC-F5-12) + extratos do informal (RC-F5-14); CNPJ isolado não é renda MCMV |
+| Servidor + renda extra | Folha de pagamento do servidor (RC-F5-07) + documentação da renda extra conforme regime |
+
+**Proibições:**
+- Não somar todas as rendas como valor único sem identificar dono e regime de cada fonte
+- Não ignorar fontes de renda menos formais por serem secundárias
+- Não tratar renda por bico/informal como financiável sem registro de limitação
+- Benefício assistencial (BF, BPC, seguro-desemprego, trabalho temporário) continua **não financiável** (RC-F5-15) mesmo quando presente em conjunto com outra renda
+
+> **Lacuna de schema declarada:** sem `fact_*` canônico específico para múltiplas fontes de
+> renda por pessoa. Registrar cada fonte como observação no dossiê até que PR futura de T2
+> declare os campos canônicos para renda multi-fonte. Sem `fact_*` novo nesta PR.
+
 ### RC-F5-16 — Casado civil / P2
 
 Obrigatório:
@@ -755,6 +789,7 @@ Regra:
 | VS-F5-10 | Tratar benefício assistencial (BF, BPC) como renda no dossiê | Viola RC-F5-15 |
 | VS-F5-11 | Tratar separado(a) sem averbação como divorciado(a) formal | Viola RC-F5-37; sem averbação = legalmente casado(a) para o financiamento |
 | VS-F5-12 | Bloquear de forma seca cliente separado(a) sem averbação sem apresentar os dois caminhos | Viola RC-F5-37; Enova apresenta caminhos, não bloqueia secamente |
+| VS-F5-13 | Somar todas as fontes de renda de P1 sem separar por regime/fonte | Viola RC-F5-38 (AT-04 — PR-T6.1); multi-renda deve ser documentada por fonte |
 
 ---
 
@@ -818,6 +853,7 @@ F5 ainda não está concluída se:
 | AP-F5-16 | Omitir certidão de óbito do cônjuge no dossiê de viúvo(a) | Viola RC-F5-35; certidão de óbito é documento civil obrigatório para viúvo(a) |
 | AP-F5-17 | Tratar separado(a) sem averbação como divorciado(a) formal no dossiê | Viola RC-F5-37; sem averbação = casado(a) civilmente para o financiamento |
 | AP-F5-18 | Bloquear lead separado(a) sem averbação sem apresentar os dois caminhos possíveis | Viola RC-F5-37; Enova não bloqueia secamente — apresenta caminhos concretos |
+| AP-F5-19 | Tratar multi-renda/multi-regime como valor único indiferenciado no dossiê | Viola RC-F5-38 (AT-04 — PR-T6.1); cada fonte deve ter dono, regime e documento separados |
 
 ---
 
@@ -998,6 +1034,7 @@ Lead diz que é "separado, mas não foi em cartório" ou "separado mas ainda est
 | 20 | RC-F5-36 (PR-T5.6-fix) | Divorciado(a): certidão de casamento com averbação; verificar se averbado ou separado sem averbação | ✅ cirúrgico |
 | 21 | RC-F5-37 (PR-T5.6-fix) | Separado(a) sem averbação: dois caminhos; NÃO tratar como divorciado(a) formal; RC-F5-16 herdada para caminho conjunto | ✅ cirúrgico |
 | 22 | LF-32..35 (PR-T5.6-fix) | 4 lacunas civis declaradas (certidão óbito, certidão averbação, separado sem averbação, regularização pendente); zero `fact_*` criado | ✅ sem invenção |
+| 23 | RC-F5-38 (PR-T6.1 — AT-04) | Multi-renda/multi-regime: docs por fonte/regime separados; sem soma indiferenciada; lacuna de schema multi-fonte declarada sem criar `fact_*` | ✅ cirúrgico |
 
 ---
 
@@ -1042,7 +1079,7 @@ Fontes de verdade consultadas:
 | 3 | 9 fatos/derived T2 canônicos mapeados (Group IX, X + derived) | §3.1 |
 | 4 | 11 fatos herdados de F2/F3/F4 documentados como insumos | §3.2 |
 | 5 | 31 lacunas de schema (LF-01..31) declaradas sem criar fact_* | §4 |
-| 6 | 37 regras comerciais Vasques documentadas (RC-F5-01..37; RC-F5-35..37 = correção civis — PR-T5.6-fix) | §5 |
+| 6 | 38 regras comerciais Vasques documentadas (RC-F5-01..38; RC-F5-35..37 = civis PR-T5.6-fix; RC-F5-38 = multi-renda/multi-regime PR-T6.1 AT-04) | §5 |
 | 7 | Regra-mãe: condução ativa, não escolha passiva | RC-F5-01, §1.4 |
 | 8 | Follow-up obrigatório mínimo 3x antes de convidar plantão | RC-F5-03 |
 | 9 | Docs por regime/perfil: CLT, servidor, aposentado, autônomo, MEI, empresário, informal | RC-F5-06..14 |
@@ -1057,11 +1094,12 @@ Fontes de verdade consultadas:
 | 18 | 6 OBR + 2 CONF + 6 SGM + 5 ROT + 12 VS — zero reply_text | §6, §7 |
 | 19 | 18 anti-padrões (AP-F5-01..18; AP-F5-16..18 = civis, PR-T5.6-fix) | §10 |
 | 20 | 13 cenários sintéticos (SYN-F5-01..13; SYN-F5-11..13 = civis, PR-T5.6-fix) | §13 |
-| 21 | 22 itens de validação cruzada T2/T3/T4 (itens 19..22 = civis, PR-T5.6-fix) | §14 |
+| 21 | 23 itens de validação cruzada T2/T3/T4 (itens 19..22 = civis PR-T5.6-fix; item 23 = RC-F5-38 PR-T6.1) | §14 |
 | 22 | Zero reply_text mecânico — soberania LLM intacta | §6, AP-F5-13 |
 | 23 | Bloco E completo com ESTADO HERDADO + ESTADO ENTREGUE | este §15 |
 | 24 | RC-F5-35..37: viúvo(a), divorciado(a), separado(a) sem averbação — correção cirúrgica civis (PR-T5.6-fix) | §5 |
 | 25 | LF-32..35: 4 lacunas civis declaradas sem criar fact_* (PR-T5.6-fix) | §4 |
+| 26 | RC-F5-38: multi-renda/multi-regime — AT-04 explicitado (PR-T6.1); lacuna schema multi-fonte declarada; zero fact_* criado | §5 |
 
 ### Provas
 

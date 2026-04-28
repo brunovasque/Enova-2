@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **aberto** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.1 (pré-flight cirúrgico AT-01/03/04) |
+| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.2 (surface única de canal) |
 
 ## Contratos encerrados
 
@@ -176,3 +176,4 @@ schema/contracts/
 - 2026-04-26 — PR-T5.0 executada. Contrato T5 ABERTO formalmente conforme CONTRACT_SCHEMA.md. Corpo preenchido: §1–§17 + Bloco E (objetivo, escopo, fora de escopo, dependências, entradas, saídas S1–S9, critérios CA-01..CA-10, provas P-T5-01..05, bloqueios B-01..B-10, quebra PRs T5.0–T5.R, gate G5). 10 PRs mapeadas: T5.0 (abertura), T5.1 (mapa fatias), T5.2–T5.6 (contratos de fatia), T5.7 (paridade), T5.8 (shadow), T5.R (readiness G5). PR-T5.1 desbloqueada. Próximo passo: PR-T5.1.
 - 2026-04-28 — PR-T5.R executada. T5_READINESS_CLOSEOUT_G5.md criado: smoke S1–S8 8/8 PASS; CA-01..CA-10 10/10 CUMPRIDOS; CE-01..CE-09 9/9 satisfeitas; 4 atenções aceitas (AT-01/03/04/05 — não bloqueantes); 0 bloqueantes; veredito G5 PRONTO COM ATENÇÃO — APROVADO; inventário fora de escopo deliberado; soberania LLM verificada; zero fact_*/current_phase novos; zero src/runtime/Supabase/WhatsApp. Contrato T5 ENCERRADO e arquivado em archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md. G5 APROVADO. PR-T6.0 desbloqueada. Próximo passo: PR-T6.0.
 - 2026-04-28 — PR-T6.0 executada. Contrato T6 ABERTO formalmente. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` criado: §1–§17 + Bloco E; regra-mãe "T6 não cria outro cérebro"; 11 PRs (T6.0–T6.9–T6.R); CA-T6-01..10; B-T6-01..10 (incluindo B-T6-04 bloqueio permanente canal paralelo); gate G6 "multimodal sob mesma governança"; conformidade A00-ADENDO-01/02/03 declarada. PR-T6.1 desbloqueada. Próximo passo: PR-T6.1.
+- 2026-04-28 — PR-T6.1 executada. T6_PREFLIGHT_RISCOS_T5.md criado: pré-flight cirúrgico de riscos herdados T5. AT-01 CORRIGIDO (ponteiro F2 §3.1 divorciado/viúvo → F5). AT-03 ANTECIPADO (§2.5 nota preventiva separado sem averbação em F2). AT-04 EXPLICITADO (RC-F5-38 multi-renda/multi-regime em F5). AT-05 lacuna normativa planejada. Zero src/; zero fact_*; zero runtime. PR-T6.2 desbloqueada. Próximo passo: PR-T6.2.
