@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.7 é o próximo passo autorizado).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.8 é o próximo passo autorizado).
 
 Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
@@ -21,6 +21,24 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T6.7` — Adapter Meta/WhatsApp governado:
+`schema/implantation/T6_ADAPTER_META_WHATSAPP.md` criado — contrato declarativo do adapter.
+Regra-mãe: "Adapter é canal, não cérebro. Adapter não escreve reply_text, não decide stage,
+não cria fact_*, não valida documento, não transcreve áudio, não interpreta aprovação. Só transporta."
+Fluxo inbound 16 etapas: validação assinatura → dedupe → idempotência → extração identificadores
+→ normalização AdapterEventoBruto → T6_SURFACE_CANAL → T4 → LLM → T4.4 → outbound;
+Fluxo outbound 11 etapas: IntencaoEnvioOutbound → payload técnico Meta → rate limit → retry → envio;
+13 invariantes INV-AD-01..13; WH-01..07 (challenge); SIG-01..09 (assinatura);
+IDP-01..10 (idempotência); DD-01..08 (dedupe por wa_message_id);
+RTI-01..03 + RTO-01..09 (retry); 14 erros ERR-AD-01..14;
+RL-01..07 (rate limit); MID-01..14 (mídia roteada T6.3/T6.4/T6.5/T6.6);
+ST-01..08 (status events como system_event); §18 separação canal/cérebro;
+SEC-01..10 (segurança mínima + variáveis conceituais); 13 eventos de observabilidade;
+20 proibições PROB-AD-01..20; 21 critérios CA-T6.7-01..21; Bloco E §26 com 25 evidências.
+Zero src/; zero fact_*; zero reply_text; zero webhook real; zero env/secret; zero runtime. PR-T6.8 desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.6)
 
 `PR-T6.6` — Sticker, mídia inútil e mensagens não textuais:
 `schema/implantation/T6_STICKER_MIDIA_INUTIL.md` criado — contrato declarativo para sujeira de canal.
