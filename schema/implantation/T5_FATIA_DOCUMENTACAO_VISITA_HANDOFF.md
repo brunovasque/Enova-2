@@ -315,6 +315,9 @@ Todos os `fact_*` abaixo são chaves canônicas de `T2_DICIONARIO_FATOS.md §3`.
 | 26 | LF-26 | Notificação ao Vasques (telefone) com perfil + horário — sem schema de integração | `agendamento_visita` | Integração de notificação pessoal sem schema canônico |
 | 27 | LF-27 | Finalização real de etapa vs processo — distinção canônica — sem `fact_*` | `finalizacao`, `finalizacao_processo` | Diferenciação entre "etapa fechada" e "processo fechado por agora" |
 | 28 | LF-28 | Nova intenção real após encerramento — sem `signal_*` canônico | `finalizacao_processo` | Detecção de nova intenção genuína vs confirmação de cortesia |
+| 29 | LF-29 | Parcela mensal pretendida pelo cliente — sem `fact_*` canônico | `envio_docs`, dossiê | Informativo/comercial; insumo de negociação com a construtora; sem `fact_installment_target` canônico |
+| 30 | LF-30 | Parcela mensal máxima confortável — sem `fact_*` canônico | `envio_docs`, dossiê | Teto comercial de negociação; define limite do atendimento; sem `fact_installment_max_comfort` canônico |
+| 31 | LF-31 | Limite comercial de negociação mensal — sem `fact_*` canônico | dossiê, `agendamento_visita` | Define até onde o atendimento pode chegar; calculado a partir de LF-29/30; sem schema canônico |
 
 ---
 
@@ -501,6 +504,7 @@ O dossiê deve ser organizado — não conversa crua. Deve conter:
 - Restrição informada (observação — não bloqueia envio)
 - Se possui entrada + valor (LF-19)
 - Se possui FGTS + valor aproximado (LF-20); se não soube: informativo
+- Parcela mensal pretendida/máxima confortável (LF-29/LF-30) — informativo/comercial; não é simulação, não é aprovação, não é promessa de parcela final; não substitui análise do banco/correspondente; captar com naturalidade no mesmo bloco de informações comerciais (entrada/FGTS/bairros), sem transformar em pergunta mecânica fixa
 - Observações comerciais relevantes
 
 `derived_dossier_profile` (simples/médio/complexo) informa a complexidade do dossiê.
@@ -516,6 +520,7 @@ Para enviar, precisa no mínimo:
 - Entrada/FGTS (se houver ou se cliente não souber)
 - Bairros: mora, trabalha, pretende comprar (LF-16/17/18)
 - Canal de retorno
+- Parcela mensal pretendida/máxima confortável (LF-29/30) **quando informada pelo cliente** — registrar como observação comercial; não é requisito bloqueante
 
 Restrição informada não bloqueia envio.
 
@@ -623,6 +628,19 @@ Após `finalizacao_processo`, só voltar a responder se houver nova intenção r
 - Nova dúvida; nova objeção; novo envio; pedido de visita; pedido de status; mudança de decisão
 
 Confirmações de cortesia e despedidas não reabrem conversa.
+
+### RC-F5-34 — Parcela mensal confortável: informação comercial do dossiê
+
+Registrar no dossiê até qual valor de parcela mensal o cliente está disposto/consegue/pretende pagar.
+
+Regras:
+- Dado informativo/comercial — não é simulação, não é aprovação, não é promessa de parcela final
+- Não substitui análise do banco/correspondente
+- Ajuda na negociação com a construtora e define até onde o atendimento comercial pode chegar (LF-31)
+- Captar com naturalidade no mesmo bloco de informações comerciais complementares do dossiê (entrada/FGTS/bairros), junto dos demais dados informativos — sem transformar em pergunta mecânica fixa
+- Se cliente informar: registrar como observação comercial no dossiê (LF-29/30)
+- Se cliente não informar: não bloquear avanço; campo informativo, não requisito
+- Não expor ao cliente como parcela calculada ou prometida pelo banco/Caixa
 
 ---
 
@@ -891,7 +909,7 @@ Lead com restrição declarada + renda boa + docs básicos enviados.
 | 15 | `T5_FATIA_ELEGIBILIDADE_RESTRICAO.md` | Herança de F4: derived_eligibility_probable + fact_credit_restriction (observação no dossiê) | ✅ cross-fatia documentada |
 | 16 | `T5_FATIA_RENDA_REGIME_COMPOSICAO.md` | Herança de F3: work_regime, income, ctps_36m, autonomo_has_ir, has_fgts, entry_reserve | ✅ determinam docs por regime |
 | 17 | `T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` | Herança de F2: estado_civil, process_mode, p3_required | ✅ determinam docs de P2/P3 |
-| 18 | LF-01..LF-28 | 28 lacunas declaradas; zero `fact_*` inventado | ✅ sem invenção |
+| 18 | LF-01..LF-31 | 31 lacunas declaradas; zero `fact_*` inventado | ✅ sem invenção |
 
 ---
 
@@ -911,7 +929,7 @@ O que a última PR fechou: F4 coberta (elegibilidade/restrição); PR-T5.5 merge
 O que a última PR NÃO fechou: F5; G5; runtime
 Por que esta tarefa existe: F4 confirmou elegibilidade; F5 converte lead qualificado em dossiê analisável
 Esta tarefa está dentro ou fora do contrato ativo: dentro
-Objetivo desta tarefa: Criar contrato declarativo completo da F5 com 5 stages, 33 regras Vasques, facts T2, 28 lacunas e políticas T3
+Objetivo desta tarefa: Criar contrato declarativo completo da F5 com 5 stages, 34 regras Vasques, facts T2, 31 lacunas e políticas T3
 Escopo: schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md + live files
 Fora de escopo: src/, runtime, T1/T2/T3/T4 aprovados, T5.3/T5.4/T5.5, implementação real, PR-T5.7
 Houve desvio de contrato?: não
@@ -935,8 +953,8 @@ Fontes de verdade consultadas:
 | 2 | Sequência de 5 `current_phase` canônicos documentada | §1.2 |
 | 3 | 9 fatos/derived T2 canônicos mapeados (Group IX, X + derived) | §3.1 |
 | 4 | 11 fatos herdados de F2/F3/F4 documentados como insumos | §3.2 |
-| 5 | 28 lacunas de schema (LF-01..28) declaradas sem criar fact_* | §4 |
-| 6 | 33 regras comerciais Vasques documentadas (RC-F5-01..33) | §5 |
+| 5 | 31 lacunas de schema (LF-01..31) declaradas sem criar fact_* | §4 |
+| 6 | 34 regras comerciais Vasques documentadas (RC-F5-01..34) | §5 |
 | 7 | Regra-mãe: condução ativa, não escolha passiva | RC-F5-01, §1.4 |
 | 8 | Follow-up obrigatório mínimo 3x antes de convidar plantão | RC-F5-03 |
 | 9 | Docs por regime/perfil: CLT, servidor, aposentado, autônomo, MEI, empresário, informal | RC-F5-06..14 |
@@ -958,13 +976,13 @@ Fontes de verdade consultadas:
 ### Provas
 
 - **P-T5.6-01:** arquivo `schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` criado; `git diff --stat` confirma novo artefato
-- **P-T5.6-02:** 9 fatos canônicos T2 (Groups IX, X + derived) verificados em `T2_DICIONARIO_FATOS.md §3.9/3.10/3.11`; zero fact_* inventado; 28 lacunas declaradas em §4
+- **P-T5.6-02:** 9 fatos canônicos T2 (Groups IX, X + derived) verificados em `T2_DICIONARIO_FATOS.md §3.9/3.10/3.11`; zero fact_* inventado; 31 lacunas declaradas em §4 (LF-01..31, incluindo LF-29/30/31 para parcela mensal)
 - **P-T5.6-03:** zero reply_text em qualquer seção §6 (OBR/CONF/SGM/ROT/VS); soberania LLM auditável no artefato
 
 ```
 --- ESTADO ENTREGUE ---
-O que foi feito nesta PR: Criado T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md — contrato declarativo completo da F5
-O que foi fechado nesta PR: F5 coberta com 5 stages, 33 regras, 28 lacunas, políticas T3 completas; funil core F1–F5 documentado
+O que foi feito nesta PR: Criado T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md — contrato declarativo completo da F5; adendo cirúrgico RC-F5-34 (parcela mensal confortável) adicionado após revisão do Vasques
+O que foi fechado nesta PR: F5 coberta com 5 stages, 34 regras, 31 lacunas, políticas T3 completas; funil core F1–F5 documentado
 O que continua pendente: paridade funcional (T5.7), shadow (T5.8), readiness (T5.R); G5; runtime; F5 runtime implementation
 O que ainda não foi fechado do contrato ativo: PR-T5.7..PR-T5.8, PR-T5.R, G5
 Recorte executado do contrato: T5 §6 S5 — contrato declarativo F5 (última fatia do funil core)
@@ -985,11 +1003,11 @@ Permissões Cloudflare necessárias: nenhuma adicional
 | Critério A00-ADENDO-03 | Status |
 |---|---|
 | Evidência real de conclusão presente | ✅ 23 evidências documentadas acima |
-| 28 lacunas são gaps intencionais, não prova parcial | ✅ declaradas explicitamente com base em auditoria T2 |
+| 31 lacunas são gaps intencionais, não prova parcial | ✅ declaradas explicitamente com base em auditoria T2 + adendo RC-F5-34 |
 | Nenhuma etapa fechada sem evidência | ✅ artefato criado antes do Bloco E |
 | Bloco E completo | ✅ ESTADO HERDADO + ESTADO ENTREGUE + provas |
 | Soberania LLM intacta | ✅ zero reply_text mecânico auditável em §6 |
-| Nenhum `fact_*` inventado | ✅ todos os 9 fatos são canônicos T2; 28 lacunas declaradas |
+| Nenhum `fact_*` inventado | ✅ todos os 9 fatos são canônicos T2; 31 lacunas declaradas |
 | `current_phase` — somente valores canônicos | ✅ 5 valores usados pertencem aos 8 canônicos |
 | F1–F5 funil core coberto | ✅ esta PR fecha o último contrato de fatia do funil core |
 | PR-T5.7 autorizada após merge | ✅ §Meta + ESTADO ENTREGUE declarados |
