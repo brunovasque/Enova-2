@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.5 (próxima) |
+| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.6 (próxima) |
 
 ## Contratos encerrados
 
@@ -136,6 +136,7 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
+- 2026-04-28 — PR-T6.5 executada: `schema/implantation/T6_AUDIO_CEREBRO_CONVERSACIONAL.md` criado — contrato declarativo de áudio no mesmo cérebro conversacional; fluxo EA-01..EA-08; 15+ tipos de áudio; âncora T2_POLITICA_CONFIANCA §3.3 (O3 AUDIO_TRANSCRIPT: audio_good→captured / audio_medium→captured/low / audio_poor→hypothesis); 7 níveis de confiança; 14 informações críticas com confirmação obrigatória; STT como lacuna futura (T6-LA-01); 13 casos problemáticos; 20 proibições PROB-AUD-01..20; 23 critérios CA-T6.5-01..23; zero reply_text; zero fact_*; zero stage decision; zero STT real. PR-T6.6 desbloqueada.
 - 2026-04-28 — PR-T6.4 executada: `schema/implantation/T6_PIPELINE_IMAGEM_PDF.md` criado — pipeline declarativo de imagem/PDF/documento; EP-01..EP-07; 19+ tipos de entrada; 11 estados reaproveitados T6.3; classificação hipotética; associação P1/P2/P3; 14 casos problemáticos; relação T6.8; 20 proibições PROB-PIP-01..20; zero OCR real; zero reply_text; zero fact_*; zero stage decision. PR-T6.5 desbloqueada.
 - 2026-04-28 — PR-T6.3 executada: `schema/implantation/T6_CONTRATO_ANEXOS_DOCUMENTOS.md` criado — governança documental; 35+ tipos documentais; 11 estados documentais; associação P1/P2/P3; 18 perfis/regime; 14 finalidades; OCR como lacuna futura; 18 proibições PROB-AD-01..18; zero reply_text; zero fact_*; zero stage decision. PR-T6.4 desbloqueada.
 - 2026-04-28 — PR-T6.2 executada: `schema/implantation/T6_SURFACE_CANAL.md` criado — contrato declarativo da surface única de canal; 8 input_types; shape SurfaceEventNormalizado; 10 invariantes INV-SC-01..10; 13 proibições PROB-SC-01..13; routing → TurnoEntrada(T4.1); zero reply_text; zero fact_*; zero decisão de stage. PR-T6.3 desbloqueada.
