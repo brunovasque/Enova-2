@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.7 (próxima) |
+| T6 — Multimodal / Integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` | **em execução** | G5 APROVADO; G6 — integração de canal real | 2026-04-28 | PR-T6.8 (próxima) |
 
 ## Contratos encerrados
 
@@ -136,6 +136,7 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
+- 2026-04-28 — PR-T6.7 executada: `schema/implantation/T6_ADAPTER_META_WHATSAPP.md` criado — contrato declarativo do adapter Meta/WhatsApp governado; fluxo inbound 16 etapas + 8 invariantes INV-AD-01..08; fluxo outbound 11 etapas + 5 invariantes INV-AD-09..13; verificação de webhook WH-01..07; assinatura SIG-01..09; idempotência IDP-01..10; dedupe DD-01..08; retry RTI/RTO; 14 erros; rate limit; 14 regras de mídia; status events; separação canal/cérebro; segurança SEC-01..10; 13 eventos de observabilidade; 20 proibições PROB-AD-01..20; 21 critérios CA-T6.7-01..21; zero reply_text; zero fact_*; zero webhook real; zero runtime. PR-T6.8 desbloqueada.
 - 2026-04-28 — PR-T6.6 executada: `schema/implantation/T6_STICKER_MIDIA_INUTIL.md` criado — contrato declarativo para sticker, mídia inútil e mensagens não textuais; princípio-mãe "sujeira de canal não é decisão"; 21+ subtipos em 9 categorias; fluxo EM-01..EM-06; tratamento de sticker, emoji/reação, imagem ambígua, print confuso, áudio inaudível, mídia repetida, arquivo corrompido, mensagem vazia/fraca; 8 limites de persistência LP-01..08; 20 proibições PROB-STK-01..20; 20 critérios CA-T6.6-01..20; zero reply_text; zero fact_*; zero stage decision; zero runtime. PR-T6.7 desbloqueada.
 - 2026-04-28 — PR-T6.5 executada: `schema/implantation/T6_AUDIO_CEREBRO_CONVERSACIONAL.md` criado — contrato declarativo de áudio no mesmo cérebro conversacional; fluxo EA-01..EA-08; 15+ tipos de áudio; âncora T2_POLITICA_CONFIANCA §3.3 (O3 AUDIO_TRANSCRIPT: audio_good→captured / audio_medium→captured/low / audio_poor→hypothesis); 7 níveis de confiança; 14 informações críticas com confirmação obrigatória; STT como lacuna futura (T6-LA-01); 13 casos problemáticos; 20 proibições PROB-AUD-01..20; 23 critérios CA-T6.5-01..23; zero reply_text; zero fact_*; zero stage decision; zero STT real. PR-T6.6 desbloqueada.
 - 2026-04-28 — PR-T6.4 executada: `schema/implantation/T6_PIPELINE_IMAGEM_PDF.md` criado — pipeline declarativo de imagem/PDF/documento; EP-01..EP-07; 19+ tipos de entrada; 11 estados reaproveitados T6.3; classificação hipotética; associação P1/P2/P3; 14 casos problemáticos; relação T6.8; 20 proibições PROB-PIP-01..20; zero OCR real; zero reply_text; zero fact_*; zero stage decision. PR-T6.5 desbloqueada.

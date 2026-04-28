@@ -69,6 +69,72 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.7 — Adapter Meta/WhatsApp governado
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.6 (#131) merged 2026-04-28T20:56:34Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- Surface única de canal (T6.2–T6.6): SurfaceEventNormalizado; 8 input_types; todos os tipos de sujeira tratados.
+- Próximo passo autorizado: PR-T6.7 — Adapter Meta/WhatsApp governado.
+- Branch: `feat/t6-pr-t6-7-adapter-meta-whatsapp`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_ADAPTER_META_WHATSAPP.md` criado — contrato declarativo do adapter Meta/WhatsApp governado.
+
+**Regra-mãe:** "Adapter é canal — não é cérebro. Adapter só recebe e envia — nunca decide."
+
+**Arquitetura declarada:**
+```
+Meta/WhatsApp bruto → Adapter (validação, dedupe) → T6_SURFACE_CANAL → T4 → T3 → T2 → T5
+                  ↑                                                               ↓
+                  └────────────────── Outbound aprovado ──────────────────────────┘
+```
+
+**§7 — Fluxo inbound (16 etapas, 8 invariantes INV-AD-01..08):**
+POST Meta → validação método → assinatura → extração wa_message_id/wa_id/phone_number_id/timestamp →
+dedupe_key → idempotência → challenge/status check → AdapterEventoBruto → T6_SURFACE_CANAL → T4 → LLM → outbound.
+
+**§8 — Fluxo outbound (11 etapas, 5 invariantes INV-AD-09..13):**
+TurnoSaida (reply_text LLM) → IntencaoEnvioOutbound → payload técnico Meta → rate limit →
+retry → envio → status events → falha vira rastro técnico (nunca fala mecânica).
+
+**§9 — Verificação de webhook (WH-01..07):** challenge = evento técnico; não cria turno.
+**§10 — Assinatura (SIG-01..09):** X-Hub-Signature-256 obrigatória; payload sem assinatura nunca entra no pipeline.
+**§11 — Idempotência (IDP-01..10):** dedupe_key; retry da Meta descartado; HTTP 200 imediato.
+**§12 — Dedupe (DD-01..08):** wa_message_id primário; fallback conceitual.
+**§13 — Retry (RTI/RTO):** retry inbound = idempotência captura; retry outbound ≤ 3 tentativas; backoff exponencial.
+**§14 — 14 erros declarados (ERR-AD-01..14).**
+**§15 — Rate limit (RL-01..07):** técnico; não altera negócio; não gera fala mecânica.
+**§16 — 14 regras de mídia (MID-01..14):** adapter só preserva referência; T6.3/T6.4/T6.5/T6.6 governam.
+**§17 — Status events (ST-01..08):** delivered/read/failed = system_event; nunca turno conversacional.
+**§18 — Separação canal/cérebro:** tabela completa — adapter nunca decide; LLM/T3/T2/T4 decidem.
+**§19 — Segurança (SEC-01..10):** variáveis conceituais declaradas (nenhuma criada).
+**§20 — 13 eventos de observabilidade conceituais.**
+**§21 — 20 proibições PROB-AD-01..20.**
+**§22 — 10 riscos com mitigação R-AD-01..10.**
+**§23 — 21 critérios CA-T6.7-01..21.**
+**§26 — Bloco E com 25 evidências.**
+
+**Garantias:** zero src/; zero fact_*; zero current_phase; zero reply_text; zero webhook real; zero env/secret; zero runtime.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.8** — Dossiê operacional e link do correspondente: `schema/implantation/T6_DOSSIE_OPERACIONAL.md`
+Montagem do link do correspondente; anexos recebidos; docs pendentes por perfil; envio/retorno;
+segurança mínima; trilha de auditoria; estados do dossiê.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-7-adapter-meta-whatsapp` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.7: CONCLUÍDA (adapter Meta/WhatsApp governado)
+- PR-T6.8: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.6 — Sticker, mídia inútil e mensagens não textuais
 
 ### ESTADO HERDADO
