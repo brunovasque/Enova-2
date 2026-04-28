@@ -8,7 +8,7 @@
 | Dependências                      | G5 APROVADO (`schema/implantation/T5_READINESS_CLOSEOUT_G5.md`), T5 encerrado, T1–T4 encerrados |
 | Legados aplicáveis                | L03 (obrigatório); L17 (PR-T6.3, T6.4, T6.8); L18 (PR-T6.9, T6.R); L19 (complementar em T6.5) |
 | Referências obrigatórias          | `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`, `schema/ADENDO_CANONICO_SOBERANIA_IA.md`, `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`, `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`, `schema/CONTRACT_SCHEMA.md`, `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md`, `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`, `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` seção M |
-| Status                            | **em execução** — PR-T6.5 executada em 2026-04-28; próxima: PR-T6.6                         |
+| Status                            | **em execução** — PR-T6.6 executada em 2026-04-28; próxima: PR-T6.7                         |
 | Última atualização                | 2026-04-28                                                                                    |
 
 ---
