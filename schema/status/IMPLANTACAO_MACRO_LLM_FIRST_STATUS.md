@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.8 aberta em 2026-04-27 — Plano declarativo de shadow/sandbox F1–F5; aguardando merge).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato aguardando abertura; PR-T6.0 é o próximo passo autorizado).
 
-Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
+Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
-Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
+Gate aberto: G6 — integração de canal real (bloqueado até PR-T6.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 + PR-T5.5 + PR-T5.6 + PR-T5.6-fix + PR-T5.7 merged; PR-T5.8 aberta em 2026-04-27; PR-T5.R autorizada após merge da T5.8 conforme contrato).
+Contrato T5 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md` (G5 APROVADO; PR-T5.R executada em 2026-04-28).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,16 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.R` — Readiness / Closeout G5:
+`schema/implantation/T5_READINESS_CLOSEOUT_G5.md` criado:
+Smoke S1–S8 8/8 PASS; CA-01..CA-10 10/10 CUMPRIDOS; CE-01..CE-09 9/9 satisfeitas;
+4 atenções aceitas por Vasques (AT-01/03/04/05 — não bloqueantes); 0 bloqueantes;
+veredito G5: PRONTO COM ATENÇÃO — APROVADO; inventário fora de escopo deliberado;
+soberania LLM verificada; zero fact_*/current_phase novos; zero src/runtime/Supabase.
+Contrato T5 ENCERRADO e arquivado. G5 APROVADO. PR-T6.0 autorizada.
+
+## Ultima tarefa anterior (PR-T5.8)
 
 `PR-T5.8` — Plano declarativo de shadow/sandbox F1–F5:
 `schema/implantation/T5_PLANO_SHADOW_SANDBOX.md` criado:
