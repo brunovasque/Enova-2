@@ -69,6 +69,63 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.9 — Suite declarativa de testes/sandbox multicanal
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.8 (#133) merged 2026-04-28T22:52:48Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- T6.2–T6.8: todos os artefatos multicanal declarados e merged.
+- Próximo passo autorizado: PR-T6.9 — Suite declarativa de testes/sandbox multicanal.
+- Branch: `feat/t6-pr-t6-9-suite-testes-sandbox`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_SUITE_TESTES_SANDBOX.md` criado — suite de validação declarativa da governança multicanal T6.2–T6.8.
+
+**Princípio central:** "Teste valida governança — não cria runtime."
+
+**§6 — Matriz de cobertura:**
+T6.2 Surface, T6.3 Anexos, T6.4 Pipeline Imagem/PDF, T6.5 Áudio, T6.6 Sticker/mídia inútil,
+T6.7 Adapter Meta/WhatsApp, T6.8 Dossiê operacional, T4/T3/T2/T5.
+
+**53 cenários declarativos em 9 grupos:**
+- Grupo A (texto puro): A-01..A-05 (5 cenários)
+- Grupo B (imagem/PDF/documento): B-01..B-08 (8 cenários)
+- Grupo C (áudio): C-01..C-06 (6 cenários)
+- Grupo D (sticker/mídia inútil): D-01..D-06 (6 cenários)
+- Grupo E (adapter Meta/WhatsApp): E-01..E-06 (6 cenários)
+- Grupo F (dossiê/correspondente): F-01..F-08 (8 cenários)
+- Grupo G (aprovação/reprovação/visita): G-01..G-04 (4 cenários)
+- Grupo H (regressão T1–T5): H-01..H-05 (5 cenários)
+- Grupo I (cliente some/reenvio/follow-up): I-01..I-05 (5 cenários extras)
+
+**§7 — Critérios globais PASS/FAIL:** PF-01..10 (passa) / FL-01..12 (falha).
+**§8 — 13 invariantes INV-01..13** referenciadas em todos os grupos.
+**§19 — 15 bloqueantes BLQ-01..15** para PR-T6.R declarados.
+**§20 — 20 proibições PROB-T69-01..20.**
+**§21 — 8 riscos com mitigação R-T69-01..08.**
+**§22 — 13 critérios CA-T6.9-01..13.**
+**§24 — Bloco E completo:** estado=completa; sem lacuna; PR-T6.R desbloqueada.
+
+**Garantias:** zero src/; zero runtime; zero sandbox real; zero reply_text; zero fact_*; zero READINESS_G6; zero T7.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.R** — Readiness/Closeout G6: `schema/implantation/T6_READINESS_CLOSEOUT_G6.md`
+Smoke T6.1–T6.9; verificação CA-T6-01..CA-T6-10; checklist BLQ-01..15 desta suite;
+decisão G6 APROVADO ou REPROVADO com evidência; aplicar `CONTRACT_CLOSEOUT_PROTOCOL.md`.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-9-suite-testes-sandbox` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.9: CONCLUÍDA (suite declarativa de testes/sandbox multicanal)
+- PR-T6.R: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.8 — Dossiê operacional e link do correspondente
 
 ### ESTADO HERDADO

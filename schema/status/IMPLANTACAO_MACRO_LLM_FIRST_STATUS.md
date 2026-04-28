@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.9 é o próximo passo autorizado).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.R é o próximo passo autorizado).
 
 Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
@@ -22,27 +22,30 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
 
+`PR-T6.9` — Suite declarativa de testes/sandbox multicanal:
+`schema/implantation/T6_SUITE_TESTES_SANDBOX.md` criado — suite de validação declarativa T6.2–T6.8.
+Princípio central: "Teste valida governança — não cria runtime."
+53 cenários declarativos em 9 grupos (A–H + I):
+Grupo A (texto puro): A-01..A-05; Grupo B (imagem/PDF/doc): B-01..B-08;
+Grupo C (áudio): C-01..C-06; Grupo D (sticker/mídia inútil): D-01..D-06;
+Grupo E (adapter Meta/WhatsApp): E-01..E-06; Grupo F (dossiê/correspondente): F-01..F-08;
+Grupo G (aprovação/reprovação/visita): G-01..G-04; Grupo H (regressão T1-T5): H-01..H-05;
+Grupo I (cliente some/reenvio/follow-up): I-01..I-05;
+Matriz de cobertura T6.2–T6.8 + T4/T3/T2/T5; 13 invariantes INV-01..13;
+Critérios globais PASS (PF-01..10) / FAIL (FL-01..12);
+15 bloqueantes BLQ-01..15 para PR-T6.R; 20 proibições PROB-T69-01..20;
+13 critérios CA-T6.9-01..13; Bloco E §24 com estado completo.
+Zero src/; zero runtime; zero sandbox real; zero reply_text; zero fact_*; zero READINESS_G6. PR-T6.R desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.8)
+
 `PR-T6.8` — Dossiê operacional e link do correspondente:
 `schema/implantation/T6_DOSSIE_OPERACIONAL.md` criado — contrato declarativo do dossiê operacional.
-Regra-mãe: "Dossiê organiza, não decide. Dossiê não escreve reply_text, não decide stage,
-não cria fact_*, não aprova crédito, não envia documento sem condição, não expõe restrição. Só organiza."
-Shape DossieOperacional: dossier_id, case_id, pre_cadastro_id, pessoas[], documentos_recebidos[],
-documentos_pendentes[], documentos_rejeitados[], documentos_informativos[], rendas[], composicao,
-restricoes_informadas, observacoes_comerciais, link_correspondente, correspondente_status,
-retorno_correspondente, visit_status, audit_trail[];
-14 estados: draft → collecting_documents → partial_documents → ready_for_review → ready_to_send →
-sent_to_correspondent → correspondent_received → correspondent_reviewing → approved → rejected →
-pending_regularization → visit_required → visit_scheduled → archived_temporarily;
-DS-01..08 (regras de transição); docs mínimos por perfil: CLT, servidor, aposentado,
-autônomo c/ e s/ IRPF, MEI, empresário, informal; estado civil: divorciado (RC-F5-36),
-viúvo (RC-F5-35), separado sem averbação (RC-F5-37); multi-renda RC-F5-38;
-benefícios não financiáveis: Bolsa Família, BPC/LOAS, assistencial, seguro-desemprego, temporário;
-16 campos observacoes_comerciais; IC-01..06; link_correspondente conceitual SL-01..10;
-ENV-01..08 (condições de envio); RET-01..08 (retorno correspondente);
-RET-03: aprovado condicionado → cliente vê apenas "aprovado"; VIS-01..08 (visita);
-REP-01..08 (orientação reprovação); 17 eventos trilha de auditoria;
-20 proibições PROB-DOS-01..20; 21 critérios CA-T6.8-01..21; Bloco E §27 com 25 evidências.
-Zero src/; zero fact_*; zero current_phase; zero reply_text; zero dossiê real; zero runtime. PR-T6.9 desbloqueada.
+Regra-mãe: "Dossiê organiza, não decide. Não escreve reply_text, não decide stage, não cria fact_*."
+14 estados; DS-01..08; docs mínimos CLT/servidor/aposentado/autônomo/MEI/empresário/informal;
+RC-F5-36/35/37/38; benefícios não financiáveis; SL-01..10; ENV-01..08; RET-01..08; RET-03;
+VIS-01..08; REP-01..08; 17 eventos de auditoria; PROB-DOS-01..20; CA-T6.8-01..21; Bloco E §27.
+Zero src/; zero fact_*; zero reply_text; zero dossiê real; zero runtime. PR-T6.9 desbloqueada.
 
 ## Ultima tarefa anterior (PR-T6.7)
 
