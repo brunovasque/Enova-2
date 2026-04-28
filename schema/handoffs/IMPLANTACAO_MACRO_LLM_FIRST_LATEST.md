@@ -69,6 +69,45 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-27 — PR-T5.6-fix — Correção cirúrgica: documentos civis finos da F5
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.6 (#120) merged 2026-04-28T01:03:04Z.
+- Artefato base: `schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` vigente.
+- Próximo passo autorizado: PR-T5.6-fix — correção cirúrgica civis (viúvo/divorciado/separado sem averbação).
+- Branch base: `main` (após pull pós-merge de #120).
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` corrigido — 3 regras civis adicionadas.
+
+**Regras adicionadas (RC-F5-35..37):**
+- RC-F5-35: viúvo(a) → certidão de óbito obrigatória; inventário fora do recorte
+- RC-F5-36: divorciado(a) → certidão de casamento com averbação quando aplicável
+- RC-F5-37: separado(a) sem averbação → dois caminhos (regularizar ou seguir com cônjuge); não bloquear
+
+**Lacunas adicionadas (LF-32..35):**
+LF-32: certidão de óbito; LF-33: certidão de casamento com averbação;
+LF-34: estado civil "separado sem averbação"; LF-35: regularização pendente
+
+**Garantias:**
+- Inventário NÃO incluído
+- União estável NÃO reaberta
+- P3/familiar casado civil NÃO reaberto
+- Zero `fact_*` criado
+- Zero `reply_text` ou template
+- Próximo passo autorizado: PR-T5.7 — após merge desta fix
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr5-6-fix-documentos-civis` → PR aberta
+- Contrato T5: `active/CONTRATO_IMPLANTACAO_MACRO_T5.md` — STATUS: aberto
+- Artefato `T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md`: corrigido (PR-T5.6-fix)
+- Gate G5: bloqueado até PR-T5.R
+
+---
+
 ## Atualizacao 2026-04-26 — PR-T5.6 — Contrato da fatia F5: documentação / dossiê / correspondente / visita / handoff
 
 ### ESTADO HERDADO

@@ -14,6 +14,7 @@
 | Stages cobertos | `envio_docs`, `agendamento_visita`, `aguardando_retorno_correspondente`, `finalizacao`, `finalizacao_processo` |
 | Legados aplicáveis | L11 (obrigatório — fluxo documental Meio A), L12 (obrigatório — correspondente e retorno), L13 (obrigatório — visita e agendamento) |
 | Data | 2026-04-27 |
+| Revisão | PR-T5.6-fix — Correção cirúrgica: documentos civis viúvo(a) / divorciado(a) / separado(a) sem averbação (RC-F5-35..37; LF-32..35) |
 
 ---
 
@@ -318,6 +319,10 @@ Todos os `fact_*` abaixo são chaves canônicas de `T2_DICIONARIO_FATOS.md §3`.
 | 29 | LF-29 | Parcela mensal pretendida pelo cliente — sem `fact_*` canônico | `envio_docs`, dossiê | Informativo/comercial; insumo de negociação com a construtora; sem `fact_installment_target` canônico |
 | 30 | LF-30 | Parcela mensal máxima confortável — sem `fact_*` canônico | `envio_docs`, dossiê | Teto comercial de negociação; define limite do atendimento; sem `fact_installment_max_comfort` canônico |
 | 31 | LF-31 | Limite comercial de negociação mensal — sem `fact_*` canônico | dossiê, `agendamento_visita` | Define até onde o atendimento pode chegar; calculado a partir de LF-29/30; sem schema canônico |
+| 32 | LF-32 | Certidão de óbito do cônjuge — sem `fact_*` canônico | `envio_docs`, dossiê | Estado civil viúvo(a) exige certidão de óbito; sem chave canônica para esse documento específico |
+| 33 | LF-33 | Certidão de casamento com averbação de divórcio — sem `fact_*` canônico | `envio_docs`, dossiê | Divorciado(a) precisa da certidão com averbação; sem chave para distinguir "averbado" de "não averbado" |
+| 34 | LF-34 | Estado civil "separado sem averbação" — sem `fact_*` diferenciado | `envio_docs`, dossiê | `fact_estado_civil` (herdado de F2) não distingue separado informal de divorciado formal; lacuna de estado civil fino |
+| 35 | LF-35 | Documentação civil de regularização pendente (averbação em andamento) — sem `fact_*` | `envio_docs`, dossiê | Status intermediário entre separado sem averbação e divorciado formal; sem `signal_*` canônico |
 
 ---
 
@@ -642,6 +647,51 @@ Regras:
 - Se cliente não informar: não bloquear avanço; campo informativo, não requisito
 - Não expor ao cliente como parcela calculada ou prometida pelo banco/Caixa
 
+### RC-F5-35 — Viúvo(a)
+
+Se o cliente for viúvo(a), incluir no dossiê:
+- Documento de identificação
+- Comprovante de residência
+- Comprovante de renda conforme perfil/regime (ver RC-F5-06..14)
+- **Certidão de óbito do cônjuge** — necessária para comprovar estado civil e identificar a composição correta do processo
+
+Regra:
+- Certidão de óbito = documento civil obrigatório para viúvo(a) no financiamento
+- NÃO incluir inventário nesta fatia (inventário fora do recorte ativo, conforme §1.4 de F4)
+- Sem `fact_*` canônico para certidão de óbito → LF-32
+
+### RC-F5-36 — Divorciado(a)
+
+Se o cliente for divorciado(a), incluir no dossiê:
+- Documento de identificação
+- Comprovante de residência
+- Comprovante de renda conforme perfil/regime (ver RC-F5-06..14)
+- **Certidão de casamento com averbação de divórcio**, quando aplicável
+
+Regra:
+- Divórcio precisa estar formalizado/documentado para o financiamento reconhecer esse estado civil
+- Se cliente não souber se possui averbação: verificar status — pode ser "separado sem averbação" → aplicar RC-F5-37
+- Sem `fact_*` canônico para certidão de casamento com averbação → LF-33
+
+### RC-F5-37 — Separado(a) sem averbação de divórcio
+
+Se o cliente disser que é separado(a) mas ainda não possui averbação de divórcio:
+
+- Para o financiamento, a pessoa **ainda está legalmente casada** — averbação pendente = casamento vigente perante o banco
+- O processo tende a exigir financiamento em conjunto com o cônjuge
+
+**Dois caminhos disponíveis:**
+1. **Regularizar a documentação civil primeiro** — fazer a averbação de divórcio; processo fica aguardando; retomar após formalização (LF-35)
+2. **Seguir em conjunto com o cônjuge** — já que legalmente ainda são casados; RC-F5-16 se aplica
+
+Regra:
+- NÃO tratar separado sem averbação como divorciado formal
+- NÃO bloquear de forma seca — apresentar os dois caminhos sem travar o lead
+- NÃO reabrir regra de união estável
+- NÃO reabrir regra de P3/familiar casado civil
+- Sem `fact_*` canônico para distinguir "separado informal" de "divorciado formal" → LF-34
+- Status de regularização da averbação → LF-35
+
 ---
 
 ## §6 Políticas T3
@@ -703,6 +753,8 @@ Regras:
 | VS-F5-08 | Resposta curta ("ok", "tá") acionar `finalizacao_processo` automaticamente | Viola RC-F5-32; anti-padrão crítico |
 | VS-F5-09 | Inventar motivo de reprovação sem retorno real do correspondente | Viola RC-F5-23 |
 | VS-F5-10 | Tratar benefício assistencial (BF, BPC) como renda no dossiê | Viola RC-F5-15 |
+| VS-F5-11 | Tratar separado(a) sem averbação como divorciado(a) formal | Viola RC-F5-37; sem averbação = legalmente casado(a) para o financiamento |
+| VS-F5-12 | Bloquear de forma seca cliente separado(a) sem averbação sem apresentar os dois caminhos | Viola RC-F5-37; Enova apresenta caminhos, não bloqueia secamente |
 
 ---
 
@@ -763,6 +815,9 @@ F5 ainda não está concluída se:
 | AP-F5-13 | Criar `reply_text` mecânico em qualquer política T3 | Viola soberania LLM (A00-ADENDO-01) |
 | AP-F5-14 | Criar novo `current_phase` fora dos 8 canônicos | `current_phase` canônico imutável |
 | AP-F5-15 | Criar novo `fact_*` fora dos 35 canônicos T2 | Zero invenção de schema; declarar lacuna |
+| AP-F5-16 | Omitir certidão de óbito do cônjuge no dossiê de viúvo(a) | Viola RC-F5-35; certidão de óbito é documento civil obrigatório para viúvo(a) |
+| AP-F5-17 | Tratar separado(a) sem averbação como divorciado(a) formal no dossiê | Viola RC-F5-37; sem averbação = casado(a) civilmente para o financiamento |
+| AP-F5-18 | Bloquear lead separado(a) sem averbação sem apresentar os dois caminhos possíveis | Viola RC-F5-37; Enova não bloqueia secamente — apresenta caminhos concretos |
 
 ---
 
@@ -886,6 +941,35 @@ Lead com restrição declarada + renda boa + docs básicos enviados.
 - ROT-F5-04: `awaiting_broker`
 - Não inventar resultado antes do retorno do correspondente
 
+### SYN-F5-11 — Viúvo(a): certidão de óbito obrigatória
+
+Lead viúvo(a) em F5 para envio de documentos.
+- Estado civil: viúvo(a) (herdado `fact_estado_civil` de F2)
+- RC-F5-35: incluir certidão de óbito do cônjuge no dossiê além dos docs padrão
+- Inventário: fora do recorte ativo desta fatia — não incluir, não mencionar como requisito
+- LF-32: sem `fact_*` canônico para certidão de óbito; registrar como observação documental
+- Docs completos: doc de identidade + comprovante de residência + comprovante de renda por regime + certidão de óbito do cônjuge
+
+### SYN-F5-12 — Divorciado(a): certidão de casamento com averbação
+
+Lead divorciado(a) formal em F5.
+- Estado civil: divorciado(a) (herdado `fact_estado_civil` de F2)
+- RC-F5-36: solicitar certidão de casamento com averbação de divórcio
+- Se cliente não souber se tem averbação: verificar; se não tiver → RC-F5-37 (separado sem averbação)
+- LF-33: sem `fact_*` canônico para certidão com averbação; registrar como observação documental
+- Docs completos: doc de identidade + residência + renda por regime + certidão de casamento com averbação
+
+### SYN-F5-13 — Separado(a) sem averbação: dois caminhos
+
+Lead diz que é "separado, mas não foi em cartório" ou "separado mas ainda estou no papel".
+- Estado civil declarado: separado informal, sem averbação → para o banco: ainda casado(a) civilmente
+- RC-F5-37: apresentar os dois caminhos sem bloquear
+  - Caminho 1: regularizar averbação de divórcio primeiro; processo aguarda formalização (LF-35)
+  - Caminho 2: seguir em conjunto com o cônjuge, já que legalmente ainda são casados (RC-F5-16)
+- NÃO tratar como divorciado(a); NÃO bloquear secamente; NÃO reabrir união estável
+- LF-34 (estado civil fino) + LF-35 (regularização da averbação em andamento)
+- VS-F5-11 + VS-F5-12: vetar tratamento errado e bloqueio seco
+
 ---
 
 ## §14 Validação cruzada T2 / T3 / T4
@@ -910,6 +994,10 @@ Lead com restrição declarada + renda boa + docs básicos enviados.
 | 16 | `T5_FATIA_RENDA_REGIME_COMPOSICAO.md` | Herança de F3: work_regime, income, ctps_36m, autonomo_has_ir, has_fgts, entry_reserve | ✅ determinam docs por regime |
 | 17 | `T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` | Herança de F2: estado_civil, process_mode, p3_required | ✅ determinam docs de P2/P3 |
 | 18 | LF-01..LF-31 | 31 lacunas declaradas; zero `fact_*` inventado | ✅ sem invenção |
+| 19 | RC-F5-35 (PR-T5.6-fix) | Viúvo(a): certidão de óbito obrigatória; inventário fora do recorte; sem novo `fact_*` | ✅ cirúrgico |
+| 20 | RC-F5-36 (PR-T5.6-fix) | Divorciado(a): certidão de casamento com averbação; verificar se averbado ou separado sem averbação | ✅ cirúrgico |
+| 21 | RC-F5-37 (PR-T5.6-fix) | Separado(a) sem averbação: dois caminhos; NÃO tratar como divorciado(a) formal; RC-F5-16 herdada para caminho conjunto | ✅ cirúrgico |
+| 22 | LF-32..35 (PR-T5.6-fix) | 4 lacunas civis declaradas (certidão óbito, certidão averbação, separado sem averbação, regularização pendente); zero `fact_*` criado | ✅ sem invenção |
 
 ---
 
@@ -954,7 +1042,7 @@ Fontes de verdade consultadas:
 | 3 | 9 fatos/derived T2 canônicos mapeados (Group IX, X + derived) | §3.1 |
 | 4 | 11 fatos herdados de F2/F3/F4 documentados como insumos | §3.2 |
 | 5 | 31 lacunas de schema (LF-01..31) declaradas sem criar fact_* | §4 |
-| 6 | 34 regras comerciais Vasques documentadas (RC-F5-01..34) | §5 |
+| 6 | 37 regras comerciais Vasques documentadas (RC-F5-01..37; RC-F5-35..37 = correção civis — PR-T5.6-fix) | §5 |
 | 7 | Regra-mãe: condução ativa, não escolha passiva | RC-F5-01, §1.4 |
 | 8 | Follow-up obrigatório mínimo 3x antes de convidar plantão | RC-F5-03 |
 | 9 | Docs por regime/perfil: CLT, servidor, aposentado, autônomo, MEI, empresário, informal | RC-F5-06..14 |
@@ -966,23 +1054,25 @@ Fontes de verdade consultadas:
 | 15 | Toda aprovação vira agendamento | RC-F5-27 |
 | 16 | Confirmações D-1 + D0; notificação Vasques documentadas | RC-F5-28 |
 | 17 | `finalizacao_processo` com critério rigoroso; resposta curta não aciona | RC-F5-32, AP-F5-10 |
-| 18 | 6 OBR + 2 CONF + 6 SGM + 5 ROT + 10 VS — zero reply_text | §6, §7 |
-| 19 | 15 anti-padrões (AP-F5-01..15) | §10 |
-| 20 | 10 cenários sintéticos cobrindo todos os casos críticos | §13 |
-| 21 | 18 itens de validação cruzada T2/T3/T4 | §14 |
+| 18 | 6 OBR + 2 CONF + 6 SGM + 5 ROT + 12 VS — zero reply_text | §6, §7 |
+| 19 | 18 anti-padrões (AP-F5-01..18; AP-F5-16..18 = civis, PR-T5.6-fix) | §10 |
+| 20 | 13 cenários sintéticos (SYN-F5-01..13; SYN-F5-11..13 = civis, PR-T5.6-fix) | §13 |
+| 21 | 22 itens de validação cruzada T2/T3/T4 (itens 19..22 = civis, PR-T5.6-fix) | §14 |
 | 22 | Zero reply_text mecânico — soberania LLM intacta | §6, AP-F5-13 |
 | 23 | Bloco E completo com ESTADO HERDADO + ESTADO ENTREGUE | este §15 |
+| 24 | RC-F5-35..37: viúvo(a), divorciado(a), separado(a) sem averbação — correção cirúrgica civis (PR-T5.6-fix) | §5 |
+| 25 | LF-32..35: 4 lacunas civis declaradas sem criar fact_* (PR-T5.6-fix) | §4 |
 
 ### Provas
 
 - **P-T5.6-01:** arquivo `schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` criado; `git diff --stat` confirma novo artefato
-- **P-T5.6-02:** 9 fatos canônicos T2 (Groups IX, X + derived) verificados em `T2_DICIONARIO_FATOS.md §3.9/3.10/3.11`; zero fact_* inventado; 31 lacunas declaradas em §4 (LF-01..31, incluindo LF-29/30/31 para parcela mensal)
+- **P-T5.6-02:** 9 fatos canônicos T2 (Groups IX, X + derived) verificados em `T2_DICIONARIO_FATOS.md §3.9/3.10/3.11`; zero fact_* inventado; 35 lacunas declaradas em §4 (LF-01..35, incluindo LF-32..35 para civis — PR-T5.6-fix)
 - **P-T5.6-03:** zero reply_text em qualquer seção §6 (OBR/CONF/SGM/ROT/VS); soberania LLM auditável no artefato
 
 ```
 --- ESTADO ENTREGUE ---
-O que foi feito nesta PR: Criado T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md — contrato declarativo completo da F5; adendo cirúrgico RC-F5-34 (parcela mensal confortável) adicionado após revisão do Vasques
-O que foi fechado nesta PR: F5 coberta com 5 stages, 34 regras, 31 lacunas, políticas T3 completas; funil core F1–F5 documentado
+O que foi feito nesta PR: Criado T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md — contrato declarativo completo da F5; adendo cirúrgico RC-F5-34 (parcela mensal confortável); PR-T5.6-fix: correção cirúrgica de documentos civis — viúvo(a) (RC-F5-35, LF-32), divorciado(a) (RC-F5-36, LF-33), separado(a) sem averbação (RC-F5-37, LF-34/35); 2 VS + 3 AP + 3 SYN + 4 itens validação cruzada adicionados
+O que foi fechado nesta PR: F5 coberta com 5 stages, 37 regras, 35 lacunas, políticas T3 completas; funil core F1–F5 documentado incluindo casos civis finos
 O que continua pendente: paridade funcional (T5.7), shadow (T5.8), readiness (T5.R); G5; runtime; F5 runtime implementation
 O que ainda não foi fechado do contrato ativo: PR-T5.7..PR-T5.8, PR-T5.R, G5
 Recorte executado do contrato: T5 §6 S5 — contrato declarativo F5 (última fatia do funil core)
@@ -998,16 +1088,19 @@ Permissões Cloudflare necessárias: nenhuma adicional
 
 ### BLOCO E A00-ADENDO-03
 
-**Esta PR está apta a fechar a etapa F5?** ✅ **SIM**
+**Esta PR (e correção PR-T5.6-fix) está apta a fechar a etapa F5?** ✅ **SIM**
 
 | Critério A00-ADENDO-03 | Status |
 |---|---|
-| Evidência real de conclusão presente | ✅ 23 evidências documentadas acima |
-| 31 lacunas são gaps intencionais, não prova parcial | ✅ declaradas explicitamente com base em auditoria T2 + adendo RC-F5-34 |
-| Nenhuma etapa fechada sem evidência | ✅ artefato criado antes do Bloco E |
+| Evidência real de conclusão presente | ✅ 25 evidências documentadas acima (incl. 2 da PR-T5.6-fix) |
+| 35 lacunas são gaps intencionais, não prova parcial | ✅ declaradas explicitamente; LF-32..35 civis adicionados na PR-T5.6-fix |
+| Nenhuma etapa fechada sem evidência | ✅ artefato criado antes do Bloco E; correção aplicada antes do commit |
 | Bloco E completo | ✅ ESTADO HERDADO + ESTADO ENTREGUE + provas |
-| Soberania LLM intacta | ✅ zero reply_text mecânico auditável em §6 |
-| Nenhum `fact_*` inventado | ✅ todos os 9 fatos são canônicos T2; 31 lacunas declaradas |
+| Soberania LLM intacta | ✅ zero reply_text mecânico auditável em §6; nenhum template/fala criada na fix |
+| Nenhum `fact_*` inventado | ✅ todos os 9 fatos são canônicos T2; 35 lacunas declaradas (LF-01..35) |
 | `current_phase` — somente valores canônicos | ✅ 5 valores usados pertencem aos 8 canônicos |
-| F1–F5 funil core coberto | ✅ esta PR fecha o último contrato de fatia do funil core |
+| F1–F5 funil core coberto | ✅ F5 coberta com casos civis finos incluídos (PR-T5.6-fix) |
 | PR-T5.7 autorizada após merge | ✅ §Meta + ESTADO ENTREGUE declarados |
+| Inventário não incluído | ✅ RC-F5-35 declara explicitamente: inventário fora do recorte ativo |
+| União estável não reaberta | ✅ RC-F5-37 declara explicitamente: não reabrir |
+| P3/familiar casado civil não reaberto | ✅ RC-F5-37 declara explicitamente: não reabrir |

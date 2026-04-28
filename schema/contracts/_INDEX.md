@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T5 — Migração do funil core e integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` | **aberto** | G4 APROVADO; G5 — paridade funcional | 2026-04-26 | PR-T5.6 (aberta — F5 documentação/visita/handoff) | PR-T5.7 (após merge T5.6) |
+| T5 — Migração do funil core e integração de canal | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` | **aberto** | G4 APROVADO; G5 — paridade funcional | 2026-04-26 | PR-T5.6-fix (aberta — correção civis F5) | PR-T5.7 (após merge T5.6-fix) |
 
 ## Contratos encerrados
 
