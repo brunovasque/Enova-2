@@ -111,7 +111,7 @@ Canal bruto → Surface → SurfaceEventNormalizado → TurnoEntrada(T4.1) → T
 
 ### PRÓXIMO PASSO AUTORIZADO
 
-**PR-T6.3** — Pipeline de texto simples (T6.3): processamento declarativo do input_type=text; normalização; feeding T4.1; sem runtime; zero canal real.
+**PR-T6.3** — Contrato de anexos e documentos: governança documental para documentos exigidos pelo dossiê MCMV, tipos aceitos/rejeitados, associação ao lead e à pessoa correta, e estados do documento.
 
 ### ESTADO ATUAL DO REPOSITÓRIO
 
