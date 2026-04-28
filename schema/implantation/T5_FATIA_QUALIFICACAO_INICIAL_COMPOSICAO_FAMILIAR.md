@@ -149,6 +149,46 @@ Esta regra opera sobre o estado civil do familiar — dado não capturado no sch
 → Marcado como **LF-02** e **LF-03** (ver §4).
 → Esta PR **não cria** `fact_composition_actor_marital_status` nem equivalente.
 
+### 2.5 Nota sobre `"separado(a)"` — identificação preventiva de averbação *(AT-03 — PR-T6.1)*
+
+Quando o lead mencionar que é **"separado(a)"** durante o stage `estado_civil` ou
+`confirmar_casamento`, a Enova deve **identificar preventivamente** se o divórcio foi
+formalizado com averbação.
+
+**Por que identificar em F2 (e não apenas em F5)?**
+
+Descobrir somente em F5 (ao montar o dossiê) que a separação não possui averbação gera
+atrito desnecessário. A identificação preventiva em F2 permite orientar o cliente mais cedo
+e evitar retrabalho no final do processo.
+
+**O que fazer quando o cliente diz "sou separado(a)":**
+
+| Situação | Ação em F2 |
+|---|---|
+| Separado(a) **com averbação formalizada** | Tratar como `"divorciado"` no schema; documentação civil → F5 (RC-F5-36) |
+| Separado(a) **sem averbação** | Identificar que para o financiamento a pessoa **ainda está legalmente casada**; apresentar os dois caminhos (ver abaixo); **não bloquear de forma seca** |
+| Dúvida sobre averbação | Registrar incerteza; conduzir esclarecimento; não presumir; não bloquear |
+
+**Dois caminhos quando separado(a) sem averbação:**
+1. **Regularizar a averbação primeiro** — processo aguarda formalização; retomar após conclusão
+2. **Seguir em conjunto com o cônjuge** — já que legalmente ainda são casados (RC-F5-16 aplica-se ao caminho conjunto)
+
+**Limites desta nota preventiva:**
+- Não é pergunta fixa obrigatória sobre estado civil
+- Não cria `fact_*` novo
+- Não cria `current_phase` novo
+- Não redefine o enum de `fact_estado_civil` (sem valor `"separado_sem_averbacao"`)
+- Não reabre: união estável, P3/familiar casado civil, inventário
+
+**Referência detalhada:** F5 (RC-F5-37) contém a regra completa de tratamento documental de
+separado(a) sem averbação para o dossiê. Esta nota serve exclusivamente como alerta preventivo
+em F2 para identificação antecipada.
+
+> **Lacuna de schema declarada:** `fact_estado_civil` não possui valor canônico
+> `"separado_sem_averbacao"`. Quando identificado, registrar como observação operacional /
+> `PEND_SLOT_VAZIO` na conversa. O `fact_estado_civil` retém o valor declarado pelo lead;
+> a decisão de tratamento documental ocorre em F5. Sem `fact_*` novo nesta PR.
+
 ---
 
 ## §3 Fatos mínimos T2 — obrigatórios na saída de F2
@@ -173,8 +213,8 @@ Esta regra opera sobre o estado civil do familiar — dado não capturado no sch
 |---|---|
 | `"solteiro"` | Solo por padrão; pode abrir composição voluntária |
 | `"casado"` | **Casamento civil → obrigatoriamente em conjunto** (ver §2.1) |
-| `"divorciado"` | Solo por padrão; verificação de averbação em F4 (LF-F4: fora do escopo de F2) |
-| `"viúvo"` | Solo por padrão; verificação de inventário em F4 (fora do escopo de F2) |
+| `"divorciado"` | Solo por padrão; documentação civil (certidão de casamento com averbação de divórcio) é escopo de **F5** (RC-F5-36); F2 confirma o estado civil — verificação documental e tratamento de averbação ocorrem em F5 *(AT-01 corrigido — PR-T6.1)* |
+| `"viúvo"` | Solo por padrão; documentação civil obrigatória (certidão de óbito do cônjuge) é escopo de **F5** (RC-F5-35); inventário permanece fora do recorte ativo (deliberado — RC-F5-35); documentação civil ≠ escopo F4 *(AT-01 corrigido — PR-T6.1)* |
 | `"união_estável"` | **Não equipara automaticamente a casamento**; pode ser solo ou com composição voluntária (ver §2.1) |
 
 ### 3.2 Valores canônicos de `fact_process_mode` (T2_DICIONARIO_FATOS)

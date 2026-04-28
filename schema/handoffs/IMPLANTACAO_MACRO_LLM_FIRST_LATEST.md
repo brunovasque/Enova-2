@@ -69,6 +69,55 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.1 — Pré-flight cirúrgico de riscos herdados T5
+
+### ESTADO HERDADO
+
+- Fase: T6 aberta; PR-T6.0 (#125) merged 2026-04-28T17:38:31Z.
+- Contrato T6: ABERTO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- Atenções herdadas da T5: AT-01/03/04/05 declaradas em T5_READINESS_CLOSEOUT_G5 §6.
+- Próximo passo autorizado: PR-T6.1 — Pré-flight cirúrgico.
+- Branch: `feat/t6-pr-t6-1-preflight-riscos-t5`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_PREFLIGHT_RISCOS_T5.md` criado — pré-flight formal das atenções herdadas.
+
+**AT-01 CORRIGIDO:**
+- `T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` §3.1: ponteiros "divorciado" e "viúvo" atualizados
+- Antes: "verificação de averbação/inventário em F4"
+- Depois: documentação civil → F5 (RC-F5-36 e RC-F5-35)
+
+**AT-03 ANTECIPADO:**
+- `T5_FATIA_QUALIFICACAO_INICIAL_COMPOSICAO_FAMILIAR.md` §2.5 (novo): nota preventiva sobre separado(a) sem averbação
+- Identificação em F2; dois caminhos; referência cruzada F5 RC-F5-37
+- Sem fact_*; sem pergunta fixa; sem template de fala
+
+**AT-04 EXPLICITADO:**
+- `T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md`: RC-F5-38 adicionada (multi-renda/multi-regime)
+- Docs por fonte/regime separados; VS-F5-13; AP-F5-19; validação cruzada #23
+- 37 → 38 regras; 22 → 23 itens de validação
+
+**AT-05:** lacuna normativa planejada — sem ação; frente futura.
+
+**Garantias:** zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.2** — Surface única de canal: contrato declarativo da camada de entrada única
+(texto, documento, imagem, PDF, áudio, sticker, botão/link, evento de sistema).
+Invariante: canal não escreve atendimento.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-1-preflight-riscos-t5` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.1: CONCLUÍDA (pré-flight)
+- PR-T6.2: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.0 — Abertura formal do contrato T6
 
 ### ESTADO HERDADO

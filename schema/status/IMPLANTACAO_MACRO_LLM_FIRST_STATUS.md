@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato ABERTO; PR-T6.1 é o próximo passo autorizado).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.2 é o próximo passo autorizado).
 
 Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
@@ -21,6 +21,16 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T6.1` — Pré-flight cirúrgico de riscos herdados T5:
+`schema/implantation/T6_PREFLIGHT_RISCOS_T5.md` criado:
+AT-01 CORRIGIDO — ponteiro F2 §3.1 "divorciado"/"viúvo" agora apontam corretamente para F5 (RC-F5-36/35);
+AT-03 ANTECIPADO — §2.5 nota preventiva sobre separado(a) sem averbação adicionada em F2; dois caminhos; referência cruzada F5 RC-F5-37; sem fact_*;
+AT-04 EXPLICITADO — RC-F5-38 multi-renda/multi-regime adicionada em F5; VS-F5-13; AP-F5-19; 38 regras; 23 itens validação;
+AT-05 — lacuna normativa planejada; sem ação; frente futura.
+Zero src/; zero fact_*; zero runtime; zero reply_text. PR-T6.2 desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.0)
 
 `PR-T6.0` — Abertura formal do contrato T6:
 `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md` criado: §1–§17 + Bloco E;
