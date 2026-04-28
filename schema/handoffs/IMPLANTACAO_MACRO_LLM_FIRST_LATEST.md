@@ -69,13 +69,62 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T5.R — Readiness / Closeout G5
+
+### ESTADO HERDADO
+
+- Fase: T5 aberta; PR-T5.8 (#123) merged 2026-04-28T02:47:56Z.
+- Artefato base: todos os S1–S8 vigentes; CE-01..CE-09 declaradas.
+- Próximo passo autorizado: PR-T5.R — Readiness / Closeout G5.
+- Branch base: `main` (após pull pós-merge de #123).
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T5_READINESS_CLOSEOUT_G5.md` criado — readiness/closeout formal do Gate G5.
+
+**Veredito:** G5 PRONTO COM ATENÇÃO — **APROVADO**
+
+**Smoke S1–S8:** 8/8 PASS
+
+**CA-01..CA-10:** 10/10 CUMPRIDOS
+
+**CE-01..CE-09:** 9/9 satisfeitas (CE-04/05/06 satisfeitas com atenção — aceitas por Vasques)
+
+**4 atenções aceitas (não bloqueantes):**
+- AT-01: ponteiro F2 averbação → F4 desatualizado — aceita; PR-fix futura recomendada
+- AT-03: separado sem averbação descoberto tardiamente — aceita; PR-fix futura recomendada
+- AT-04: docs regime múltiplo implícitos em F5 — aceita; PR-fix futura recomendada (prioritária antes do runtime)
+- AT-05: base normativa MCMV/CEF ausente — lacuna planejada; frente futura
+
+**Inventário:** fora do escopo deliberado desta fase — não é atenção, não é lacuna bloqueante.
+
+**Contrato T5 ENCERRADO:** arquivado em `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md`
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.0** — Abertura formal do contrato T6 (Multimodal / Integração de canal).
+
+Recomendações antes do runtime T5 (não bloqueantes para T6.0):
+1. PR-fix-AT-04: RC explícita regime múltiplo em F5 (prioritária)
+2. PR-fix-AT-01: corrigir ponteiro F2 averbação
+3. PR-fix-AT-03: nota F2 separado sem averbação
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t5-pr-t5r-readiness-closeout-g5` → PR aberta
+- Contrato T5: ENCERRADO — `archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md`
+- Contrato T6: aguardando abertura via PR-T6.0
+- Gate G5: APROVADO
+
+---
+
 ## Atualizacao 2026-04-27 — PR-T5.8 — Plano declarativo de shadow/sandbox F1–F5
 
 ### ESTADO HERDADO
 
 - Fase: T5 aberta; PR-T5.7 (#122) merged 2026-04-28T02:28:38Z.
 - Artefato base: `schema/implantation/T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md` vigente.
-- Veredito herdado: PODE SEGUIR COM ATENÇÃO; 5 atenções (AT-01..05); 0 bloqueantes.
+- Veredito herdado: PODE SEGUIR COM ATENÇÃO; 4 atenções (AT-01, AT-03, AT-04, AT-05); 0 bloqueantes.
 - Próximo passo autorizado: PR-T5.8 — Plano declarativo de shadow/sandbox F1–F5.
 - Branch base: `main` (após pull pós-merge de #122).
 
@@ -144,9 +193,8 @@ Recomendação adicional (não bloqueante): PR-fix-AT-01 + PR-fix-AT-03 + PR-fix
 
 **8/8 `current_phase` canônicos cobertos:** discovery → qualification → qualification_special → docs_prep → docs_collection → broker_handoff → awaiting_broker → visit_conversion
 
-**5 atenções identificadas (não bloqueantes):**
+**4 atenções identificadas (não bloqueantes):**
 - AT-01: Ponteiro F2 "averbação → F4" desatualizado; real é F5 RC-F5-36
-- AT-02: Inventário sem cobertura declarada no funil F1-F5
 - AT-03: Gap de timing para descoberta de "separado sem averbação" em F2
 - AT-04: Docs para regime múltiplo são implícitos em F5, não explícitos
 - AT-05: Base normativa MCMV/CEF ausente (LF-05)
