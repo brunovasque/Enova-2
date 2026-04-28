@@ -243,11 +243,11 @@ DossieOperacional {
     bairro_mora:            string | null
     bairro_trabalha:        string | null
     bairro_pretende_comprar: string | null
-    valor_entrada_disponivel: null — não armazenar valor sem contrato de dados
-    valor_fgts_disponivel:  null — não armazenar valor sem contrato de dados
+    valor_entrada_disponivel: número | null — valor de entrada declarado pelo cliente, se informado
+    valor_fgts_disponivel:  número | null — valor de FGTS declarado pelo cliente, se souber/informar
     tem_fgts_duvida:        boolean | null
-    parcela_pretendida:     null — não armazenar valor sem contrato de dados
-    parcela_maxima_confortavel: null — não armazenar valor sem contrato de dados
+    parcela_pretendida:     número | null — parcela que o cliente pretende pagar, se informada
+    parcela_maxima_confortavel: número | null — parcela máxima confortável declarada pelo cliente, se informada
     profissao_autonomo:     string | null
     autonomo_curso_superior: boolean | null
     obs_renda_informal:     string | null
@@ -479,6 +479,11 @@ Toda entrada do dossiê que envolve documento ou renda deve declarar:
 As informações comerciais do dossiê auxiliam a negociação e o correspondente — não são cálculo
 de aprovação nem simulação final.
 
+**Trava obrigatória:** valores de entrada, FGTS e parcela neste dossiê são **comerciais/declarativos**,
+informados pelo cliente quando houver. Não são valores aprovados pela Caixa, não configuram simulação
+oficial e não prometem aprovação. Servem apenas para orientar negociação, correspondente e estratégia
+comercial dentro da governança já declarada.
+
 **Campos declarados (§8 `observacoes_comerciais`):**
 
 | Campo | Finalidade | Restrição |
@@ -486,11 +491,11 @@ de aprovação nem simulação final.
 | `bairro_mora` | Contexto de localização | Não é filtro de aprovação |
 | `bairro_trabalha` | Contexto de mobilidade | Não é filtro de aprovação |
 | `bairro_pretende_comprar` | Contexto de preferência | Não é filtro de aprovação |
-| `valor_entrada_disponivel` | Declarado `null` — contrato de dados próprio | Nunca armazenar em claro sem contrato |
-| `valor_fgts_disponivel` | Declarado `null` — contrato de dados próprio | Nunca armazenar em claro sem contrato |
+| `valor_entrada_disponivel` | Valor de entrada declarado pelo cliente, se informado | Comercial/declarativo; não é valor aprovado pela Caixa |
+| `valor_fgts_disponivel` | Valor de FGTS declarado pelo cliente, se souber/informar | Comercial/declarativo; não é valor aprovado pela Caixa |
 | `tem_fgts_duvida` | Cliente declarou dúvida sobre ter FGTS | Informação para correspondente |
-| `parcela_pretendida` | Declarado `null` — contrato de dados próprio | Nunca armazenar em claro sem contrato |
-| `parcela_maxima_confortavel` | Declarado `null` — contrato de dados próprio | Nunca armazenar em claro sem contrato |
+| `parcela_pretendida` | Parcela que o cliente pretende pagar, se informada | Comercial/declarativo; não é simulação oficial |
+| `parcela_maxima_confortavel` | Parcela máxima confortável declarada pelo cliente, se informada | Comercial/declarativo; não promete aprovação |
 | `profissao_autonomo` | Contexto para autônomo | Auxilia correspondente na análise |
 | `autonomo_curso_superior` | Pode impactar análise de autônomo sem IRPF | Informativo |
 | `obs_renda_informal` | Renda informal declarada | Não é renda financiável; informativa |
@@ -507,7 +512,7 @@ de aprovação nem simulação final.
 | IC-01 | Informações comerciais ajudam negociação e correspondente — não são aprovação |
 | IC-02 | Não apresentar parcelas como simulação oficial da Caixa |
 | IC-03 | Não prometer aprovação com base em informações comerciais |
-| IC-04 | Valores sensíveis (entrada, FGTS, parcela) declarados como `null` até contrato de dados próprio |
+| IC-04 | Valores de entrada, FGTS e parcela podem existir como informação declarada pelo cliente; são apenas comerciais/declarativos |
 | IC-05 | Renda informal e benefício não financiável são observações — nunca renda financiável |
 | IC-06 | CNPJ isolado é observação — nunca renda financiável MCMV |
 
