@@ -69,6 +69,78 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.6 — Sticker, mídia inútil e mensagens não textuais
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.5 (#130) merged 2026-04-28T20:28:20Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- Surface única de canal (T6.2): SurfaceEventNormalizado; 8 input_types; dedupe_key; surface_warnings.
+- Contrato de anexos (T6.3): 35+ tipos documentais; 11 estados; associação P1/P2/P3.
+- Pipeline imagem/PDF (T6.4): EP-01..EP-07; classificação hipotética; 14 casos problemáticos.
+- Áudio conversacional (T6.5): EA-01..EA-08; STT como lacuna T6-LA-01; 7 níveis de confiança.
+- Próximo passo autorizado: PR-T6.6 — Sticker, mídia inútil e mensagens não textuais.
+- Branch: `feat/t6-pr-t6-6-sticker-midia-inutil`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_STICKER_MIDIA_INUTIL.md` criado — contrato declarativo para sujeira de canal.
+
+**Regra-mãe:** "Sujeira de canal não é decisão. Sticker não confirma dado. Emoji não decide stage.
+Mídia inútil não quebra o funil. Tudo passa pela mesma governança: T6_SURFACE_CANAL → T4 → T3 → T2 → T5."
+
+**§6 — 21+ subtipos de sujeira em 9 categorias:**
+sticker estático/animado; emoji isolado; reação; imagem sem doc/random/sem contexto;
+print confuso/sem contexto; áudio inaudível/sem transcrição útil; mídia repetida/nome diferente;
+arquivo corrompido/vazio/tipo não suportado; mensagem vazia/pontuação/confirmação fraca;
+mídia fora de contexto/sem dono/parece doc mas não valida; payload inválido.
+
+**§8 — Fluxo EM-01..EM-06:**
+Canal → Surface (SurfaceEventNormalizado) →
+EM-01 Recepção → EM-02 Classificação de utilidade → EM-03 Definição de risco →
+EM-04 Entrega T4 (attachment com utility_classification + risk_flags[]) →
+EM-05 Conduta LLM → EM-06 Persistência limitada.
+
+**§8 EM-04 — Shape attachment para mídia inútil:**
+`attachment_id, surface_event_id, media_ref, raw_payload_ref, input_type, input_subtype,
+utility_classification, risk_flags[], surface_warnings[], dedupe_key, caption, confidence_hint,
+media_size_bytes, media_mime_type`
+
+**§8 EM-05 — 6 condutas do LLM:**
+ignorar sinal inútil; acolher sem sair do stage; retomar última pergunta;
+pedir reenvio; pedir texto; reconhecer confirmação fraca com cautela.
+
+**§9..§16 — Tratamento por tipo:** STK-01..08; EMJ-01..06; REA-01..05; IMG-01..08;
+PRT-01..08; AUD-01..06; REP-01..07; COR-01..08; VAZ-01..09.
+
+**§17 — 8 limites de persistência LP-01..08.**
+
+**§18 — 20 proibições absolutas PROB-STK-01..20.**
+
+**§19 — 10 riscos com mitigação R-STK-01..10.**
+
+**§20 — 20 critérios de aceite CA-T6.6-01..20.**
+
+**§23 — Bloco E com 25 evidências.**
+
+**Garantias:** zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime; zero canal real.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.7** — Adapter Meta/WhatsApp governado: webhook inbound/outbound; verificação de assinatura;
+idempotência; deduplicação por `message_id`; retries controlados; erros; rate limit; separação
+canal/cérebro; não é go-live amplo.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-6-sticker-midia-inutil` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.6: CONCLUÍDA (sticker, mídia inútil, mensagens não textuais)
+- PR-T6.7: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.5 — Áudio no mesmo cérebro conversacional
 
 ### ESTADO HERDADO

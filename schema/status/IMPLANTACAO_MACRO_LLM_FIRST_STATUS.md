@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.6 é o próximo passo autorizado).
+Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.7 é o próximo passo autorizado).
 
 Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
 
@@ -21,6 +21,21 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T6.6` — Sticker, mídia inútil e mensagens não textuais:
+`schema/implantation/T6_STICKER_MIDIA_INUTIL.md` criado — contrato declarativo para sujeira de canal.
+Princípio-mãe: "Sujeira de canal não é decisão. Sticker não confirma dado. Emoji não decide stage.
+Mídia inútil não quebra funil. Tudo passa pela mesma governança T6_SURFACE_CANAL → T4 → T3 → T2 → T5."
+21+ subtipos em 9 categorias: sticker, emoji/reação, imagem sem doc, print confuso, áudio inaudível,
+mídia repetida, arquivo corrompido, mensagem vazia/fraca, mídia ambígua/sem dono;
+fluxo EM-01..EM-06: Recepção → Classificação de utilidade → Definição de risco → Entrega T4 →
+Conduta LLM → Persistência limitada;
+attachment shape para mídia inútil com `utility_classification` e `risk_flags[]`;
+8 limites de persistência LP-01..08; 20 proibições PROB-STK-01..20;
+20 critérios CA-T6.6-01..20; Bloco E §23 com 25 evidências.
+Zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime. PR-T6.7 desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.5)
 
 `PR-T6.5` — Áudio no mesmo cérebro conversacional:
 `schema/implantation/T6_AUDIO_CEREBRO_CONVERSACIONAL.md` criado — contrato declarativo de áudio.
