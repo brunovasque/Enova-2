@@ -21,7 +21,7 @@ Esta PR encerra formalmente a fase T5 da implantação macro ENOVA 2.
 
 **Veredito: G5 PRONTO COM ATENÇÃO — APROVADO**
 
-Todas as 9 PRs da sequência T5 (T5.0–T5.8 + T5.6-fix) foram executadas e mergeadas.
+Todas as 11 entregas/PRs da sequência T5 (T5.0–T5.8 + T5.2-fix + T5.6-fix) foram executadas e mergeadas.
 Os 8 artefatos contratuais (S1–S8) existem e são coerentes entre si e com T1/T2/T3/T4.
 Os 10 critérios de aceite (CA-01..CA-10) foram verificados e declarados cumpridos.
 As 9 condições de entrada CE-01..CE-09 da T5.8 foram verificadas e satisfeitas.
@@ -184,7 +184,7 @@ Soberania LLM verificada em todos os artefatos (zero `reply_text` mecânico em q
 | Correspondente/visita/finalização verificados | ✅ |
 | 54+ lacunas aceitas declaradas | ✅ |
 | 0 bloqueantes | ✅ |
-| 5 atenções (AT-01..05) identificadas e classificadas | ✅ — não bloqueantes |
+| 4 atenções (AT-01, AT-03, AT-04, AT-05) identificadas e classificadas | ✅ — não bloqueantes |
 | Paridade = cobertura de casos, não de fala | ✅ — CA-05 / A00-ADENDO-02 |
 | Soberania LLM confirmada | ✅ |
 | Bloco E presente | ✅ |

@@ -49,7 +49,7 @@ zero runtime; zero fact_* inventado; zero inventário; zero regra comercial nova
 Validação declarativa cruzada de 43 stages (F1:7, F2:7, F3:21, F4:3, F5:5); 8/8 current_phase
 canônicos cobertos; 6 estados civis; 14 regimes + benefícios; dossiê completo (21 itens);
 correspondente/visita/finalização verificados; 54+ lacunas aceitas (F1-LF-01..02, F2-LF-01..05,
-F3-LF-01..09, F4-LF-01..08, F5-LF-01..35); 5 atenções identificadas (AT-01..05 — não bloqueantes);
+F3-LF-01..09, F4-LF-01..08, F5-LF-01..35); 4 atenções identificadas (AT-01, AT-03, AT-04, AT-05 — não bloqueantes);
 0 bloqueantes; veredito: PODE SEGUIR COM ATENÇÃO; PR-T5.8 / PR-T5.R autorizados.
 
 ## Ultima tarefa anterior (PR-T5.6-fix)

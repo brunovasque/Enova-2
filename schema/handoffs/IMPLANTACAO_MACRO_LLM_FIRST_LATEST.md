@@ -124,7 +124,7 @@ Recomendações antes do runtime T5 (não bloqueantes para T6.0):
 
 - Fase: T5 aberta; PR-T5.7 (#122) merged 2026-04-28T02:28:38Z.
 - Artefato base: `schema/implantation/T5_MATRIZ_PARIDADE_FUNCIONAL_F1_F5.md` vigente.
-- Veredito herdado: PODE SEGUIR COM ATENÇÃO; 5 atenções (AT-01..05); 0 bloqueantes.
+- Veredito herdado: PODE SEGUIR COM ATENÇÃO; 4 atenções (AT-01, AT-03, AT-04, AT-05); 0 bloqueantes.
 - Próximo passo autorizado: PR-T5.8 — Plano declarativo de shadow/sandbox F1–F5.
 - Branch base: `main` (após pull pós-merge de #122).
 
@@ -193,9 +193,8 @@ Recomendação adicional (não bloqueante): PR-fix-AT-01 + PR-fix-AT-03 + PR-fix
 
 **8/8 `current_phase` canônicos cobertos:** discovery → qualification → qualification_special → docs_prep → docs_collection → broker_handoff → awaiting_broker → visit_conversion
 
-**5 atenções identificadas (não bloqueantes):**
+**4 atenções identificadas (não bloqueantes):**
 - AT-01: Ponteiro F2 "averbação → F4" desatualizado; real é F5 RC-F5-36
-- AT-02: Inventário sem cobertura declarada no funil F1-F5
 - AT-03: Gap de timing para descoberta de "separado sem averbação" em F2
 - AT-04: Docs para regime múltiplo são implícitos em F5, não explícitos
 - AT-05: Base normativa MCMV/CEF ausente (LF-05)

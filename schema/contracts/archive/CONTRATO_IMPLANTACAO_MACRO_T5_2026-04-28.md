@@ -11,8 +11,8 @@
 | Blocos legados obrigatórios       | L03 (todas as PRs); L04, L05, L06 (PR-T5.2); L07, L08 (PR-T5.3, T5.4); L17 (PR-T5.6)      |
 | Blocos legados complementares     | L15, L16 (PR-T5.5); L18 (PR-T5.7, T5.8, T5.R); L19 (todas — contexto substantivo MCMV)    |
 | Ordem mínima de leitura da frente | L03 → L04 → L05 → L06 (topo) → L07 → L08 (Meio A) → L17 (Final) → L18 (QA/paridade) → L19 (MCMV) |
-| Status                            | **aberto** — PR-T5.0 executada em 2026-04-26                                                 |
-| Última atualização                | 2026-04-26                                                                                    |
+| Status                            | **encerrado** — PR-T5.R executada em 2026-04-28; G5 APROVADO; arquivado em schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md |
+| Última atualização                | 2026-04-28                                                                                    |
 
 ---
 
