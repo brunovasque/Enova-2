@@ -69,6 +69,73 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.5 — Áudio no mesmo cérebro conversacional
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.4 (#129) merged 2026-04-28T20:07:41Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- Surface única de canal (T6.2): SurfaceEventNormalizado; 8 input_types; dedupe_key; surface_warnings.
+- Contrato de anexos (T6.3): 35+ tipos documentais; 11 estados; associação P1/P2/P3.
+- Pipeline imagem/PDF (T6.4): EP-01..EP-07; classificação hipotética; 14 casos problemáticos; OCR como lacuna futura.
+- Próximo passo autorizado: PR-T6.5 — Áudio no mesmo cérebro conversacional.
+- Branch: `feat/t6-pr-t6-5-audio-cerebro-conversacional`.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T6_AUDIO_CEREBRO_CONVERSACIONAL.md` criado — contrato declarativo de áudio no mesmo cérebro conversacional.
+
+**Regra-mãe:** "Áudio é entrada conversacional. Não é cérebro paralelo. Não escreve reply_text. Não decide stage. Não avança funil sozinho."
+
+**§3 — Âncora canônica:** T2_POLITICA_CONFIANCA §3.3 — O3 AUDIO_TRANSCRIPT:
+- `audio_good` → `captured`
+- `audio_medium` → `captured/low`
+- `audio_poor` → `hypothesis`
+- PC-06: áudio ruim **nunca** confirma fato crítico
+
+**§8 — Fluxo declarativo EA-01..EA-08:**
+Canal → Surface (SurfaceEventNormalizado, input_type=audio) →
+EA-01 Recepção → EA-02 Lacuna STT → EA-03 Transcrição como hipótese →
+EA-04 Classificação conversacional → EA-05 Extração candidatos a fato →
+EA-06 Validação T4/T3/T2 → EA-07 Resposta via LLM → EA-08 Falha/áudio ruim.
+
+**§5 — TurnoEntrada.attachments[] shape para áudio:**
+`attachment_id, surface_event_id, media_ref, media_mime_type, input_type="audio", input_subtype, duration_hint, transcript_text, transcript_confidence, transcript_partial, audio_classification, caption, surface_warnings, dedupe_key`
+
+**§6 — 15+ tipos de áudio:** por qualidade (curto/claro, longo, com ruído, incompreensível, cortado, sem transcrição, parcial) e por conteúdo conversacional (resposta, dúvida, objeção, informação, correção, pedido visita, pedido humano, informação fora de ordem, emocional, retorno, fora de contexto, duplicado, terceiro, informação sensível, contraditório, múltiplos assuntos).
+
+**§9 — 7 níveis de confiança:**
+`audio_unavailable, transcription_unavailable, transcription_low_confidence (audio_poor→hypothesis), transcription_medium_confidence (audio_medium→captured/low), transcription_high_confidence (audio_good→captured), transcription_partial, transcription_conflicting`
+
+**§10 — 14 informações críticas com confirmação obrigatória:**
+renda, regime de trabalho, composição de renda, estado civil, intenção solo/conjunto, restrição, CPF/RG sensível, RNM, autorização dossiê, agendamento visita, aprovação/reprovação correspondente, dado que altere elegibilidade.
+
+**§11 — STT como lacuna futura (T6-LA-01):** `transcript_text=null`; sistema continua sem transcrição; LLM pode pedir texto.
+
+**§12 — 13 casos problemáticos tratados:** inaudível, muito ruído, cortado, muito longo, outro idioma, terceiro falando, múltiplas informações, contraditório, duplicado, fora de contexto, informação sensível, sem transcrição, falha STT.
+
+**§15 — 20 proibições absolutas PROB-AUD-01..20.**
+
+**§17 — 23 critérios CA-T6.5-01..23.**
+
+**§19 — Bloco E com 25 evidências.**
+
+**Garantias:** zero src/; zero fact_*; zero current_phase; zero reply_text; zero runtime; zero STT real; zero canal real.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T6.6** — Sticker, mídia inútil e mensagens não textuais: tratamento seguro de sujeira do WhatsApp real (sticker, imagem sem doc, áudio inaudível, mídia repetida, print confuso, arquivo corrompido, reação/emoji) sem quebrar o funil.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-5-audio-cerebro-conversacional` → PR aberta
+- Contrato T6: **EM EXECUÇÃO** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- PR-T6.5: CONCLUÍDA (áudio no mesmo cérebro conversacional)
+- PR-T6.6: **DESBLOQUEADA**
+- Gate G6: aberto (bloqueado até PR-T6.R)
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.4 — Pipeline de imagem/PDF/documento
 
 ### ESTADO HERDADO
