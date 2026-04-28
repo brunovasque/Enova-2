@@ -2,13 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.5 aberta em 2026-04-26 — F4 elegibilidade / restrição; aguardando merge).
+Fase macro ativa: T5 — Migração do funil core e integração de canal (contrato aberto; PR-T5.6 aberta em 2026-04-26 — F5 documentação / dossiê / correspondente / visita / handoff; aguardando merge).
 
 Gate anterior: G4 — APROVADO em 2026-04-25 via PR-T4.R.
 
 Gate aberto: G5 — paridade funcional dos fluxos prioritários (bloqueado até PR-T5.R).
 
-Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 merged; PR-T5.5 aberta em 2026-04-26; PR-T5.6 autorizada após merge da T5.5).
+Contrato ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T5.md` (aberto — PR-T5.2 + PR-T5.2-fix + PR-T5.3 + PR-T5.4 + PR-T5.5 merged; PR-T5.6 aberta em 2026-04-26; PR-T5.7 autorizada após merge da T5.6).
 
 Contrato T4 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md`.
 
@@ -21,6 +21,23 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T5.6` — Contrato declarativo da fatia F5: documentação / dossiê / correspondente / visita / handoff:
+`schema/implantation/T5_FATIA_DOCUMENTACAO_VISITA_HANDOFF.md` criado:
+contrato declarativo completo da fatia F5 (current_phase: docs_prep → docs_collection →
+broker_handoff → awaiting_broker → visit_conversion); 5 stages cobertos (envio_docs,
+agendamento_visita, aguardando_retorno_correspondente, finalizacao, finalizacao_processo);
+9 fatos T2 canônicos (Groups IX, X + derived: fact_doc_identity_status, fact_doc_income_status,
+fact_doc_residence_status, fact_doc_ctps_status, fact_docs_channel_choice, fact_visit_interest,
+fact_current_intent, derived_doc_risk, derived_dossier_profile); 28 lacunas de schema futuras
+(LF-01..28); 33 regras comerciais Vasques (RC-F5-01..33); regra-mãe: Enova conduz para análise,
+não pede permissão; coleta ativa (não passiva); 3 follow-ups obrigatórios antes do plantão;
+toda aprovação vira agendamento de visita com todos os decisores; critério rigoroso
+finalizacao_processo (respostas curtas não disparam encerramento); 6 OBR + 2 CONF + 6 SGM +
+5 ROT + 10 VS; 15 anti-padrões; 10 cenários sintéticos; 18 validações cruzadas; Bloco E completo.
+PR-T5.7 desbloqueada após merge.
+
+## Ultima tarefa anterior (PR-T5.5)
 
 `PR-T5.5` — Contrato declarativo da fatia F4: elegibilidade / restrição:
 `schema/implantation/T5_FATIA_ELEGIBILIDADE_RESTRICAO.md` criado:
