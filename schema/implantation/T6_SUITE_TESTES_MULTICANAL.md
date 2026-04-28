@@ -1,4 +1,4 @@
-# T6_SUITE_TESTES_SANDBOX — Suite Declarativa de Testes/Sandbox Multicanal — ENOVA 2
+# T6_SUITE_TESTES_MULTICANAL — Suite Declarativa de Testes/Sandbox Multicanal — ENOVA 2
 
 ## Meta
 
@@ -1129,7 +1129,7 @@ Os seguintes itens impedem a abertura de PR-T6.R:
 
 | ID | Critério |
 |---|---|
-| CA-T6.9-01 | `T6_SUITE_TESTES_SANDBOX.md` existe e está bem-formado |
+| CA-T6.9-01 | `T6_SUITE_TESTES_MULTICANAL.md` existe e está bem-formado |
 | CA-T6.9-02 | Matriz de cobertura T6.2–T6.8 declarada (§6) |
 | CA-T6.9-03 | ≥ 48 cenários declarativos criados |
 | CA-T6.9-04 | Grupos A–H cobertos (mínimos: A=5, B=8, C=6, D=6, E=6, F=8, G=4, H=5) |
@@ -1161,7 +1161,7 @@ Os seguintes itens impedem a abertura de PR-T6.R:
 
 ```
 --- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
-Documento-base da evidência:           schema/implantation/T6_SUITE_TESTES_SANDBOX.md
+Documento-base da evidência:           schema/implantation/T6_SUITE_TESTES_MULTICANAL.md
 Estado da evidência:                   completa
 Há lacuna remanescente?:               não
 Há item parcial/inconclusivo bloqueante?: não
@@ -1189,7 +1189,7 @@ O que a última PR NÃO fechou: suite de testes (PR-T6.9), readiness G6 (PR-T6.R
 Por que esta tarefa existe: T6.2–T6.8 entregues; necessário consolidar validação declarativa antes do G6
 Esta tarefa está dentro ou fora do contrato ativo: dentro
 Objetivo desta tarefa: criar suite declarativa de 48+ cenários cobrindo toda a governança multicanal T6.2–T6.8
-Escopo: T6_SUITE_TESTES_SANDBOX.md; atualização dos 4 arquivos vivos
+Escopo: T6_SUITE_TESTES_MULTICANAL.md; atualização dos 4 arquivos vivos
 Fora de escopo: runtime, sandbox real, src/, T7, READINESS_G6
 Houve desvio de contrato?: não
 Mudanças em dados persistidos (Supabase): nenhuma
@@ -1212,7 +1212,7 @@ Fontes de verdade consultadas:
 ```
 --- ESTADO ENTREGUE ---
 O que foi feito nesta PR:
-  - Criado T6_SUITE_TESTES_SANDBOX.md com 53 cenários declarativos (grupos A–H + I)
+  - Criado T6_SUITE_TESTES_MULTICANAL.md com 53 cenários declarativos (grupos A–H + I)
   - Grupos A (5), B (8), C (6), D (6), E (6), F (8), G (4), H (5), I (5) cobertos
   - Matriz de cobertura T6.2–T6.8 + T4/T3/T2/T5 declarada
   - 13 invariantes INV-01..13 declaradas e referenciadas
@@ -1233,7 +1233,7 @@ Contrato encerrado nesta PR?: não
 O próximo passo autorizado foi alterado?: sim — de PR-T6.9 para PR-T6.R
 Esta tarefa foi fora de contrato?: não
 Arquivos vivos atualizados:
-  - schema/implantation/T6_SUITE_TESTES_SANDBOX.md (criado)
+  - schema/implantation/T6_SUITE_TESTES_MULTICANAL.md (criado)
   - schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md (status atualizado)
   - schema/contracts/_INDEX.md (PR atual atualizado)
   - schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md (ultima tarefa atualizada)

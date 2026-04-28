@@ -23,7 +23,7 @@ Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 ## Ultima tarefa relevante
 
 `PR-T6.9` — Suite declarativa de testes/sandbox multicanal:
-`schema/implantation/T6_SUITE_TESTES_SANDBOX.md` criado — suite de validação declarativa T6.2–T6.8.
+`schema/implantation/T6_SUITE_TESTES_MULTICANAL.md` criado — suite de validação declarativa T6.2–T6.8.
 Princípio central: "Teste valida governança — não cria runtime."
 53 cenários declarativos em 9 grupos (A–H + I):
 Grupo A (texto puro): A-01..A-05; Grupo B (imagem/PDF/doc): B-01..B-08;

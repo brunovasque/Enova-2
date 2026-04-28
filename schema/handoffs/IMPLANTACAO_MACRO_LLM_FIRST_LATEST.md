@@ -81,7 +81,7 @@ T0-PR2 — inventario legado vivo.
 
 ### ESTADO ENTREGUE
 
-`schema/implantation/T6_SUITE_TESTES_SANDBOX.md` criado — suite de validação declarativa da governança multicanal T6.2–T6.8.
+`schema/implantation/T6_SUITE_TESTES_MULTICANAL.md` criado — suite de validação declarativa da governança multicanal T6.2–T6.8.
 
 **Princípio central:** "Teste valida governança — não cria runtime."
 
@@ -183,7 +183,7 @@ CNPJ isolado → `nao_financiavel` ou `informativa`.
 
 ### PRÓXIMO PASSO AUTORIZADO
 
-**PR-T6.9** — Suite de testes/sandbox multicanal: `schema/implantation/T6_SUITE_TESTES_SANDBOX.md`
+**PR-T6.9** — Suite de testes/sandbox multicanal: `schema/implantation/T6_SUITE_TESTES_MULTICANAL.md`
 Cenários completos de validação da governança multicanal T6.2–T6.8; smoke tests declarativos;
 cobertura de todos os tipos de entrada e estados do dossiê; validação de invariantes.
 
