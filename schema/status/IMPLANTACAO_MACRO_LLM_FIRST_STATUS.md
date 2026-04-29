@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (contrato formal aberto via PR-T7.0 em 2026-04-29; próxima PR: PR-T7.1).
+Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.1 executada em 2026-04-29; próxima PR: PR-T7.2 — Shadow/simulação controlada).
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
@@ -23,6 +23,19 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.1` — Pré-flight de go-live e travas operacionais:
+`schema/implantation/T7_PREFLIGHT_GO_LIVE.md` criado — 15 seções; condições mínimas de go-live mapeadas.
+Feature flags (ENOVA2_ENABLED, CANARY_PERCENT, CHANNEL_ENABLED, SHADOW_MODE, CUTOVER_MODE, ROLLBACK_FLAG);
+Fallback para estado anterior (lead_state preservado, logs imutáveis, dossiê preservado);
+Métricas MET-01..MET-10 com thresholds Caminho A e Caminho B;
+Logs com 19 campos obrigatórios por turno; retenção mínima; formato de evidência de rollback;
+Comparação T1–T6: critérios de paridade por contrato; camada de comparação declarativa para T7.2;
+Bloqueios B-T7.1-01..12 (inclui bloqueio absoluto vs. MCMV, vs. reply_text mecânico, vs. cliente real sem G7);
+CA-T7.1-01..12 todos satisfeitos; Bloco E com Fechamento permitido: sim.
+Zero src/; zero runtime; zero shadow/canary/cutover real; zero WhatsApp real; zero reply_text; zero fact_*. PR-T7.2 desbloqueada.
+
+## Ultima tarefa anterior (PR-T7.0)
 
 `PR-T7.0` — Abertura formal do contrato T7:
 `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` — skeleton substituído por contrato formal completo.
