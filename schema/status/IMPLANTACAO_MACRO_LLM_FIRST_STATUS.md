@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.2 executada em 2026-04-29; próxima PR: PR-T7.3 — Matriz de divergências e hardening).
+Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.3 executada em 2026-04-29; próxima PR: PR-T7.4 — Canary controlado).
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
@@ -23,6 +23,20 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.3` — Matriz de divergências e hardening:
+`schema/implantation/T7_MATRIZ_DIVERGENCIAS.md` criado — 17 seções; classificação formal de divergências e hardening antes de canary/cutover.
+12 categorias DIV-MA..DIV-BA (DIV-RM e DIV-BA: bloqueantes absolutos com ação `block` e decisão Vasques obrigatória);
+Graduação S0–S4 com regras de elevação automática e relação severidade→decisão;
+6 decisões canônicas (accept, accept_with_note, fix_required, investigate, block, defer) com restrições e shapes;
+20 hardenings catalogados HD-T73-001..020 em 9 tipos (HD-PROMPT, HD-POLICY, HD-STATE, HD-FUNIL, HD-DOC, HD-CANAL, HD-OBS, HD-ROLLBACK, HD-OPR);
+Hardenings DIV-RM obrigatórios HD-T73-001..005 e DIV-BA HD-T73-006..009 com `bloqueia_t74: true`;
+12 bloqueios absolutos BLK-T73-01..12; 12 critérios de liberação para T7.4; relação Caminho A vs B;
+Payload canônico de saída para T7.4: approved_for_canary, canary_mode, unresolved_divergences, accepted_risks, required_hardenings, blocking_items, recommendation;
+CA-T7.3-01..15 todos satisfeitos; B-T7.3-01..12 declarados; Bloco E com Fechamento permitido: sim.
+Zero src/; zero runtime; zero shadow real; zero canary; zero cutover; zero WhatsApp real; zero reply_text; zero fact_*. PR-T7.4 desbloqueada.
+
+## Ultima tarefa anterior (PR-T7.2)
 
 `PR-T7.2` — Shadow/simulação controlada:
 `schema/implantation/T7_SHADOW_SIMULACAO.md` criado — 15 seções; simulação controlada antes de clientes reais.
