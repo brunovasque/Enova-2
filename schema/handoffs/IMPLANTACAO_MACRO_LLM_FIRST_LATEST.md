@@ -69,6 +69,51 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.1 — Pré-flight de go-live e travas operacionais
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T7.0 (#136) aberta em 2026-04-29.
+- Contrato T7: ABERTO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.0 entregou: contrato formal completo (24 seções); caminhos A e B formalizados.
+- Próximo passo autorizado: PR-T7.1 — Pré-flight de go-live e travas operacionais.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T7_PREFLIGHT_GO_LIVE.md` criado — pré-flight completo com 15 seções.
+
+**Conteúdo entregue:**
+
+- §3 Premissa operacional: Enova NÃO atende clientes reais; risco é ligar antes de smoke/rollback/telemetria provados.
+- §4 Caminhos A e B formalizados: gradual (padrão) vs. arrojado (permitido com condições).
+- §5 Feature flags: `ENOVA2_ENABLED`, `CANARY_PERCENT`, `CHANNEL_ENABLED`, `SHADOW_MODE`, `CUTOVER_MODE`, `ROLLBACK_FLAG`; roteiros de desligamento, pausa de canal, impedimento de cutover acidental.
+- §6 Fallback: reversão de roteamento, preservação de lead_state, logs imutáveis, dossiê preservado, rastreabilidade garantida.
+- §7 Métricas MET-01..10: taxa PASS, divergência policy/MCMV, erro estado/dossiê/canal, latência, falha crítica, promessa indevida, fala mecânica — com thresholds para Caminho A e para Caminho B.
+- §8 Logs: 19 campos por turno (turn_id, case_id, decision_trace, policy_triggered, lead_state before/after, divergência, reply_text_source, latência, modo...); retenção 90–365 dias; formato JSON de evidência de rollback.
+- §9 Comparação T1–T6: mapa de artefatos por contrato; critérios de paridade; camada de comparação declarativa para T7.2.
+- §10 Bloqueios B-T7.1-01..12: inclui bloqueios absolutos vs. MCMV, vs. reply_text mecânico, vs. cliente real sem G7, vs. sequência violada.
+- §11 Critérios para liberar PR-T7.2 (Caminho A): 10 critérios verificáveis.
+- §12 Critérios para Caminho B: 9 condições a verificar em PR-T7.7 e PR-T7.R.
+- §13 CA-T7.1-01..12: todos satisfeitos.
+- §14–§16: ESTADO HERDADO, ESTADO ENTREGUE, BLOCO E.
+
+**Garantias:** zero src/; zero runtime; zero shadow/canary/cutover real; zero WhatsApp real; zero deploy; zero reply_text; zero fact_*; G7 continua aberto/bloqueado até PR-T7.R.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T7.2** — Shadow/simulação controlada.
+Entregar `schema/implantation/T7_SHADOW_SIMULACAO.md`: casos sintéticos + históricos, comparação T1–T6, validação LLM-first, métricas de paridade, gatilhos de congelamento.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t7-pr-t7-1-preflight-golive` → PR aberta
+- Contrato T7: **em execução** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- G6: **APROVADO**
+- G7: aberto (bloqueado até PR-T7.R)
+- PR-T7.2: **DESBLOQUEADA**
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T7.0 — Abertura formal do contrato T7
 
 ### ESTADO HERDADO
