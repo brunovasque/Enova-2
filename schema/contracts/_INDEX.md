@@ -27,7 +27,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 | Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
 |------|----------------|--------|------|------------------|----------|--------------------------|
-| T7 — Shadow, canary, cutover e rollback | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` | **em execução** — PR-T7.5 executada; próxima PR-T7.6 | G6 APROVADO; G7 — go-live controlado (bloqueado até PR-T7.R) | 2026-04-29 | PR-T7.6 — Rollback operacional comprovado |
+| T7 — Shadow, canary, cutover e rollback | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` | **em execução** — PR-T7.6 executada; próxima PR-T7.7 | G6 APROVADO; G7 — go-live controlado (bloqueado até PR-T7.R) | 2026-04-29 | PR-T7.7 — Checklist executivo de go/no-go |
 
 ## Contratos encerrados
 
