@@ -1,4 +1,4 @@
-# T6_READINESS_CLOSEOUT_G6 — Readiness e Closeout do Gate G6 — ENOVA 2
+# READINESS_G6 — Readiness e Closeout do Gate G6 — ENOVA 2
 
 ## Meta
 
@@ -271,7 +271,7 @@ Adendos A00-ADENDO-01/02/03 respeitados em toda a T6.
 | Campo | Valor |
 |---|---|
 | Status | **PASS** |
-| Artefatos que provam | `T6_READINESS_CLOSEOUT_G6.md` (este documento) |
+| Artefatos que provam | `READINESS_G6.md` (este documento) |
 | Evidência | Smoke S1–S9 completo (§3); CA-T6-01..09 verificados (§4); B-T6-01..10 verificados (§5); BLQ-01..15 verificados (§6); Bloco E (§12) presente |
 | Lacuna | Nenhuma |
 
@@ -372,7 +372,7 @@ Adendos A00-ADENDO-01/02/03 respeitados em toda a T6.
 | Campo | Valor |
 |---|---|
 | Status | **DESBLOQUEADO** — esta PR é a PR-T6.R |
-| Evidência | Este artefato `T6_READINESS_CLOSEOUT_G6.md` é a PR-T6.R; smoke S1–S9 presentes; Bloco E presente |
+| Evidência | Este artefato `READINESS_G6.md` é a PR-T6.R; smoke S1–S9 presentes; Bloco E presente |
 | Consequência | Sem consequência — protocolo respeitado |
 
 ### Resumo B-T6-01..B-T6-10
@@ -511,7 +511,7 @@ Nenhuma lacuna bloqueante identificada. Todas as lacunas são não bloqueantes e
 G6 — APROVADO
 Data: 2026-04-28
 PR: PR-T6.R
-Artefato: schema/implantation/T6_READINESS_CLOSEOUT_G6.md
+Artefato: schema/implantation/READINESS_G6.md
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -554,7 +554,7 @@ git revert <commit-hash-desta-PR>
 ```
 
 Isso:
-1. Remove `T6_READINESS_CLOSEOUT_G6.md`
+1. Remove `READINESS_G6.md`
 2. Remove `CONTRATO_IMPLANTACAO_MACRO_T7.md` (skeleton)
 3. Remove arquivo de archive T6
 4. Reverte os 4 arquivos vivos para estado pré-T6.R
@@ -611,7 +611,7 @@ O que a última PR NÃO fechou: G6, encerramento de T6
 Por que esta tarefa existe: todos os artefatos T6.1–T6.9 entregues; closeout formal obrigatório para avançar T7
 Esta tarefa está dentro ou fora do contrato ativo: dentro
 Objetivo desta tarefa: verificar S1–S9, CA-T6-01..10, B-T6-01..10, BLQ-01..15 e decidir G6
-Escopo: T6_READINESS_CLOSEOUT_G6.md; archive T6; skeleton T7; atualização 4 arquivos vivos
+Escopo: READINESS_G6.md; archive T6; skeleton T7; atualização 4 arquivos vivos
 Fora de escopo: runtime, canal real, shadow/canary/cutover, src/, corpo executivo de T7
 Houve desvio de contrato?: não
 Mudanças em dados persistidos (Supabase): nenhuma
@@ -633,7 +633,7 @@ Fontes de verdade consultadas:
 ```
 --- ESTADO ENTREGUE ---
 O que foi feito nesta PR:
-  - Criado T6_READINESS_CLOSEOUT_G6.md com smoke S1–S9, CA-T6-01..10, B-T6-01..10, BLQ-01..15
+  - Criado READINESS_G6.md com smoke S1–S9, CA-T6-01..10, B-T6-01..10, BLQ-01..15
   - G6 declarado APROVADO com evidência formal
   - Contrato T6 arquivado: schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md
   - Skeleton T7 criado: schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md
@@ -649,7 +649,7 @@ Contrato encerrado nesta PR?: sim — T6 encerrada; ver §16
 O próximo passo autorizado foi alterado?: sim — de PR-T6.R para PR-T7.0
 Esta tarefa foi fora de contrato?: não
 Arquivos vivos atualizados:
-  - schema/implantation/T6_READINESS_CLOSEOUT_G6.md (criado)
+  - schema/implantation/READINESS_G6.md (criado)
   - schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md (arquivado)
   - schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md (skeleton criado)
   - schema/contracts/_INDEX.md (T6 encerrado; T7 ativo)
@@ -665,7 +665,7 @@ Permissões Cloudflare necessárias: nenhuma adicional
 
 ```
 --- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
-Documento-base da evidência:           schema/implantation/T6_READINESS_CLOSEOUT_G6.md
+Documento-base da evidência:           schema/implantation/READINESS_G6.md
 Estado da evidência:                   completa
 Há lacuna remanescente?:               não — lacunas existentes (STT, OCR, AT-05) são não bloqueantes e declaradas no contrato
 Há item parcial/inconclusivo bloqueante?: não

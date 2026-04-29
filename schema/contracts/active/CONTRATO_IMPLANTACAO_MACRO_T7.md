@@ -12,7 +12,7 @@
 | Frente                            | T7 — Shadow, canary, cutover e rollback                                       |
 | Fase do A01                       | T7 (semanas 15–16 da implantação macro)                                       |
 | Prioridade do A01                 | 8                                                                              |
-| Dependências                      | G6 APROVADO — `schema/implantation/T6_READINESS_CLOSEOUT_G6.md` — **SATISFEITA em 2026-04-28** |
+| Dependências                      | G6 APROVADO — `schema/implantation/READINESS_G6.md` — **SATISFEITA em 2026-04-28** |
 | Status                            | **skeleton — aguardando PR-T7.0 para abertura formal**                        |
 | Última atualização                | 2026-04-28                                                                     |
 
