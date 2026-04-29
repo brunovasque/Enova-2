@@ -69,6 +69,49 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.6 — Rollback operacional comprovado
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T7.5 (#141) merged em main em 2026-04-29.
+- Contrato T7: em execução — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.5 entregou: `T7_CUTOVER_GOVERNADO.md` com protocolo de cutover (CC-01..14, 4 modos, CUTOVER_GATE_STATUS 6 estados, 8 travas, payload para T7.6).
+- Referências canônicas: `READINESS_G6.md` / `T7_PREFLIGHT_GO_LIVE.md` / `T7_SHADOW_SIMULACAO.md` / `T7_MATRIZ_DIVERGENCIAS.md` / `T7_CANARY_INTERNO.md` / `T7_CUTOVER_GOVERNADO.md`.
+- Próximo passo autorizado: PR-T7.6 — Rollback operacional comprovado.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T7_ROLLBACK_OPERACIONAL.md` criado — protocolo formal de rollback operacional comprovado.
+
+**Conteúdo entregue (20 seções):**
+
+- §4 Entradas de T7.5: 13 campos com valores esperados e consequências se ausentes.
+- §5 Gatilhos GT-01..GT-12: GT-01..GT-05 imediatos (violação MCMV, falha crítica, promessa indevida, tráfego real não autorizado, veto Vasques) + GT-06..GT-12 por degradação.
+- §6 Procedimento operacional P-01..P-14 com responsável, tempo máximo e evidência gerada; metas < 5 min (CO-TOTAL-CLIENTE meta < 3 min).
+- §7 Preservação de estado: lead_state nunca excluído, 7 campos invariantes, shape pós-rollback, proibições.
+- §8 Shape de log canônico com 16 campos; retenção mínima 90 dias.
+- §9 Regras de dossiê RD-01..RD-08 + verificação pós-rollback.
+- §10 Reversão de flags: 6 flags com estados antes/depois, responsável, evidência, condição de sucesso e ordem de alteração.
+- §11 8 cenários de smoke RBK-01..RBK-08 (um por tipo de gatilho), com objetivo, estado inicial, ação esperada, evidência obrigatória, PASS/FAIL e bloqueia T7.7.
+- §12 Critérios de sucesso SUC-01..SUC-14.
+- §13 Critérios de falha FAL-01..FAL-11 com consequências.
+- §14 Matriz de decisão: 8 condições com rollback aprovado/bloqueia T7.7/exige Vasques/exige investigação/próxima ação.
+- §15 Payload canônico para T7.7: rollback_approved, rollback_mode_tested, triggers_fired, procedure_completed, smoke_results, state_preserved, log_preserved, dossier_preserved, success_criteria, blocking_items, recommendation.
+- §16 CA-T7.6-01..19; §17 B-T7.6-01..14; §18 Bloco E com Fechamento permitido: sim.
+- §19 Estado herdado; §20 Estado entregue.
+
+**Próximo passo único autorizado:** PR-T7.7 — Checklist executivo de go/no-go. Entrega esperada pelo contrato T7: `schema/implantation/T7_GO_NO_GO_EXECUTIVO.md`.
+
+**Leituras obrigatórias para PR-T7.7:**
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+2. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+3. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+4. `schema/implantation/T7_ROLLBACK_OPERACIONAL.md` (entregue nesta PR)
+
+**Limites herdados:** zero src/; zero runtime; zero rollback real; zero cutover real; zero canary real; zero WhatsApp real; zero reply_text; zero fact_*.
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T7.5 — Cutover parcial ou total governado
 
 ### ESTADO HERDADO

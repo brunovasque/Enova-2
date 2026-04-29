@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.5 executada em 2026-04-29; próxima PR: PR-T7.6 — Rollback operacional comprovado).
+Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.6 executada em 2026-04-29; próxima PR: PR-T7.7 — Checklist executivo de go/no-go).
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
@@ -23,6 +23,22 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.6` — Rollback operacional comprovado:
+`schema/implantation/T7_ROLLBACK_OPERACIONAL.md` criado — 20 seções; protocolo formal de rollback operacional comprovado antes do go/no-go executivo.
+Gatilhos GT-01..GT-12: GT-01..GT-05 imediatos (violação MCMV, falha crítica, promessa indevida, tráfego real não autorizado, veto Vasques) e GT-06..GT-12 por degradação;
+Procedimento operacional P-01..P-14 com responsável, tempo máximo e evidência gerada; metas CO-PARCIAL/CO-TOTAL-INTERNO < 5 min; CO-TOTAL-CLIENTE meta < 3 min;
+Preservação de estado: lead_state nunca excluído, 7 campos invariantes, shape pós-rollback obrigatório;
+Shape de log com 16 campos canônicos; retenção mínima 90 dias; 8 regras de dossiê RD-01..RD-08;
+Reversão de flags: 6 flags com estados antes/depois, responsável, evidência e ordem de alteração;
+8 cenários de smoke/simulação RBK-01..RBK-08 (um por tipo de gatilho), cada um com objetivo, estado inicial, ação esperada, evidência obrigatória, PASS/FAIL e bloqueia T7.7;
+14 critérios de sucesso SUC-01..SUC-14; 11 critérios de falha FAL-01..FAL-11;
+Matriz de decisão: 8 condições com rollback aprovado/bloqueia T7.7/exige Vasques/exige investigação/próxima ação;
+Payload canônico §15 para T7.7: rollback_approved, rollback_mode_tested, triggers_fired, procedure_completed, smoke_results, state_preserved, log_preserved, dossier_preserved, success_criteria, blocking_items, recommendation;
+CA-T7.6-01..19 todos satisfeitos; B-T7.6-01..14 declarados; Bloco E com Fechamento permitido: sim.
+Zero src/; zero runtime; zero rollback real; zero cutover real; zero canary real; zero WhatsApp real; zero reply_text; zero fact_*. PR-T7.7 desbloqueada.
+
+## Ultima tarefa anterior (PR-T7.5)
 
 `PR-T7.5` — Cutover parcial ou total governado:
 `schema/implantation/T7_CUTOVER_GOVERNADO.md` criado — 19 seções; protocolo formal de cutover antes de rollback comprovado.
