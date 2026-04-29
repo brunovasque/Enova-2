@@ -69,6 +69,60 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.3 — Matriz de divergências e hardening
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T7.2 (#138) merged em main em 2026-04-29.
+- Contrato T7: em execução — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.2 entregou: `T7_SHADOW_SIMULACAO.md` com 70 cenários em 9 grupos, MET-01..10, FREEZE-01..12, CA-T7.2-01..15.
+- Referência canônica G6: `schema/implantation/READINESS_G6.md`.
+- Referência canônica preflight: `schema/implantation/T7_PREFLIGHT_GO_LIVE.md`.
+- Próximo passo autorizado: PR-T7.3 — Matriz de divergências e hardening.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T7_MATRIZ_DIVERGENCIAS.md` criado — classificação formal de divergências e hardening antes de canary/cutover.
+
+**Conteúdo entregue (17 seções):**
+
+- §5 Taxonomia formal: 12 categorias DIV-MA..DIV-BA com descrição, exemplos, severidade padrão, bloqueia T7.4?, ação obrigatória, evidência exigida e quem decide.
+  - DIV-RM (Regra MCMV) e DIV-BA (Adversarial): bloqueantes absolutos — ação `block`, resolução com evidência real, decisão Vasques obrigatória.
+- §6 Graduação S0–S4: impacto operacional, relação severidade→decisão, regras de elevação automática (DIV-RM, DIV-BA, MET-08, MET-03, MET-09 sempre elevam para S4).
+- §7 6 decisões canônicas: accept, accept_with_note, fix_required, investigate, block, defer — com restrições (accept/defer proibidos para DIV-RM/DIV-BA), shapes e regras de uso.
+- §8 20 hardenings catalogados HD-T73-001..020 em 9 tipos (HD-PROMPT, HD-POLICY, HD-STATE, HD-FUNIL, HD-DOC, HD-CANAL, HD-OBS, HD-ROLLBACK, HD-OPR).
+  - Hardenings obrigatórios DIV-RM: HD-T73-001..005 (`bloqueia_t74: true`).
+  - Hardenings obrigatórios DIV-BA: HD-T73-006..009 (`bloqueia_t74: true`).
+  - Hardenings de qualidade DIV-MA..DIV-ES: HD-T73-010..020.
+- §9 12 bloqueios absolutos BLK-T73-01..12 com condição e como desbloquear.
+- §10 12 critérios objetivos de liberação para PR-T7.4 + critérios adicionais Caminho B.
+- §11 Relação Caminho A vs Caminho B: impacto de divergências em cada caminho; decisão de caminho é definida pelo payload §12.
+- §12 Payload canônico de saída para T7.4: approved_for_canary, canary_mode, path_selected, unresolved_divergences, accepted_risks, required_hardenings, blocking_items, metrics_summary, recommendation, vasques_authorization.
+- §13 CA-T7.3-01..15 todos satisfeitos; §14 B-T7.3-01..12 declarados.
+- §15 Bloco E com Fechamento permitido: sim.
+
+**Garantias:** zero src/; zero runtime; zero shadow real; zero canary; zero cutover; zero WhatsApp/Meta real; zero deploy; zero reply_text; zero fact_*; G7 continua aberto/bloqueado até PR-T7.R.
+
+**Referências canônicas usadas:**
+- G6: `schema/implantation/READINESS_G6.md`
+- Pré-flight: `schema/implantation/T7_PREFLIGHT_GO_LIVE.md`
+- Shadow: `schema/implantation/T7_SHADOW_SIMULACAO.md`
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T7.4** — Canary controlado.
+Entregar `schema/implantation/T7_CANARY_CONTROLADO.md`: plano de canary progressivo com CANARY_PERCENT, condições de avanço e rollback, métricas de monitoramento em produção, go/no-go por percentual.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t7-pr-t7-3-matriz-divergencias` → PR aberta
+- Contrato T7: **em execução** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- G6: **APROVADO**
+- G7: aberto (bloqueado até PR-T7.R)
+- PR-T7.4: **DESBLOQUEADA**
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T7.2 — Shadow/simulação controlada
 
 ### ESTADO HERDADO
