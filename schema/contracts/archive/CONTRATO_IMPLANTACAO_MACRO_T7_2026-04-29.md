@@ -1,6 +1,9 @@
 > **CONTRATO ENCERRADO** — G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS em 2026-04-29 via PR-T7.R.
 > Arquivado em: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md`
-> Ver readiness em: `schema/implantation/READINESS_G7.md`
+> Readiness: `schema/implantation/READINESS_G7.md`
+> Próxima fase autorizada: T8 — Diagnóstico técnico de aderência contrato × código real.
+> Restrições operacionais herdadas: RA-G7-01..08 (telemetria, smoke, flags, WhatsApp — runtime pendente).
+> Encerrado por: PR-T7.R (feat/t7-pr-t7-r-readiness-closeout-g7)
 
 # CONTRATO — T7 Shadow, Canary, Cutover e Rollback — ENOVA 2
 

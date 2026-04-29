@@ -25,14 +25,17 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 ## Contrato macro ativo
 
-| Fase | Contrato ativo | Status | Gate | Data de abertura | PR atual | Proximo passo autorizado |
-|------|----------------|--------|------|------------------|----------|--------------------------|
-| T7 — Shadow, canary, cutover e rollback | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` | **em execução** — PR-T7.7 executada; próxima PR-T7.R | G6 APROVADO; G7 — go-live controlado (bloqueado até PR-T7.R) | 2026-04-29 | PR-T7.R — Readiness/Closeout G7 |
+Contrato macro ativo: T8 ainda não aberto — T7 encerrada em 2026-04-29 (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS). Próxima fase: T8 — aguardando abertura formal via PR-T8.0.
+
+| Fase | Status | Próximo passo autorizado |
+|------|--------|--------------------------|
+| T8 — Diagnóstico técnico de aderência contrato × código real | **aguardando abertura** — PR-T7.R executada; T8 aguarda autorização Vasques | PR-T8.0 — Abertura formal do contrato T8 / Diagnóstico técnico |
 
 ## Contratos encerrados
 
 | Fase | Contrato arquivado | Status | Gate | Data de encerramento | PR que encerrou |
 |------|-------------------|--------|------|----------------------|-----------------|
+| T7 — Shadow, canary, cutover e rollback | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` | encerrado — G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS | G7 — APROVADO DOCUMENTALMENTE (restrições RA-G7-01..08 herdadas para T8) | 2026-04-29 | PR-T7.R |
 | T6 — Docs, multimodalidade e superfícies de canal | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md` | encerrado | G6 — APROVADO em 2026-04-28 | 2026-04-28 | PR-T6.R |
 | T5 — Migração do funil core e integração de canal | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md` | encerrado | G5 — APROVADO com atenções aceitas | 2026-04-28 | PR-T5.R |
 | T4 — Orquestrador de turno LLM-first | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T4_2026-04-25.md` | encerrado | G4 — APROVADO | 2026-04-25 | PR-T4.R |
