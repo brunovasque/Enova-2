@@ -25,11 +25,11 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 ## Contrato macro ativo
 
-Contrato macro ativo: T8 ainda não aberto — T7 encerrada em 2026-04-29 (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS). Próxima fase: T8 — aguardando abertura formal via PR-T8.0.
+Contrato macro ativo: **T8 — aberta formalmente em 2026-04-29 via PR-T8.0** (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; restrições RA-G7-01..08 herdadas).
 
 | Fase | Status | Próximo passo autorizado |
 |------|--------|--------------------------|
-| T8 — Diagnóstico técnico de aderência contrato × código real | **aguardando abertura** — PR-T7.R executada; T8 aguarda autorização Vasques | PR-T8.0 — Abertura formal do contrato T8 / Diagnóstico técnico |
+| T8 — Diagnóstico técnico de aderência contrato × código real + implementação operacional real | **aberto** — PR-T8.0 executada em 2026-04-29; contrato ativo em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md` | PR-T8.1 — Inventário técnico real do Repo2 (tipo: PR-DIAG) |
 
 ## Contratos encerrados
 

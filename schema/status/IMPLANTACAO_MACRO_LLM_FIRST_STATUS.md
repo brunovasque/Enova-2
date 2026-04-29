@@ -2,17 +2,19 @@
 
 ## Estado atual
 
-Fase macro ativa: **NENHUMA** — implantação macro T0–T7 encerrada documentalmente em 2026-04-29.
+Fase macro ativa: **T8 — Diagnóstico técnico de aderência contrato × código real + implementação operacional real** — contrato T8 aberto formalmente em 2026-04-29 via PR-T8.0.
 
 **Veredito G7: APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS** — PR-T7.R executada em 2026-04-29.
 
-Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
+Gate anterior: G7 — APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS em 2026-04-29 via PR-T7.R.
 
-Gate atual: **G7 — APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS** em 2026-04-29 via PR-T7.R.
+Gate atual: **G8 — em aberto** — T8 em execução; próxima PR: PR-T8.1.
 
-Restrições operacionais herdadas para T8: telemetria (RA-G7-01), smoke runtime (RA-G7-02), feature flags runtime (RA-G7-05), WhatsApp real (RA-G7-08).
+Restrições operacionais herdadas de G7: telemetria (RA-G7-01), smoke runtime (RA-G7-02), feature flags runtime (RA-G7-05), WhatsApp real (RA-G7-08).
 
-Próxima fase: **T8 — Diagnóstico técnico de aderência contrato × código real** (aguardando PR-T8.0 e autorização Vasques).
+Contrato T8 ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md` — aberto em 2026-04-29 via PR-T8.0.
+
+Próxima PR autorizada: **PR-T8.1 — Inventário técnico real do Repo2** (tipo: PR-DIAG).
 
 Contrato T7 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; PR-T7.R executada em 2026-04-29).
 
