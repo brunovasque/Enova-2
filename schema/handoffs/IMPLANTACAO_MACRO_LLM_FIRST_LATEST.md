@@ -120,6 +120,36 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T8.1 — Inventário técnico real do Repo2
+
+### ESTADO HERDADO
+
+- Fase: T8 em execução; PR-T8.0 concluída — contrato T8 ativo.
+- Próximo passo autorizado pré-T8.1: PR-T8.1 (tipo: PR-DIAG).
+
+### ESTADO ENTREGUE
+
+**Tipo:** PR-DIAG.
+
+`schema/diagnostics/T8_REPO2_INVENTARIO_TECNICO.md` criado — inventário técnico real do Repo2 com 12 seções.
+
+**Achados principais:**
+- Worker Cloudflare funcional com 3 rotas (GET /, POST /__core__/run, POST /__meta__/ingest).
+- Core Mecânico 2 implementado — 15 arquivos, todas as stages do funil MCMV.
+- Supabase Adapter implementado com InMemoryPersistenceBackend — **sem Supabase real**; `@supabase/supabase-js` ausente; migrations ausentes.
+- Meta/WhatsApp ingest técnico local — **sem webhook challenge, sem assinatura, sem outbound**.
+- **CRM frontend TOTALMENTE AUSENTE no Repo2** — deve ser migrado do Repo1 (PR-T8.3/4/5).
+- **LLM real ausente** — speech engine define contrato cognitivo sem chamada HTTP a API de IA.
+- **CI/CD crítico (RK-W-01)**: deploy automático em produção em qualquer merge em `main` — risco imediato pré-T8.R.
+- Feature flags (`ENOVA2_ENABLED`, etc.) ausentes.
+- 8 riscos CRÍTICOS, 6 ALTOS, 1 MÉDIO mapeados.
+
+**Próximo passo único autorizado:** PR-T8.2 — Matriz contrato T1–T7 × código real (tipo: PR-DIAG).
+
+**Limites desta PR:** zero src/; zero runtime; zero Supabase; zero Meta/WhatsApp; zero CRM; zero deploy; zero go-live; zero cliente real.
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T8.0 — Abertura formal do contrato T8
 
 ### ESTADO HERDADO

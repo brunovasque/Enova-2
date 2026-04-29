@@ -14,7 +14,9 @@ Restrições operacionais herdadas de G7: telemetria (RA-G7-01), smoke runtime (
 
 Contrato T8 ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md` — aberto em 2026-04-29 via PR-T8.0.
 
-Próxima PR autorizada: **PR-T8.1 — Inventário técnico real do Repo2** (tipo: PR-DIAG).
+PR-T8.1 concluída: `schema/diagnostics/T8_REPO2_INVENTARIO_TECNICO.md` criado em 2026-04-29.
+
+Próxima PR autorizada: **PR-T8.2 — Matriz contrato T1–T7 × código real** (tipo: PR-DIAG).
 
 Contrato T7 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; PR-T7.R executada em 2026-04-29).
 
