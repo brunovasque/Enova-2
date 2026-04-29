@@ -69,6 +69,57 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.0 — Abertura formal do contrato T7
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T6.R (#135) aberta em 2026-04-28.
+- Contrato T6: ENCERRADO — `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md`
+- G6: APROVADO em 2026-04-28.
+- Contrato T7: skeleton — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- Próximo passo autorizado: PR-T7.0 — Abertura formal do contrato T7.
+- Branch: `feat/t6-pr-t6-r-readiness-closeout-g6` (T6.R base).
+
+### ESTADO ENTREGUE
+
+`schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` substituído — skeleton → contrato formal completo.
+
+**Contrato T7 aberto formalmente em 2026-04-29.**
+
+**Estrutura entregue (24 seções):**
+§1 Objetivo (com Caminhos A e B, contexto operacional); §2 Escopo (10 itens); §3 Fora de escopo;
+§4 Dependências (6 — todas satisfeitas ou satisfeitas por esta PR); §5 Entradas; §6 Saídas S1–S8;
+§7 CA-T7-01..12; §8 Provas P-T7-01..07; §9 Bloqueios B-T7-01..10;
+§10 Próximo passo; §11 A01; §12 Legados; §13 Referências; §14 Blocos legados; §15 Ordem de leitura;
+§16 PRs T7.0–T7.R (8 PRs com objetivo, escopo, entrega, próxima PR);
+§17 Caminhos A e B formalizados; §18 Gate G7; §19 Preservação soberania;
+§20 Proibições PROB-T7-01..10; §21 Rollback contratual; §22 Estado desta PR;
+§23 ESTADO HERDADO; §24 ESTADO ENTREGUE; §25 BLOCO E.
+
+**Contexto operacional reconhecido:** Enova ainda NÃO atende clientes reais em produção. T7 é preparação e liberação de go-live — não proteção de operação ativa.
+
+**Caminho A (gradual):** T7.1→T7.2→T7.3→T7.4→T7.5→T7.6→T7.7→T7.R — padrão.
+
+**Caminho B (arrojado):** cutover total antes de clientes reais se pré-flight + rollback + go/no-go passarem. Canary pode ser dispensado com justificativa. Rollback, smoke, telemetria, feature flag e G7 formal **sempre obrigatórios**.
+
+**Garantias:** zero src/; zero runtime; zero shadow/canary real; zero reply_text; zero fact_*; zero WhatsApp real; zero deploy.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T7.1** — Pré-flight de go-live e travas operacionais.
+Entregar `schema/implantation/T7_PREFLIGHT_GOLIIVE.md`: feature flags, desligamento, fallback, plano de métricas/logs, comparação T1–T6, critérios para T7.2 e critérios para Caminho B.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t7-pr-t7-0-abertura-formal-contrato` → PR aberta
+- Contrato T6: **ENCERRADO** — `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md`
+- Contrato T7: **aberto** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- G6: **APROVADO**
+- G7: aberto (bloqueado até PR-T7.R)
+- PR-T7.1: **DESBLOQUEADA**
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.R — Readiness/Closeout G6 — T6 ENCERRADA
 
 ### ESTADO HERDADO
