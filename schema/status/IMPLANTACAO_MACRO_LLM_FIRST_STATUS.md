@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, canary, cutover e rollback (contrato skeleton criado; PR-T7.0 é o próximo passo autorizado).
+Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (contrato formal aberto via PR-T7.0 em 2026-04-29; próxima PR: PR-T7.1).
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
@@ -23,6 +23,18 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.0` — Abertura formal do contrato T7:
+`schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` — skeleton substituído por contrato formal completo.
+24 seções: objetivo, escopo, fora de escopo, dependências, entradas, saídas S1–S8, CA-T7-01..12,
+provas P-T7-01..07, bloqueios B-T7-01..10, quebra PRs T7.0–T7.R, caminhos A e B (gradual e arrojado),
+gate G7, legados, referências, adendos, Bloco E.
+Contexto operacional: Enova ainda NÃO atende clientes reais — T7 é preparação e liberação de go-live.
+Caminho A (gradual): T7.1→T7.2→T7.3→T7.4→T7.5→T7.6→T7.7→T7.R.
+Caminho B (arrojado): cutover total antes de clientes reais se pré-flight, rollback e go/no-go passarem.
+Zero src/; zero runtime; zero shadow/canary real; zero reply_text; zero fact_*. PR-T7.1 desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.R)
 
 `PR-T6.R` — Readiness/Closeout G6:
 `schema/implantation/READINESS_G6.md` criado — readiness formal da T6; G6 APROVADO.
