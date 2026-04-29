@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.3 executada em 2026-04-29; próxima PR: PR-T7.4 — Canary controlado).
+Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.4 executada em 2026-04-29; próxima PR: PR-T7.5 — Cutover parcial ou total governado).
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
@@ -23,6 +23,21 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.4` — Canary interno e pré-produção:
+`schema/implantation/T7_CANARY_INTERNO.md` criado — 18 seções; protocolo formal de canary interno antes de cutover.
+Pré-condições PC-01..PC-12 com checklist e evidência exigida; ambientes AMB-01..04 com proibições absolutas;
+Volumes Caminho A (A0 0% → A1 5% → A2 20% → A3 50% → A4 100% interno) e Caminho B (B0/B1 comprimido);
+MET-01..10 com thresholds por etapa (avançar/pausar/rollback); MET-03/08/09 zero absoluto em todas as etapas;
+Critérios de pausa PAU-01..PAU-12 com distinção pausa vs rollback; rollback ROL-01..08 e procedimento R1..R10;
+Janela de observação: 24h mínimo / 50 turnos (A1) até 1.000 turnos (A4) / grupos A..I obrigatórios por janela;
+Matriz de aprovação: técnico para A1/A2; Vasques obrigatório para A3/A4/Caminho B/cliente real/cutover; veto Vasques soberano;
+Relação Caminho A vs B: B nunca dispensa smoke/rollback/telemetria/go-no-go/decisão humana;
+Payload canônico §13 para T7.5: approved_for_cutover, cutover_mode, metrics_summary, incidents, rollbacks_triggered, recommendation;
+CA-T7.4-01..20 todos satisfeitos; B-T7.4-01..15 declarados; Bloco E com Fechamento permitido: sim.
+Zero src/; zero runtime; zero shadow real; zero canary real; zero cutover; zero WhatsApp real; zero reply_text; zero fact_*. PR-T7.5 desbloqueada.
+
+## Ultima tarefa anterior (PR-T7.3)
 
 `PR-T7.3` — Matriz de divergências e hardening:
 `schema/implantation/T7_MATRIZ_DIVERGENCIAS.md` criado — 17 seções; classificação formal de divergências e hardening antes de canary/cutover.

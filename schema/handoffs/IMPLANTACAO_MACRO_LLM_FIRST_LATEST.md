@@ -69,6 +69,61 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.4 — Canary interno e pré-produção
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T7.3 (#139) merged em main em 2026-04-29.
+- Contrato T7: em execução — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.3 entregou: `T7_MATRIZ_DIVERGENCIAS.md` com 12 categorias DIV-MA..DIV-BA, 20 hardenings, 12 bloqueios BLK-T73, payload canônico para T7.4.
+- Referência canônica G6: `schema/implantation/READINESS_G6.md`.
+- Referência canônica preflight: `schema/implantation/T7_PREFLIGHT_GO_LIVE.md`.
+- Referência canônica shadow: `schema/implantation/T7_SHADOW_SIMULACAO.md`.
+- Próximo passo autorizado: PR-T7.4 — Canary interno e pré-produção.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T7_CANARY_INTERNO.md` criado — protocolo formal de canary interno/pré-produção antes de cutover.
+
+**Conteúdo entregue (18 seções):**
+
+- §3 Premissa: Enova não atende clientes reais; esta PR não executa canary real; canary interno ≠ abertura comercial; matriz T7.3 libera canary.
+- §4 Pré-condições PC-01..PC-12: checklist obrigatório com evidência exigida por item.
+- §5 Ambientes AMB-01..04 com proibições absolutas (sem canal aberto, sem cliente real, sem número comercial sem allowlist).
+- §6 Volumes: Caminho A (A0 0% → A4 100% interno); Caminho B (B0/B1 comprimido); condição de retorno a 0%; diferença operacional entre caminhos.
+- §7 MET-01..10 com thresholds por etapa canary: avançar / pausar / rollback. MET-03/08/09 zero absoluto em todas as etapas.
+- §8 Critérios de pausa PAU-01..PAU-12; distinção formal pausa vs rollback.
+- §9 Rollback ROL-01..08 com procedimento R1..R10 (preservar logs, preservar lead_state, nunca apagar evidência, bloquear T7.5 até revisão).
+- §10 Janela de observação: 24h mínimo; 50 turnos (A1) a 1.000 (A4); grupos A..I obrigatórios por janela.
+- §11 Matriz de aprovação: técnico (A1/A2); Vasques obrigatório (A3/A4/B/cliente real/cutover); veto Vasques soberano.
+- §12 Relação Caminho A vs B: B nunca dispensa smoke/rollback/telemetria/go-no-go/decisão humana.
+- §13 Payload canônico para T7.5: approved_for_cutover, cutover_mode, canary_mode_used, metrics_summary, incidents, rollbacks_triggered, accepted_risks, blocking_items, recommendation, vasques_authorization.
+- §14 CA-T7.4-01..20; §15 B-T7.4-01..15; §16 Bloco E com Fechamento permitido: sim.
+
+**Garantias:** zero src/; zero runtime; zero shadow real; zero canary real; zero cutover; zero WhatsApp/Meta real; zero deploy; zero reply_text; zero fact_*; G7 continua aberto/bloqueado até PR-T7.R.
+
+**Referências canônicas:**
+- G6: `schema/implantation/READINESS_G6.md`
+- Pré-flight: `schema/implantation/T7_PREFLIGHT_GO_LIVE.md`
+- Shadow: `schema/implantation/T7_SHADOW_SIMULACAO.md`
+- Matriz: `schema/implantation/T7_MATRIZ_DIVERGENCIAS.md`
+- Canary: `schema/implantation/T7_CANARY_INTERNO.md`
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T7.5** — Cutover parcial ou total governado.
+Entregar `schema/implantation/T7_CUTOVER_GOVERNADO.md`: plano de cutover com condições de substituição do legado, modo parcial vs total, gate de cutover, critérios de rollback de cutover, evidência para G7.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t7-pr-t7-4-canary-interno` → PR aberta
+- Contrato T7: **em execução** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- G6: **APROVADO**
+- G7: aberto (bloqueado até PR-T7.R)
+- PR-T7.5: **DESBLOQUEADA**
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T7.3 — Matriz de divergências e hardening
 
 ### ESTADO HERDADO
