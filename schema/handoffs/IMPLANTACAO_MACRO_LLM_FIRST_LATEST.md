@@ -69,6 +69,52 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.5 — Cutover parcial ou total governado
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T7.4 (#140) merged em main em 2026-04-29.
+- Contrato T7: em execução — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.4 entregou: `T7_CANARY_INTERNO.md` com protocolo de canary (PC-01..12, volumes A/B, MET-01..10, pausa/rollback, payload para T7.5).
+- Referências canônicas: `READINESS_G6.md` / `T7_PREFLIGHT_GO_LIVE.md` / `T7_SHADOW_SIMULACAO.md` / `T7_MATRIZ_DIVERGENCIAS.md` / `T7_CANARY_INTERNO.md`.
+- Próximo passo autorizado: PR-T7.5 — Cutover parcial ou total governado.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T7_CUTOVER_GOVERNADO.md` criado — protocolo formal de cutover parcial ou total governado.
+
+**Conteúdo entregue (19 seções):**
+
+- §4 Pré-condições CC-01..CC-14 com checklist e evidência exigida por item.
+- §5 4 modos de cutover: CO-PARCIAL, CO-TOTAL-INTERNO, CO-TOTAL-CLIENTE, CO-NOGO — com pré-condições, risco, rollback, aprovação e evidência por modo.
+- §6 Caminho A (progressivo: parcial → total interno → total cliente) e Caminho B (total interno direto) com restrições do Caminho B invioláveis.
+- §7 Critérios para CO-PARCIAL: 10 condições com segmentos autorizados por fatia T5.
+- §8 Critérios para CO-TOTAL com limites mais rígidos; adicionais para CO-TOTAL-CLIENTE.
+- §9 Gate CUTOVER_GATE_STATUS com 6 estados (blocked/ready/approved/no_go/in_progress/completed), transições formais e shape.
+- §10 8 travas TR-01..TR-08 contra entrada real sem decisão; declaração de estado nesta PR (zero real).
+- §11 Rollback de cutover RC-01..RC-08 + procedimento RK-1..RK-11 (preservar logs/lead_state/dossiê, nunca apagar).
+- §12 MET-01..10 com thresholds distintos por modo; thresholds de pausa e no-go.
+- §13 Matriz de decisão formal: 8 condições com permissões, aprovações e próxima ação.
+- §14 Payload canônico para T7.6: approved_for_rollback_proof, cutover_mode_selected, cutover_gate_status, metrics_summary, rollback_requirements, blocking_items, recommendation.
+- §15 CA-T7.5-01..21; §16 B-T7.5-01..14; §17 Bloco E com Fechamento permitido: sim.
+
+**Garantias:** zero src/; zero runtime; zero cutover real; zero canary real; zero WhatsApp real; zero reply_text; zero fact_*; G7 continua bloqueado até PR-T7.R.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T7.6** — Rollback operacional comprovado.
+Entregar `schema/implantation/T7_ROLLBACK_OPERACIONAL.md`: prova de rollback operacional, smoke test de rollback, evidência de execução controlada.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t7-pr-t7-5-cutover-governado` → PR aberta
+- Contrato T7: **em execução** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- G6: **APROVADO**
+- G7: aberto (bloqueado até PR-T7.R)
+- PR-T7.6: **DESBLOQUEADA**
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T7.4 — Canary interno e pré-produção
 
 ### ESTADO HERDADO

@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.4 executada em 2026-04-29; próxima PR: PR-T7.5 — Cutover parcial ou total governado).
+Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.5 executada em 2026-04-29; próxima PR: PR-T7.6 — Rollback operacional comprovado).
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
@@ -23,6 +23,21 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.5` — Cutover parcial ou total governado:
+`schema/implantation/T7_CUTOVER_GOVERNADO.md` criado — 19 seções; protocolo formal de cutover antes de rollback comprovado.
+Pré-condições CC-01..CC-14 com checklist; 4 modos de cutover (CO-PARCIAL, CO-TOTAL-INTERNO, CO-TOTAL-CLIENTE, CO-NOGO);
+Caminho A (progressivo: parcial→total-interno→total-cliente) e Caminho B (total-interno direto com justificativa formal);
+MET-01..10 com thresholds distintos por modo; MET-03/08/09 zero absoluto em todos os modos;
+Gate CUTOVER_GATE_STATUS com 6 estados (blocked/ready/approved/no_go/in_progress/completed) e transições formais;
+8 travas TR-01..TR-08 contra entrada real sem decisão formal;
+Rollback de cutover RC-01..RC-08 e procedimento RK-1..RK-11 (preservar logs/lead_state/dossiê, nunca apagar evidência);
+Matriz de decisão formal por condição (parcial/total/exige Vasques/exige T7.6/próxima ação);
+Payload canônico §14 para T7.6: approved_for_rollback_proof, cutover_mode_selected, cutover_gate_status, metrics_summary, rollback_requirements;
+CA-T7.5-01..21 todos satisfeitos; B-T7.5-01..14 declarados; Bloco E com Fechamento permitido: sim.
+Zero src/; zero runtime; zero cutover real; zero canary real; zero WhatsApp real; zero reply_text; zero fact_*. PR-T7.6 desbloqueada.
+
+## Ultima tarefa anterior (PR-T7.4)
 
 `PR-T7.4` — Canary interno e pré-produção:
 `schema/implantation/T7_CANARY_INTERNO.md` criado — 18 seções; protocolo formal de canary interno antes de cutover.
