@@ -2,11 +2,13 @@
 
 ## Estado atual
 
-Fase macro ativa: T6 — Multimodal / Integração de canal (contrato EM EXECUÇÃO; PR-T6.R é o próximo passo autorizado).
+Fase macro ativa: T7 — Shadow, canary, cutover e rollback (contrato skeleton criado; PR-T7.0 é o próximo passo autorizado).
 
-Gate anterior: G5 — APROVADO com atenções aceitas em 2026-04-28 via PR-T5.R.
+Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
-Gate aberto: G6 — integração de canal real (bloqueado até PR-T6.R).
+Gate aberto: G7 — go-live controlado (bloqueado até PR-T7.R).
+
+Contrato T6 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md` (G6 APROVADO; PR-T6.R executada em 2026-04-28).
 
 Contrato T5 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md` (G5 APROVADO; PR-T5.R executada em 2026-04-28).
 
@@ -21,6 +23,17 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T6.R` — Readiness/Closeout G6:
+`schema/implantation/READINESS_G6.md` criado — readiness formal da T6; G6 APROVADO.
+Smoke S1–S9: 9/9 PASS; CA-T6-01..10: 10/10 PASS; B-T6-01..10: 10/10 desbloqueados;
+BLQ-01..15: 15/15 satisfeitos; adendos A00-ADENDO-01/02/03 respeitados em toda T6.
+Contrato T6 arquivado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md`.
+Skeleton T7 criado: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`.
+Lacunas não bloqueantes: STT (T6-LA-01), OCR (T6-LF-01), AT-05 (normativa MCMV).
+Zero src/; zero runtime; zero canal real; zero reply_text; zero fact_*; zero shadow/canary/cutover. PR-T7.0 desbloqueada.
+
+## Ultima tarefa anterior (PR-T6.9)
 
 `PR-T6.9` — Suite declarativa de testes/sandbox multicanal:
 `schema/implantation/T6_SUITE_TESTES_MULTICANAL.md` criado — suite de validação declarativa T6.2–T6.8.

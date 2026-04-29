@@ -69,6 +69,64 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-28 — PR-T6.R — Readiness/Closeout G6 — T6 ENCERRADA
+
+### ESTADO HERDADO
+
+- Fase: T6 em execução; PR-T6.9 (#134) merged 2026-04-28T23:46:11Z.
+- Contrato T6: EM EXECUÇÃO — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T6.md`
+- T6.1–T6.9: todos os artefatos declarativos entregues e merged em main.
+- Suite multicanal (T6.9): 48+ cenários; BLQ-01..15 declarados.
+- Próximo passo autorizado: PR-T6.R — Readiness/Closeout G6.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/READINESS_G6.md` criado — readiness formal da T6.
+
+**Decisão: G6 — APROVADO em 2026-04-28**
+
+**Smoke S1–S9 (9/9 PASS):**
+S1 T6_PREFLIGHT_RISCOS_T5.md PASS; S2 T6_SURFACE_CANAL.md PASS; S3 T6_CONTRATO_ANEXOS_DOCUMENTOS.md PASS;
+S4 T6_PIPELINE_IMAGEM_PDF.md PASS; S5 T6_AUDIO_CEREBRO_CONVERSACIONAL.md PASS;
+S6 T6_STICKER_MIDIA_INUTIL.md PASS; S7 T6_ADAPTER_META_WHATSAPP.md PASS;
+S8 T6_DOSSIE_OPERACIONAL.md PASS; S9 T6_SUITE_TESTES_MULTICANAL.md PASS.
+
+**CA-T6-01..CA-T6-10 (10/10 PASS):**
+CA-T6-01 canal sob mesma governança PASS; CA-T6-02 reply_text exclusivo LLM PASS;
+CA-T6-03 áudio não avança sozinho PASS; CA-T6-04 imagem/PDF não vira verdade absoluta PASS;
+CA-T6-05 doc associado a pessoa correta PASS; CA-T6-06 mídia inválida não quebra funil PASS;
+CA-T6-07 WhatsApp idempotente PASS; CA-T6-08 dossiê com trilha PASS;
+CA-T6-09 sandbox multicanal cobre casos reais PASS; CA-T6-10 G6 com Bloco E PASS.
+
+**B-T6-01..B-T6-10 (10/10 desbloqueados):** todos os bloqueios removidos.
+**BLQ-01..15 (15/15 satisfeitos):** todos os bloqueantes da suite satisfeitos.
+**A00-ADENDO-01/02/03:** respeitados em toda T6.
+
+**Consequências do G6 APROVADO:**
+- Contrato T6 arquivado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md`
+- Skeleton T7 criado: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.0 desbloqueada
+
+**Lacunas não bloqueantes:** STT (T6-LA-01), OCR (T6-LF-01), AT-05 (normativa MCMV/CEF).
+
+**Garantias:** zero src/; zero runtime; zero canal real; zero reply_text; zero fact_*; zero shadow/canary/cutover; zero corpo executivo T7.
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T7.0** — Abertura formal do contrato T7: shadow mode, canary, cutover e rollback.
+`schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` como skeleton; PR-T7.0 cria o corpo executivo completo.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t6-pr-t6-r-readiness-closeout-g6` → PR aberta
+- Contrato T6: **ENCERRADO** — `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md`
+- Contrato T7: **skeleton** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- G6: **APROVADO**
+- G7: aberto (bloqueado até PR-T7.R)
+- PR-T7.0: **DESBLOQUEADA**
+
+---
+
 ## Atualizacao 2026-04-28 — PR-T6.9 — Suite declarativa de testes/sandbox multicanal
 
 ### ESTADO HERDADO
@@ -112,7 +170,7 @@ T6.7 Adapter Meta/WhatsApp, T6.8 Dossiê operacional, T4/T3/T2/T5.
 
 ### PRÓXIMO PASSO AUTORIZADO
 
-**PR-T6.R** — Readiness/Closeout G6: `schema/implantation/T6_READINESS_CLOSEOUT_G6.md`
+**PR-T6.R** — Readiness/Closeout G6: `schema/implantation/READINESS_G6.md`
 Smoke T6.1–T6.9; verificação CA-T6-01..CA-T6-10; checklist BLQ-01..15 desta suite;
 decisão G6 APROVADO ou REPROVADO com evidência; aplicar `CONTRACT_CLOSEOUT_PROTOCOL.md`.
 
