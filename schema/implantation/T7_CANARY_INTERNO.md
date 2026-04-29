@@ -10,10 +10,10 @@
 | Referência G6 | `schema/implantation/READINESS_G6.md` |
 | Referência G6 canônica | `READINESS_G6.md` — **nunca** `T6_READINESS_CLOSEOUT_G6.md` |
 | Pré-flight | `schema/implantation/T7_PREFLIGHT_GO_LIVE.md` |
-| Pré-flight canônico | `T7_PREFLIGHT_GO_LIVE.md` — **nunca** `T7_PREFLIGHT_GOLIIVE.md` |
+| Pré-flight canônico | `T7_PREFLIGHT_GO_LIVE.md` — não usar nomes alternativos para o artefato de pré-flight |
 | Simulação | `schema/implantation/T7_SHADOW_SIMULACAO.md` |
 | Matriz | `schema/implantation/T7_MATRIZ_DIVERGENCIAS.md` |
-| Canary (este artefato) | `schema/implantation/T7_CANARY_INTERNO.md` — **nunca** `T7_CANARY_CONTROLADO.md` |
+| Canary (este artefato) | `schema/implantation/T7_CANARY_INTERNO.md` — não usar nomes alternativos para o artefato de canary |
 | Data | 2026-04-29 |
 | Gate anterior | G6 — APROVADO em 2026-04-28 |
 | Gate aberto | G7 — go-live controlado (bloqueado até PR-T7.R) |
@@ -89,8 +89,8 @@ Canary interno **só pode ocorrer** se a matriz T7.3 (`T7_MATRIZ_DIVERGENCIAS.md
 - Zero shadow real, canary real ou cutover real.
 - Zero WhatsApp real ou Meta real.
 - Referência G6 é `READINESS_G6.md` — nunca `T6_READINESS_CLOSEOUT_G6.md`.
-- Referência preflight é `T7_PREFLIGHT_GO_LIVE.md` — nunca `T7_PREFLIGHT_GOLIIVE.md`.
-- Este artefato é `T7_CANARY_INTERNO.md` — nunca `T7_CANARY_CONTROLADO.md`.
+- Referência preflight é `T7_PREFLIGHT_GO_LIVE.md` — não usar nomes alternativos para o artefato de pré-flight.
+- Este artefato é `T7_CANARY_INTERNO.md` — não usar nomes alternativos para o artefato de canary.
 
 ---
 
@@ -530,10 +530,10 @@ Como esta PR é a **definição do protocolo** (não a execução do canary), o 
 | CA-T7.4-12 | Zero execução real (runtime, canary, shadow, cutover, WhatsApp real) | Diff: apenas 4 arquivos schema/ |
 | CA-T7.4-13 | Zero modificação em `src/` | Diff validado |
 | CA-T7.4-14 | Referência G6 = `READINESS_G6.md` (nunca `T6_READINESS_CLOSEOUT_G6.md`) | §1 verificado |
-| CA-T7.4-15 | Referência preflight = `T7_PREFLIGHT_GO_LIVE.md` (nunca `T7_PREFLIGHT_GOLIIVE.md`) | §1 verificado |
+| CA-T7.4-15 | Referência preflight = `T7_PREFLIGHT_GO_LIVE.md` (não usar nomes alternativos para o artefato de pré-flight) | §1 verificado |
 | CA-T7.4-16 | Referência shadow = `T7_SHADOW_SIMULACAO.md` | §1 verificado |
 | CA-T7.4-17 | Referência matriz = `T7_MATRIZ_DIVERGENCIAS.md` | §1 verificado |
-| CA-T7.4-18 | Nome deste artefato = `T7_CANARY_INTERNO.md` (nunca `T7_CANARY_CONTROLADO.md`) | §1 verificado |
+| CA-T7.4-18 | Nome deste artefato = `T7_CANARY_INTERNO.md` (não usar nomes alternativos para o artefato de canary) | §1 verificado |
 | CA-T7.4-19 | Próxima PR autorizada = PR-T7.5 — Cutover parcial ou total governado | Bloco E §16 |
 | CA-T7.4-20 | Bloco E com `Fechamento permitido: sim` | §16 presente e preenchido |
 
@@ -554,8 +554,8 @@ Como esta PR é a **definição do protocolo** (não a execução do canary), o 
 | B-T7.4-09 | Tentativa de execução de runtime ou modificação de `src/` | Violação de contrato — bloqueia merge imediato |
 | B-T7.4-10 | Modificação de artefatos T6 | PR inválida |
 | B-T7.4-11 | Uso de `T6_READINESS_CLOSEOUT_G6.md` como referência canônica G6 | PR inválida — bloqueia merge |
-| B-T7.4-12 | Uso de `T7_PREFLIGHT_GOLIIVE.md` (typo com II) como referência preflight | PR inválida — bloqueia merge |
-| B-T7.4-13 | Uso de `T7_CANARY_CONTROLADO.md` como entrega canônica desta PR | PR inválida — nome canônico é `T7_CANARY_INTERNO.md` |
+| B-T7.4-12 | Uso de nome alternativo com typo como referência preflight | PR inválida — bloqueia merge |
+| B-T7.4-13 | Uso de nome alternativo como entrega canônica desta PR | PR inválida — nome canônico é `T7_CANARY_INTERNO.md` |
 | B-T7.4-14 | Diff com mais de 4 arquivos (além dos 4 esperados) sem justificativa | PR fora de escopo |
 | B-T7.4-15 | `reply_text` gerado como conteúdo desta PR | Violação LLM-first |
 
