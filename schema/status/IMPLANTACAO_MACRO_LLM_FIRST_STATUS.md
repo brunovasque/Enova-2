@@ -2,11 +2,19 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.7 executada em 2026-04-29; próxima PR: PR-T7.R — Readiness/Closeout G7).
+Fase macro ativa: **NENHUMA** — implantação macro T0–T7 encerrada documentalmente em 2026-04-29.
+
+**Veredito G7: APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS** — PR-T7.R executada em 2026-04-29.
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
-Gate aberto: G7 — go-live controlado (bloqueado até PR-T7.R).
+Gate atual: **G7 — APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS** em 2026-04-29 via PR-T7.R.
+
+Restrições operacionais herdadas para T8: telemetria (RA-G7-01), smoke runtime (RA-G7-02), feature flags runtime (RA-G7-05), WhatsApp real (RA-G7-08).
+
+Próxima fase: **T8 — Diagnóstico técnico de aderência contrato × código real** (aguardando PR-T8.0 e autorização Vasques).
+
+Contrato T7 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; PR-T7.R executada em 2026-04-29).
 
 Contrato T6 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md` (G6 APROVADO; PR-T6.R executada em 2026-04-28).
 
@@ -23,6 +31,20 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.R` — Readiness/Closeout G7:
+`schema/implantation/READINESS_G7.md` criado — 17 seções; veredito G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS.
+CA-G7-01..22 (22/22 CUMPRIDOS); B-G7-01..14 declarados (todos não aplicáveis);
+Riscos aceitos RA-G7-01..08 consolidados (telemetria, smoke, canary real, divergências, flags, thresholds, rollback meta, WhatsApp);
+Riscos não aceitos RNA-G7-01..06 (S4 — cliente real, MCMV, promessa indevida, lead_state, legado, reply_text mecânico);
+Contrato T7 encerrado formalmente via CONTRACT_CLOSEOUT_PROTOCOL §4; arquivado em `archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md`;
+Próxima fase T8 planejada: diagnóstico técnico de aderência contrato × código real; PR-T8.0 autorizada (pending: Vasques);
+Critérios mínimos para T8 definidos: CT8-01..10;
+O que G7 NÃO autoriza: go-live real, cliente real, WhatsApp real, deploy, cutover real, uso comercial;
+Bloco E: Fechamento permitido: sim.
+Zero src/; zero runtime; zero WhatsApp real; zero reply_text; zero fact_*; zero go-live; zero cliente real. Implantação macro T0–T7 ENCERRADA DOCUMENTALMENTE.
+
+## Ultima tarefa anterior (PR-T7.7)
 
 `PR-T7.7` — Checklist executivo de go/no-go:
 `schema/implantation/T7_GO_NO_GO_EXECUTIVO.md` criado — 18 seções; consolidação de evidências T7.1–T7.6 e recomendação executiva antes do closeout G7.

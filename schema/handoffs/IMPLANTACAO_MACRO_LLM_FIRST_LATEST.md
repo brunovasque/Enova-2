@@ -69,6 +69,57 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.R — Readiness/Closeout G7
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T7.7 (#143) merged em main em 2026-04-29.
+- Contrato T7: em execução — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.7 entregou: `T7_GO_NO_GO_EXECUTIVO.md` com checklist CHK-T77-01..20 (20/20 PASS), recomendação GO PARA CLOSEOUT G7 DOCUMENTAL, payload para T7.R.
+- Referências canônicas: `READINESS_G6.md` / `T7_PREFLIGHT_GO_LIVE.md` / `T7_SHADOW_SIMULACAO.md` / `T7_MATRIZ_DIVERGENCIAS.md` / `T7_CANARY_INTERNO.md` / `T7_CUTOVER_GOVERNADO.md` / `T7_ROLLBACK_OPERACIONAL.md` / `T7_GO_NO_GO_EXECUTIVO.md`.
+- Próximo passo autorizado: PR-T7.R — Readiness/Closeout G7.
+
+### ESTADO ENTREGUE
+
+**Veredito: G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS**
+
+`schema/implantation/READINESS_G7.md` criado — readiness/closeout G7 formal.
+
+**Conteúdo entregue (17 seções):**
+
+- §4 Evidências T7.0–T7.7: tabela por PR com artefato, status, evidência principal, resultado, bloqueios e conclusão.
+- §5 CA-G7-01..22: 22/22 CUMPRIDOS (contrato T7 aberto, T7.0–T7.7 merged, artefatos verificados, G6 aprovado, zero src/runtime/WhatsApp/cliente/go-live).
+- §6 B-G7-01..14: todos não aplicáveis — nenhum bloqueio ativo.
+- §7 Riscos aceitos RA-G7-01..08 consolidados de T7.7.
+- §8 Riscos não aceitos RNA-G7-01..06 (S4 — cliente real, MCMV, promessa indevida, lead_state, legado, reply_text mecânico).
+- §9 Veredito: G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS.
+- §10 O que G7 autoriza: encerramento T7, arquivamento, abertura T8, diagnóstico técnico.
+- §11 O que G7 NÃO autoriza: go-live real, cliente real, WhatsApp real, deploy, produção.
+- §12 Próxima etapa T8: diagnóstico técnico de aderência contrato × código real; PR-T8.0 sugerida.
+- §13 Critérios mínimos para T8: CT8-01..10.
+- §14 Bloco E: Fechamento permitido: sim.
+- §15 Encerramento formal via CONTRACT_CLOSEOUT_PROTOCOL §4.
+
+**Encerramento do contrato T7:**
+- Contrato arquivado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md`
+- Nota de encerramento adicionada em: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+
+**Próximo passo único autorizado:** PR-T8.0 — Abertura formal do contrato T8 / Diagnóstico técnico de aderência contrato × código real. Pending: autorização explícita de Vasques.
+
+**Restrições operacionais herdadas para T8:**
+- RA-G7-01: telemetria — definida documentalmente; ativação runtime em T8
+- RA-G7-02: smoke de rollback — definido documentalmente; execução em T8
+- RA-G7-05: feature flags — definidas documentalmente; implementação runtime em T8
+- RA-G7-08: WhatsApp/Meta — adapter documentado; handshake real em T8
+
+**Riscos não aceitos que bloqueiam go-live real:**
+- RNA-G7-01: zero cliente real sem T8 + Vasques (S4 — absoluto)
+- RNA-G7-05: legado permanece ativo até T8 + Vasques (S4 — absoluto)
+
+**Limites herdados:** zero src/; zero runtime real; zero rollback real; zero cutover real; zero WhatsApp real; zero reply_text; zero fact_*; zero go-live; zero cliente real.
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T7.7 — Checklist executivo de go/no-go
 
 ### ESTADO HERDADO
