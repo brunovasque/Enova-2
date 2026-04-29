@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.1 executada em 2026-04-29; próxima PR: PR-T7.2 — Shadow/simulação controlada).
+Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.2 executada em 2026-04-29; próxima PR: PR-T7.3 — Matriz de divergências e hardening).
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
@@ -23,6 +23,20 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.2` — Shadow/simulação controlada:
+`schema/implantation/T7_SHADOW_SIMULACAO.md` criado — 15 seções; simulação controlada antes de clientes reais.
+9 grupos (A topo/abertura, B estado civil/composição, C renda/regime/IR, D restrição/elegibilidade, E documentos/dossiê,
+F canal/mídia/WhatsApp simulado, G aprovação/reprovação/visita, H regressão T1–T6, I adversarial/fala indevida);
+70 cenários com IDs, fonte contratual, PASS/FAIL, divergência candidata e bloqueio T7.3 declarado;
+9 tipos TIP-01..09 (sintético, histórico replay, adversarial, regressão, canal, dossiê, MCMV, objeção, finalização);
+MET-01..10 com thresholds Caminho A e Caminho B; logs com 19 campos + extensões;
+12 gatilhos de congelamento FREEZE-01..12 (incluindo violação MCMV, reply_text mecânico, WhatsApp real, src/);
+Saída para T7.3: payload com divergence_id, category_candidate (DIV-MA..DIV-BA), severity, recommendation;
+CA-T7.2-01..15 todos satisfeitos; B-T7.2-01..12 declarados; Bloco E com Fechamento permitido: sim.
+Zero src/; zero runtime; zero shadow real; zero canary; zero cutover; zero WhatsApp real; zero reply_text; zero fact_*. PR-T7.3 desbloqueada.
+
+## Ultima tarefa anterior (PR-T7.1)
 
 `PR-T7.1` — Pré-flight de go-live e travas operacionais:
 `schema/implantation/T7_PREFLIGHT_GO_LIVE.md` criado — 15 seções; condições mínimas de go-live mapeadas.

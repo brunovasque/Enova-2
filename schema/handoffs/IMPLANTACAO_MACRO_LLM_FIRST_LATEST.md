@@ -69,6 +69,54 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.2 — Shadow/simulação controlada
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T7.1 (#137) merged em main em 2026-04-29.
+- Contrato T7: em execução — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.1 entregou: `T7_PREFLIGHT_GO_LIVE.md` com flags, fallback, MET-01..10, logs, comparação T1–T6, caminhos A/B.
+- Referência canônica G6: `schema/implantation/READINESS_G6.md`.
+- Próximo passo autorizado: PR-T7.2 — Shadow/simulação controlada.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T7_SHADOW_SIMULACAO.md` criado — simulação controlada antes da entrada de clientes reais.
+
+**Conteúdo entregue (15 seções):**
+
+- §3 Premissa operacional: Enova não atende clientes reais; esta etapa não usa cliente real; simulação controlada/replay/comparação declarativa.
+- §4 Fontes de comparação: T1 (contrato cognitivo), T2 (estado/memória/reconciliação), T3 (policy engine), T4 (orquestrador), T5 (funil core), T6 (canal/docs/multimodal), T7.1 (pré-flight).
+- §5 Tipos de simulação TIP-01..09: sintético, histórico replay, adversarial, regressão T1–T6, canal simulado, documental, MCMV, objeção, finalização/visita.
+- §6 Cenários: 9 grupos A–I com 70 cenários totais, cada um com ID, nome, objetivo, fonte contratual, PASS, FAIL→DIV candidata, bloqueio T7.3.
+- §7 Métricas MET-01..10 com thresholds Caminho A e Caminho B; bloqueio absoluto para MET-03, MET-08, MET-09.
+- §8 Evidência por cenário: 19 campos canônicos + scenario_id, expected_output, observed_output, divergence, divergence_category_candidate, pass_fail, reviewer_note.
+- §9 12 gatilhos de congelamento FREEZE-01..12 (violação MCMV, reply_text mecânico, promessa indevida, perda lead_state, doc associado errado, WhatsApp real, src/, divergência sem categoria).
+- §10 Saída para T7.3: payload completo com divergence_id, scenario_id, category_candidate (DIV-MA..DIV-BA), severity, contract_source_violated, recommendation (accept/fix/investigate/block).
+- §11 CA-T7.2-01..15 todos satisfeitos; §12 B-T7.2-01..12 declarados (inclui bloqueio se T6_READINESS_CLOSEOUT_G6.md ou T7_PREFLIGHT_GOLIIVE.md aparecerem).
+- §13 Bloco E com Fechamento permitido: sim.
+
+**Garantias:** zero src/; zero runtime; zero shadow real; zero canary; zero cutover; zero WhatsApp/Meta real; zero deploy; zero reply_text; zero fact_*; G7 continua aberto/bloqueado até PR-T7.R.
+
+**Referências canônicas usadas:**
+- G6: `schema/implantation/READINESS_G6.md`
+- Pré-flight: `schema/implantation/T7_PREFLIGHT_GO_LIVE.md`
+
+### PRÓXIMO PASSO AUTORIZADO
+
+**PR-T7.3** — Matriz de divergências e hardening.
+Entregar `schema/implantation/T7_MATRIZ_DIVERGENCIAS.md`: classificação formal das divergências (DIV-MA..DIV-BA), hardening necessário antes de canary/cutover, decisão por categoria.
+
+### ESTADO ATUAL DO REPOSITÓRIO
+
+- Branch: `feat/t7-pr-t7-2-shadow-simulacao` → PR aberta
+- Contrato T7: **em execução** — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- G6: **APROVADO**
+- G7: aberto (bloqueado até PR-T7.R)
+- PR-T7.3: **DESBLOQUEADA**
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T7.1 — Pré-flight de go-live e travas operacionais
 
 ### ESTADO HERDADO
