@@ -25,7 +25,7 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 ## Contrato macro ativo
 
-Nenhum contrato macro ativo — T7 encerrada em 2026-04-29 (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS). Próxima fase: T8 — aguardando abertura formal via PR-T8.0.
+Contrato macro ativo: T8 ainda não aberto — T7 encerrada em 2026-04-29 (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS). Próxima fase: T8 — aguardando abertura formal via PR-T8.0.
 
 | Fase | Status | Próximo passo autorizado |
 |------|--------|--------------------------|
