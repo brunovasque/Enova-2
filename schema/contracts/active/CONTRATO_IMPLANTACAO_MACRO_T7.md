@@ -5,9 +5,9 @@
 | Frente                            | T7 — Shadow, simulação, canary, cutover e rollback                                                |
 | Fase do A01                       | T7 (semanas 15–16 + buffer da implantação macro)                                                  |
 | Prioridade do A01                 | 8                                                                                                  |
-| Dependências                      | G6 APROVADO — `schema/implantation/T6_READINESS_CLOSEOUT_G6.md` — **SATISFEITA em 2026-04-28**   |
+| Dependências                      | G6 APROVADO — `schema/implantation/READINESS_G6.md` — **SATISFEITA em 2026-04-28**   |
 | Legados aplicáveis                | L01, L02, L03, L04, L05, L06, L07, L08, L09, L10, L11, L12, L13, L14, L15, L16, L17, C01–C09    |
-| Referências obrigatórias          | `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`, `schema/A00_PLANO_CANONICO_MACRO.md`, `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`, `schema/ADENDO_CANONICO_SOBERANIA_IA.md`, `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`, `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`, `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md`, `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`, `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`, `schema/CONTRACT_SCHEMA.md`, `schema/implantation/T6_READINESS_CLOSEOUT_G6.md` |
+| Referências obrigatórias          | `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`, `schema/A00_PLANO_CANONICO_MACRO.md`, `schema/A01_BACKLOG_MESTRE_ORDEM_EXECUTIVA.md`, `schema/ADENDO_CANONICO_SOBERANIA_IA.md`, `schema/ADENDO_CANONICO_SOBERANIA_LLM_MCMV.md`, `schema/ADENDO_CANONICO_FECHAMENTO_POR_PROVA.md`, `schema/contracts/CONTRACT_EXECUTION_PROTOCOL.md`, `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`, `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`, `schema/CONTRACT_SCHEMA.md`, `schema/implantation/READINESS_G6.md` |
 | Blocos legados obrigatórios       | L01, L02, L06, L07, L08, L10, L15, L16, L17, C01, C02, C03, C04, C05, C07, C08, C09             |
 | Blocos legados complementares     | L03, L04, L05, L09, L11, L12, L13, L14, C06                                                      |
 | Ordem mínima de leitura da frente | L01 → L02 → L06 → L07 → L08 → L10 → L15 → L16 → L17 → C01 → C02 → C03 → C04 → C05 → C07       |
@@ -96,7 +96,7 @@ T7 **não** inclui:
 
 | Dependência | Status | Evidência |
 |-------------|--------|-----------|
-| G6 APROVADO | **SATISFEITA** em 2026-04-28 | `schema/implantation/T6_READINESS_CLOSEOUT_G6.md` |
+| G6 APROVADO | **SATISFEITA** em 2026-04-28 | `schema/implantation/READINESS_G6.md` |
 | Contrato T6 encerrado | **SATISFEITA** em 2026-04-28 | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md` |
 | T1–T6 entregues e merged | **SATISFEITA** | 9 PRs T6.1–T6.9 merged; T1–T5 encerrados via gates G1–G5 |
 | Soberania LLM verificada | **SATISFEITA** | A00-ADENDO-01/02 respeitados em T1–T6 |
@@ -112,7 +112,7 @@ Para iniciar T7, os seguintes artefatos e estados devem existir:
 | Entrada | Caminho | Status |
 |---------|---------|--------|
 | Contrato T7 aberto formalmente | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md` (este arquivo) | ✅ criado nesta PR |
-| Readiness G6 | `schema/implantation/T6_READINESS_CLOSEOUT_G6.md` | ✅ existe |
+| Readiness G6 | `schema/implantation/READINESS_G6.md` | ✅ existe |
 | Sistema T1–T6 completo | `schema/implantation/T*_*.md` | ✅ 40+ artefatos declarativos |
 | Adendos soberania | `schema/ADENDO_CANONICO_*.md` | ✅ ativos |
 | Bíblia canônica PR | `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md` | ✅ existe |
@@ -124,7 +124,7 @@ Para iniciar T7, os seguintes artefatos e estados devem existir:
 
 | ID | Artefato | PR que entrega | Conteúdo mínimo |
 |----|----------|----------------|-----------------|
-| S1 | `schema/implantation/T7_PREFLIGHT_GOLIIVE.md` | PR-T7.1 | Feature flags, desligamento, fallback, plano de métricas/logs, comparação T1–T6, critérios para T7.2 e caminho arrojado |
+| S1 | `schema/implantation/T7_PREFLIGHT_GO_LIVE.md` | PR-T7.1 | Feature flags, desligamento, fallback, plano de métricas/logs, comparação T1–T6, critérios para T7.2 e caminho arrojado |
 | S2 | `schema/implantation/T7_SHADOW_SIMULACAO.md` | PR-T7.2 | Casos sintéticos+históricos, comparação T1–T6, validação LLM-first, métricas de paridade, gatilhos de congelamento |
 | S3 | `schema/implantation/T7_MATRIZ_DIVERGENCIAS.md` | PR-T7.3 | Classificação formal de divergências em 12 categorias; hardening antes de canary/cutover |
 | S4 | `schema/implantation/T7_CANARY_INTERNO.md` | PR-T7.4 | Ambiente/canal, volume, critérios de expansão/pausa/rollback, janela, métricas, quem aprova |
@@ -153,7 +153,7 @@ Independentemente do caminho escolhido, antes da abertura de volume real de clie
 
 | ID | Critério | Verificável por |
 |----|----------|-----------------|
-| CA-T7-01 | Pré-flight completo: feature flags documentadas, desligamento definido, fallback mapeado | `T7_PREFLIGHT_GOLIIVE.md` |
+| CA-T7-01 | Pré-flight completo: feature flags documentadas, desligamento definido, fallback mapeado | `T7_PREFLIGHT_GO_LIVE.md` |
 | CA-T7-02 | Shadow/simulação executada com casos sintéticos e históricos; métricas de paridade coletadas | `T7_SHADOW_SIMULACAO.md` |
 | CA-T7-03 | Todas as divergências classificadas em 12 categorias; bloqueantes zerados ou com decisão explícita | `T7_MATRIZ_DIVERGENCIAS.md` |
 | CA-T7-04 | Canary interno executado (ou dispensado com justificativa explícita e documentada) | `T7_CANARY_INTERNO.md` |
@@ -164,7 +164,7 @@ Independentemente do caminho escolhido, antes da abertura de volume real de clie
 | CA-T7-09 | Soberania LLM preservada em todo T7 — zero `reply_text` mecânico, zero LLM alternativo | Inspeção de todos S1–S8 |
 | CA-T7-10 | Regras MCMV de T2/T3/T5 não alteradas por nenhuma PR de T7 | Diff de `src/` + artefatos T2/T3/T5 |
 | CA-T7-11 | Zero abertura de volume real de clientes antes de decisão G7 explícita | `T7_READINESS_CLOSEOUT_G7.md` + registro executivo |
-| CA-T7-12 | Telemetria mínima ativa antes de qualquer go-live com cliente real | `T7_PREFLIGHT_GOLIIVE.md` + evidência runtime |
+| CA-T7-12 | Telemetria mínima ativa antes de qualquer go-live com cliente real | `T7_PREFLIGHT_GO_LIVE.md` + evidência runtime |
 
 ---
 
@@ -172,7 +172,7 @@ Independentemente do caminho escolhido, antes da abertura de volume real de clie
 
 | ID | Prova | Formato | Entregue por |
 |----|-------|---------|--------------|
-| P-T7-01 | Pré-flight passou (feature flags, desligamento, fallback) | Inspeção declarativa de `T7_PREFLIGHT_GOLIIVE.md` | PR-T7.1 |
+| P-T7-01 | Pré-flight passou (feature flags, desligamento, fallback) | Inspeção declarativa de `T7_PREFLIGHT_GO_LIVE.md` | PR-T7.1 |
 | P-T7-02 | Simulação executada com métricas de paridade | `T7_SHADOW_SIMULACAO.md` com cenários e resultados | PR-T7.2 |
 | P-T7-03 | Divergências classificadas e bloqueantes zerados | `T7_MATRIZ_DIVERGENCIAS.md` com tabela de classificação | PR-T7.3 |
 | P-T7-04 | Canary executado ou dispensado com justificativa explícita | `T7_CANARY_INTERNO.md` com decisão e critérios | PR-T7.4 |
@@ -247,7 +247,7 @@ Os blocos legados do tronco soberano `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.
 11. `schema/execution/PR_BIBLIA_CANONICA_MACRO_LLM_FIRST.md`
 12. `schema/execution/PR_EXECUTION_TEMPLATE.md`
 13. `schema/handoffs/PR_HANDOFF_TEMPLATE.md`
-14. `schema/implantation/T6_READINESS_CLOSEOUT_G6.md`
+14. `schema/implantation/READINESS_G6.md`
 15. `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md`
 16. `schema/CODEX_WORKFLOW.md`
 
@@ -289,7 +289,7 @@ L01 → L02 (visão e produto)
 → L15 → L16 → L17 (visita, handoff, desligamento)
 → C01 → C02 → C03 → C04 → C05 (contratos cognitivos T1–T5)
 → C07 → C08 → C09 (contratos de canal T6)
-→ schema/implantation/T6_READINESS_CLOSEOUT_G6.md (pré-requisito G6)
+→ schema/implantation/READINESS_G6.md (pré-requisito G6)
 → schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md (este contrato)
 ```
 
@@ -327,7 +327,7 @@ L01 → L02 (visão e produto)
 
 **Fora de escopo:** Executar shadow real, ligar tráfego real ou alterar runtime.
 
-**Entrega:** `schema/implantation/T7_PREFLIGHT_GOLIIVE.md`.
+**Entrega:** `schema/implantation/T7_PREFLIGHT_GO_LIVE.md`.
 
 **Próxima PR:** PR-T7.2.
 

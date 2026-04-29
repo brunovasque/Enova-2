@@ -37,7 +37,7 @@ Zero src/; zero runtime; zero shadow/canary real; zero reply_text; zero fact_*. 
 ## Ultima tarefa anterior (PR-T6.R)
 
 `PR-T6.R` — Readiness/Closeout G6:
-`schema/implantation/T6_READINESS_CLOSEOUT_G6.md` criado — readiness formal da T6; G6 APROVADO.
+`schema/implantation/READINESS_G6.md` criado — readiness formal da T6; G6 APROVADO.
 Smoke S1–S9: 9/9 PASS; CA-T6-01..10: 10/10 PASS; B-T6-01..10: 10/10 desbloqueados;
 BLQ-01..15: 15/15 satisfeitos; adendos A00-ADENDO-01/02/03 respeitados em toda T6.
 Contrato T6 arquivado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md`.

@@ -107,7 +107,7 @@ T0-PR2 — inventario legado vivo.
 ### PRÓXIMO PASSO AUTORIZADO
 
 **PR-T7.1** — Pré-flight de go-live e travas operacionais.
-Entregar `schema/implantation/T7_PREFLIGHT_GOLIIVE.md`: feature flags, desligamento, fallback, plano de métricas/logs, comparação T1–T6, critérios para T7.2 e critérios para Caminho B.
+Entregar `schema/implantation/T7_PREFLIGHT_GO_LIVE.md`: feature flags, desligamento, fallback, plano de métricas/logs, comparação T1–T6, critérios para T7.2 e critérios para Caminho B.
 
 ### ESTADO ATUAL DO REPOSITÓRIO
 
@@ -132,7 +132,7 @@ Entregar `schema/implantation/T7_PREFLIGHT_GOLIIVE.md`: feature flags, desligame
 
 ### ESTADO ENTREGUE
 
-`schema/implantation/T6_READINESS_CLOSEOUT_G6.md` criado — readiness formal da T6.
+`schema/implantation/READINESS_G6.md` criado — readiness formal da T6.
 
 **Decisão: G6 — APROVADO em 2026-04-28**
 
@@ -221,7 +221,7 @@ T6.7 Adapter Meta/WhatsApp, T6.8 Dossiê operacional, T4/T3/T2/T5.
 
 ### PRÓXIMO PASSO AUTORIZADO
 
-**PR-T6.R** — Readiness/Closeout G6: `schema/implantation/T6_READINESS_CLOSEOUT_G6.md`
+**PR-T6.R** — Readiness/Closeout G6: `schema/implantation/READINESS_G6.md`
 Smoke T6.1–T6.9; verificação CA-T6-01..CA-T6-10; checklist BLQ-01..15 desta suite;
 decisão G6 APROVADO ou REPROVADO com evidência; aplicar `CONTRACT_CLOSEOUT_PROTOCOL.md`.
 
