@@ -2,7 +2,7 @@
 
 ## Estado atual
 
-Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.6 executada em 2026-04-29; próxima PR: PR-T7.7 — Checklist executivo de go/no-go).
+Fase macro ativa: T7 — Shadow, simulação, canary, cutover e rollback (PR-T7.7 executada em 2026-04-29; próxima PR: PR-T7.R — Readiness/Closeout G7).
 
 Gate anterior: G6 — APROVADO em 2026-04-28 via PR-T6.R.
 
@@ -23,6 +23,22 @@ Contrato T1 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T1_2
 Base soberana: `schema/source/LEGADO_MESTRE_ENOVA1_ENOVA2.md`.
 
 ## Ultima tarefa relevante
+
+`PR-T7.7` — Checklist executivo de go/no-go:
+`schema/implantation/T7_GO_NO_GO_EXECUTIVO.md` criado — 18 seções; consolidação de evidências T7.1–T7.6 e recomendação executiva antes do closeout G7.
+Checklist CHK-T77-01..20 com 20/20 PASS; evidências de cada PR tabeladas;
+Riscos aceitos RA-T77-01..08 (telemetria, smoke, canary real, divergências, flags, thresholds, rollback runtime, WhatsApp);
+Riscos não aceitos RNA-T77-01..06 (cliente real sem G7, violação MCMV, promessa indevida, perda de lead_state, legado antes de G7, reply_text mecânico);
+12 bloqueantes BLK-T77-01..12 com estado atual (3 pendentes de runtime: BLK-T77-07/11/12);
+4 decisões possíveis (GO/GO PARCIAL/GO COM RESTRIÇÕES/NO-GO) com pré-condições, consequências e próxima ação;
+Recomendação executiva: GO PARA CLOSEOUT G7 DOCUMENTAL (condicional a BLK-T77-07/11/12);
+Autorização humana Vasques definida: obrigatória para G7; veto soberano; formato de registro com data/escopo;
+14 critérios mínimos CR-T7R-01..14 para PR-T7.R;
+Payload canônico §13 para PR-T7.R: go_no_go_status, recommended_decision, approved_for_closeout_g7, t7_artifacts_complete, blockers, accepted_risks, rejected_risks, human_authorization_required, evidence_paths, recommendation;
+CA-T7.7-01..20 todos satisfeitos; B-T7.7-01..14 declarados; Bloco E com Fechamento permitido: sim.
+Zero src/; zero runtime; zero WhatsApp real; zero reply_text; zero fact_*; zero G7 aprovado; zero go-live. PR-T7.R desbloqueada.
+
+## Ultima tarefa anterior (PR-T7.6)
 
 `PR-T7.6` — Rollback operacional comprovado:
 `schema/implantation/T7_ROLLBACK_OPERACIONAL.md` criado — 20 seções; protocolo formal de rollback operacional comprovado antes do go/no-go executivo.
