@@ -69,6 +69,53 @@ T0-PR2 — inventario legado vivo.
 
 ---
 
+## Atualizacao 2026-04-29 — PR-T7.7 — Checklist executivo de go/no-go
+
+### ESTADO HERDADO
+
+- Fase: T7 em execução; PR-T7.6 (#142) merged em main em 2026-04-29.
+- Contrato T7: em execução — `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+- PR-T7.6 entregou: `T7_ROLLBACK_OPERACIONAL.md` com protocolo de rollback (GT-01..12, P-01..14, RBK-01..08, SUC-01..14, FAL-01..11, payload para T7.7).
+- Referências canônicas: `READINESS_G6.md` / `T7_PREFLIGHT_GO_LIVE.md` / `T7_SHADOW_SIMULACAO.md` / `T7_MATRIZ_DIVERGENCIAS.md` / `T7_CANARY_INTERNO.md` / `T7_CUTOVER_GOVERNADO.md` / `T7_ROLLBACK_OPERACIONAL.md`.
+- Próximo passo autorizado: PR-T7.7 — Checklist executivo de go/no-go.
+
+### ESTADO ENTREGUE
+
+`schema/implantation/T7_GO_NO_GO_EXECUTIVO.md` criado — checklist executivo de go/no-go antes do closeout G7.
+
+**Conteúdo entregue (18 seções):**
+
+- §4 Evidências acumuladas T7.1–T7.6: tabela por PR com artefato, status, evidência principal, bloqueios resolvidos/pendentes e conclusão executiva.
+- §5 Checklist executivo CHK-T77-01..20: todos 20/20 PASS (G6 aprovado, T7.1–T7.7 merged, zero src/, zero runtime, zero WhatsApp, zero cliente, zero reply_text, G7 bloqueado, PR-T7.R como próxima).
+- §6 Riscos aceitos RA-T77-01..08: telemetria pendente runtime, smoke pendente runtime, canary real futuro, divergências sem instâncias reais, flags pendentes runtime, thresholds documentais, rollback meta não validada, WhatsApp não testado.
+- §7 Riscos não aceitos RNA-T77-01..06: cliente real sem G7 (S4), violação MCMV (S4), promessa indevida (S4), perda lead_state (S4), desligamento legado antes G7 (S4), reply_text mecânico (S4).
+- §8 Bloqueantes BLK-T77-01..12 com estado atual: 8 resolvidos (BLK-T77-01..06/09/10), 3 pendentes runtime (BLK-T77-07/11/12).
+- §9 4 decisões possíveis: GO, GO PARCIAL, GO COM RESTRIÇÕES (Caminho B), NO-GO — cada uma com pré-condições, consequências e próxima ação.
+- §10 Recomendação executiva: GO PARA CLOSEOUT G7 DOCUMENTAL (condicional a BLK-T77-07/11/12 resolvidos em PR-T7.R).
+- §11 Autorização humana: quando Vasques obrigatório, formato de registro, veto soberano, como entra no payload de T7.R.
+- §12 Critérios mínimos PR-T7.R: CR-T7R-01..14.
+- §13 Payload canônico para PR-T7.R com todos os campos obrigatórios.
+- §14 CA-T7.7-01..20; §15 B-T7.7-01..14; §16 Bloco E com Fechamento permitido: sim.
+
+**Próximo passo único autorizado:** PR-T7.R — Readiness/Closeout G7. Entrega esperada: `schema/implantation/READINESS_G7.md`.
+
+**Leituras obrigatórias para PR-T7.R:**
+1. `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
+2. `schema/contracts/CONTRACT_CLOSEOUT_PROTOCOL.md`
+3. `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+4. `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+5. `schema/implantation/T7_GO_NO_GO_EXECUTIVO.md` (entregue nesta PR)
+6. Todos os artefatos T7.1–T7.6 para verificação de evidências
+
+**Pendentes que PR-T7.R deve resolver antes de declarar G7 APROVADO:**
+- BLK-T77-07: execução de smoke de rollback (mínimo 4 cenários RBK)
+- BLK-T77-11: confirmação técnica de telemetria ativa
+- BLK-T77-12: confirmação técnica de feature flags implementadas
+
+**Limites herdados:** zero src/; zero runtime; zero rollback real; zero cutover real; zero canary real; zero WhatsApp real; zero reply_text; zero fact_*; zero G7 aprovado; zero go-live.
+
+---
+
 ## Atualizacao 2026-04-29 — PR-T7.6 — Rollback operacional comprovado
 
 ### ESTADO HERDADO
