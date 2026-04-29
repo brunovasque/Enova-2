@@ -104,7 +104,7 @@ T0-PR2 — inventario legado vivo.
 - Contrato arquivado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md`
 - Nota de encerramento adicionada em: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T7.md`
 
-**Próximo passo único autorizado:** PR-T8.0 — Abertura formal do contrato T8 / Diagnóstico técnico de aderência contrato × código real. Pending: autorização explícita de Vasques.
+**Próximo passo único autorizado:** PR-T8.1 — Inventário técnico real do Repo2 (tipo: PR-DIAG). PR-T8.0 CONCLUÍDA em 2026-04-29.
 
 **Restrições operacionais herdadas para T8:**
 - RA-G7-01: telemetria — definida documentalmente; ativação runtime em T8
@@ -117,6 +117,39 @@ T0-PR2 — inventario legado vivo.
 - RNA-G7-05: legado permanece ativo até T8 + Vasques (S4 — absoluto)
 
 **Limites herdados:** zero src/; zero runtime real; zero rollback real; zero cutover real; zero WhatsApp real; zero reply_text; zero fact_*; zero go-live; zero cliente real.
+
+---
+
+## Atualizacao 2026-04-29 — PR-T8.0 — Abertura formal do contrato T8
+
+### ESTADO HERDADO
+
+- Fase: T7 encerrada; G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS via PR-T7.R (#144) em 2026-04-29.
+- Contrato T7 arquivado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md`
+- CT8-01..09 satisfeitos; CT8-10 autorização Vasques: concedida (PR-T8.0 executada).
+- Próximo passo autorizado pré-T8.0: PR-T8.0 — Abertura formal do contrato T8.
+
+### ESTADO ENTREGUE
+
+**Contrato T8 aberto formalmente.**
+
+Artefatos criados/atualizados nesta PR:
+- `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md` — contrato ativo T8 Rev2 integral (17 PRs, regra DIAG → IMPL → PROVA, gate G8, memória evolutiva, cláusula Claude Code).
+- `CLAUDE.md` — leitura obrigatória atualizada para 9 arquivos; loop obrigatório de execução por PR adicionado; regras de bloqueio adicionadas.
+- `schema/contracts/_INDEX.md` — T8 declarada aberta; linha de status atualizada.
+- `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` — fase ativa T8 declarada; próxima PR: T8.1.
+- `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` — este handoff.
+
+**Regras-mãe da T8 declaradas:**
+- PR-DIAG → PR-IMPL → PR-PROVA obrigatório por frente.
+- Nenhuma PR-IMPL sem PR-DIAG anterior.
+- Nenhuma frente pronta sem PR-PROVA.
+- Nenhum cliente real / WhatsApp real / go-live sem autorização explícita Vasques.
+- G8 só aprovado com Enova 2 atendendo cliente/lead real controlado conforme contratos T1–T7.
+
+**Próximo passo único autorizado:** PR-T8.1 — Inventário técnico real do Repo2 (tipo: PR-DIAG).
+
+**Limites desta PR:** zero src/; zero runtime; zero Supabase; zero Meta/WhatsApp; zero CRM; zero deploy; zero go-live; zero cliente real.
 
 ---
 
