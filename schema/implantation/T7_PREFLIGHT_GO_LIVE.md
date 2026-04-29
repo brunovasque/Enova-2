@@ -13,7 +13,7 @@
 | Fecha | Pré-flight T7.1 — condições mínimas de go-live mapeadas e validadas documentalmente |
 | Próxima PR | PR-T7.2 — Shadow/simulação controlada |
 | Data | 2026-04-29 |
-| Referência G6 | `schema/implantation/T6_READINESS_CLOSEOUT_G6.md` — única referência canônica do G6 APROVADO |
+| Referência G6 | `schema/implantation/READINESS_G6.md` — única referência canônica do G6 APROVADO |
 
 ---
 
