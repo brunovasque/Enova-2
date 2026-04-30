@@ -19,7 +19,8 @@
     "smoke:adapter:policy": "tsx src/adapter/policy-smoke.ts",
     "smoke:adapter:runtime": "tsx src/adapter/runtime-smoke.ts",
     "smoke:audio": "tsx src/audio/smoke.ts",
-    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio",
+    "smoke:panel": "tsx src/panel/smoke.ts",
+    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio && npm run smoke:panel",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

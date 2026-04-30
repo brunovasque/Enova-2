@@ -1,5 +1,42 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.5 — Frontend do painel operacional completo (2026-04-29)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA
+**PR precedente**: PR-T8.4 (#149) — backend mínimo das 7 abas
+
+**Artefatos criados**:
+- `src/panel/handler.ts` — Painel estático servido em `/panel` (HTML/CSS/JS embutidos como string TS, sem framework, sem build step)
+- `src/panel/smoke.ts` — Smoke test com 30 verificações
+- `schema/implementation/T8_FRONTEND_PAINEL_OPERACIONAL.md` — Documentação
+
+**Arquivos modificados**:
+- `src/worker.ts` — Import + roteamento `/panel` e `/panel/`
+- `package.json` — Script `smoke:panel` adicionado a `smoke:all`
+
+**7 abas implementadas**:
+1. Conversas — lista, detalhe, mensagens/turnos
+2. Bases — bases canônicas com tipo/path/status
+3. Atendimento — visão operacional, pendências, modo manual, overrides recentes
+4. CRM — lista de leads, criação, case-file completo, ações (override, manual mode, reset)
+5. Dashboard — métricas operacionais + warnings
+6. Incidentes — sumário por severidade, eventos críticos, ações de operador
+7. ENOVA IA — status do runtime, flags, próximas PRs
+
+**Endpoints consumidos**: 14 endpoints distintos da PR-T8.4 chamados via JS vanilla com header `X-CRM-Admin-Key`. Demais 12 endpoints acessíveis via `case-file` consolidado.
+
+**Auth**: chave em `localStorage` (`crm_admin_key`), sem hardcode. Modal aparece no primeiro acesso. Botão "configurar" no header reabre modal. Status visual da chave (`***last4` ou `sem chave`).
+
+**Restrições satisfeitas**: zero reply_text, zero stage decision, zero ativação real. Empty-state declarado em todas as abas. Flags `real_supabase`/`real_llm`/`real_whatsapp` exibidas no header global e por aba como avisos amarelos.
+
+**Não tocado**: workflow/deploy, contrato T8, cliente real, WhatsApp real, Supabase real, LLM real, autenticação complexa, redesign visual definitivo.
+
+**Verificação**: `npm run smoke:panel` → 30/30 PASS. `node --check` OK em handler.ts, smoke.ts, worker.ts.
+
+**Próxima PR autorizada**: PR-T8.6 — PR-PROVA — Prova real CRM end-to-end consumindo o painel.
+
+---
+
 ## PR-T8.4 — Backend mínimo das 7 abas do painel operacional (2026-04-29)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA (escopo expandido para 7 abas)  
