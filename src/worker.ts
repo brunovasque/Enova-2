@@ -258,8 +258,7 @@ function handleRoot(telemetryContext: TelemetryRequestContext): Response {
       core_run: 'POST /__core__/run',
       meta_ingest: 'POST /__meta__/ingest',
       crm_health: 'GET /crm/health',
-      crm_leads: 'GET /crm/leads',
-      crm_lead_ops: 'GET|POST /crm/leads/:lead_id[/:sub]',
+      crm_panel: 'GET|POST /crm/* (7 abas: conversations, bases, attendance, leads, dashboard, incidents, enova-ia)',
     },
     surface: 'technical_only',
   });
@@ -298,7 +297,7 @@ export default {
       return response;
     }
 
-    if (url.pathname === '/crm/health' || url.pathname.startsWith('/crm/leads')) {
+    if (url.pathname.startsWith('/crm/')) {
       response = await handleCrmRequest(request, url, telemetryContext, env);
       emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
       return response;

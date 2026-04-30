@@ -11,16 +11,18 @@
 
 ## 0. Escopo real desta PR
 
-> **PR-T8.4 implementa a fundação backend CRM e a matriz backend por aba.**
-> A cobertura completa das abas do painel operacional Enova 2 depende de:
-> - **PR-T8.5** — Frontend CRM operacional
+> **PR-T8.4 entrega o backend mínimo das 7 abas do painel operacional Enova 2**
+> em modo in-process com schema estável e empty-state declarado. A persistência
+> real, runtime de LLM, WhatsApp real e telemetria persistida ficam para PRs
+> futuras:
+> - **PR-T8.5** — Frontend do painel completo consumindo estes endpoints
 > - **PR-T8.6** — Prova real CRM end-to-end
 > - **PR-T8.8** — Supabase real (conector DB)
 > - **PR-T8.9** — Prova Supabase/LLM
 > - **PR-T8.12** — WhatsApp real
 > - **PR-T8.14** — Telemetria/flags runtime
 
-Esta PR **não promete painel completo**. Cobre apenas a fatia da aba "CRM" do painel operacional, deixando todas as demais abas explicitamente declaradas como AUSENTES com PR responsável apontada.
+Esta PR **não implementa frontend**, **não conecta Supabase real**, **não ativa LLM real**, **não ativa WhatsApp real**, **não altera workflow/deploy**. Apenas fornece à PR-T8.5 contratos de API testáveis para todas as 7 abas.
 
 ---
 
@@ -35,8 +37,9 @@ Nenhuma linha de código produz `reply_text`, decide `stage`, ou aprova dossiê.
 |---|---|
 | `src/crm/types.ts` | Tipos canônicos: 9 tabelas, 9 entidades, inputs/resultados/filtros, interface CrmBackend |
 | `src/crm/store.ts` | `CrmInMemoryBackend` (implementa CrmBackend) + singleton `crmBackend` |
-| `src/crm/service.ts` | 15 funções de negócio — leitura, escrita, reset, override, modo manual, case-file |
-| `src/crm/routes.ts` | Handler HTTP `/crm/*` — 13 rotas, auth, path parsing |
+| `src/crm/service.ts` | 15 funções de negócio (aba CRM) — leitura, escrita, reset, override, modo manual, case-file |
+| `src/crm/panel.ts` | Funções de painel para as outras 6 abas — agregações in-process, empty-state estável |
+| `src/crm/routes.ts` | Handler HTTP `/crm/*` — 23 rotas, auth segura, path parsing genérico |
 
 ### Arquivo modificado
 
@@ -46,23 +49,66 @@ Nenhuma linha de código produz `reply_text`, decide `stage`, ou aprova dossiê.
 
 ---
 
-## 2. Rotas implementadas
+## 2. Rotas implementadas (23 endpoints, 7 abas)
 
-| Método | Rota | Função de serviço |
+### Health
+| Método | Rota | Função |
 |---|---|---|
-| GET | `/crm/health` | — (inline) |
-| GET | `/crm/leads` | `listLeads` |
-| POST | `/crm/leads` | `createLead` |
-| GET | `/crm/leads/:id` | `getLeadById` |
-| GET | `/crm/leads/:id/facts` | `getLeadFacts` |
-| GET | `/crm/leads/:id/timeline` | `getLeadTimeline` |
-| GET | `/crm/leads/:id/artifacts` | `getLeadDocuments` |
-| GET | `/crm/leads/:id/dossier` | `getLeadDossier` |
-| GET | `/crm/leads/:id/policy-events` | `getLeadPolicyEvents` |
-| GET | `/crm/leads/:id/case-file` | `getLeadCaseFile` |
-| POST | `/crm/leads/:id/override` | `registerOverride` |
-| POST | `/crm/leads/:id/manual-mode` | `toggleManualMode` |
-| POST | `/crm/leads/:id/reset` | `resetLead` |
+| GET | `/crm/health` | inline (lista as 7 abas) |
+
+### Aba 1 — Conversas
+| Método | Rota | Função | Fonte |
+|---|---|---|---|
+| GET | `/crm/conversations` | `panel.listConversations` | leads + último turno |
+| GET | `/crm/conversations/:lead_id` | `panel.getConversation` | lead + turnos ordenados |
+| GET | `/crm/conversations/:lead_id/messages` | `panel.getConversationMessages` | turnos (mensagens reais em PR-T8.12) |
+
+### Aba 2 — Bases
+| Método | Rota | Função | Fonte |
+|---|---|---|---|
+| GET | `/crm/bases` | `panel.listBases` | 9 bases canônicas hardcoded (status: documented_only) |
+| GET | `/crm/bases/status` | `panel.listBasesStatus` | contagem por tipo + flags real_supabase/vector/memory |
+
+### Aba 3 — Atendimento
+| Método | Rota | Função | Fonte |
+|---|---|---|---|
+| GET | `/crm/attendance` | `panel.getAttendanceOverview` | leads ativos + manual + facts/docs pendentes + overrides recentes |
+| GET | `/crm/attendance/pending` | `panel.getAttendancePending` | facts pending/requires_confirmation + docs requested |
+| GET | `/crm/attendance/manual-mode` | `panel.getAttendanceManualMode` | leads com manual_mode=true |
+
+### Aba 4 — CRM
+| Método | Rota | Função |
+|---|---|---|
+| GET | `/crm/leads` | `svc.listLeads` (filtros: status, manual_mode) |
+| POST | `/crm/leads` | `svc.createLead` |
+| GET | `/crm/leads/:id` | `svc.getLeadById` |
+| GET | `/crm/leads/:id/facts` | `svc.getLeadFacts` |
+| GET | `/crm/leads/:id/timeline` | `svc.getLeadTimeline` |
+| GET | `/crm/leads/:id/artifacts` | `svc.getLeadDocuments` |
+| GET | `/crm/leads/:id/dossier` | `svc.getLeadDossier` |
+| GET | `/crm/leads/:id/policy-events` | `svc.getLeadPolicyEvents` |
+| GET | `/crm/leads/:id/case-file` | `svc.getLeadCaseFile` |
+| POST | `/crm/leads/:id/override` | `svc.registerOverride` |
+| POST | `/crm/leads/:id/manual-mode` | `svc.toggleManualMode` |
+| POST | `/crm/leads/:id/reset` | `svc.resetLead` (preserva auditoria) |
+
+### Aba 5 — Dashboard
+| Método | Rota | Função | Fonte |
+|---|---|---|---|
+| GET | `/crm/dashboard` | `panel.getDashboardSummary` | metrics + warnings (real_supabase=false, empty_state) |
+| GET | `/crm/dashboard/metrics` | `panel.getDashboardMetrics` | contagens in-process + flag real_supabase=false |
+
+### Aba 6 — Incidentes
+| Método | Rota | Função | Fonte |
+|---|---|---|---|
+| GET | `/crm/incidents` | `panel.listIncidents` | policy_events high/critical + override_log (50 últimos) |
+| GET | `/crm/incidents/summary` | `panel.getIncidentsSummary` | contagem por severity + total overrides |
+
+### Aba 7 — ENOVA IA
+| Método | Rota | Função | Fonte |
+|---|---|---|---|
+| GET | `/crm/enova-ia/status` | `panel.getEnovaIaStatus` | flags llm_real/supabase_real/whatsapp_real + next_prs |
+| GET | `/crm/enova-ia/runtime` | `panel.getEnovaIaRuntime` | runtime técnico (worker, core, e1, crm, rollout) |
 
 ---
 
@@ -134,126 +180,130 @@ Para migrar para Supabase real:
 
 ## 8. Backend por aba do painel operacional
 
-O painel operacional Enova 2 possui, no mínimo, **7 abas/frentes**: Conversas, Bases, Atendimento, CRM, Dashboard, Incidentes, ENOVA IA. Esta seção mapeia, para cada aba, o backend exigido vs. o que esta PR entrega.
+Esta PR entrega **endpoints reais e testáveis** para todas as 7 abas. Cada rota retorna schema estável e empty-state declarado quando não há dados — sem promessa falsa de runtime real.
 
 ### 8.1. Aba: Conversas
 
-| Funcionalidade esperada | Backend nesta PR | Backend ausente | PR responsável |
-|---|---|---|---|
-| Listar conversas (por lead) | ❌ | Endpoint `GET /conversations` agregando turnos por lead | PR-T8.8 (Supabase) |
-| Abrir conversa (detalhe) | ⚠️ Parcial — `GET /crm/leads/:id/timeline` retorna turnos | Mensagens reais (inbound + outbound) | PR-T8.12 (WhatsApp real) |
-| Listar mensagens/turnos | ⚠️ Parcial — `crm_turns` (placeholder) | Mensagens com payload real, anexos, áudio | PR-T8.12 |
-| Exibir stage/fase atual | ❌ | `GET /crm/leads/:id` projeta `stage_current` do Core; tabela `crm_lead_state` ainda vazia | PR-T8.8 (projeção real do Core) |
-| Exibir último resumo | ❌ | Resumo semântico produzido pelo LLM | PR-T8.9 (LLM real) |
-| Suporte a modo manual | ✅ | — | Esta PR (`POST /crm/leads/:id/manual-mode`) |
+| Funcionalidade esperada | Endpoint nesta PR | Status real | Dados retornados | Dependência futura |
+|---|---|---|---|---|
+| Listar conversas | `GET /crm/conversations` | ✅ in-process | leads + last_turn_at + turn_count | PR-T8.8 (cross-session) |
+| Abrir conversa | `GET /crm/conversations/:lead_id` | ✅ in-process | lead + turnos ordenados | — |
+| Listar mensagens/turnos | `GET /crm/conversations/:lead_id/messages` | ⚠️ parcial | turnos (placeholder); `real_messages: false` | PR-T8.12 (WhatsApp real) |
+| Exibir stage/fase atual | (via `GET /crm/leads/:id`) | ⚠️ parcial | `stage_current` projetado quando Core escreve em `crm_lead_state` | PR-T8.8 |
+| Exibir último resumo | — | ❌ | — | PR-T8.9 (LLM real) |
+| Modo manual | `POST /crm/leads/:id/manual-mode` | ✅ in-process | log + flag atualizada | — |
 
-**Status da aba:** AUSENTE em runtime real — fundação parcial nesta PR. Frontend depende de PR-T8.5; mensagens reais dependem de PR-T8.12.
+**Status da aba:** ✅ ENDPOINTS REAIS in-process. Empty-state estável. Mensagens reais e resumo semântico em PRs futuras.
 
 ---
 
 ### 8.2. Aba: Bases
 
-| Funcionalidade esperada | Backend nesta PR | Backend ausente | PR responsável |
-|---|---|---|---|
-| Listar bases/conhecimentos | ❌ | Endpoint `GET /bases` | PR-T8.8 + PR-T8.14 |
-| Status de fontes | ❌ | Endpoint `GET /bases/:id/status` | PR-T8.14 (telemetria) |
-| Base normativa (MCMV) | ❌ | Tabela canônica `enova2_normative_base` + endpoint | PR-T8.8 |
-| Memória operacional | ⚠️ Parcial — E1 memory existe em `src/e1/memory.ts` | Endpoint de leitura `GET /memory/:lead_id` | PR-T8.8 |
-| Fonte de regras MCMV | ❌ | Endpoint `GET /rules/mcmv` lendo do contrato canônico | PR-T8.8 |
+| Funcionalidade esperada | Endpoint nesta PR | Status real | Dados retornados | Dependência futura |
+|---|---|---|---|---|
+| Listar bases/conhecimentos | `GET /crm/bases` | ✅ documented_only | 9 bases canônicas hardcoded | PR-T8.8 |
+| Status de fontes | `GET /crm/bases/status` | ✅ documented_only | contagem por tipo + flags real_supabase/vector/memory_runtime | PR-T8.8 + PR-T8.14 |
+| Base normativa (MCMV) | (via `/crm/bases`) | ✅ documented_only | `adendo_soberania_llm_mcmv` + contrato T8 listados | PR-T8.8 |
+| Memória operacional | (via `/crm/bases/status`) | ⚠️ parcial | `memory_runtime: in_process` (E1 memory) | PR-T8.8 |
+| Fonte de regras MCMV | (via `/crm/bases`) | ✅ documented_only | adendos canônicos listados | PR-T8.8 |
 
-**Status da aba:** AUSENTE — esta PR não toca em bases. Razão: Supabase real ainda não conectado; bases vivem em arquivos `schema/source/` e migrações futuras.
+**Status da aba:** ✅ ENDPOINTS REAIS em modo documented_only. Frontend pode listar/inspecionar 9 bases canônicas; runtime de bases (Supabase/vector) entra em PR-T8.8.
 
 ---
 
 ### 8.3. Aba: Atendimento
 
-| Funcionalidade esperada | Backend nesta PR | Backend ausente | PR responsável |
-|---|---|---|---|
-| Visão operacional do atendimento | ⚠️ Parcial — `GET /crm/leads?status=active` | Agregação multi-lead com priorização | PR-T8.8 |
-| Leads em andamento | ✅ | — | Esta PR (`GET /crm/leads?status=active`) |
-| Pendências | ❌ | Endpoint `GET /pending` agregando facts pendentes + docs solicitados | PR-T8.8 |
-| Ações humanas | ✅ Parcial — `POST /crm/leads/:id/override` | Listagem cross-lead de overrides | PR-T8.5 (frontend) + PR-T8.8 |
-| Modo manual | ✅ | — | Esta PR |
-| Reset seguro | ✅ | — | Esta PR (`POST /crm/leads/:id/reset` — preserva auditoria) |
+| Funcionalidade esperada | Endpoint nesta PR | Status real | Dados retornados | Dependência futura |
+|---|---|---|---|---|
+| Visão operacional | `GET /crm/attendance` | ✅ in-process | leads_total/active/manual + facts/docs pendentes + overrides recentes | PR-T8.8 (volume real) |
+| Leads em andamento | (via `/crm/attendance` ou `/crm/leads?status=active`) | ✅ in-process | contagem + listagem | — |
+| Pendências | `GET /crm/attendance/pending` | ✅ in-process | facts pending/requires_confirmation + docs requested | PR-T8.8 |
+| Ações humanas | (via `/crm/attendance` campo `recent_overrides`) | ✅ in-process | últimos 10 overrides cross-lead | — |
+| Modo manual | `GET /crm/attendance/manual-mode` | ✅ in-process | leads com manual_mode=true | — |
+| Reset seguro | `POST /crm/leads/:id/reset` | ✅ in-process | preserva auditoria (fatos → superseded) | — |
 
-**Status da aba:** PARCIAL — operações por-lead funcionando; visão agregada cross-lead ainda ausente.
+**Status da aba:** ✅ ENDPOINTS REAIS in-process com agregação cross-lead já calculada. Volume real entra em PR-T8.8.
 
 ---
 
 ### 8.4. Aba: CRM
 
-| Funcionalidade esperada | Backend nesta PR | Backend ausente | PR responsável |
+| Funcionalidade esperada | Endpoint nesta PR | Status real | Dependência futura |
 |---|---|---|---|
-| Leads (lista + criar) | ✅ | — | Esta PR (`GET/POST /crm/leads`) |
-| Detalhe do lead | ✅ | — | Esta PR (`GET /crm/leads/:id`) |
-| Facts | ✅ leitura | Escrita via API (apenas pelo Core hoje) | PR-T8.8 |
-| Documentos | ✅ leitura | Upload via Storage | PR-T8.8 (Supabase Storage) |
-| Dossiê | ✅ leitura | Geração/edição do dossiê | PR-T8.6 (prova) + PR-T8.9 |
-| Policy events | ✅ leitura | — | Esta PR |
-| Override | ✅ | — | Esta PR |
-| Case-file consolidado | ✅ | — | Esta PR (`GET /crm/leads/:id/case-file`) |
+| Leads (lista + criar) | `GET/POST /crm/leads` | ✅ in-process | — |
+| Detalhe do lead | `GET /crm/leads/:id` | ✅ in-process | — |
+| Facts | `GET /crm/leads/:id/facts` | ✅ leitura in-process | PR-T8.8 (escrita via Core) |
+| Documentos | `GET /crm/leads/:id/artifacts` | ✅ leitura in-process | PR-T8.8 (upload Storage) |
+| Dossiê | `GET /crm/leads/:id/dossier` | ✅ leitura in-process | PR-T8.6 + PR-T8.9 |
+| Policy events | `GET /crm/leads/:id/policy-events` | ✅ leitura in-process | — |
+| Override | `POST /crm/leads/:id/override` | ✅ in-process | — |
+| Manual mode | `POST /crm/leads/:id/manual-mode` | ✅ in-process | — |
+| Reset | `POST /crm/leads/:id/reset` | ✅ in-process (preserva auditoria) | — |
+| Case-file consolidado | `GET /crm/leads/:id/case-file` | ✅ in-process | — |
 
-**Status da aba:** ✅ COBERTA NESTA PR para leitura/operação supervisionada. Escrita de facts/docs/dossiê depende de PR-T8.8 + PR-T8.9.
+**Status da aba:** ✅ COBERTA. Operações supervisionadas funcionando in-process; persistência real em PR-T8.8.
 
 ---
 
 ### 8.5. Aba: Dashboard
 
-| Funcionalidade esperada | Backend nesta PR | Backend ausente | PR responsável |
-|---|---|---|---|
-| Métricas operacionais | ❌ | Endpoint `GET /dashboard/metrics` agregando telemetria | PR-T8.14 |
-| Volume de leads | ❌ | Endpoint `GET /dashboard/volume?range=...` | PR-T8.8 |
-| Distribuição por fase | ❌ | Endpoint `GET /dashboard/stages` | PR-T8.8 |
-| Pendências (cross-lead) | ❌ | Endpoint `GET /dashboard/pending` | PR-T8.8 |
-| Erros | ❌ | Agregação de telemetria de erro | PR-T8.14 |
-| Conversões futuras | ❌ | Funil completo lead → visita → contrato | PR-T8.6 (prova) + PR-T8.9 |
+| Funcionalidade esperada | Endpoint nesta PR | Status real | Dados retornados | Dependência futura |
+|---|---|---|---|---|
+| Métricas operacionais | `GET /crm/dashboard` | ✅ in-process | metrics + warnings (real_supabase=false, empty_state) | PR-T8.14 |
+| Volume de leads | `GET /crm/dashboard/metrics` | ✅ in-process | leads_total/active/manual_mode | PR-T8.8 (range/histórico) |
+| Distribuição por fase | (via metrics) | ⚠️ parcial | depende de `crm_lead_state` populado pelo Core | PR-T8.8 |
+| Pendências cross-lead | (via metrics) | ✅ in-process | facts_pending + documents_pending | — |
+| Erros | (via metrics) | ⚠️ parcial | policy_events_total | PR-T8.14 (telemetria persistida) |
+| Conversões futuras | — | ❌ | — | PR-T8.6 + PR-T8.9 |
 
-**Status da aba:** AUSENTE — esta PR não implementa dashboard. Razão: depende de telemetria real (PR-T8.14) e Supabase (PR-T8.8) para agregações.
+**Status da aba:** ✅ ENDPOINTS REAIS in-process. Métricas voláteis (não persistidas); funil de conversão e histórico real em PRs futuras.
 
 ---
 
 ### 8.6. Aba: Incidentes
 
-| Funcionalidade esperada | Backend nesta PR | Backend ausente | PR responsável |
-|---|---|---|---|
-| Logs de erro | ❌ | Endpoint `GET /incidents` agregando telemetria de erro | PR-T8.14 |
-| Violações de policy | ⚠️ Parcial — `GET /crm/leads/:id/policy-events` (por lead) | Listagem cross-lead | PR-T8.8 + PR-T8.14 |
-| Falhas de integração | ❌ | Endpoint `GET /incidents/integrations` | PR-T8.14 |
-| Eventos críticos | ❌ | Filtro por `severity=critical` | PR-T8.14 |
-| Trilha de investigação | ⚠️ Parcial — `crm_override_log` por lead | Trilha cross-lead com `trace_id` | PR-T8.14 |
+| Funcionalidade esperada | Endpoint nesta PR | Status real | Dados retornados | Dependência futura |
+|---|---|---|---|---|
+| Logs de erro | `GET /crm/incidents` | ⚠️ parcial | `policy_events` high/critical + 50 últimos overrides | PR-T8.14 (auth failures persistidos) |
+| Violações de policy | (via `/crm/incidents`) | ✅ in-process | `policy_events` high/critical cross-lead | — |
+| Falhas de integração | — | ❌ | — | PR-T8.14 |
+| Eventos críticos | (via `/crm/incidents/summary`) | ✅ in-process | contagem por severity (critical/high/medium/low) | — |
+| Trilha de investigação | (via `/crm/incidents` `operator_actions`) | ✅ in-process | overrides cross-lead com trace de operador | PR-T8.14 (trace_id persistido) |
 
-**Status da aba:** AUSENTE — fundação por-lead existe; visão cross-lead/cross-trace depende de PR-T8.14 (telemetria real persistida).
+**Status da aba:** ✅ ENDPOINTS REAIS in-process. Auth failures e telemetria cognitiva persistida entram em PR-T8.14.
 
 ---
 
 ### 8.7. Aba: ENOVA IA
 
-| Funcionalidade esperada | Backend nesta PR | Backend ausente | PR responsável |
-|---|---|---|---|
-| Status do runtime | ⚠️ Parcial — `GET /` (root) e `GET /crm/health` | Endpoint dedicado `GET /ia/runtime` | PR-T8.14 |
-| Status do LLM | ❌ | Endpoint `GET /ia/llm` (modelo, latência, fallback) | PR-T8.9 (LLM real) |
-| Memória | ⚠️ Parcial — E1 memory existe | Endpoint de leitura/inspeção | PR-T8.8 |
-| Prompt registry | ❌ | Endpoint `GET /ia/prompts` lendo registry canônico | PR-T8.9 |
-| Avaliações futuras | ❌ | Endpoint `GET /ia/evals` | PR-T8.9 |
-| Telemetria cognitiva | ❌ | Endpoint agregando decisões do Core + LLM | PR-T8.14 |
+| Funcionalidade esperada | Endpoint nesta PR | Status real | Dados retornados | Dependência futura |
+|---|---|---|---|---|
+| Status do runtime | `GET /crm/enova-ia/status` | ✅ documented_only | flags + next_prs | PR-T8.14 |
+| Status do LLM | (via status: `llm_real: false`) | ⚠️ declarado | flag explícita | PR-T8.9 |
+| Memória | (via runtime: `e1_memory: in_process`) | ⚠️ declarado | flag explícita | PR-T8.8 |
+| Prompt registry | (via status: `prompt_registry: documented_only`) | ⚠️ declarado | flag explícita | PR-T8.9 |
+| Avaliações futuras | — | ❌ | — | PR-T8.9 |
+| Telemetria cognitiva | (via runtime: `telemetry: emit_only`) | ⚠️ declarado | flag explícita | PR-T8.14 |
+| Runtime técnico | `GET /crm/enova-ia/runtime` | ✅ in-process | service + core_engine + e1_memory + crm_backend + rollout_guard | — |
 
-**Status da aba:** AUSENTE — esta PR não toca em runtime IA. Razão: LLM real (PR-T8.9) e telemetria real (PR-T8.14) ainda não conectados.
+**Status da aba:** ✅ ENDPOINTS REAIS retornando estado técnico do runtime e flags explícitas para o frontend. Conexões reais (LLM, Supabase, WhatsApp) declaradas como `false` com PR responsável apontada.
 
 ---
 
 ### 8.8. Sumário consolidado das 7 abas
 
-| Aba | Cobertura nesta PR |
-|---|---|
-| Conversas | AUSENTE (fundação parcial via `crm_turns`) |
-| Bases | AUSENTE |
-| Atendimento | PARCIAL |
-| **CRM** | ✅ **COBERTA** |
-| Dashboard | AUSENTE |
-| Incidentes | AUSENTE (fundação parcial por-lead) |
-| ENOVA IA | AUSENTE |
+| Aba | Endpoints | Cobertura nesta PR | Empty-state estável |
+|---|---|---|---|
+| Conversas | 3 | ✅ ENDPOINTS REAIS in-process | sim |
+| Bases | 2 | ✅ ENDPOINTS REAIS documented_only | sim |
+| Atendimento | 3 | ✅ ENDPOINTS REAIS in-process | sim |
+| CRM | 12 | ✅ COBERTA | sim |
+| Dashboard | 2 | ✅ ENDPOINTS REAIS in-process | sim |
+| Incidentes | 2 | ✅ ENDPOINTS REAIS in-process | sim |
+| ENOVA IA | 2 | ✅ ENDPOINTS REAIS documented_only | sim |
+| **Total** | **26** (incluindo `/crm/health`) | | |
 
-**Conclusão:** PR-T8.4 cobre apenas a aba **CRM** do painel operacional. As demais 6 abas estão explicitamente declaradas como AUSENTES, com PR futura responsável apontada. Esta PR **não promete painel completo**.
+**Conclusão:** PR-T8.4 entrega backend mínimo das 7 abas com endpoints reais, schema estável e empty-state declarado. PR-T8.5 tem base concreta para construir o painel completo consumindo contratos de API testáveis. Esta PR **não promete runtime real** — todas as flags `real_supabase`, `real_llm`, `real_whatsapp` e `real_persistence` estão declaradas como `false` com PR responsável apontada.
 
 ---
 
@@ -272,11 +322,17 @@ O painel operacional Enova 2 possui, no mínimo, **7 abas/frentes**: Conversas, 
 
 Esta PR só pode fechar se:
 
-- [x] Auth seguro (sem fallback universal — flag `CRM_ALLOW_DEV_TOKEN` exigida)
-- [x] Backend atual funcional (`node --check` OK em 5 arquivos)
-- [x] Matriz por aba documentada (§8.1 a §8.7)
-- [x] Lacunas por aba explícitas com PR responsável (§8.8)
-- [x] Próxima PR-T8.5 sabe quais telas/funcionalidades consumir
-- [x] Sem promessa falsa de painel completo
+- [x] Auth seguro corrigido (sem fallback universal; flag `CRM_ALLOW_DEV_TOKEN` exigida)
+- [x] Backend mínimo das 7 abas implementado (26 endpoints incluindo `/crm/health`)
+- [x] Endpoints reais e testáveis (`node --check` OK em 6 arquivos: types, store, service, panel, routes, worker)
+- [x] Frontend NÃO implementado
+- [x] Supabase real NÃO conectado
+- [x] WhatsApp real NÃO ativado
+- [x] Workflow/deploy NÃO alterado
+- [x] Documentação lista endpoints por aba (§2 e §8)
+- [x] Matriz por aba documenta endpoint, status, dados, dependência futura
+- [x] Empty-state declarado com schema estável (todos panel.* retornam estrutura previsível)
+- [x] Flags `real_supabase`, `real_llm`, `real_whatsapp` declaradas explicitamente como `false`
+- [x] PR-T8.5 tem base concreta para construir o painel completo
 
-**Itens fora de escopo desta PR (não tocados):** frontend, workflow/deploy, cliente real, WhatsApp real, contrato T8.
+**Itens fora de escopo (não tocados):** frontend, workflow/deploy, contrato T8, cliente real, WhatsApp real, Supabase real, LLM real.

@@ -1,24 +1,47 @@
 /**
- * ENOVA 2 — CRM Operacional — Route handler (PR-T8.4)
+ * ENOVA 2 — CRM Operacional — Route handler (PR-T8.4 expandido)
  *
  * ESCOPO:
  *   Handler HTTP do módulo CRM. Recebe requests com prefixo `/crm/`,
- *   faz roteamento interno por pathname, chama `service.ts` e retorna
- *   resposta JSON. Integra com o sistema de telemetria existente.
+ *   faz roteamento interno por pathname e cobre as 7 abas do painel
+ *   operacional Enova 2.
  *
- * ROTAS IMPLEMENTADAS:
- *   GET  /crm/health
- *   GET  /crm/leads
- *   POST /crm/leads
- *   GET  /crm/leads/:lead_id
- *   GET  /crm/leads/:lead_id/facts
- *   GET  /crm/leads/:lead_id/timeline
- *   GET  /crm/leads/:lead_id/artifacts
- *   GET  /crm/leads/:lead_id/dossier
- *   GET  /crm/leads/:lead_id/policy-events
- *   POST /crm/leads/:lead_id/override
- *   POST /crm/leads/:lead_id/manual-mode
- *   POST /crm/leads/:lead_id/reset
+ * ABAS DO PAINEL E ROTAS:
+ *   1. Conversas
+ *      GET  /crm/conversations
+ *      GET  /crm/conversations/:lead_id
+ *      GET  /crm/conversations/:lead_id/messages
+ *   2. Bases
+ *      GET  /crm/bases
+ *      GET  /crm/bases/status
+ *   3. Atendimento
+ *      GET  /crm/attendance
+ *      GET  /crm/attendance/pending
+ *      GET  /crm/attendance/manual-mode
+ *   4. CRM
+ *      GET  /crm/leads
+ *      POST /crm/leads
+ *      GET  /crm/leads/:lead_id
+ *      GET  /crm/leads/:lead_id/facts
+ *      GET  /crm/leads/:lead_id/timeline
+ *      GET  /crm/leads/:lead_id/artifacts
+ *      GET  /crm/leads/:lead_id/dossier
+ *      GET  /crm/leads/:lead_id/policy-events
+ *      GET  /crm/leads/:lead_id/case-file
+ *      POST /crm/leads/:lead_id/override
+ *      POST /crm/leads/:lead_id/manual-mode
+ *      POST /crm/leads/:lead_id/reset
+ *   5. Dashboard
+ *      GET  /crm/dashboard
+ *      GET  /crm/dashboard/metrics
+ *   6. Incidentes
+ *      GET  /crm/incidents
+ *      GET  /crm/incidents/summary
+ *   7. ENOVA IA
+ *      GET  /crm/enova-ia/status
+ *      GET  /crm/enova-ia/runtime
+ *
+ *   GET  /crm/health  (health-check técnico)
  *
  * SEGURANÇA:
  *   Todas as rotas CRM exigem header `X-CRM-Admin-Key`.
@@ -29,12 +52,12 @@
  *     3. Caso contrário → 401.
  *   Sem `CRM_ADMIN_KEY` e sem flag dev declarada, todas as requisições são
  *   rejeitadas — não há fallback universal em produção.
- *   Quando Supabase real for conectado (PR-T8.8), autenticação pode ser
- *   aprimorada sem alterar este handler.
  *
  * RESTRIÇÕES INVIOLÁVEIS:
  *   - Nenhuma rota produz ou altera reply_text.
  *   - Nenhuma rota decide stage.
+ *   - Nenhuma rota ativa LLM, Supabase ou WhatsApp reais.
+ *   - Empty-state é declarado explicitamente.
  *   - Modo manual é operacional — não cria script de fala.
  *   - Dossiê retorna informação consolidada — não decide aprovação.
  */
@@ -43,6 +66,7 @@ import type { TelemetryRequestContext } from '../telemetry/types.ts';
 import { emitRuntimeGuard, emitTelemetry } from '../telemetry/emit.ts';
 import { crmBackend } from './store.ts';
 import * as svc from './service.ts';
+import * as panel from './panel.ts';
 import type {
   CrmLeadFilter,
   CrmLeadStatus,
@@ -64,26 +88,28 @@ function crmError(status: number, reason: string, extra?: Record<string, unknown
   return jsonResponse({ ok: false, error: reason, ...extra }, status);
 }
 
-/**
- * Extrai lead_id e sub-recurso do pathname.
- * Exemplo: /crm/leads/abc-123/facts → { lead_id: 'abc-123', sub: 'facts' }
- */
-function parseCrmPath(pathname: string): {
+interface CrmPathParts {
   resource: string;
-  lead_id: string | null;
-  sub: string | null;
-} {
-  // /crm/health
-  if (pathname === '/crm/health') return { resource: 'health', lead_id: null, sub: null };
+  segment_a: string | null;
+  segment_b: string | null;
+}
 
-  // /crm/leads[/:lead_id[/:sub]]
-  const parts = pathname.replace(/^\/crm\//, '').split('/');
-  if (parts[0] !== 'leads') return { resource: parts[0] ?? '', lead_id: null, sub: null };
-
+/**
+ * Decompõe o pathname em (resource, segment_a, segment_b).
+ * Exemplos:
+ *   /crm/health                            → { resource: 'health' }
+ *   /crm/leads                             → { resource: 'leads' }
+ *   /crm/leads/abc-123/facts               → { resource: 'leads', segment_a: 'abc-123', segment_b: 'facts' }
+ *   /crm/conversations/abc-123/messages    → { resource: 'conversations', segment_a: 'abc-123', segment_b: 'messages' }
+ *   /crm/bases/status                      → { resource: 'bases', segment_a: 'status' }
+ *   /crm/enova-ia/runtime                  → { resource: 'enova-ia', segment_a: 'runtime' }
+ */
+function parseCrmPath(pathname: string): CrmPathParts {
+  const parts = pathname.replace(/^\/crm\/?/, '').split('/').filter((s) => s.length > 0);
   return {
-    resource: 'leads',
-    lead_id: parts[1] ?? null,
-    sub: parts[2] ?? null,
+    resource: parts[0] ?? '',
+    segment_a: parts[1] ?? null,
+    segment_b: parts[2] ?? null,
   };
 }
 
@@ -101,8 +127,6 @@ function isCrmAuthorized(request: Request, env: Record<string, unknown>): boolea
   const envKey = typeof env?.CRM_ADMIN_KEY === 'string' ? env.CRM_ADMIN_KEY : '';
   if (envKey && header === envKey) return true;
 
-  // Token dev SÓ vale com flag explícita. Sem a flag, retorna 401 mesmo se o
-  // header bater com `dev-crm-local`. Isso impede fallback universal em produção.
   const allowDevToken = env?.CRM_ALLOW_DEV_TOKEN === 'true';
   if (allowDevToken && header === 'dev-crm-local') return true;
 
@@ -132,7 +156,7 @@ export async function handleCrmRequest(
   env: Record<string, unknown> = {},
 ): Promise<Response> {
 
-  // Auth
+  // Auth (vale para TODAS as rotas /crm/*)
   if (!isCrmAuthorized(request, env)) {
     emitRuntimeGuard(telemetryContext, 'src/crm/routes.ts', 'crm', 'crm_unauthorized', {
       route: url.pathname,
@@ -140,27 +164,162 @@ export async function handleCrmRequest(
     return crmError(401, 'X-CRM-Admin-Key inválida ou ausente.');
   }
 
-  const { resource, lead_id, sub } = parseCrmPath(url.pathname);
+  const { resource, segment_a, segment_b } = parseCrmPath(url.pathname);
   const method = request.method.toUpperCase();
 
   // -------------------------------------------------------------------------
   // GET /crm/health
   // -------------------------------------------------------------------------
   if (resource === 'health') {
+    if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/health.');
     return jsonResponse({
       ok: true,
       service: 'enova-2-crm',
       status: 'operational',
       mode: 'in_process_backend',
       real_supabase: false,
-      note: 'Backend in-process isolado do adapter core. Supabase real em PR-T8.8.',
+      real_llm: false,
+      real_whatsapp: false,
+      panel_tabs: [
+        'conversations',
+        'bases',
+        'attendance',
+        'leads',
+        'dashboard',
+        'incidents',
+        'enova-ia',
+      ],
+      note: 'Backend in-process isolado. Supabase real em PR-T8.8.',
     });
   }
 
   // -------------------------------------------------------------------------
-  // /crm/leads (sem lead_id)
+  // ABA 1 — Conversas
   // -------------------------------------------------------------------------
-  if (resource === 'leads' && !lead_id) {
+  if (resource === 'conversations') {
+    if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/conversations.');
+
+    if (!segment_a) {
+      const result = await panel.listConversations(crmBackend);
+      return jsonResponse({ ok: true, ...result });
+    }
+
+    const lead_id = segment_a;
+
+    if (!segment_b) {
+      const result = await panel.getConversation(crmBackend, lead_id);
+      if (!result.found) return crmError(404, `Conversa do lead '${lead_id}' não encontrada.`);
+      return jsonResponse({ ok: true, record: result.record });
+    }
+
+    if (segment_b === 'messages') {
+      const result = await panel.getConversationMessages(crmBackend, lead_id);
+      return jsonResponse({ ok: true, ...result });
+    }
+
+    return crmError(404, `Sub-rota de conversas não reconhecida: ${segment_b}`);
+  }
+
+  // -------------------------------------------------------------------------
+  // ABA 2 — Bases
+  // -------------------------------------------------------------------------
+  if (resource === 'bases') {
+    if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/bases.');
+
+    if (!segment_a) {
+      return jsonResponse({ ok: true, ...panel.listBases() });
+    }
+
+    if (segment_a === 'status') {
+      return jsonResponse({ ok: true, ...panel.listBasesStatus() });
+    }
+
+    return crmError(404, `Sub-rota de bases não reconhecida: ${segment_a}`);
+  }
+
+  // -------------------------------------------------------------------------
+  // ABA 3 — Atendimento
+  // -------------------------------------------------------------------------
+  if (resource === 'attendance') {
+    if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/attendance.');
+
+    if (!segment_a) {
+      const result = await panel.getAttendanceOverview(crmBackend);
+      return jsonResponse({ ok: true, record: result });
+    }
+
+    if (segment_a === 'pending') {
+      const result = await panel.getAttendancePending(crmBackend);
+      return jsonResponse({ ok: true, ...result });
+    }
+
+    if (segment_a === 'manual-mode') {
+      const result = await panel.getAttendanceManualMode(crmBackend);
+      return jsonResponse({ ok: true, ...result });
+    }
+
+    return crmError(404, `Sub-rota de atendimento não reconhecida: ${segment_a}`);
+  }
+
+  // -------------------------------------------------------------------------
+  // ABA 5 — Dashboard
+  // -------------------------------------------------------------------------
+  if (resource === 'dashboard') {
+    if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/dashboard.');
+
+    if (!segment_a) {
+      const result = await panel.getDashboardSummary(crmBackend);
+      return jsonResponse({ ok: true, ...result });
+    }
+
+    if (segment_a === 'metrics') {
+      const result = await panel.getDashboardMetrics(crmBackend);
+      return jsonResponse({ ok: true, record: result });
+    }
+
+    return crmError(404, `Sub-rota de dashboard não reconhecida: ${segment_a}`);
+  }
+
+  // -------------------------------------------------------------------------
+  // ABA 6 — Incidentes
+  // -------------------------------------------------------------------------
+  if (resource === 'incidents') {
+    if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/incidents.');
+
+    if (!segment_a) {
+      const result = await panel.listIncidents(crmBackend);
+      return jsonResponse({ ok: true, ...result });
+    }
+
+    if (segment_a === 'summary') {
+      const result = await panel.getIncidentsSummary(crmBackend);
+      return jsonResponse({ ok: true, record: result });
+    }
+
+    return crmError(404, `Sub-rota de incidentes não reconhecida: ${segment_a}`);
+  }
+
+  // -------------------------------------------------------------------------
+  // ABA 7 — ENOVA IA
+  // -------------------------------------------------------------------------
+  if (resource === 'enova-ia') {
+    if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/enova-ia.');
+
+    if (segment_a === 'status') {
+      return jsonResponse({ ok: true, record: panel.getEnovaIaStatus() });
+    }
+
+    if (segment_a === 'runtime') {
+      return jsonResponse({ ok: true, record: panel.getEnovaIaRuntime() });
+    }
+
+    return crmError(404, `Sub-rota de enova-ia não reconhecida: ${segment_a ?? '(vazia)'}`);
+  }
+
+  // -------------------------------------------------------------------------
+  // ABA 4 — CRM (/crm/leads sem lead_id)
+  // -------------------------------------------------------------------------
+  if (resource === 'leads' && !segment_a) {
     if (method === 'GET') {
       const params = url.searchParams;
       const filter: CrmLeadFilter = {};
@@ -188,9 +347,12 @@ export async function handleCrmRequest(
   }
 
   // -------------------------------------------------------------------------
-  // /crm/leads/:lead_id[/:sub]
+  // ABA 4 — CRM (/crm/leads/:lead_id[/:sub])
   // -------------------------------------------------------------------------
-  if (resource === 'leads' && lead_id) {
+  if (resource === 'leads' && segment_a) {
+    const lead_id = segment_a;
+    const sub = segment_b;
+
     // GET /crm/leads/:lead_id
     if (!sub && method === 'GET') {
       const result = await svc.getLeadById(crmBackend, lead_id);
