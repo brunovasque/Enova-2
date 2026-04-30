@@ -1,5 +1,24 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.3 — Diagnóstico CRM/Infra Operacional Enova 1 → Enova 2 (2026-04-29)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA
+
+**Artefato criado**: `schema/diagnostics/T8_CRM_REAPROVEITAMENTO_ENOVA1_DIAGNOSTICO.md`
+
+**Achados principais**:
+- 37 componentes CRM/infra mapeados (REAPROV. 18 | REDESENHAR 7 | PROIBIDO 9 | AUSENTE 3)
+- 11 tabelas Supabase canônicas identificadas (enova_leads, enova_facts, enova_turns, enova_state_v2, enova_policy_events, enova_memory_snapshots, enova_artifacts + 4 mais)
+- **Proibido reaproveitar**: casca mecânica de fala, fallback estático por stage, views de stage hardcoded, dossiê que decide stage, reset que apaga auditoria
+- **Deve redesenhar**: view de histórico de etapa (mapear para T5 F1-F5), link do correspondente (Supabase Storage URL), telemetria de qualidade semântica, badges de incidente (frontend novo)
+- CRM backend = 12 endpoints mínimos para PR-T8.4
+- CRM frontend TOTALMENTE AUSENTE do Repo2 — PR-T8.5
+- Repo1 não acessado diretamente — diagnóstico baseado no mapa canônico internalizado
+
+**Próxima PR autorizada**: PR-T8.4 — PR-IMPL — Migração backend CRM operacional no Repo2
+
+---
+
 ## PR-T8.2 — Matriz Aderência Contrato × Código (2026-04-29)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA
