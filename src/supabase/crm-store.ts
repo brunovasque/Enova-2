@@ -190,9 +190,10 @@ export class SupabaseCrmBackend implements CrmBackend {
   }
 
   private async readDocuments(): Promise<CrmDocument[]> {
+    // enova_docs não tem coluna updated_at (confirmado em execução real PR-T8.9B).
     const result = await supabaseSelect<EnovaDocsRow>(this.cfg, 'enova_docs', {
       limit: 100,
-      order: 'updated_at.desc',
+      order: 'created_at.desc',
     });
     if (!result.ok) return [];
     return result.rows.map((r, i) => mapDocumentFromEnovaDocs(r, i));

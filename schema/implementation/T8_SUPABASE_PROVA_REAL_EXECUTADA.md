@@ -101,25 +101,28 @@ Vasques resolveu a conectividade. Resultado com rede funcional:
 
 ---
 
-## §7 — Correção aplicada nesta PR-T8.9B
+## §7 — Correções aplicadas nesta PR-T8.9B
 
 ### Arquivo: `src/supabase/proof.ts` — P4
 
-**Antes**:
-```typescript
-: { limit: 20, order: 'updated_at.desc' };
-```
+**Antes**: `order: 'updated_at.desc'`  
+**Depois**: `order: 'created_at.desc'`
 
-**Depois**:
-```typescript
-// enova_docs não tem coluna updated_at (confirmado em execução real PR-T8.9B).
-// crm-store.ts tem o mesmo bug — corrigir em PR posterior.
-: { limit: 20, order: 'created_at.desc' };
-```
+### Arquivo: `src/supabase/crm-store.ts` — `readDocuments()` (bug equivalente no Worker runtime)
 
-### Bug colateral identificado: `crm-store.ts` linha 195
+`readDocuments()` em `SupabaseCrmBackend` usava `order: 'updated_at.desc'` para `enova_docs` — mesmo bug, faria a leitura falhar quando o Worker operar em modo Supabase real.
 
-`readDocuments()` em `SupabaseCrmBackend` também usa `order: 'updated_at.desc'` para `enova_docs`. Este bug fará a leitura falhar quando o Worker operar em modo Supabase real. **Não corrigido nesta PR** (fora de escopo — Worker runtime). Registrado para PR posterior.
+**Antes**: `order: 'updated_at.desc'`  
+**Depois**: `order: 'created_at.desc'`
+
+### Verificação de outras ocorrências
+
+| Arquivo | Ocorrência | Impacto | Ação |
+|---|---|---|---|
+| `types.ts:186` | `EnovaDocsRow.updated_at?: string \| null` | Type declaration opcional — fallback gracioso se ausente | Nenhuma — tipo correto (campo pode existir em outras instâncias) |
+| `crm-store.ts:130` | `updated_at: asString(row.updated_at) \|\| nowIso()` | Mapper com fallback — retorna `nowIso()` se campo ausente | Nenhuma — seguro |
+| `proof.ts:271` | `enova_state` com `order: 'updated_at.desc'` | `enova_state.updated_at` existe — P5 PASSOU | Nenhuma — correto |
+| `smoke.ts:181` | Mock `crm_lead_meta` com `updated_at` | `crm_lead_meta.updated_at` existe — P3 PASSOU | Nenhuma — correto |
 
 ---
 
@@ -164,7 +167,7 @@ Vasques resolveu a conectividade. Resultado com rede funcional:
 
 ## §11 — Próximo passo imediato
 
-Vasques reexecuta `prove:supabase-real` com o harness atualizado (`created_at.desc` para `enova_docs`). Resultado esperado:
+Vasques reexecuta `prove:supabase-real` com harness e runtime corrigidos (`created_at.desc` em `proof.ts` E `crm-store.ts`). Resultado esperado:
 
 ```
 [P4] enova_docs ............... OK  rows=N
@@ -178,8 +181,7 @@ Se P4 passar, a frente Supabase pode ser declarada encerrada (leitura real aprov
 
 ## §12 — Próximas frentes após encerramento Supabase
 
-1. Corrigir `crm-store.ts` — `readDocuments()` usa `updated_at.desc` (bug paralelo ao P4)
-2. Ativar RLS nas 9 tabelas desativadas
+1. Ativar RLS nas 9 tabelas desativadas
 3. Revisar policy dos buckets públicos
 4. Integração Meta/WhatsApp real
 5. LLM real controlado

@@ -23,8 +23,11 @@
 
 **Resultado rodada 2**: 7/8 PASS | 1 SKIPPED | 1 FAIL — EXIT 1
 
-**Correção**: `proof.ts` P4 — `order: 'updated_at.desc'` → `order: 'created_at.desc'` (coluna real confirmada pelo hint do PostgREST).  
-**Bug colateral**: `crm-store.ts:195` `readDocuments()` tem o mesmo bug — registrado para PR posterior.
+**Correções aplicadas**:
+- `proof.ts` P4 — `order: 'updated_at.desc'` → `order: 'created_at.desc'`
+- `crm-store.ts:195` `readDocuments()` — mesmo fix aplicado (Worker runtime)
+
+**Verificação de outras ocorrências**: `types.ts`, `smoke.ts`, `crm-store.ts:130` e `proof.ts:271` — todos seguros (fallback gracioso ou tabela diferente com coluna existente).
 
 **Testes locais pós-correção**: `smoke:supabase` 70/70 PASS | `prove:crm-e2e` 73/73 PASS | `smoke:all` PASS | `prove:supabase-real` skip exit 0.
 
