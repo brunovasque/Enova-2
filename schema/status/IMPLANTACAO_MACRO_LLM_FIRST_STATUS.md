@@ -16,7 +16,9 @@ Contrato T8 ativo: `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md` �
 
 PR-T8.1 concluída: `schema/diagnostics/T8_REPO2_INVENTARIO_TECNICO.md` criado em 2026-04-29.
 
-Próxima PR autorizada: **PR-T8.2 — Matriz contrato T1–T7 × código real** (tipo: PR-DIAG).
+PR-T8.2 concluída: `schema/diagnostics/T8_MATRIZ_ADERENCIA_CONTRATO_CODIGO.md` criado em 2026-04-29 — 57 itens contratuais mapeados (T1–T7); 2 conflitos críticos (CONF-01: CI/CD auto-deploy; CONF-02: canal incompleto); 4 lacunas bloqueantes G8 (LLM real, Supabase real, CRM, WhatsApp outbound).
+
+Próxima PR autorizada: **PR-T8.3 — Diagnóstico CRM Repo1** (tipo: PR-DIAG).
 
 Contrato T7 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; PR-T7.R executada em 2026-04-29).
 
