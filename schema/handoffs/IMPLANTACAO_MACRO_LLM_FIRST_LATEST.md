@@ -1,5 +1,64 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.8 — Supabase operacional controlado (2026-04-30)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA
+**PR precedente**: PR-T8.7 (#152) — Diagnóstico Supabase real
+
+**Artefatos criados**:
+- `src/supabase/types.ts` — Tipos canônicos, catálogos `SUPABASE_KNOWN_TABLES`, `SUPABASE_RLS_DISABLED_TABLES`, `SUPABASE_KNOWN_BUCKETS`
+- `src/supabase/readiness.ts` — `getSupabaseReadiness`, `getSupabaseConfig`, `getSupabaseReadinessPublic`, `maskSupabaseUrl`
+- `src/supabase/client.ts` — HTTP client PostgREST em fetch puro; sanitização defensiva de erros (service role nunca aparece em mensagem)
+- `src/supabase/crm-store.ts` — `SupabaseCrmBackend` (leitura real `crm_lead_meta`/`enova_state`/`enova_docs`/`crm_override_log`; escrita 100% in-memory via writeBuffer)
+- `src/supabase/smoke.ts` — Smoke 70 checks em 16 categorias (sem tocar Supabase real)
+- `schema/implementation/T8_SUPABASE_OPERACIONAL.md` — Documentação 15 seções
+
+**Arquivos modificados**:
+- `src/crm/store.ts` — Factory `getCrmBackend(env)` adicionada; singleton in-memory mantido
+- `src/crm/routes.ts` — Backend resolvido por request via factory; `/crm/health` expõe `mode` + `supabase_readiness`; 503 seguro quando flag ON sem envs
+- `src/crm/panel.ts` — `listBasesStatus(readiness?)`, `getEnovaIaStatus(readiness?)`, `getEnovaIaRuntime(readiness?)` aceitam readiness opcional
+- `package.json` — Script `smoke:supabase` adicionado e incluído em `smoke:all`. **Sem nova dependência** (sem `@supabase/supabase-js`).
+
+**Feature flag**:
+- `SUPABASE_REAL_ENABLED=true` + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` → modo Supabase real.
+- Qualquer outro estado → modo in-memory (idêntico a PR-T8.6).
+- Flag ON sem envs → 503 seguro com `supabase_readiness` no body.
+
+**Comportamento por estado**:
+
+| Estado | `/crm/health` | Backend | `prove:crm-e2e` |
+|---|---|---|---|
+| Flag OFF (default) | `mode: in_process_backend`, `real_supabase: false` | `CrmInMemoryBackend` | 73/73 PASS |
+| Flag ON sem envs | `/crm/leads` → 503 | (rejeita) | n/a (só rodamos com flag OFF) |
+| Flag ON + envs | `mode: supabase_real`, `real_supabase: true`, `url_masked` exposto | `SupabaseCrmBackend` (R real / W in-memory) | n/a (não rodado em CI) |
+
+**Endpoints afetados**: `/crm/health`, `/crm/leads`, `/crm/leads/:id`, `/crm/leads/:id/case-file`, `/crm/conversations`, `/crm/dashboard`, `/crm/incidents`, `/crm/bases/status`, `/crm/enova-ia/status`, `/crm/enova-ia/runtime`.
+
+**Segurança**:
+- Service role apenas server-side. Sanitização defensiva no client (`safeErrorMessage`) — nunca aparece em response/log/error.
+- `SUPABASE_URL` exposta apenas como `protocol://host` via `maskSupabaseUrl`.
+- Painel **não** acessa Supabase direto — admin key local + Worker.
+- RLS desativado declarado como warning (informativo, não bloqueio).
+- Buckets públicos `documentos-pre-analise` (141 obj) e `enavia-brain` (112 obj) declarados como risco — correção em PR específica.
+
+**Testes**:
+- `npm run smoke:supabase` → **70/70 PASS** (16 categorias).
+- `npm run prove:crm-e2e` → **73/73 PASS** (PR-T8.6 retrocompatibilidade total).
+- `npm run smoke:all` → todas etapas PASS.
+
+**Limitações declaradas**:
+- Sem migration. Sem alteração de schema/RLS/bucket/storage policy.
+- Sem escrita real (writeBuffer in-memory para todas mutações).
+- Sem reset real de dados persistidos.
+- `crm_turns`, `crm_facts`, `crm_dossier`, `crm_policy_events`, `crm_manual_mode_log` sem mapeamento real (writeBuffer).
+- Sem `@supabase/supabase-js`. Sem WhatsApp real. Sem LLM real. Sem cliente real. Sem workflow/deploy alterado.
+
+**Rollback**: setar `SUPABASE_REAL_ENABLED=false` (ou ausente) — fallback automático para in-memory, idêntico a PR-T8.6. Sem deploy necessário. Nenhum dado real foi alterado durante esta PR.
+
+**Próxima PR**: PR-T8.9 — Prova Supabase + documentos + dossiê (PR-PROVA).
+
+---
+
 ## PR-T8.7 — Diagnóstico Supabase real (2026-04-29)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA

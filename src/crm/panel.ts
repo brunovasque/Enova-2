@@ -189,25 +189,41 @@ export function listBases(): { records: CrmBaseRef[]; total: number; real_runtim
   };
 }
 
-export function listBasesStatus(): {
+export interface CrmBasesStatusReadiness {
+  real_supabase: boolean;
+  known_tables_count?: number;
+  known_buckets_count?: number;
+  rls_disabled_tables?: readonly string[];
+}
+
+export function listBasesStatus(readiness?: CrmBasesStatusReadiness): {
   bases_count: number;
   by_type: Record<string, number>;
   real_supabase: boolean;
   real_vector_store: boolean;
   real_memory_runtime: boolean;
+  known_tables_count: number;
+  known_buckets_count: number;
+  rls_disabled_tables: readonly string[];
   note: string;
 } {
   const by_type: Record<string, number> = {};
   for (const b of CANONICAL_BASES) {
     by_type[b.type] = (by_type[b.type] ?? 0) + 1;
   }
+  const real_supabase = readiness?.real_supabase ?? false;
   return {
     bases_count: CANONICAL_BASES.length,
     by_type,
-    real_supabase: false,
+    real_supabase,
     real_vector_store: false,
     real_memory_runtime: false,
-    note: 'Bases servidas em modo documented_only. Runtime de bases (Supabase/vector) entra em PR-T8.8.',
+    known_tables_count: readiness?.known_tables_count ?? 0,
+    known_buckets_count: readiness?.known_buckets_count ?? 0,
+    rls_disabled_tables: readiness?.rls_disabled_tables ?? [],
+    note: real_supabase
+      ? 'Modo Supabase real ATIVO. Catálogo de tabelas/buckets conhecidos exposto. Vector/memory runtime entra em PRs futuras.'
+      : 'Bases servidas em modo documented_only. Runtime de bases (Supabase/vector) entra em PR-T8.8.',
   };
 }
 
@@ -391,7 +407,11 @@ export async function getIncidentsSummary(backend: CrmBackend): Promise<{
 // 6. ENOVA IA
 // ---------------------------------------------------------------------------
 
-export function getEnovaIaStatus(): {
+export interface CrmEnovaIaReadinessParam {
+  real_supabase: boolean;
+}
+
+export function getEnovaIaStatus(readiness?: CrmEnovaIaReadinessParam): {
   runtime: string;
   llm_real: boolean;
   supabase_real: boolean;
@@ -401,24 +421,27 @@ export function getEnovaIaStatus(): {
   next_prs: Record<string, string>;
   note: string;
 } {
+  const supabase_real = readiness?.real_supabase ?? false;
   return {
     runtime: 'in_process',
     llm_real: false,
-    supabase_real: false,
+    supabase_real,
     whatsapp_real: false,
     memory_runtime: 'in_process',
     prompt_registry: 'documented_only',
     next_prs: {
       llm_real: 'PR-T8.9',
-      supabase_real: 'PR-T8.8',
+      supabase_real: supabase_real ? 'PR-T8.8 (ativa)' : 'PR-T8.8',
       whatsapp_real: 'PR-T8.12',
       telemetry_runtime: 'PR-T8.14',
     },
-    note: 'Status técnico do runtime. Conexões reais em PRs futuras.',
+    note: supabase_real
+      ? 'Supabase real ATIVO (leitura controlada). LLM e WhatsApp reais permanecem off.'
+      : 'Status técnico do runtime. Conexões reais em PRs futuras.',
   };
 }
 
-export function getEnovaIaRuntime(): {
+export function getEnovaIaRuntime(readiness?: CrmEnovaIaReadinessParam): {
   service: string;
   runtime: string;
   core_engine: string;
@@ -431,15 +454,16 @@ export function getEnovaIaRuntime(): {
   real_whatsapp: boolean;
   next_prs: Record<string, string>;
 } {
+  const real_supabase = readiness?.real_supabase ?? false;
   return {
     service: 'enova-2-worker',
     runtime: 'cloudflare_worker',
     core_engine: 'in_process',
     e1_memory: 'in_process',
-    crm_backend: 'in_process',
+    crm_backend: real_supabase ? 'supabase_real' : 'in_process',
     rollout_guard: 'active',
     telemetry: 'emit_only',
-    real_supabase: false,
+    real_supabase,
     real_llm: false,
     real_whatsapp: false,
     next_prs: {
