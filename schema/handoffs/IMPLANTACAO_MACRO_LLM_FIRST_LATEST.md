@@ -1,5 +1,46 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.7 — Diagnóstico Supabase real (2026-04-29)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA
+**Frente**: Integração Supabase real (antecede PR-T8.8)
+
+**Artefato criado**:
+- `schema/diagnostics/T8_SUPABASE_DIAGNOSTICO.md` — Diagnóstico completo em 12 seções
+
+**Declaração crítica (§3)**: Schema real do Supabase não confirmado no repo. Nenhum arquivo SQL de schema, nenhuma migration, nenhuma chamada `@supabase/supabase-js`, nenhum binding no `wrangler.toml`. PR-T8.8 é **condicional** ao Vasques fornecer o DDL export real.
+
+**10 lacunas mapeadas (LAC-SB-01..10)**:
+- LAC-SB-01 (CRÍTICA): Zero migrations SQL — sem nenhum `.sql` ou `/supabase/migrations/`
+- LAC-SB-02 (CRÍTICA): Sem `@supabase/supabase-js` no package.json
+- LAC-SB-03 (CRÍTICA): Sem bindings no `wrangler.toml` — `SUPABASE_URL`/`SUPABASE_KEY` ausentes
+- LAC-SB-04 (ALTA): Nomenclatura tripla — `enova_*` (contratos), `enova2_*` (adapter TS), `crm_*` (CRM) — não consolidada
+- LAC-SB-05 (ALTA): `enova_prompt_registry` e `enova_eval_runs` sem representação TypeScript
+- LAC-SB-06 (ALTA): Storage bucket `enova-docs` não declarado
+- LAC-SB-07 (ALTA): RLS não configurado para nenhuma tabela
+- LAC-SB-08 (MÉDIA): Env vars `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` sem documentação de provisionamento
+- LAC-SB-09 (MÉDIA): `InMemoryPersistenceBackend` isolado do `CrmInMemoryBackend` — PR-T8.8 une os dois via Supabase
+- LAC-SB-10 (BAIXA): Ausência de flag `SUPABASE_REAL_ENABLED` para rollback seguro
+
+**Plano PR-T8.8 (condicional)**:
+- 7 migrations sequenciadas (enova2_*, crm_*, storage, RLS, indexes, prompt/eval, bindings)
+- `AdapterSupabaseBackend` substituindo `InMemoryPersistenceBackend`
+- `CrmSupabaseBackend` substituindo `CrmInMemoryBackend`
+- Feature flag `SUPABASE_REAL_ENABLED` para rollback sem deploy
+
+**O que Vasques deve fornecer**:
+1. DDL export de todas as tabelas do projeto Supabase real
+2. Confirmação do `project_ref` (SUPABASE_URL)
+3. `service_role` key (nunca `anon_key`) via `wrangler secret put`
+4. Lista de buckets existentes em Storage
+5. Status atual de RLS por tabela
+
+**Zero src/ alterado, zero migration, zero package change, zero Supabase real alterado.**
+
+**Próxima PR autorizada**: PR-T8.8 — Supabase real (condicional — aguarda DDL export de Vasques).
+
+---
+
 ## PR-T8.6 — Prova real CRM end-to-end (2026-04-29)
 
 **Tipo**: PR-PROVA | **Status**: CONCLUÍDA

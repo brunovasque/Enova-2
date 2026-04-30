@@ -26,7 +26,9 @@ PR-T8.5 concluída: `src/panel/handler.ts` (HTML/CSS/JS embutidos) + `src/panel/
 
 PR-T8.6 concluída: `src/panel/e2e-smoke.ts` criado em 2026-04-29 — **prova automatizada E2E** de PR-T8.4 (backend) + PR-T8.5 (painel); **73/73 checks PASS** em 6 categorias (C1 health/painel, C2 auth, C3 fluxo CRM completo com create→override→manual-mode→attendance→case-file→reset→auditoria preservada, C4 7 abas, C5 flags real_*:false, C6 restrições invioláveis); `npm run prove:crm-e2e` adicionado ao `smoke:all`; `schema/implementation/T8_PROVA_CRM_END_TO_END.md` criado com evidência de cada check; invariante de auditoria comprovada: override_log tem 2 entradas pós-reset (C3-18).
 
-Próxima PR autorizada: **PR-T8.7 — (conforme contrato T8 §PR-T8.7)**.
+PR-T8.7 concluída: `schema/diagnostics/T8_SUPABASE_DIAGNOSTICO.md` criado em 2026-04-29 — diagnóstico Supabase real (PR-DIAG); schema real do Supabase não confirmado no repo; 10 lacunas identificadas (LAC-SB-01..10): zero SQL migrations, zero `@supabase/supabase-js`, zero bindings no wrangler.toml, 3 nomenclaturas paralelas (enova_*, enova2_*, crm_*), ausência de 2 tabelas sem representação TS (prompt_registry, eval_runs), storage/bucket não declarado, RLS não configurado, env vars ausentes, wrangler bindings ausentes; plano PR-T8.8 condicional à chegada de DDL export de Vasques; zero src/ alterado, zero migration, zero package change, zero Supabase real alterado.
+
+Próxima PR autorizada: **PR-T8.8 — Supabase real (condicional — aguarda DDL export de Vasques)**.
 
 Contrato T7 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; PR-T7.R executada em 2026-04-29).
 
