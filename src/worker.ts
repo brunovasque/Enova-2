@@ -17,6 +17,7 @@
 import { runCoreEngine } from './core/engine.ts';
 import type { CoreDecision, LeadState, StageId } from './core/types.ts';
 import { handleMetaIngest } from './meta/ingest.ts';
+import { handleCrmRequest } from './crm/routes.ts';
 import { applyRolloutGuard } from './rollout/controller.ts';
 import { applyE1CoreHook } from './e1/memory.ts';
 import {
@@ -256,13 +257,16 @@ function handleRoot(telemetryContext: TelemetryRequestContext): Response {
       health: 'GET /',
       core_run: 'POST /__core__/run',
       meta_ingest: 'POST /__meta__/ingest',
+      crm_health: 'GET /crm/health',
+      crm_leads: 'GET /crm/leads',
+      crm_lead_ops: 'GET|POST /crm/leads/:lead_id[/:sub]',
     },
     surface: 'technical_only',
   });
 }
 
 export default {
-  async fetch(request: Request): Promise<Response> {
+  async fetch(request: Request, env: Record<string, unknown> = {}): Promise<Response> {
     const url = new URL(request.url);
     const telemetryContext = createRequestTelemetryContext(request, url.pathname);
 
@@ -290,6 +294,12 @@ export default {
 
     if (url.pathname === '/__meta__/ingest') {
       response = await handleMetaIngest(request, telemetryContext);
+      emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
+      return response;
+    }
+
+    if (url.pathname === '/crm/health' || url.pathname.startsWith('/crm/leads')) {
+      response = await handleCrmRequest(request, url, telemetryContext, env);
       emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
       return response;
     }

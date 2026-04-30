@@ -1,5 +1,32 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.4 — Backend CRM Operacional no Repo2 (2026-04-29)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Diagnóstico precedente**: PR-T8.3 (T8_CRM_REAPROVEITAMENTO_ENOVA1_DIAGNOSTICO.md)
+
+**Artefatos criados**:
+- `src/crm/types.ts` — Tipos canônicos CRM (9 tabelas, 9 entidades, interface CrmBackend)
+- `src/crm/store.ts` — `CrmInMemoryBackend` + singleton `crmBackend`
+- `src/crm/service.ts` — 15 funções de negócio (createLead, listLeads, getLeadById, resetLead, registerOverride, toggleManualMode, getLeadCaseFile, ...)
+- `src/crm/routes.ts` — Handler HTTP `/crm/*` — 13 rotas com auth `X-CRM-Admin-Key`
+- `schema/implementation/T8_BACKEND_CRM_OPERACIONAL.md` — documento de implementação
+
+**Arquivo modificado**: `src/worker.ts` — import + env param + bloco `/crm/health` e `/crm/leads`
+
+**Rotas operacionais**:
+GET /crm/health | GET /crm/leads | POST /crm/leads | GET /crm/leads/:id | GET /crm/leads/:id/facts | GET /crm/leads/:id/timeline | GET /crm/leads/:id/artifacts | GET /crm/leads/:id/dossier | GET /crm/leads/:id/policy-events | GET /crm/leads/:id/case-file | POST /crm/leads/:id/override | POST /crm/leads/:id/manual-mode | POST /crm/leads/:id/reset
+
+**Restrições satisfeitas**: zero reply_text, zero stage decision, reset preserva auditoria (fatos → superseded), override_log permanente, modo manual sem script de fala, dossiê sem decisão de aprovação.
+
+**Limitação documentada**: backend in-process isolado do adapter core — integração real em PR-T8.8 (Supabase).
+
+**Verificação**: `node --check` OK em todos os 5 arquivos (types.ts, store.ts, service.ts, routes.ts, worker.ts).
+
+**Próxima PR autorizada**: PR-T8.5 — PR-IMPL — Frontend CRM operacional
+
+---
+
 ## PR-T8.3 — Diagnóstico CRM/Infra Operacional Enova 1 → Enova 2 (2026-04-29)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA

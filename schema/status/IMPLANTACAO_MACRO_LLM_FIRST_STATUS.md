@@ -20,7 +20,9 @@ PR-T8.2 concluída: `schema/diagnostics/T8_MATRIZ_ADERENCIA_CONTRATO_CODIGO.md` 
 
 PR-T8.3 concluída: `schema/diagnostics/T8_CRM_REAPROVEITAMENTO_ENOVA1_DIAGNOSTICO.md` criado em 2026-04-29 — 37 componentes CRM/infra mapeados; 11 tabelas canônicas Supabase identificadas; 9 itens proibidos de reaproveitar; plano de migração sequenciado (PR-T8.4 backend / PR-T8.5 frontend / PR-T8.6 prova).
 
-Próxima PR autorizada: **PR-T8.4 — Migração backend CRM operacional no Repo2** (tipo: PR-IMPL).
+PR-T8.4 concluída: `src/crm/` (types.ts, store.ts, service.ts, routes.ts) criados em 2026-04-29; `src/worker.ts` atualizado com roteamento `/crm/*`; 13 rotas operacionais implementadas; backend in-process `CrmInMemoryBackend` isolado do adapter core; auth via `X-CRM-Admin-Key`; restrições invioláveis satisfeitas (sem reply_text, sem stage decision, reset preserva auditoria); `schema/implementation/T8_BACKEND_CRM_OPERACIONAL.md` criado.
+
+Próxima PR autorizada: **PR-T8.5 — Frontend CRM operacional** (tipo: PR-IMPL).
 
 Contrato T7 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; PR-T7.R executada em 2026-04-29).
 
