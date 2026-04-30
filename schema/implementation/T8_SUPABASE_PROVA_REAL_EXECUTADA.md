@@ -15,7 +15,7 @@
 | Tipo | PR-PROVA |
 | Base | PR-T8.9 — harness `prove:supabase-real` instalado |
 | Objetivo | Execução real Supabase com env real controlada e registro de evidência |
-| Próxima PR | A definir por Vasques — frente depende do resultado desta PR |
+| Próxima PR | Vasques reexecuta `prove:supabase-real` com correção `created_at` → deve retornar P1–P7 positivos |
 
 ---
 
@@ -24,10 +24,10 @@
 | Item | Status |
 |---|---|
 | Modo skip testado (Claude Code) | SIM — `SKIPPED_REAL_ENV_MISSING` / exit 0 / nunca falha CI |
-| Modo real testado (Vasques local) | SIM — envs reais fornecidas por Vasques |
+| Modo real testado (Vasques local) | SIM — duas rodadas com envs reais |
 | URL mascarada | `https://jsqwhnmjsbmtfyyukwsr.supabase.co` |
 | Service role exposta? | NÃO — script imprime apenas `eyJhbG…(219 chars)` |
-| Data/hora execução por Vasques | 2026-04-30 |
+| Data/hora execução por Vasques | 2026-04-30 (rodadas 1 e 2) |
 
 ---
 
@@ -57,157 +57,130 @@ Modo skip: **exit 0 confirmado**. CI seguro sem env real.
 
 ---
 
-## §5 — Resultado da primeira execução real (v1 do harness — fetch failed)
+## §5 — Resultado da primeira execução real (rodada 1 — fetch failed)
 
-Vasques executou o harness `proof.ts` na versão PR-T8.9 (antes da correção de diagnóstico desta PR-T8.9B). Resultado:
+Harness `proof.ts` versão inicial (PR-T8.9 + P0 diagnóstico de rede). Problema: `network_error: fetch failed` em todas as chamadas HTTP. Diagnóstico: bloqueio de rede local no ambiente de Vasques.
 
-```
-PROVA-SUPABASE-REAL | PR-T8.9 | 2026-04-30
-
-Modo real ativo.
-url_masked      : https://jsqwhnmjsbmtfyyukwsr.supabase.co
-service_role   : eyJhbG...(219 chars)
-lead_ref        : (não setado — leitura geral)
-write_enabled  : false
-known_tables    : 30
-known_buckets   : 4
-
-[P1] Readiness ........... OK   mode=supabase_real url=https://jsqwhnmjsbmtfyyukwsr.supabase.co warnings=3
-[P2] Auth inválida ....... FAIL http_status=null ok=false
-[P3] crm_lead_meta ....... FAIL error=network_error: fetch failed
-[P4] enova_docs .......... FAIL error=network_error: fetch failed
-[P5] Dossier snapshot .... FAIL state_ok=false override_ok=false
-[P6] enova_document_files  FAIL error=network_error: fetch failed
-[P7] Storage buckets ..... FAIL error=network_error: fetch failed
-[P8] Write opcional ...... SKIPPED SUPABASE_PROOF_WRITE_ENABLED não setado.
-
-RESULTADO: 2/8 PASS | 1 SKIPPED | 6 FAIL
-EXIT 1 (falha em modo real)
-```
-
-### Interpretação
-
-| Fase | Status | Significado |
+| Fase | Status | Detalhe |
 |---|---|---|
-| P1 | PASS | Readiness local OK — envs reconhecidas, URL parseada |
-| P2 | FAIL (NETWORK_FAIL) | fetch retornou `http_status=null` — não chegou ao endpoint |
-| P3–P7 | FAIL (network_error: fetch failed) | Nenhuma chamada HTTP chegou ao Supabase |
-| P8 | SKIPPED | Correto — write não habilitado |
+| P1 Readiness | PASS | `mode=supabase_real` — envs reconhecidas |
+| P2–P7 | FAIL | `network_error: fetch failed` — sem conexão |
+| P8 | SKIPPED | correto |
 
-**Diagnóstico**: o problema não é de schema, autenticação ou dados. É um problema de **conectividade de rede no ambiente local de Vasques** — o `fetch` do Node.js/tsx não está alcançando o host externo `jsqwhnmjsbmtfyyukwsr.supabase.co`.
-
-Causas possíveis:
-1. **Firewall corporativo ou VPN** bloqueando saída na porta 443 para `*.supabase.co`
-2. **Proxy não configurado** no ambiente Node.js (Node não herda proxy do sistema automaticamente)
-3. **Resolução DNS** falhando para o domínio
-4. **Node.js < 18** sem suporte a fetch nativo (improvável — o script rodou até P1)
+**Resultado**: 2/8 PASS | 1 SKIPPED | 6 FAIL — EXIT 1  
+**Causa**: conectividade de rede local. Corrigida pela Vasques entre rodadas.
 
 ---
 
-## §6 — Correção implementada nesta PR-T8.9B
+## §6 — Resultado da segunda execução real (rodada 2 — conexão resolvida)
 
-O `proof.ts` foi atualizado para incluir **bloco de diagnóstico P0** antes das fases reais:
+Vasques resolveu a conectividade. Resultado com rede funcional:
 
-### Adições ao proof.ts
+| Fase | Status | Detalhe |
+|---|---|---|
+| P1 Readiness estrutural | **PASS** | `mode=supabase_real` — envs reconhecidas, URL parseada |
+| P2 Auth inválida (espera 4xx) | **PASS** | 401 recebido — endpoint acessível, auth funcional |
+| P3 Leitura `crm_lead_meta` | **PASS** | `rows=6` — leitura real confirmada |
+| P4 Leitura `enova_docs` | **FAIL** | `column enova_docs.updated_at does not exist` (hint: `created_at`) |
+| P5 Dossier snapshot | **PASS** | `enova_state` + `crm_override_log` lidos |
+| P6 Leitura `enova_document_files` | **PASS** | `rows=0` — tabela existe, sem registros |
+| P7 Storage buckets | **PASS** | `found=4/4` — todos os buckets conhecidos encontrados |
+| P8 Write append-only | **SKIPPED** | `SUPABASE_PROOF_WRITE_ENABLED` não setado — correto |
 
-1. **`runNetworkDiagnostics(cfg)`** — função de pré-diagnóstico:
-   - Imprime `process.version` (Node.js version)
-   - Imprime `typeof fetch` (confirma disponibilidade)
-   - Testa endpoint neutro público (`https://httpstat.us/200`) — confirma se Node tem acesso à internet em geral
-   - Testa `HEAD /rest/v1/` do Supabase sem auth — confirma se DNS e TLS estão resolvendo
+**Resultado**: 7/8 PASS | 1 SKIPPED | 1 FAIL — EXIT 1
 
-2. **`extractNetworkCause(e, secret)`** — extrai `.cause` do erro undici:
-   - Node.js 18+ (undici) encapsula o erro real do SO em `error.cause`
-   - Causa real pode ser: `ENOTFOUND` (DNS), `ECONNREFUSED` (porta), `CERT_*` (TLS), `UND_ERR_CONNECT_TIMEOUT` (timeout)
-   - Service role sempre sanitizada antes de imprimir
+**Causa do FAIL P4**: a tabela `enova_docs` no Supabase real não tem coluna `updated_at`. O harness usava `order: 'updated_at.desc'`; a coluna correta é `created_at`. Bug de mapeamento de schema — confirmado pelo hint do PostgREST.
 
-3. **Diagnóstico de causa raiz** no bloco de falhas:
-   - Se todas as fases são `NETWORK_FAIL` + endpoint neutro falha → bloqueio de rede local
-   - Se endpoint neutro OK mas Supabase falha → DNS/TLS específico do Supabase
-   - Se endpoint neutro OK e Supabase HEAD OK mas fases falham → autenticação/URL incorreta
+### Evidências positivas da rodada 2
 
-### Output esperado do P0 (quando Vasques rodar novamente)
-
-```
---- Diagnóstico de rede (P0) ---
-  Node.js: v<versão>
-  fetch disponível: true (typeof=function)
-  endpoint neutro (https://httpstat.us/200): status=200 ok=true    ← OU FAIL com causa
-  Supabase /rest/v1/ HEAD: status=401 (esperado sem auth — OK)      ← OU FAIL com causa
---- Fim P0 ---
-```
-
-Se `httpstat.us` FAIL → problema de rede local, não do Supabase.  
-Se `httpstat.us` OK + Supabase FAIL → DNS/TLS específico do Supabase.  
-Se ambos OK → problema era de key/URL (menos provável dado o P1 OK).
+- **Conectividade real**: P2 retornou 401 (auth inválida) — endpoint alcançável.
+- **Leitura real**: P3 retornou 6 leads de `crm_lead_meta` — dados reais confirmados.
+- **Dossiê real**: P5 passou — `enova_state` + `crm_override_log` lidos.
+- **Documentos físicos**: P6 passou — `enova_document_files` existe (vazia).
+- **Storage real**: P7 passou — 4/4 buckets encontrados (`documentos-pre-analise`, `emailsnv`, `enavia-brain`, `enavia-brain-test`).
 
 ---
 
-## §7 — Segurança
+## §7 — Correção aplicada nesta PR-T8.9B
+
+### Arquivo: `src/supabase/proof.ts` — P4
+
+**Antes**:
+```typescript
+: { limit: 20, order: 'updated_at.desc' };
+```
+
+**Depois**:
+```typescript
+// enova_docs não tem coluna updated_at (confirmado em execução real PR-T8.9B).
+// crm-store.ts tem o mesmo bug — corrigir em PR posterior.
+: { limit: 20, order: 'created_at.desc' };
+```
+
+### Bug colateral identificado: `crm-store.ts` linha 195
+
+`readDocuments()` em `SupabaseCrmBackend` também usa `order: 'updated_at.desc'` para `enova_docs`. Este bug fará a leitura falhar quando o Worker operar em modo Supabase real. **Não corrigido nesta PR** (fora de escopo — Worker runtime). Registrado para PR posterior.
+
+---
+
+## §8 — Segurança
 
 | Verificação | Status |
 |---|---|
-| Service role apareceu em stdout? | NÃO — impresso apenas `eyJhbG…(219 chars)` |
-| URL completa exposta? | NÃO — apenas `https://jsqwhnmjsbmtfyyukwsr.supabase.co` (host, sem path/key) |
-| Segredo em output de erro? | NÃO — `safeErrorMessage` e `extractNetworkCause` sanitizam o secret |
+| Service role apareceu em stdout? | NÃO — apenas `eyJhbG…(219 chars)` |
+| URL completa exposta? | NÃO — apenas `https://jsqwhnmjsbmtfyyukwsr.supabase.co` |
+| Segredo em output de erro? | NÃO — `safeErrorMessage` e `extractNetworkCause` sanitizam |
 | Schema alterado? | NÃO |
 | RLS alterado? | NÃO |
 | Bucket alterado? | NÃO |
 | Delete/update/reset real? | NÃO |
+| Write real executado? | NÃO — P8 SKIPPED (sem `SUPABASE_PROOF_WRITE_ENABLED`) |
 
 ---
 
-## §8 — Resultado final desta PR-T8.9B
+## §9 — Resultado atual
 
 | Critério | Status |
 |---|---|
-| Supabase real aprovado | **PENDENTE** — fetch falhou por problema de rede local |
-| Documentos aprovados | PENDENTE |
-| Dossiê aprovado | PENDENTE |
-| Storage aprovado | PENDENTE |
-| Frente Supabase encerrada | **NÃO** — pendente execução real positiva |
-
-**Esta PR-T8.9B entrega**: diagnóstico preciso do bloqueio + correção do harness com P0 de diagnóstico de rede. Não declara prova real positiva pois a execução real falhou por problema externo ao código.
+| Conexão real Supabase | **APROVADO** — P2 401 confirmou |
+| Leitura real `crm_lead_meta` | **APROVADO** — 6 rows reais |
+| Leitura `enova_docs` | **PENDENTE** — correção `created_at` aplicada; reexecução necessária |
+| Dossiê (`enova_state` + `crm_override_log`) | **APROVADO** |
+| `enova_document_files` | **APROVADO** — tabela existe (rows=0) |
+| Storage buckets | **APROVADO** — 4/4 encontrados |
+| Frente Supabase encerrada | **NÃO** — P4 pendente de reexecução positiva |
 
 ---
 
-## §9 — Limitações remanescentes e causa raiz do bloqueio
+## §10 — Limitações remanescentes
 
-O código Supabase (PR-T8.8: `client.ts`, `crm-store.ts`, `readiness.ts`) está correto — P1 confirmou que readiness reconhece as envs e parseia a URL. O bloqueio é de conectividade de rede do ambiente local de Vasques.
+1. **`enova_docs` sem `updated_at`**: coluna real é `created_at`. Corrigido em `proof.ts`; `crm-store.ts` tem o mesmo bug (Worker runtime — PR posterior).
+2. **`enova_document_files` vazia**: `rows=0` — tabela existe no schema mas sem dados no momento da prova. Normal se nenhum documento foi carregado.
+3. **Write não testado**: P8 SKIPPED por decisão correta (sem `SUPABASE_PROOF_WRITE_ENABLED`). Schema de `crm_override_log` precisa ser confirmado antes de enable.
+4. **RLS desativado**: 9 tabelas com RLS off — risco documentado desde PR-T8.7. PR posterior.
+5. **Buckets públicos**: `documentos-pre-analise` (141 obj) e `enavia-brain` (112 obj) — risco documentado. PR posterior.
 
-**Ação necessária para desbloquear**:
+---
 
-```bash
-# 1. Verificar se o Node consegue acessar qualquer host externo:
-node -e "fetch('https://httpstat.us/200').then(r => console.log('OK:', r.status)).catch(e => console.log('FAIL:', e.message, e.cause?.code))"
+## §11 — Próximo passo imediato
 
-# 2. Se falhar, verificar proxy (Windows):
-echo %HTTPS_PROXY%
-echo %HTTP_PROXY%
+Vasques reexecuta `prove:supabase-real` com o harness atualizado (`created_at.desc` para `enova_docs`). Resultado esperado:
 
-# 3. Se proxy necessário, configurar:
-set HTTPS_PROXY=http://proxy:porta
-set HTTP_PROXY=http://proxy:porta
-npm run prove:supabase-real
-
-# 4. Verificar DNS:
-nslookup jsqwhnmjsbmtfyyukwsr.supabase.co
-
-# 5. Verificar porta 443:
-Test-NetConnection jsqwhnmjsbmtfyyukwsr.supabase.co -Port 443
+```
+[P4] enova_docs ............... OK  rows=N
+RESULTADO: 8/8 PASS | 1 SKIPPED | 0 FAIL
+EXIT 0 (ok)
 ```
 
+Se P4 passar, a frente Supabase pode ser declarada encerrada (leitura real aprovada em todas as fases).
+
 ---
 
-## §10 — Próxima PR recomendada
+## §12 — Próximas frentes após encerramento Supabase
 
-**Opção A (preferida)**: Vasques resolve conectividade local e reexecuta `prove:supabase-real` com P0 ativo. Com output positivo, esta PR-T8.9B é completada e a frente Supabase encerrada.
-
-**Opção B**: Se o problema for de proxy/rede corporativa irresolvível localmente, Vasques executa os comandos de diagnóstico `node -e "..."` e cola o resultado aqui. O Claude adapta o harness para usar `https` nativo do Node (sempre disponível, não afetado por fetch/undici), ou usa `axios`/`node-fetch` como fallback.
-
-**Frentes seguintes após Supabase provado**:
-1. Correção de RLS nas tabelas desativadas
-2. Revisão de policy dos buckets públicos (`documentos-pre-analise`, `enavia-brain`)
-3. Integração Meta/WhatsApp real
-4. LLM real controlado
-5. Atendimento de cliente real (pós-G8)
+1. Corrigir `crm-store.ts` — `readDocuments()` usa `updated_at.desc` (bug paralelo ao P4)
+2. Ativar RLS nas 9 tabelas desativadas
+3. Revisar policy dos buckets públicos
+4. Integração Meta/WhatsApp real
+5. LLM real controlado
+6. Atendimento de cliente real (pós-G8)

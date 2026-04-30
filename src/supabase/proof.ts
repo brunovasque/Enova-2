@@ -249,10 +249,12 @@ async function runProof(cfg: SupabaseConfig): Promise<ProofPhase[]> {
   }
 
   // P4: Leitura enova_docs
+  // NOTA: enova_docs não tem coluna updated_at (confirmado em execução real PR-T8.9B).
+  // Ordenar por created_at. crm-store.ts tem o mesmo bug — corrigir em PR posterior.
   {
     const opts = leadRef
       ? { limit: 20, filters: { lead_id: `eq.${leadRef}` } }
-      : { limit: 20, order: 'updated_at.desc' };
+      : { limit: 20, order: 'created_at.desc' };
     const result = await supabaseSelect(cfg, 'enova_docs', opts);
     const ok = result.ok;
     const detail = ok
