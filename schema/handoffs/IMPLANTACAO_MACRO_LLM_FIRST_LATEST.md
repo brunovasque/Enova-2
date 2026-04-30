@@ -1,37 +1,33 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
-## PR-T8.9B — Execução real Supabase 7/8 PASS + correção P4 (2026-04-30)
+## PR-T8.9B — Execução real Supabase APROVADA — frente ENCERRADA (2026-04-30)
 
-**Tipo**: PR-PROVA (em progresso) | **Status**: 7/8 PASS — P4 corrigido, reexecução pendente  
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA — **8/8 PASS | 1 SKIPPED | 0 FAIL**  
 **PR precedente**: PR-T8.9 (#154) — Harness instalado  
-**Frente Supabase**: conexão real confirmada; 6/7 fases substantivas PASS; P4 falhou por coluna inexistente (`updated_at` → `created_at`) — corrigido neste commit.
+**Frente Supabase**: **ENCERRADA** — leitura real provada em todas as fases (ressalva: write real amplo e RLS/storage policy em PRs próprias)
 
-**Rodada 1 (rede bloqueada)**: 2/8 PASS — `network_error: fetch failed`. Vasques resolveu a conectividade.
+**Rodada final positiva (Vasques local, Node v24.14.1, 2026-04-30)**:
 
-**Rodada 2 (conexão OK, 2026-04-30)**:
-
-| Fase | Status | Detalhe |
+| Fase | Status | Evidência |
 |---|---|---|
-| P1 Readiness | **PASS** | `mode=supabase_real` — envs reconhecidas |
-| P2 Auth inválida | **PASS** | 401 recebido — endpoint real confirmado |
-| P3 `crm_lead_meta` | **PASS** | `rows=6` — dados reais lidos |
-| P4 `enova_docs` | **FAIL** | `column enova_docs.updated_at does not exist` |
-| P5 Dossier snapshot | **PASS** | `enova_state` + `crm_override_log` lidos |
+| P1 Readiness | **PASS** | `mode=supabase_real warnings=3` |
+| P2 Auth inválida | **PASS** | `http_status=401` — endpoint real confirmado |
+| P3 `crm_lead_meta` | **PASS** | `rows=6` — leads reais lidos |
+| P4 `enova_docs` | **PASS** | `rows=20` — documentos reais lidos |
+| P5 Dossier snapshot | **PASS** | `state_rows=10 override_rows=0` |
 | P6 `enova_document_files` | **PASS** | `rows=0` — tabela existe |
-| P7 Storage buckets | **PASS** | `found=4/4` |
-| P8 Write | **SKIPPED** | sem `SUPABASE_PROOF_WRITE_ENABLED` — correto |
+| P7 Storage buckets | **PASS** | `found=4/4 known_matched=4/4` |
+| P8 Write append-only | **SKIPPED** | sem `SUPABASE_PROOF_WRITE_ENABLED` — correto |
 
-**Resultado rodada 2**: 7/8 PASS | 1 SKIPPED | 1 FAIL — EXIT 1
+**RESULTADO: 8/8 PASS | 1 SKIPPED | 0 FAIL — EXIT 0**
 
-**Correções aplicadas**:
-- `proof.ts` P4 — `order: 'updated_at.desc'` → `order: 'created_at.desc'`
-- `crm-store.ts:195` `readDocuments()` — mesmo fix aplicado (Worker runtime)
+**Correções aplicadas na frente**:
+- `proof.ts` P4 + `crm-store.ts readDocuments()` — `updated_at.desc` → `created_at.desc`
+- `proof.ts` — bloco P0 `runNetworkDiagnostics()` + `extractNetworkCause()`
 
-**Verificação de outras ocorrências**: `types.ts`, `smoke.ts`, `crm-store.ts:130` e `proof.ts:271` — todos seguros (fallback gracioso ou tabela diferente com coluna existente).
+**Segurança confirmada**: service role nunca exposta | zero migration | zero RLS alterado | zero bucket alterado | zero delete/update/reset | zero WhatsApp/LLM/cliente real.
 
-**Testes locais pós-correção**: `smoke:supabase` 70/70 PASS | `prove:crm-e2e` 73/73 PASS | `smoke:all` PASS | `prove:supabase-real` skip exit 0.
-
-**Próximo passo**: Vasques reexecuta `prove:supabase-real`. Esperado: 8/8 PASS | 1 SKIPPED | 0 FAIL → frente Supabase encerrada.
+**Próxima PR**: a definir por Vasques — Meta/WhatsApp real, LLM real, ou RLS/storage policy.
 
 ---
 
