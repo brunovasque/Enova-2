@@ -1,5 +1,42 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.4 — Backend mínimo das 7 abas do painel operacional (2026-04-29)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA (escopo expandido para 7 abas)  
+**Diagnóstico precedente**: PR-T8.3 (T8_CRM_REAPROVEITAMENTO_ENOVA1_DIAGNOSTICO.md)
+
+**Artefatos criados**:
+- `src/crm/types.ts` — Tipos canônicos CRM (9 tabelas, 9 entidades, interface CrmBackend)
+- `src/crm/store.ts` — `CrmInMemoryBackend` + singleton `crmBackend`
+- `src/crm/service.ts` — 15 funções de negócio (aba CRM)
+- `src/crm/panel.ts` — Funções de painel para 6 abas adicionais (conversas, bases, atendimento, dashboard, incidentes, enova-ia)
+- `src/crm/routes.ts` — Handler HTTP `/crm/*` — 26 endpoints (7 abas + health) com auth segura
+- `schema/implementation/T8_BACKEND_CRM_OPERACIONAL.md` — documento com matriz backend por aba
+
+**Arquivo modificado**: `src/worker.ts` — `env` param + roteamento `url.pathname.startsWith('/crm/')` para todas as abas
+
+**Endpoints por aba (26 totais)**:
+- **Health (1)**: `GET /crm/health`
+- **Conversas (3)**: `GET /crm/conversations`, `GET /crm/conversations/:lead_id`, `GET /crm/conversations/:lead_id/messages`
+- **Bases (2)**: `GET /crm/bases`, `GET /crm/bases/status`
+- **Atendimento (3)**: `GET /crm/attendance`, `GET /crm/attendance/pending`, `GET /crm/attendance/manual-mode`
+- **CRM (12)**: `GET/POST /crm/leads`, `GET /crm/leads/:id[/facts|/timeline|/artifacts|/dossier|/policy-events|/case-file]`, `POST /crm/leads/:id/[override|manual-mode|reset]`
+- **Dashboard (2)**: `GET /crm/dashboard`, `GET /crm/dashboard/metrics`
+- **Incidentes (2)**: `GET /crm/incidents`, `GET /crm/incidents/summary`
+- **ENOVA IA (2)**: `GET /crm/enova-ia/status`, `GET /crm/enova-ia/runtime`
+
+**Auth segura**: `X-CRM-Admin-Key` com flag explícita `CRM_ALLOW_DEV_TOKEN === "true"` para token dev. Sem fallback universal — sem `CRM_ADMIN_KEY` e sem flag → 401 sempre.
+
+**Restrições satisfeitas**: zero reply_text, zero stage decision, reset preserva auditoria, override_log permanente, modo manual sem script, dossiê sem decisão, empty-state declarado com schema estável, flags `real_supabase`/`real_llm`/`real_whatsapp` explicitamente `false`.
+
+**Não tocado**: frontend, workflow/deploy, contrato T8, cliente real, WhatsApp real, Supabase real, LLM real.
+
+**Verificação**: `node --check` OK em 6 arquivos (types, store, service, panel, routes, worker).
+
+**Próxima PR autorizada**: PR-T8.5 — PR-IMPL — Frontend do painel operacional completo consumindo os 26 endpoints da PR-T8.4
+
+---
+
 ## PR-T8.3 — Diagnóstico CRM/Infra Operacional Enova 1 → Enova 2 (2026-04-29)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA
