@@ -64,7 +64,8 @@
 
 import type { TelemetryRequestContext } from '../telemetry/types.ts';
 import { emitRuntimeGuard, emitTelemetry } from '../telemetry/emit.ts';
-import { crmBackend } from './store.ts';
+import { getCrmBackend } from './store.ts';
+import { getSupabaseReadiness, getSupabaseReadinessPublic } from '../supabase/readiness.ts';
 import * as svc from './service.ts';
 import * as panel from './panel.ts';
 import type {
@@ -167,6 +168,10 @@ export async function handleCrmRequest(
   const { resource, segment_a, segment_b } = parseCrmPath(url.pathname);
   const method = request.method.toUpperCase();
 
+  // PR-T8.8 — readiness Supabase (sem segredos)
+  const supabaseReadiness = getSupabaseReadiness(env);
+  const supabaseReadinessPublic = getSupabaseReadinessPublic(env);
+
   // -------------------------------------------------------------------------
   // GET /crm/health
   // -------------------------------------------------------------------------
@@ -176,8 +181,8 @@ export async function handleCrmRequest(
       ok: true,
       service: 'enova-2-crm',
       status: 'operational',
-      mode: 'in_process_backend',
-      real_supabase: false,
+      mode: supabaseReadiness.mode,
+      real_supabase: supabaseReadiness.ready,
       real_llm: false,
       real_whatsapp: false,
       panel_tabs: [
@@ -189,9 +194,26 @@ export async function handleCrmRequest(
         'incidents',
         'enova-ia',
       ],
-      note: 'Backend in-process isolado. Supabase real em PR-T8.8.',
+      supabase_readiness: supabaseReadinessPublic,
+      note:
+        supabaseReadiness.mode === 'supabase_real'
+          ? 'Modo Supabase real ATIVO — leitura controlada. Escrita real desabilitada nesta PR (PR-T8.8).'
+          : 'Backend in-process isolado. Supabase real condicionado a SUPABASE_REAL_ENABLED=true + envs.',
     });
   }
+
+  // PR-T8.8 — falha rápida e segura quando flag está ON sem envs
+  if (supabaseReadiness.flag_enabled && !supabaseReadiness.ready) {
+    emitRuntimeGuard(telemetryContext, 'src/crm/routes.ts', 'crm', 'crm_supabase_misconfigured', {
+      route: url.pathname,
+      errors: supabaseReadiness.errors,
+    });
+    return crmError(503, 'Supabase real habilitado, mas envs ausentes.', {
+      supabase_readiness: supabaseReadinessPublic,
+    });
+  }
+
+  const backend = await getCrmBackend(env);
 
   // -------------------------------------------------------------------------
   // ABA 1 — Conversas
@@ -200,20 +222,20 @@ export async function handleCrmRequest(
     if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/conversations.');
 
     if (!segment_a) {
-      const result = await panel.listConversations(crmBackend);
+      const result = await panel.listConversations(backend);
       return jsonResponse({ ok: true, ...result });
     }
 
     const lead_id = segment_a;
 
     if (!segment_b) {
-      const result = await panel.getConversation(crmBackend, lead_id);
+      const result = await panel.getConversation(backend, lead_id);
       if (!result.found) return crmError(404, `Conversa do lead '${lead_id}' não encontrada.`);
       return jsonResponse({ ok: true, record: result.record });
     }
 
     if (segment_b === 'messages') {
-      const result = await panel.getConversationMessages(crmBackend, lead_id);
+      const result = await panel.getConversationMessages(backend, lead_id);
       return jsonResponse({ ok: true, ...result });
     }
 
@@ -231,7 +253,15 @@ export async function handleCrmRequest(
     }
 
     if (segment_a === 'status') {
-      return jsonResponse({ ok: true, ...panel.listBasesStatus() });
+      return jsonResponse({
+        ok: true,
+        ...panel.listBasesStatus({
+          real_supabase: supabaseReadiness.ready,
+          known_tables_count: supabaseReadinessPublic.known_tables_count,
+          known_buckets_count: supabaseReadinessPublic.known_buckets_count,
+          rls_disabled_tables: supabaseReadinessPublic.rls_disabled_tables,
+        }),
+      });
     }
 
     return crmError(404, `Sub-rota de bases não reconhecida: ${segment_a}`);
@@ -244,17 +274,17 @@ export async function handleCrmRequest(
     if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/attendance.');
 
     if (!segment_a) {
-      const result = await panel.getAttendanceOverview(crmBackend);
+      const result = await panel.getAttendanceOverview(backend);
       return jsonResponse({ ok: true, record: result });
     }
 
     if (segment_a === 'pending') {
-      const result = await panel.getAttendancePending(crmBackend);
+      const result = await panel.getAttendancePending(backend);
       return jsonResponse({ ok: true, ...result });
     }
 
     if (segment_a === 'manual-mode') {
-      const result = await panel.getAttendanceManualMode(crmBackend);
+      const result = await panel.getAttendanceManualMode(backend);
       return jsonResponse({ ok: true, ...result });
     }
 
@@ -268,12 +298,12 @@ export async function handleCrmRequest(
     if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/dashboard.');
 
     if (!segment_a) {
-      const result = await panel.getDashboardSummary(crmBackend);
+      const result = await panel.getDashboardSummary(backend);
       return jsonResponse({ ok: true, ...result });
     }
 
     if (segment_a === 'metrics') {
-      const result = await panel.getDashboardMetrics(crmBackend);
+      const result = await panel.getDashboardMetrics(backend);
       return jsonResponse({ ok: true, record: result });
     }
 
@@ -287,12 +317,12 @@ export async function handleCrmRequest(
     if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/incidents.');
 
     if (!segment_a) {
-      const result = await panel.listIncidents(crmBackend);
+      const result = await panel.listIncidents(backend);
       return jsonResponse({ ok: true, ...result });
     }
 
     if (segment_a === 'summary') {
-      const result = await panel.getIncidentsSummary(crmBackend);
+      const result = await panel.getIncidentsSummary(backend);
       return jsonResponse({ ok: true, record: result });
     }
 
@@ -306,11 +336,17 @@ export async function handleCrmRequest(
     if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/enova-ia.');
 
     if (segment_a === 'status') {
-      return jsonResponse({ ok: true, record: panel.getEnovaIaStatus() });
+      return jsonResponse({
+        ok: true,
+        record: panel.getEnovaIaStatus({ real_supabase: supabaseReadiness.ready }),
+      });
     }
 
     if (segment_a === 'runtime') {
-      return jsonResponse({ ok: true, record: panel.getEnovaIaRuntime() });
+      return jsonResponse({
+        ok: true,
+        record: panel.getEnovaIaRuntime({ real_supabase: supabaseReadiness.ready }),
+      });
     }
 
     return crmError(404, `Sub-rota de enova-ia não reconhecida: ${segment_a ?? '(vazia)'}`);
@@ -328,14 +364,14 @@ export async function handleCrmRequest(
       const manualParam = params.get('manual_mode');
       if (manualParam !== null) filter.manual_mode = manualParam === 'true';
 
-      const result = await svc.listLeads(crmBackend, filter);
+      const result = await svc.listLeads(backend, filter);
       return jsonResponse({ ok: true, ...result });
     }
 
     if (method === 'POST') {
       const body = await parseBody(request);
       if (!isRecord(body)) return crmError(400, 'Body JSON inválido.');
-      const result = await svc.createLead(crmBackend, {
+      const result = await svc.createLead(backend, {
         external_ref: (body.external_ref as string) ?? null,
         customer_name: (body.customer_name as string) ?? null,
       });
@@ -355,32 +391,32 @@ export async function handleCrmRequest(
 
     // GET /crm/leads/:lead_id
     if (!sub && method === 'GET') {
-      const result = await svc.getLeadById(crmBackend, lead_id);
+      const result = await svc.getLeadById(backend, lead_id);
       if (!result.found) return crmError(404, result.error ?? 'Lead não encontrado.');
       return jsonResponse({ ok: true, record: result.record });
     }
 
     // GET /crm/leads/:lead_id/facts
     if (sub === 'facts' && method === 'GET') {
-      const result = await svc.getLeadFacts(crmBackend, lead_id);
+      const result = await svc.getLeadFacts(backend, lead_id);
       return jsonResponse({ ok: true, ...result });
     }
 
     // GET /crm/leads/:lead_id/timeline
     if (sub === 'timeline' && method === 'GET') {
-      const result = await svc.getLeadTimeline(crmBackend, lead_id);
+      const result = await svc.getLeadTimeline(backend, lead_id);
       return jsonResponse({ ok: true, ...result });
     }
 
     // GET /crm/leads/:lead_id/artifacts
     if (sub === 'artifacts' && method === 'GET') {
-      const result = await svc.getLeadDocuments(crmBackend, lead_id);
+      const result = await svc.getLeadDocuments(backend, lead_id);
       return jsonResponse({ ok: true, ...result });
     }
 
     // GET /crm/leads/:lead_id/dossier
     if (sub === 'dossier' && method === 'GET') {
-      const result = await svc.getLeadDossier(crmBackend, lead_id);
+      const result = await svc.getLeadDossier(backend, lead_id);
       if (!result.found) {
         return jsonResponse({ ok: true, record: null, note: 'Dossiê ainda não criado para este lead.' });
       }
@@ -389,13 +425,13 @@ export async function handleCrmRequest(
 
     // GET /crm/leads/:lead_id/policy-events
     if (sub === 'policy-events' && method === 'GET') {
-      const result = await svc.getLeadPolicyEvents(crmBackend, lead_id);
+      const result = await svc.getLeadPolicyEvents(backend, lead_id);
       return jsonResponse({ ok: true, ...result });
     }
 
     // GET /crm/leads/:lead_id/case-file
     if (sub === 'case-file' && method === 'GET') {
-      const result = await svc.getLeadCaseFile(crmBackend, lead_id);
+      const result = await svc.getLeadCaseFile(backend, lead_id);
       if (!result.found) return crmError(404, result.error ?? 'Lead não encontrado.');
       return jsonResponse({ ok: true, record: result.record });
     }
@@ -414,7 +450,7 @@ export async function handleCrmRequest(
         reason: (body.reason as string) ?? '',
       };
 
-      const result = await svc.registerOverride(crmBackend, lead_id, input);
+      const result = await svc.registerOverride(backend, lead_id, input);
       if (!result.success) return crmError(400, result.error ?? 'Erro ao registrar override.');
 
       emitTelemetry({
@@ -449,7 +485,7 @@ export async function handleCrmRequest(
         return crmError(400, 'Campo "action" deve ser "activate" ou "deactivate".');
       }
 
-      const result = await svc.toggleManualMode(crmBackend, lead_id, input);
+      const result = await svc.toggleManualMode(backend, lead_id, input);
       if (!result.success) return crmError(400, result.error ?? 'Erro ao alterar modo manual.');
 
       return jsonResponse({ ok: true, record: result.record }, 201);
@@ -463,7 +499,7 @@ export async function handleCrmRequest(
       const operator_id = (body.operator_id as string) ?? '';
       const reason = (body.reason as string) ?? '';
 
-      const result = await svc.resetLead(crmBackend, lead_id, operator_id, reason);
+      const result = await svc.resetLead(backend, lead_id, operator_id, reason);
       if (!result.success) return crmError(400, result.error ?? 'Erro ao resetar lead.');
 
       emitTelemetry({

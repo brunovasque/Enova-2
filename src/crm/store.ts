@@ -87,6 +87,44 @@ export class CrmInMemoryBackend implements CrmBackend {
 
 // ---------------------------------------------------------------------------
 // Singleton module-level — compartilhado por todas as requests do Worker
+// (modo in-memory padrão; mantido para retrocompatibilidade com PR-T8.4..T8.6)
 // ---------------------------------------------------------------------------
 
 export const crmBackend: CrmBackend = new CrmInMemoryBackend();
+
+// ---------------------------------------------------------------------------
+// Factory de backend — PR-T8.8
+// Resolve o backend conforme o env (SUPABASE_REAL_ENABLED + envs).
+// Quando flag desligada ou envs ausentes, devolve o singleton in-memory
+// (comportamento idêntico a PR-T8.4..T8.6).
+// ---------------------------------------------------------------------------
+
+let supabaseBackendSingleton: CrmBackend | null = null;
+
+/**
+ * Resolve o backend CRM ativo para o request corrente.
+ * - Se `SUPABASE_REAL_ENABLED === "true"` e envs estiverem presentes →
+ *   `SupabaseCrmBackend` (leitura real, escrita em buffer interno).
+ * - Caso contrário → `crmBackend` (in-memory, comportamento PR-T8.6).
+ *
+ * Lazy-load do SupabaseCrmBackend é feito via require dinâmico para evitar
+ * carregar o módulo Supabase quando a flag está desligada.
+ */
+export async function getCrmBackend(env: Record<string, unknown>): Promise<CrmBackend> {
+  const flag = env?.SUPABASE_REAL_ENABLED === 'true';
+  const url = typeof env?.SUPABASE_URL === 'string' ? (env.SUPABASE_URL as string) : '';
+  const key =
+    typeof env?.SUPABASE_SERVICE_ROLE_KEY === 'string'
+      ? (env.SUPABASE_SERVICE_ROLE_KEY as string)
+      : '';
+
+  if (!flag || !url || !key) {
+    return crmBackend;
+  }
+
+  if (!supabaseBackendSingleton) {
+    const mod = await import('../supabase/crm-store.ts');
+    supabaseBackendSingleton = new mod.SupabaseCrmBackend({ url, serviceRoleKey: key });
+  }
+  return supabaseBackendSingleton;
+}
