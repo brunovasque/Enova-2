@@ -22,8 +22,13 @@
  *
  * SEGURANÇA:
  *   Todas as rotas CRM exigem header `X-CRM-Admin-Key`.
- *   Em PR-T8.4 a chave é validada via env var `CRM_ADMIN_KEY` (se declarada
- *   no Worker) ou aceita token fixo de desenvolvimento `dev-crm-local`.
+ *   Validação:
+ *     1. Se env var `CRM_ADMIN_KEY` existe e bate com o header → autorizado.
+ *     2. Se env var `CRM_ALLOW_DEV_TOKEN === "true"` E header === "dev-crm-local"
+ *        → autorizado (uso restrito a ambientes locais/dev).
+ *     3. Caso contrário → 401.
+ *   Sem `CRM_ADMIN_KEY` e sem flag dev declarada, todas as requisições são
+ *   rejeitadas — não há fallback universal em produção.
  *   Quando Supabase real for conectado (PR-T8.8), autenticação pode ser
  *   aprimorada sem alterar este handler.
  *
@@ -84,15 +89,23 @@ function parseCrmPath(pathname: string): {
 
 /**
  * Verifica autenticação mínima do CRM.
- * Aceita `CRM_ADMIN_KEY` do env ou o token de dev `dev-crm-local`.
+ * Aceita `CRM_ADMIN_KEY` do env. O token de dev `dev-crm-local` SOMENTE é aceito
+ * quando a flag `CRM_ALLOW_DEV_TOKEN === "true"` estiver explicitamente declarada
+ * no env. Sem `CRM_ADMIN_KEY` e sem flag dev → 401 sempre.
+ *
+ * REGRA DE SEGURANÇA: nenhum fallback universal. Em produção, ausência de
+ * `CRM_ADMIN_KEY` resulta em rejeição total das requisições CRM.
  */
 function isCrmAuthorized(request: Request, env: Record<string, unknown>): boolean {
   const header = request.headers.get('x-crm-admin-key') ?? '';
   const envKey = typeof env?.CRM_ADMIN_KEY === 'string' ? env.CRM_ADMIN_KEY : '';
   if (envKey && header === envKey) return true;
-  // Token de desenvolvimento: permite testes locais sem configuração de env var.
-  // Em produção real, CRM_ADMIN_KEY deve ser declarado como secret no wrangler.
-  if (header === 'dev-crm-local') return true;
+
+  // Token dev SÓ vale com flag explícita. Sem a flag, retorna 401 mesmo se o
+  // header bater com `dev-crm-local`. Isso impede fallback universal em produção.
+  const allowDevToken = env?.CRM_ALLOW_DEV_TOKEN === 'true';
+  if (allowDevToken && header === 'dev-crm-local') return true;
+
   return false;
 }
 
