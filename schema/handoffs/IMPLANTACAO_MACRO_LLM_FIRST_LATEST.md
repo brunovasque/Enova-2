@@ -1,5 +1,33 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.10 — Diagnóstico Meta/WhatsApp + Worker runtime CONCLUÍDO (2026-04-30)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Artefato**: `schema/diagnostics/T8_META_WORKER_DIAGNOSTICO.md`
+
+**Principais achados**:
+
+| Área | Estado real |
+|---|---|
+| wrangler.toml | ZERO bindings — nenhuma env var Meta declarada |
+| Webhook challenge (GET) | **AUSENTE** — Meta não consegue verificar o webhook |
+| X-Hub-Signature-256 | **AUSENTE** — endpoint aceita POST sem autenticação |
+| Parsing payload bruto Meta | **AUSENTE** — ingest usa envelope interno ≠ formato Meta real |
+| Outbound para Graph API | **AUSENTE** — `external_dispatch: false` hardcoded |
+| Dedupe por wa_message_id | **AUSENTE** — usa idempotency_key interno |
+| smoke:meta | **PASS** 14/14 — testa envelope interno (não webhook real) |
+| rollout guard | `allow_meta_real_activation: false` hardcoded |
+
+**Env vars Meta — todos AUSENTES**: `META_VERIFY_TOKEN`, `META_APP_SECRET`, `META_ACCESS_TOKEN`, `META_PHONE_NUMBER_ID`, `META_WABA_ID`, `META_GRAPH_VERSION`, `CHANNEL_ENABLED`, `ENOVA2_ENABLED`
+
+**11 riscos mapeados**: R-T810-01 (outbound indevido) a R-T810-11 (webhook sem challenge)
+
+**Plano PR-T8.11**: 9 blocos — challenge, assinatura HMAC, inbound parser bruto Meta, dedupe/idempotência, outbound stub, feature flags, logs, smokes, rollback
+
+**Próxima PR**: PR-T8.11 — Implementação Meta/WhatsApp + Worker inbound/outbound (PR-IMPL)
+
+---
+
 ## PR-T8.9B — Execução real Supabase APROVADA — frente ENCERRADA (2026-04-30)
 
 **Tipo**: PR-PROVA | **Status**: CONCLUÍDA — **8/8 PASS | 1 SKIPPED | 0 FAIL**  
