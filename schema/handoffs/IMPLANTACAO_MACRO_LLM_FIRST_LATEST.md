@@ -1,10 +1,10 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
-## PR-T8.9 — Prova Supabase real + documentos + dossiê (2026-04-29)
+## PR-T8.9 — Harness de prova Supabase real instalado (2026-04-29)
 
-**Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
+**Tipo**: PR-PROVA (parcial) | **Status**: CONCLUÍDA — prova real PENDENTE  
 **PR precedente**: PR-T8.8 (#153) — Supabase operacional controlado  
-**Frente encerrada**: Integração Supabase (DIAG PR-T8.7 → IMPL PR-T8.8 → PROVA PR-T8.9)
+**Frente Supabase**: harness instalado — **prova real NÃO executada** (modo SKIPPED sem env real). Frente permanece aberta até PR-T8.9B.
 
 **Artefato criado**:
 - `src/supabase/proof.ts` — Script dual-mode de prova (8 fases)
@@ -47,7 +47,7 @@
 
 **Rollback**: remover `proof.ts` + remover script do `package.json`. Nenhum arquivo funcional foi alterado nesta PR. O Worker continua idêntico à PR-T8.8.
 
-**Próxima PR**: a definir por Vasques — frente WhatsApp/Meta real ou LLM real.
+**Próxima PR**: PR-T8.9B — Execução real Supabase com env real controlado (PR-PROVA). Frente Supabase permanece aberta até execução real positiva.
 
 ---
 

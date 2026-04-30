@@ -1,17 +1,19 @@
-# T8_SUPABASE_PROVA_DOCS_DOSSIE — Prova Supabase real + documentos + dossiê
+# T8_SUPABASE_PROVA_DOCS_DOSSIE — Harness de prova Supabase real (pendente execução real)
 
-**PR**: PR-T8.9 | **Tipo**: PR-PROVA + implementação mínima controlada  
+**PR**: PR-T8.9 | **Tipo**: PR-PROVA (parcial — harness instalado, execução real pendente)  
 **Data**: 2026-04-29  
 **Branch**: feat/t8-pr-t8-9-prova-supabase-docs-dossie  
 **PR precedente**: PR-T8.8 — Supabase operacional controlado (PR-IMPL)
+
+> **AVISO**: `prove:supabase-real` foi executado em modo **SKIPPED** (sem env real). A prova real Supabase não foi executada nesta PR. Frente Supabase permanece aberta até PR-T8.9B executar com envs reais e retornar resultado positivo.
 
 ---
 
 ## §1 — Objetivo e declaração de tipo
 
-**Tipo declarado**: PR-PROVA — fecha a frente de integração Supabase (PR-T8.7 DIAG → PR-T8.8 IMPL → PR-T8.9 PROVA).
+**Tipo declarado**: PR-PROVA (parcial) — instala o harness de prova da frente Supabase (PR-T8.7 DIAG → PR-T8.8 IMPL → PR-T8.9 harness). **Não fecha a frente** — isso ocorrerá em PR-T8.9B após execução real positiva.
 
-**Objetivo**: Deixar no Repo2 o caminho real de prova Supabase/documentos/dossiê, sem virar go-live e sem alteração destrutiva no banco. A PR não simula — ela instala o script de prova que, quando ativado com as envs reais, conecta ao banco de verdade e comprova leitura de leads, documentos, dossier e buckets de storage.
+**Objetivo**: Deixar no Repo2 o caminho real de prova Supabase/documentos/dossiê, sem virar go-live e sem alteração destrutiva no banco. A PR não simula — ela instala o script de prova que, quando ativado com as envs reais na PR-T8.9B, conecta ao banco de verdade e comprova leitura de leads, documentos, dossier e buckets de storage.
 
 **Entrega mínima controlada**:
 - `src/supabase/proof.ts` — script dual-mode (skip seguro sem env / prova real com env).
@@ -231,24 +233,33 @@ EXIT 0 (skipped)
 | CA-T8.9-11 | `smoke:supabase` 70/70 PASS retrocompatível | ✅ |
 | CA-T8.9-12 | `prove:crm-e2e` 73/73 PASS retrocompatível | ✅ |
 | CA-T8.9-13 | `smoke:all` todas etapas PASS | ✅ |
-| CA-T8.9-14 | STATUS.md e LATEST.md atualizados | ✅ |
+| CA-T8.9-14 | STATUS.md e LATEST.md atualizados (sem declaração falsa de encerramento) | ✅ |
 | CA-T8.9-15 | Sem `@supabase/supabase-js` adicionado | ✅ |
 | CA-T8.9-16 | Sem WhatsApp real / LLM real / cliente real / go-live | ✅ |
+| CA-T8.9-17 | Status NÃO declara "frente Supabase encerrada" | ✅ |
+| CA-T8.9-18 | PR-T8.9B declarada como próxima PR obrigatória | ✅ |
 
 ---
 
 ## §12 — Próximos passos
 
 **O que esta PR deixa pronto**:
-- Caminho real de prova Supabase instalado no repo.
-- Operador pode ativar `SUPABASE_REAL_ENABLED=true` + envs e rodar `prove:supabase-real` para confirmar conectividade real sem risco.
+- Harness de prova Supabase real instalado no repo.
+- `prove:supabase-real` disponível para execução com envs reais — nunca falha CI sem elas.
 
-**O que ainda falta para G8**:
+**O que esta PR NÃO faz (e por isso a frente permanece aberta)**:
+- `prove:supabase-real` rodou em modo **SKIPPED** — prova real Supabase não foi executada.
+- Frente Supabase NÃO está encerrada. Não há evidência positiva de leitura real.
+
+**Próxima PR obrigatória — PR-T8.9B**:
+- Tipo: PR-PROVA
+- Objetivo: executar `prove:supabase-real` com `SUPABASE_REAL_ENABLED=true` + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` e registrar evidência positiva (saída real com `N/M PASS`).
+- Só após PR-T8.9B positiva a frente Supabase pode ser declarada encerrada.
+
+**O que ainda falta para G8 após PR-T8.9B**:
 - Integração WhatsApp/Meta real (frente separada).
 - LLM real (frente separada).
 - Atendimento de cliente real controlado (pós-G8).
 - Correção de RLS nas tabelas desativadas.
 - Revisão de policy nos buckets públicos.
 - Mapeamento completo de tabelas ainda sem representação TS (`enova_document_files`, `lead_auditoria`, etc).
-
-**Próxima PR autorizada**: a definir pelo contrato T8 — frente WhatsApp/Meta ou LLM real, conforme priorização de Vasques.
