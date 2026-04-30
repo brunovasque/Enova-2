@@ -1,5 +1,36 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.9B — Execução real Supabase APROVADA — frente ENCERRADA (2026-04-30)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA — **8/8 PASS | 1 SKIPPED | 0 FAIL**  
+**PR precedente**: PR-T8.9 (#154) — Harness instalado  
+**Frente Supabase**: **ENCERRADA** — leitura real provada em todas as fases (ressalva: write real amplo e RLS/storage policy em PRs próprias)
+
+**Rodada final positiva (Vasques local, Node v24.14.1, 2026-04-30)**:
+
+| Fase | Status | Evidência |
+|---|---|---|
+| P1 Readiness | **PASS** | `mode=supabase_real warnings=3` |
+| P2 Auth inválida | **PASS** | `http_status=401` — endpoint real confirmado |
+| P3 `crm_lead_meta` | **PASS** | `rows=6` — leads reais lidos |
+| P4 `enova_docs` | **PASS** | `rows=20` — documentos reais lidos |
+| P5 Dossier snapshot | **PASS** | `state_rows=10 override_rows=0` |
+| P6 `enova_document_files` | **PASS** | `rows=0` — tabela existe |
+| P7 Storage buckets | **PASS** | `found=4/4 known_matched=4/4` |
+| P8 Write append-only | **SKIPPED** | sem `SUPABASE_PROOF_WRITE_ENABLED` — correto |
+
+**RESULTADO: 8/8 PASS | 1 SKIPPED | 0 FAIL — EXIT 0**
+
+**Correções aplicadas na frente**:
+- `proof.ts` P4 + `crm-store.ts readDocuments()` — `updated_at.desc` → `created_at.desc`
+- `proof.ts` — bloco P0 `runNetworkDiagnostics()` + `extractNetworkCause()`
+
+**Segurança confirmada**: service role nunca exposta | zero migration | zero RLS alterado | zero bucket alterado | zero delete/update/reset | zero WhatsApp/LLM/cliente real.
+
+**Próxima PR**: a definir por Vasques — Meta/WhatsApp real, LLM real, ou RLS/storage policy.
+
+---
+
 ## PR-T8.9 — Harness de prova Supabase real instalado (2026-04-29)
 
 **Tipo**: PR-PROVA (parcial) | **Status**: CONCLUÍDA — prova real PENDENTE  
@@ -47,7 +78,7 @@
 
 **Rollback**: remover `proof.ts` + remover script do `package.json`. Nenhum arquivo funcional foi alterado nesta PR. O Worker continua idêntico à PR-T8.8.
 
-**Próxima PR**: PR-T8.9B — Execução real Supabase com env real controlado (PR-PROVA). Frente Supabase permanece aberta até execução real positiva.
+**Próxima PR**: PR-T8.9B continuação — Vasques resolve conectividade e reexecuta. Frente Supabase permanece aberta até execução real positiva.
 
 ---
 
