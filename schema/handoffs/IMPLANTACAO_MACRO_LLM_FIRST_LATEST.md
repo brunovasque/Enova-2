@@ -1,5 +1,26 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.2 — Matriz Aderência Contrato × Código (2026-04-29)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA
+
+**Artefato criado**: `schema/diagnostics/T8_MATRIZ_ADERENCIA_CONTRATO_CODIGO.md`
+
+**Achados principais**:
+- 57 itens contratuais T1–T7 mapeados
+- Veredito consolidado: ADERENTE 1 | PARCIAL 18 | AUSENTE 22 | CONFLITANTE 2 | NÃO APLIC. 14
+- **CONF-01 (CRÍTICO)**: CI/CD auto-deploya em `nv-enova-2` (produção) a cada push para `main` — PR-T8.13 deve antecipar este fix antes de qualquer PR-IMPL
+- **CONF-02**: Canal WhatsApp incompleto pode ir para produção via CONF-01
+- Lacunas bloqueantes G8: LLM real (LAC-01), Supabase real (LAC-02), CRM (LAC-03), WhatsApp outbound (LAC-04)
+- T1–T5 eram contratos inteiramente documentais — ausência de implementação nesses contratos é situação esperada
+- T6 adapter PARCIAL: ingest.ts existe mas faltam challenge, assinatura, outbound, idempotência
+- T7 flags PARCIAL: guards.ts hardcoded, sem flags dinâmicos
+
+**Próxima PR autorizada**: PR-T8.3 — PR-DIAG — Diagnóstico CRM Repo1
+
+---
+
+
 ## Contexto
 
 O repositorio foi rebaseado canonicamente para seguir o macro original do legado mestre, agora em:
