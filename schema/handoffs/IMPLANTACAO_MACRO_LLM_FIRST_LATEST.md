@@ -1,5 +1,56 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.9 — Harness de prova Supabase real instalado (2026-04-29)
+
+**Tipo**: PR-PROVA (parcial) | **Status**: CONCLUÍDA — prova real PENDENTE  
+**PR precedente**: PR-T8.8 (#153) — Supabase operacional controlado  
+**Frente Supabase**: harness instalado — **prova real NÃO executada** (modo SKIPPED sem env real). Frente permanece aberta até PR-T8.9B.
+
+**Artefato criado**:
+- `src/supabase/proof.ts` — Script dual-mode de prova (8 fases)
+- `schema/implementation/T8_SUPABASE_PROVA_DOCS_DOSSIE.md` — Documentação 12 seções
+
+**Modificado**:
+- `package.json` — Script `prove:supabase-real` adicionado (fora de `smoke:all`)
+
+**Dual-mode**:
+- Sem env real → `SKIPPED_REAL_ENV_MISSING`, exit 0. Nunca falha CI.
+- Com env real (`SUPABASE_REAL_ENABLED=true` + URL + KEY): executa P1–P8 contra banco real.
+
+**8 fases de prova**:
+
+| Fase | Descrição | Tabela/API |
+|---|---|---|
+| P1 | Readiness estrutural (sem HTTP) | — |
+| P2 | Auth inválida → espera 4xx | `crm_lead_meta` com key errada |
+| P3 | Leitura `crm_lead_meta` | PostgREST SELECT |
+| P4 | Leitura `enova_docs` | PostgREST SELECT |
+| P5 | Dossier snapshot (state + overrides) | `enova_state` + `crm_override_log` |
+| P6 | Leitura `enova_document_files` | PostgREST SELECT |
+| P7 | Storage buckets | `storage/v1/bucket` REST |
+| P8 | Write append-only (opcional) | `crm_override_log` POST |
+
+**Env vars opcionais**:
+- `SUPABASE_PROOF_LEAD_REF` — filtra leituras por lead_id específico.
+- `SUPABASE_PROOF_WRITE_ENABLED=true` — habilita insert real em `crm_override_log` (append-only, `operator_id=t8_9_proof`).
+
+**Segurança**:
+- Service role nunca exposta em stdout/stderr — `maskKey()`, catch global sanitizado.
+- Sem alteração de schema, RLS, bucket policy, workflow/deploy.
+- Sem delete/reset real. Sem WhatsApp real. Sem LLM real. Sem cliente real.
+
+**Testes**:
+- `npm run prove:supabase-real` → **SKIPPED** (exit 0) sem env real.
+- `npm run smoke:supabase` → **70/70 PASS** retrocompatível.
+- `npm run prove:crm-e2e` → **73/73 PASS** retrocompatível.
+- `npm run smoke:all` → todas etapas PASS.
+
+**Rollback**: remover `proof.ts` + remover script do `package.json`. Nenhum arquivo funcional foi alterado nesta PR. O Worker continua idêntico à PR-T8.8.
+
+**Próxima PR**: PR-T8.9B — Execução real Supabase com env real controlado (PR-PROVA). Frente Supabase permanece aberta até execução real positiva.
+
+---
+
 ## PR-T8.8 — Supabase operacional controlado (2026-04-30)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA
