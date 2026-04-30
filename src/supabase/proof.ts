@@ -5,7 +5,7 @@
  *   - Default (sem env real): imprime SKIPPED_REAL_ENV_MISSING, sai com 0.
  *     Nunca falha CI. Pode rodar em smoke:all sem risco.
  *   - Modo real (SUPABASE_REAL_ENABLED=true + URL + KEY):
- *     executa 8 fases de prova contra o banco real, sem alterar schema.
+ *     executa diagnóstico de rede + 8 fases de prova contra o banco real.
  *
  * Env vars:
  *   SUPABASE_REAL_ENABLED=true         — gate obrigatório para modo real
@@ -57,6 +57,89 @@ function maskKey(raw: string | undefined): string {
   return `${raw.slice(0, 6)}…(${raw.length} chars)`;
 }
 
+/**
+ * Extrai causa detalhada de erros de fetch em Node.js.
+ * Em Node 18+ (undici), erros de rede têm `.cause` com o erro real do SO.
+ * Nunca expõe o service role.
+ */
+function extractNetworkCause(e: unknown, secret: string): string {
+  if (!(e instanceof Error)) {
+    return String(e).replace(secret, '***').slice(0, 300);
+  }
+  let msg = e.message;
+  // Node.js undici wraps o erro real em `.cause`
+  const cause = (e as { cause?: unknown }).cause;
+  if (cause instanceof Error) {
+    const code = (cause as { code?: string }).code ?? '';
+    msg += ` | cause: ${cause.message}${code ? ` [${code}]` : ''}`;
+  } else if (cause !== undefined && cause !== null) {
+    msg += ` | cause: ${String(cause)}`;
+  }
+  return msg.replace(secret, '***').slice(0, 400);
+}
+
+// ---------------------------------------------------------------------------
+// Diagnóstico de rede (P0 — antes das fases reais)
+// ---------------------------------------------------------------------------
+
+async function runNetworkDiagnostics(cfg: SupabaseConfig): Promise<{
+  fetchAvailable: boolean;
+  neutralOk: boolean;
+  supabaseBaseOk: boolean;
+  supabaseBaseStatus: number | null;
+  nodeVersion: string;
+  details: string[];
+}> {
+  const details: string[] = [];
+  const nodeVersion = process.version;
+  const fetchAvailable = typeof fetch !== 'undefined';
+
+  details.push(`Node.js: ${nodeVersion}`);
+  details.push(`fetch disponível: ${fetchAvailable} (typeof=${typeof fetch})`);
+
+  let neutralOk = false;
+  let supabaseBaseOk = false;
+  let supabaseBaseStatus: number | null = null;
+
+  // Teste 1: endpoint neutro público (confirma se Node tem acesso à internet)
+  const neutralUrl = 'https://httpstat.us/200';
+  try {
+    const signal = typeof AbortSignal.timeout === 'function'
+      ? AbortSignal.timeout(5000)
+      : undefined;
+    const r = await fetch(neutralUrl, signal ? { signal } : {});
+    neutralOk = r.status >= 200 && r.status < 300;
+    details.push(`endpoint neutro (${neutralUrl}): status=${r.status} ok=${neutralOk}`);
+  } catch (e) {
+    const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+    const detail = extractNetworkCause(e, secret);
+    details.push(`endpoint neutro (${neutralUrl}): FAIL — ${detail}`);
+  }
+
+  // Teste 2: Supabase /rest/v1/ com HEAD (sem auth — espera 401 ou qualquer HTTP)
+  const baseUrl = cfg.url.replace(/\/$/, '');
+  const supabaseHeadUrl = `${baseUrl}/rest/v1/`;
+  try {
+    const signal = typeof AbortSignal.timeout === 'function'
+      ? AbortSignal.timeout(5000)
+      : undefined;
+    const r = await fetch(supabaseHeadUrl, {
+      method: 'HEAD',
+      ...(signal ? { signal } : {}),
+    });
+    supabaseBaseStatus = r.status;
+    // 401 = endpoint acessível (sem auth), qualquer HTTP = conectividade OK
+    supabaseBaseOk = true;
+    details.push(`Supabase /rest/v1/ HEAD: status=${r.status} (${r.status === 401 ? 'esperado sem auth — OK' : 'conexão OK'})`);
+  } catch (e) {
+    const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+    const detail = extractNetworkCause(e, secret);
+    details.push(`Supabase /rest/v1/ HEAD: FAIL — ${detail}`);
+  }
+
+  return { fetchAvailable, neutralOk, supabaseBaseOk, supabaseBaseStatus, nodeVersion, details };
+}
+
 // ---------------------------------------------------------------------------
 // Storage REST API (independente do PostgREST client)
 // ---------------------------------------------------------------------------
@@ -74,7 +157,11 @@ async function listStorageBuckets(cfg: SupabaseConfig): Promise<{
   error: string | null;
 }> {
   const url = `${cfg.url.replace(/\/$/, '')}/storage/v1/bucket`;
+  const secret = cfg.serviceRoleKey;
   try {
+    const signal = typeof AbortSignal.timeout === 'function'
+      ? AbortSignal.timeout(8000)
+      : undefined;
     const resp = await fetch(url, {
       method: 'GET',
       headers: {
@@ -82,18 +169,27 @@ async function listStorageBuckets(cfg: SupabaseConfig): Promise<{
         authorization: `Bearer ${cfg.serviceRoleKey}`,
         'content-type': 'application/json',
       },
+      ...(signal ? { signal } : {}),
     });
     const text = await resp.text();
     if (!resp.ok) {
-      return { ok: false, buckets: [], error: `http_${resp.status}: ${text.slice(0, 200)}` };
+      return {
+        ok: false,
+        buckets: [],
+        error: `http_${resp.status}: ${text.slice(0, 200).replace(secret, '***')}`,
+      };
     }
     let parsed: unknown;
-    try { parsed = JSON.parse(text); } catch { return { ok: false, buckets: [], error: 'json_parse_failed' }; }
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      return { ok: false, buckets: [], error: 'json_parse_failed' };
+    }
     if (!Array.isArray(parsed)) return { ok: false, buckets: [], error: 'unexpected_shape' };
     return { ok: true, buckets: parsed as StorageBucket[], error: null };
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'fetch_failed';
-    return { ok: false, buckets: [], error: `network: ${msg}` };
+    const detail = extractNetworkCause(e, secret);
+    return { ok: false, buckets: [], error: `network: ${detail}` };
   }
 }
 
@@ -113,6 +209,7 @@ async function runProof(cfg: SupabaseConfig): Promise<ProofPhase[]> {
   const phases: ProofPhase[] = [];
   const leadRef = env.SUPABASE_PROOF_LEAD_REF;
   const writeEnabled = env.SUPABASE_PROOF_WRITE_ENABLED;
+  const secret = cfg.serviceRoleKey;
 
   // P1: Readiness estrutural (sem chamada HTTP)
   {
@@ -129,9 +226,12 @@ async function runProof(cfg: SupabaseConfig): Promise<ProofPhase[]> {
     const badCfg: SupabaseConfig = { url: cfg.url, serviceRoleKey: 'INVALID_PROOF_KEY_T8_9' };
     const result = await supabaseSelect(badCfg, 'crm_lead_meta', { limit: 1 });
     const expectAuth = !result.ok && result.http_status !== null && result.http_status >= 400;
-    const detail = `http_status=${result.http_status ?? 'null'} ok=${result.ok}`;
+    const isNetworkFail = !result.ok && result.http_status === null;
+    const detail = isNetworkFail
+      ? `NETWORK_FAIL http_status=null — ver diagnóstico P0; error=${result.error ?? ''}`
+      : `http_status=${result.http_status ?? 'null'} ok=${result.ok}`;
     phases.push({ id: 'P2', label: 'Auth inválida (espera 4xx)', passed: expectAuth, skipped: false, detail });
-    line('[P2] Auth inválida (espera 4xx)', expectAuth ? 'OK' : 'FAIL', detail);
+    line('[P2] Auth inválida (espera 4xx)', expectAuth ? 'OK' : (isNetworkFail ? 'NETWORK_FAIL' : 'FAIL'), detail);
   }
 
   // P3: Leitura crm_lead_meta
@@ -143,7 +243,7 @@ async function runProof(cfg: SupabaseConfig): Promise<ProofPhase[]> {
     const ok = result.ok;
     const detail = ok
       ? `rows=${result.rows.length} lead_ref=${leadRef ?? 'all'}`
-      : `error=${result.error?.slice(0, 100)}`;
+      : `error=${(result.error ?? '').replace(secret, '***').slice(0, 150)}`;
     phases.push({ id: 'P3', label: 'Leitura crm_lead_meta', passed: ok, skipped: false, detail });
     line('[P3] crm_lead_meta', ok ? 'OK' : 'FAIL', detail);
   }
@@ -157,7 +257,7 @@ async function runProof(cfg: SupabaseConfig): Promise<ProofPhase[]> {
     const ok = result.ok;
     const detail = ok
       ? `rows=${result.rows.length}`
-      : `error=${result.error?.slice(0, 100)}`;
+      : `error=${(result.error ?? '').replace(secret, '***').slice(0, 150)}`;
     phases.push({ id: 'P4', label: 'Leitura enova_docs', passed: ok, skipped: false, detail });
     line('[P4] enova_docs', ok ? 'OK' : 'FAIL', detail);
   }
@@ -192,7 +292,7 @@ async function runProof(cfg: SupabaseConfig): Promise<ProofPhase[]> {
     const ok = result.ok;
     const detail = ok
       ? `rows=${result.rows.length}`
-      : `error=${result.error?.slice(0, 100)}`;
+      : `error=${(result.error ?? '').replace(secret, '***').slice(0, 150)}`;
     phases.push({ id: 'P6', label: 'Leitura enova_document_files', passed: ok, skipped: false, detail });
     line('[P6] enova_document_files', ok ? 'OK' : 'FAIL', detail);
   }
@@ -208,7 +308,7 @@ async function runProof(cfg: SupabaseConfig): Promise<ProofPhase[]> {
       const matchCount = names.filter((n) => knownNames.includes(n)).length;
       detail = `found=${storageResult.buckets.length} known_matched=${matchCount}/${knownNames.length} buckets=[${names.join(',')}]`;
     } else {
-      detail = `error=${storageResult.error?.slice(0, 150)}`;
+      detail = `error=${(storageResult.error ?? '').replace(secret, '***').slice(0, 150)}`;
     }
     phases.push({ id: 'P7', label: 'Storage buckets', passed: ok, skipped: false, detail });
     line('[P7] Storage buckets', ok ? 'OK' : 'FAIL', detail);
@@ -242,15 +342,22 @@ async function runProof(cfg: SupabaseConfig): Promise<ProofPhase[]> {
         phases.push({ id: 'P8', label: 'Write append-only real', passed: true, skipped: false, detail });
         line('[P8] Write append-only', 'OK', detail);
       } else {
-        // Verifica se parece divergência de schema vs erro de rede
         const isSchemaError =
           insertResult.http_status !== null &&
-          (insertResult.http_status === 400 || insertResult.http_status === 422 || insertResult.http_status === 404);
+          (insertResult.http_status === 400 ||
+            insertResult.http_status === 422 ||
+            insertResult.http_status === 404);
         const statusLabel = isSchemaError
           ? 'WRITE_REAL_SKIPPED_SCHEMA_UNCONFIRMED'
           : 'WRITE_REAL_FAILED';
-        const detail = `status=${insertResult.http_status} error=${insertResult.error?.slice(0, 150)}`;
-        phases.push({ id: 'P8', label: 'Write append-only real', passed: false, skipped: isSchemaError, detail: `${statusLabel}: ${detail}` });
+        const detail = `status=${insertResult.http_status} error=${(insertResult.error ?? '').replace(secret, '***').slice(0, 150)}`;
+        phases.push({
+          id: 'P8',
+          label: 'Write append-only real',
+          passed: false,
+          skipped: isSchemaError,
+          detail: `${statusLabel}: ${detail}`,
+        });
         line('[P8] Write append-only', statusLabel, detail);
       }
     }
@@ -294,13 +401,42 @@ async function main() {
   }
 
   console.log(`\nModo real ativo.`);
-  console.log(`  url_masked  : ${maskSupabaseUrl(env.SUPABASE_URL)}`);
-  console.log(`  service_role: ${maskKey(env.SUPABASE_SERVICE_ROLE_KEY)}`);
-  console.log(`  lead_ref    : ${env.SUPABASE_PROOF_LEAD_REF ?? '(não setado — leitura geral)'}`);
+  console.log(`  url_masked   : ${maskSupabaseUrl(env.SUPABASE_URL)}`);
+  console.log(`  service_role : ${maskKey(env.SUPABASE_SERVICE_ROLE_KEY)}`);
+  console.log(`  lead_ref     : ${env.SUPABASE_PROOF_LEAD_REF ?? '(não setado — leitura geral)'}`);
   console.log(`  write_enabled: ${env.SUPABASE_PROOF_WRITE_ENABLED}`);
-  console.log(`  known_tables: ${SUPABASE_KNOWN_TABLES.length}`);
+  console.log(`  known_tables : ${SUPABASE_KNOWN_TABLES.length}`);
   console.log(`  known_buckets: ${SUPABASE_KNOWN_BUCKETS.length}`);
-  console.log('');
+
+  // --- Diagnóstico de rede (P0) ---
+  console.log('\n--- Diagnóstico de rede (P0) ---');
+  const netDiag = await runNetworkDiagnostics(cfg);
+  for (const d of netDiag.details) {
+    console.log(`  ${d}`);
+  }
+  if (!netDiag.fetchAvailable) {
+    console.log(
+      '\nBLOQUEIO: fetch não disponível neste Node.js. Versão mínima necessária: Node 18.',
+    );
+    console.log(`  Node atual: ${netDiag.nodeVersion}`);
+    console.log('  Atualize Node.js para >= 18 e tente novamente.');
+    process.exit(1);
+  }
+  if (!netDiag.neutralOk) {
+    console.log(
+      '\nAVISO: endpoint neutro inacessível. Possível bloqueio de rede local (firewall, proxy, VPN).',
+    );
+    console.log('  Se estiver em rede corporativa/VPN, verifique acesso externo.');
+  }
+  if (!netDiag.supabaseBaseOk) {
+    console.log(
+      '\nAVISO: Supabase /rest/v1/ inacessível via HEAD. Pode ser DNS, TLS ou firewall.',
+    );
+    console.log(
+      `  Se endpoint neutro também falhou, o problema é de rede local, não do Supabase.`,
+    );
+  }
+  console.log('--- Fim P0 ---\n');
 
   const phases = await runProof(cfg);
 
@@ -319,6 +455,26 @@ async function main() {
     for (const p of phases.filter((x) => !x.passed && !x.skipped)) {
       console.log(`  [${p.id}] ${p.label}: ${p.detail}`);
     }
+
+    // Diagnóstico de causa raiz
+    const allNetworkFail = phases
+      .filter((p) => !p.passed && !p.skipped && p.id !== 'P1')
+      .every((p) => p.detail.includes('NETWORK_FAIL') || p.detail.includes('network_error'));
+
+    if (allNetworkFail) {
+      console.log('\nDIAGNÓSTICO: todas as falhas são NETWORK_FAIL (fetch failed).');
+      if (!netDiag.neutralOk) {
+        console.log('  Causa provável: REDE LOCAL bloqueada. Node.js não alcança a internet.');
+        console.log('  Verificar: firewall, proxy corporativo, VPN, ou restrição de saída.');
+      } else if (!netDiag.supabaseBaseOk) {
+        console.log('  Causa provável: Supabase URL inacessível especificamente.');
+        console.log('  Verificar: DNS para jsqwhnmjsbmtfyyukwsr.supabase.co, porta 443.');
+      } else {
+        console.log('  Causa provável: autenticação ou URL incorreta (endpoint neutro OK).');
+        console.log('  Verificar: SUPABASE_URL inclui protocolo (https://)? Key correta?');
+      }
+    }
+
     console.log('\nEXIT 1 (falha em modo real)');
     process.exit(1);
   }
@@ -329,9 +485,9 @@ async function main() {
 }
 
 main().catch((e) => {
+  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
   const msg = e instanceof Error ? e.message : String(e);
-  // Nunca expor service role em erro não tratado
-  const safe = msg.replace(process.env.SUPABASE_SERVICE_ROLE_KEY ?? '', '***');
+  const safe = msg.replace(secret, '***');
   console.error(`ERRO NÃO TRATADO: ${safe}`);
   process.exit(1);
 });

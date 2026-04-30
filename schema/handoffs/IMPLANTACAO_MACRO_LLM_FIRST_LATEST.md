@@ -1,5 +1,38 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.9B — Diagnóstico de rede + harness atualizado (2026-04-30)
+
+**Tipo**: PR-PROVA (em progresso) | **Status**: EM EXECUÇÃO — aguardando conectividade resolvida  
+**PR precedente**: PR-T8.9 (#154) — Harness instalado  
+**Frente Supabase**: harness executado em modo real pela primeira vez; bloqueio identificado: `network_error: fetch failed` em P2–P7 — problema de conectividade local, não de código.
+
+**Primeira execução real (Vasques local, 2026-04-30)**:
+
+| Fase | Status | Detalhe |
+|---|---|---|
+| P1 Readiness | PASS | `mode=supabase_real` — envs reconhecidas |
+| P2 Auth inválida | FAIL (NETWORK_FAIL) | `http_status=null` — fetch não chegou ao endpoint |
+| P3 crm_lead_meta | FAIL | `network_error: fetch failed` |
+| P4 enova_docs | FAIL | `network_error: fetch failed` |
+| P5 Dossier snapshot | FAIL | `state_ok=false override_ok=false` |
+| P6 enova_document_files | FAIL | `network_error: fetch failed` |
+| P7 Storage buckets | FAIL | `network_error: fetch failed` |
+| P8 Write | SKIPPED | `SUPABASE_PROOF_WRITE_ENABLED` não setado — correto |
+
+**Resultado**: 2/8 PASS | 1 SKIPPED | 6 FAIL — EXIT 1
+
+**Causa raiz**: código correto (P1 PASS confirma URL/envs reconhecidas). Bloqueio é de rede local: Node.js/tsx não alcança `jsqwhnmjsbmtfyyukwsr.supabase.co:443`. Causas prováveis: firewall corporativo, proxy não configurado no Node, VPN.
+
+**Correção entregue nesta PR**:
+- `src/supabase/proof.ts` atualizado: bloco P0 `runNetworkDiagnostics()` (Node version, fetch type, endpoint neutro `httpstat.us`, Supabase HEAD sem auth) + `extractNetworkCause()` (extrai `.cause` do erro undici — `ENOTFOUND`/`ECONNREFUSED`/código SO) + análise automática de causa raiz
+- `schema/implementation/T8_SUPABASE_PROVA_REAL_EXECUTADA.md` — evidência da execução + diagnóstico + comandos de debug para Vasques
+
+**Próximo passo obrigatório**: Vasques resolve conectividade (proxy/DNS/firewall) e reexecuta `prove:supabase-real`. Com P0 ativo, o output mostrará exatamente onde está o bloqueio.
+
+**Próxima PR**: PR-T8.9B continuação — evidência positiva de P1–P7 fecha a frente Supabase.
+
+---
+
 ## PR-T8.9 — Harness de prova Supabase real instalado (2026-04-29)
 
 **Tipo**: PR-PROVA (parcial) | **Status**: CONCLUÍDA — prova real PENDENTE  
@@ -47,7 +80,7 @@
 
 **Rollback**: remover `proof.ts` + remover script do `package.json`. Nenhum arquivo funcional foi alterado nesta PR. O Worker continua idêntico à PR-T8.8.
 
-**Próxima PR**: PR-T8.9B — Execução real Supabase com env real controlado (PR-PROVA). Frente Supabase permanece aberta até execução real positiva.
+**Próxima PR**: PR-T8.9B continuação — Vasques resolve conectividade e reexecuta. Frente Supabase permanece aberta até execução real positiva.
 
 ---
 
