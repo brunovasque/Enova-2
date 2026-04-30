@@ -18,6 +18,7 @@ import { runCoreEngine } from './core/engine.ts';
 import type { CoreDecision, LeadState, StageId } from './core/types.ts';
 import { handleMetaIngest } from './meta/ingest.ts';
 import { handleCrmRequest } from './crm/routes.ts';
+import { handlePanelRequest } from './panel/handler.ts';
 import { applyRolloutGuard } from './rollout/controller.ts';
 import { applyE1CoreHook } from './e1/memory.ts';
 import {
@@ -258,7 +259,8 @@ function handleRoot(telemetryContext: TelemetryRequestContext): Response {
       core_run: 'POST /__core__/run',
       meta_ingest: 'POST /__meta__/ingest',
       crm_health: 'GET /crm/health',
-      crm_panel: 'GET|POST /crm/* (7 abas: conversations, bases, attendance, leads, dashboard, incidents, enova-ia)',
+      crm_panel_api: 'GET|POST /crm/* (7 abas: conversations, bases, attendance, leads, dashboard, incidents, enova-ia)',
+      panel_ui: 'GET /panel (frontend HTML do painel operacional)',
     },
     surface: 'technical_only',
   });
@@ -299,6 +301,12 @@ export default {
 
     if (url.pathname.startsWith('/crm/')) {
       response = await handleCrmRequest(request, url, telemetryContext, env);
+      emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
+      return response;
+    }
+
+    if (url.pathname === '/panel' || url.pathname.startsWith('/panel/')) {
+      response = await handlePanelRequest(request, url);
       emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
       return response;
     }
