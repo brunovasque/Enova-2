@@ -24,7 +24,9 @@ PR-T8.4 concluída: `src/crm/` (types.ts, store.ts, service.ts, panel.ts, routes
 
 PR-T8.5 concluída: `src/panel/handler.ts` (HTML/CSS/JS embutidos) + `src/panel/smoke.ts` + `src/worker.ts` atualizado com roteamento `/panel` em 2026-04-29; **frontend do painel operacional** servido em `/panel` com **7 abas** consumindo os 26 endpoints da PR-T8.4; admin key via `localStorage` (sem hardcode); empty-state estável; flags `real_*: false` exibidas no header global e por aba; smoke `npm run smoke:panel` 30/30 PASS; `schema/implementation/T8_FRONTEND_PAINEL_OPERACIONAL.md` criado. Sem alteração de workflow/deploy, contrato T8, cliente real, WhatsApp real, Supabase real ou LLM real.
 
-Próxima PR autorizada: **PR-T8.6 — Prova real CRM end-to-end** (tipo: PR-PROVA).
+PR-T8.6 concluída: `src/panel/e2e-smoke.ts` criado em 2026-04-29 — **prova automatizada E2E** de PR-T8.4 (backend) + PR-T8.5 (painel); **73/73 checks PASS** em 6 categorias (C1 health/painel, C2 auth, C3 fluxo CRM completo com create→override→manual-mode→attendance→case-file→reset→auditoria preservada, C4 7 abas, C5 flags real_*:false, C6 restrições invioláveis); `npm run prove:crm-e2e` adicionado ao `smoke:all`; `schema/implementation/T8_PROVA_CRM_END_TO_END.md` criado com evidência de cada check; invariante de auditoria comprovada: override_log tem 2 entradas pós-reset (C3-18).
+
+Próxima PR autorizada: **PR-T8.7 — (conforme contrato T8 §PR-T8.7)**.
 
 Contrato T7 encerrado: `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; PR-T7.R executada em 2026-04-29).
 

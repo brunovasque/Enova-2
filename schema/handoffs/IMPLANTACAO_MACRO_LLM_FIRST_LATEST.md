@@ -1,5 +1,33 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.6 — Prova real CRM end-to-end (2026-04-29)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA
+**PRs provadas**: PR-T8.4 (backend 26 endpoints) + PR-T8.5 (painel /panel)
+
+**Artefatos criados**:
+- `src/panel/e2e-smoke.ts` — Prova automatizada: 73 checks em 6 categorias
+- `schema/implementation/T8_PROVA_CRM_END_TO_END.md` — Documentação com evidência de cada check
+
+**Arquivos modificados**:
+- `package.json` — Script `prove:crm-e2e` adicionado ao `smoke:all`
+
+**Resultado da prova**: `73/73 checks PASS`
+
+**Categorias**:
+- **C1 — Health e painel (8)**: GET /, /crm/health, /panel → 200; mode:in_process_backend; 7 abas em panel_tabs; content-type HTML.
+- **C2 — Auth (5)**: sem key → 401; dev token sem flag → 401; dev token com flag → 200; prod key → 200; key errada → 401.
+- **C3 — Fluxo CRM (20)**: create lead → override → manual-mode → attendance check → case-file → reset → auditoria preservada (override_log ≥ 2 entradas pós-reset); sem dados → 400.
+- **C4 — 7 abas (18)**: HTML contém 7 nomes de aba; 11 endpoints retornam ok:true.
+- **C5 — Flags real_* (12)**: real_supabase/real_llm/real_whatsapp false em /crm/health, /enova-ia/status, /enova-ia/runtime e declarados no HTML do painel.
+- **C6 — Restrições invioláveis (10)**: reply_text ausente; sem decide_stage; POST/PUT rejeitados com 405; lead inexistente → 404.
+
+**Invariante comprovada**: reset preserva auditoria — override_log tinha 1 entrada antes do reset e 2 após (C3-18 PASS). Modo manual desativado pelo reset (C3-19 PASS).
+
+**Próxima PR autorizada**: PR-T8.7 (conforme contrato T8 §PR-T8.7).
+
+---
+
 ## PR-T8.5 — Frontend do painel operacional completo (2026-04-29)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA
