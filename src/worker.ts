@@ -17,6 +17,8 @@
 import { runCoreEngine } from './core/engine.ts';
 import type { CoreDecision, LeadState, StageId } from './core/types.ts';
 import { handleMetaIngest } from './meta/ingest.ts';
+import { handleMetaWebhook, META_WEBHOOK_ROUTE } from './meta/webhook.ts';
+import type { MetaWorkerEnv } from './meta/webhook-env.ts';
 import { handleCrmRequest } from './crm/routes.ts';
 import { handlePanelRequest } from './panel/handler.ts';
 import { applyRolloutGuard } from './rollout/controller.ts';
@@ -258,6 +260,7 @@ function handleRoot(telemetryContext: TelemetryRequestContext): Response {
       health: 'GET /',
       core_run: 'POST /__core__/run',
       meta_ingest: 'POST /__meta__/ingest',
+      meta_webhook: 'GET|POST /__meta__/webhook',
       crm_health: 'GET /crm/health',
       crm_panel_api: 'GET|POST /crm/* (7 abas: conversations, bases, attendance, leads, dashboard, incidents, enova-ia)',
       panel_ui: 'GET /panel (frontend HTML do painel operacional)',
@@ -295,6 +298,12 @@ export default {
 
     if (url.pathname === '/__meta__/ingest') {
       response = await handleMetaIngest(request, telemetryContext);
+      emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
+      return response;
+    }
+
+    if (url.pathname === META_WEBHOOK_ROUTE) {
+      response = await handleMetaWebhook(request, url, env as MetaWorkerEnv, telemetryContext);
       emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
       return response;
     }
