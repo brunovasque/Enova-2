@@ -1,5 +1,82 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.R — Readiness / Closeout G8 com bloqueio formal (2026-04-30)
+
+**Tipo**: PR-PROVA / CLOSEOUT | **Status**: EXECUTADA — NO-GO CONTROLADO  
+**Base**: PR-T8.15 (flags/rollback/harness) + todas as frentes T8  
+**Próxima ação**: PR-T8.12B — **exclusiva de Vasques** (secrets + deploy + webhook Meta)
+
+### Veredito
+
+```
+GO/NO-GO:  NO-GO CONTROLADO
+G8:        NÃO FECHADO
+Contrato:  T8 ABERTO — não arquivado
+Motivo:    Meta/WhatsApp prova real externa pendente (PR-T8.12B — aguardando Vasques)
+```
+
+### prove:g8-readiness — 7/7 PASS
+
+| ID | Prova | Resultado |
+|---|---|---|
+| R1 | CRM backend/frontend operacional | PASS |
+| R2 | Supabase leitura real aprovada (documental) | PASS |
+| R3 | Meta/WhatsApp técnica OK + prova real BLOQUEADA | PASS |
+| R4 | Memória/telemetria aprovada local/in-memory | PASS |
+| R5 | Flags/rollback/go-live harness operacional | PASS |
+| R6 | Segurança: sem secret, sem cliente real, sem LLM | PASS |
+| R7 | G8 NÃO FECHADO — condições documentadas | PASS |
+
+### Suítes retrocompat
+
+| Suite | Resultado |
+|---|---|
+| `smoke:all` | EXIT 0 |
+| `smoke:golive` | 18/18 PASS |
+| `smoke:memory` | 17/17 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `prove:memory-telemetry` | 9/9 PASS |
+| `prove:crm-e2e` | 73/73 PASS |
+| `prove:meta-controlada` | 25/0/6 (bloqueio controlado) |
+
+### Estado consolidado das frentes
+
+| Frente | Estado |
+|---|---|
+| CRM backend/frontend | APROVADA |
+| Supabase leitura real | APROVADA |
+| Meta/WhatsApp (técnica) | APROVADA |
+| Meta/WhatsApp (prova real) | **BLOQUEADA_AGUARDANDO_VASQUES** |
+| Memória/telemetria | APROVADA_LOCAL_IN_MEMORY |
+| Flags/rollback/go-live | APROVADA |
+| LLM real | Não ativado |
+| Cliente real | Não autorizado |
+| Atendimento real | Não executado |
+| G8 | **NÃO FECHADO** |
+
+### Artefatos criados
+
+- `src/golive/closeout-smoke.ts` — 7 provas de readiness G8
+- `schema/proofs/T8_READINESS_CLOSEOUT_G8.md` — closeout formal (16 seções)
+- `package.json` — `prove:g8-readiness` adicionado
+
+### Próxima ação obrigatória
+
+**Exclusiva de Vasques:**
+1. `wrangler secret put META_VERIFY_TOKEN --env test`
+2. `wrangler secret put META_APP_SECRET --env test`
+3. `wrangler secret put META_ACCESS_TOKEN --env test`
+4. `wrangler secret put META_PHONE_NUMBER_ID --env test`
+5. `wrangler deploy --env test`
+6. Registrar webhook no painel Meta Developers
+7. `npm run prove:meta-controlada` com `META_REAL_ENABLED=true`
+8. Confirmar `≥27 PASS | 0 FAIL | ≤4 SKIP`
+9. Documentar: logs Cloudflare + painel Meta + mensagem real recebida
+10. Autorizar `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true` + `LLM_REAL_ENABLED=true` + `CLIENT_REAL_ENABLED=true`
+
+---
+
 ## PR-T8.15 — Feature flags, rollback técnico e harness de go-live CONCLUÍDA (2026-04-30)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
