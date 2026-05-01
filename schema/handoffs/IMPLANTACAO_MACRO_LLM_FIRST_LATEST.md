@@ -1,14 +1,16 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
-## PR-T8.16 — Acoplamento inbound Meta → CRM + memória (2026-05-01)
+## PR-PROVA T8.16 — Prova inbound real Meta → CRM + memória (2026-05-01)
 
-**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
-**Base**: PR #167 — roadmap oficial + PR #166 — diagnóstico inbound/cutover  
-**Próxima ação**: **PR-PROVA da T8.16** — provar com mensagem real no Worker TEST
+**Tipo**: PR-PROVA | **Status**: EM EXECUÇÃO — smokes locais PASS, prova real PENDENTE VASQUES  
+**Base**: PR-T8.16 (#168) — pipeline implementado  
+**Próxima ação**: **Vasques executa `npm run prove:meta:pipeline-real` com credenciais reais**
 
 ### Estado atual
 
-**Enova 2 recebe inbound real no Worker TEST e agora cria lead + turno + memória — ainda não responde WhatsApp.**
+**Enova 2 recebe inbound real no Worker TEST, cria lead + turno + memória — ainda não responde WhatsApp.**
+
+Bloco E: evidência PARCIAL — smokes locais 16/16 PASS, prova real Worker TEST SKIP (requer credenciais reais).
 
 1 número WhatsApp = 1 webhook ativo por vez. Enova 1 e Enova 2 não podem receber o mesmo webhook simultaneamente. Cutover obrigatório antes de qualquer resposta real. Rollback = voltar webhook para `https://nv-enova.brunovasque.workers.dev/webhook/meta` (~30s).
 
@@ -17,37 +19,48 @@
 | Etapa | PR | Status |
 |---|---|---|
 | 1 | PR-DIAG inbound/cutover | ✅ CONCLUÍDA — PR #166 |
-| 2 | PR-T8.16 inbound→CRM+memória (sem LLM) | ✅ CONCLUÍDA |
-| 3 | PR-PROVA T8.16 | **PRÓXIMA** |
-| 4 | PR-T8.17 LLM controlado (gated) | aguarda |
+| 2 | PR-T8.16 inbound→CRM+memória (sem LLM) | ✅ CONCLUÍDA — PR #168 |
+| 3 | PR-PROVA T8.16 | **EM EXECUÇÃO** — smokes locais PASS, prova real PENDENTE VASQUES |
+| 4 | PR-T8.17 LLM controlado (gated) | aguarda prova T8.16 completa |
 | 5 | PR-PROVA T8.17 em TEST (janela curta, Vasques presente) | aguarda |
 | 6 | Cutover Enova 1 → Enova 2 PROD | aguarda |
 | 7 | Closeout / G8 aprovado | aguarda |
 
-### O que foi implementado (PR-T8.16)
+### O que foi criado nesta PR-PROVA
 
-- `src/meta/pipeline.ts` (NOVO) — orquestrador inbound: evento normalizado → CRM + memória
-- `src/crm/service.ts` — `upsertLeadByPhone` + `createConversationTurn` adicionados
-- `src/crm/routes.ts` — `POST /crm/conversations` adicionado
-- `src/meta/webhook.ts` — chama pipeline quando `ENOVA2_ENABLED=true` + `kind=message` + não duplicate
-- `src/meta/pipeline-smoke.ts` (NOVO) — `smoke:meta:pipeline` **26/26 PASS**
-- `schema/implementation/T8_INBOUND_CRM_MEMORIA.md` (NOVO)
+- `src/meta/pipeline-real-proof.ts` (NOVO) — harness dual-mode de prova
+- `schema/proofs/T8_INBOUND_CRM_MEMORIA_PROVA_REAL.md` (NOVO) — documentação da prova
+- `package.json` — `prove:meta:pipeline-real` adicionado
 
-Flags nesta PR: LLM_REAL_ENABLED=false, CLIENT_REAL_ENABLED=false. Sem outbound. Sem resposta WhatsApp.
+### Smokes locais (PASS)
 
-### Próxima PR autorizada
+```
+smoke:meta:pipeline   → 26/26 PASS
+smoke:meta:webhook    → 20/20 PASS
+smoke:golive          → 18/18 PASS
+smoke:all             → EXIT 0
+prove:meta:pipeline-real (modo local) → 16 PASS | 0 FAIL | 5 SKIP | exit 0
+```
 
-**PR-PROVA da T8.16** — provar com mensagem real no Worker TEST:
-- Mensagem real recebida no Worker TEST
-- → lead criado/atualizado no CRM (verificável via `GET /crm/leads`)
-- → turno de conversa registrado (verificável via `GET /crm/conversations/:lead_id/messages`)
-- → memória registrada com `source: 'meta_webhook'` (verificável via `GET /crm/memory/lead/:wa_id`)
-- → **nenhuma resposta enviada no WhatsApp** ← confirmação explícita obrigatória
+### Próxima ação — Vasques executa a prova real
+
+```bash
+ENOVA2_PROOF_ENABLED=true \
+ENOVA2_TEST_WORKER_URL=https://nv-enova-2-test.brunovasque.workers.dev \
+META_APP_SECRET=<valor real> \
+CRM_ADMIN_KEY=<valor real> \
+META_PHONE_NUMBER_ID=<valor real> \
+npm run prove:meta:pipeline-real
+```
+
+Resultado esperado: `PASS: 25 | FAIL: 0 | SKIP: 0 | STATUS: PASS — prova real completa`
+
+Se aprovada → PR-T8.17 (LLM controlado, gated por `LLM_REAL_ENABLED=true`, autorização Vasques)
 
 ### Artefatos criados/atualizados
 
-- `schema/implementation/T8_ROADMAP_PRODUCAO_WHATSAPP.md` — roadmap oficial (atualizado)
-- `schema/implementation/T8_INBOUND_CRM_MEMORIA.md` — implementação T8.16
+- `schema/proofs/T8_INBOUND_CRM_MEMORIA_PROVA_REAL.md` — prova T8.16 (em execução)
+- `schema/implementation/T8_ROADMAP_PRODUCAO_WHATSAPP.md` — roadmap (etapa 3 em execução)
 
 ---
 
