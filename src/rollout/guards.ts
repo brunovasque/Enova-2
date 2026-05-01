@@ -4,6 +4,7 @@ const ROUTE_METHODS: Record<string, readonly string[]> = {
   '/': ['GET'],
   '/__core__/run': ['POST'],
   '/__meta__/ingest': ['POST'],
+  '/__meta__/webhook': ['GET', 'POST'],
 };
 
 const BLOCKED_BOUNDARIES = [

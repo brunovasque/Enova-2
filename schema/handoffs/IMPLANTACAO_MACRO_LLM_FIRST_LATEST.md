@@ -1,5 +1,96 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.11 — Implementação Meta/WhatsApp + Worker inbound/outbound CONCLUÍDA (2026-04-30)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Base**: PR-T8.10 (diagnóstico)  
+**Próxima**: PR-T8.12 — Prova Meta/WhatsApp controlada
+
+### Artefatos criados
+
+- `src/meta/signature.ts` — HMAC-SHA256 (Web Crypto), comparação timing-safe
+- `src/meta/parser.ts` — parser de payload bruto Meta + `computeDedupeKey`
+- `src/meta/dedupe.ts` — `DedupeStore` in-memory (interface estável para futuro KV/Supabase)
+- `src/meta/outbound.ts` — `sendMetaOutbound` bloqueado por default
+- `src/meta/webhook.ts` — handler GET challenge + POST inbound real
+- `src/meta/webhook-env.ts` — tipo `MetaWorkerEnv`
+- `src/meta/webhook-smoke.ts` — 20 cenários (100% PASS)
+- `schema/implementation/T8_META_WORKER_IMPL.md` — documentação 14 seções
+
+### Modificados
+
+- `src/worker.ts` — rota `/__meta__/webhook` (GET|POST) + anúncio em `/`
+- `src/rollout/guards.ts` — `/__meta__/webhook: ['GET', 'POST']` adicionado
+- `package.json` — `smoke:meta:webhook` em `smoke:all`
+
+### Comportamento
+
+| Rota | Método | Validação | Comportamento |
+|---|---|---|---|
+| `/__meta__/webhook` | GET | `hub.mode=subscribe` + `hub.verify_token == META_VERIFY_TOKEN` | 200 + `hub.challenge` em texto puro / 403 com reason sanitizado |
+| `/__meta__/webhook` | POST | `X-Hub-Signature-256` = `sha256=<HMAC-SHA256(rawBody, META_APP_SECRET)>` | 401 (ausente) / 403 (inválida) / 200 + lista de eventos normalizados |
+| `/__meta__/webhook` | outros | — | 405 |
+| `/__meta__/ingest` | POST | envelope interno `front6.v1` | preservado — `smoke:meta` 14/14 PASS |
+
+### Outbound
+
+- **BLOQUEADO** por default — `CHANNEL_ENABLED=false`/`META_OUTBOUND_ENABLED=false`
+- 8 reasons de bloqueio: `flag_off_channel`, `flag_off_outbound`, `access_token_missing`, `phone_number_id_missing`, `wa_id_missing`, `reply_text_missing`, `graph_api_error`, `network_error`
+- `reply_text` copiado **literalmente** — adapter nunca modifica
+- Endpoint Graph API: `https://graph.facebook.com/${META_GRAPH_VERSION:-v20.0}/${phone_number_id}/messages`
+- **Não invocado automaticamente pelo inbound nesta PR** — PR-T8.12 fará prova controlada
+
+### Envs/secrets esperados (setar via `wrangler secret put`)
+
+`META_VERIFY_TOKEN` | `META_APP_SECRET` | `META_ACCESS_TOKEN` | `META_PHONE_NUMBER_ID` | `META_GRAPH_VERSION` (opcional) | `CHANNEL_ENABLED` | `META_OUTBOUND_ENABLED`
+
+`wrangler.toml` **não alterado** — secrets exclusivamente via CLI Cloudflare.
+
+### Telemetria — 12 eventos Meta dedicados
+
+`meta.webhook.challenge.{ok,fail}` · `meta.webhook.signature.{ok,fail}` · `meta.webhook.inbound.{accepted,duplicate,invalid}` · `meta.webhook.status.received` · `meta.webhook.media.stub` · `meta.outbound.{blocked,ready,failed}`
+
+Segredos, payloads completos, conteúdo de mídia/áudio e dados sensíveis **nunca** em log.
+
+### Testes
+
+| Comando | Resultado |
+|---|---|
+| `npm run smoke:meta:webhook` | **20/20 PASS** (novo) |
+| `npm run smoke:meta` | **14/14 PASS** (retrocompat) |
+| `npm run smoke:supabase` | **70/70 PASS** |
+| `npm run prove:crm-e2e` | **73/73 PASS** |
+| `npm run smoke:all` | **PASS** (exit 0) |
+
+### Limitações declaradas
+
+1. Sem cliente real
+2. Sem outbound real automático (apenas função controlada disponível)
+3. Sem mídia real baixada (apenas referência preservada)
+4. Sem LLM real (`llm_invoked: false`)
+5. Sem go-live
+6. Dedupe in-memory por instância (interface pronta para KV/Supabase)
+7. Sem persistência Supabase do evento Meta nesta PR
+8. Sem integração com surface T6_SURFACE_CANAL nesta PR
+9. Auto-deploy main (CONF-01) não alterado
+
+### Rollback
+
+`git revert <commit>` — desfaz código novo. Worker volta ao estado da PR-T8.10. Ou: setar `CHANNEL_ENABLED=false` (já é o default — basta não habilitar) — outbound permanece bloqueado sem re-deploy.
+
+### Conformidade soberania
+
+- Adapter NUNCA gera `reply_text` ✅ (validado por smoke)
+- Adapter NUNCA decide stage / fact_* / fase ✅ (parser não produz esses campos)
+- Adapter NUNCA chama LLM ✅ (`llm_invoked: false`)
+- A00-ADENDO-01 (soberania IA na fala) — respeitado
+- A00-ADENDO-02 (multimodal sob T1–T5) — respeitado
+- A00-ADENDO-03 (fechamento por prova) — Bloco E em §14 do IMPL.md
+
+**Próxima PR**: PR-T8.12 — Prova Meta/WhatsApp controlada (PR-PROVA)
+
+---
+
 ## PR-T8.10 — Diagnóstico Meta/WhatsApp + Worker runtime CONCLUÍDO (2026-04-30)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA  

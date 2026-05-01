@@ -13,6 +13,7 @@
     "smoke:rollout": "tsx src/rollout/smoke.ts",
     "smoke:e1": "tsx src/e1/smoke.ts",
     "smoke:meta": "tsx src/meta/smoke.ts",
+    "smoke:meta:webhook": "tsx src/meta/webhook-smoke.ts",
     "smoke:speech": "tsx src/speech/smoke.ts",
     "smoke:context": "tsx src/context/smoke.ts",
     "smoke:adapter": "tsx src/adapter/smoke.ts",
@@ -23,7 +24,7 @@
     "smoke:supabase": "tsx src/supabase/smoke.ts",
     "prove:crm-e2e": "tsx src/panel/e2e-smoke.ts",
     "prove:supabase-real": "tsx src/supabase/proof.ts",
-    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio && npm run smoke:panel && npm run smoke:supabase && npm run prove:crm-e2e",
+    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:meta:webhook && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio && npm run smoke:panel && npm run smoke:supabase && npm run prove:crm-e2e",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
