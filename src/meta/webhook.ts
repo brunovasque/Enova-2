@@ -22,7 +22,7 @@ import { computeDedupeKey, parseMetaWebhookPayload, type NormalizedMetaEvent } f
 import { verifyMetaSignature } from './signature.ts';
 import { getSharedDedupeStore, type DedupeStore } from './dedupe.ts';
 import { readEnvString, type MetaWorkerEnv } from './webhook-env.ts';
-import { runInboundPipeline, type PipelineReport } from './pipeline.ts';
+import { runCanaryPipeline, type CanaryReport } from './canary-pipeline.ts';
 
 export const META_WEBHOOK_ROUTE = '/__meta__/webhook' as const;
 
@@ -210,7 +210,7 @@ export async function processMetaWebhookPost(input: {
   const dedupeStore = input.dedupeStore ?? getSharedDedupeStore();
   const reports: InboundEventReport[] = [];
   const enova2Enabled = input.env.ENOVA2_ENABLED === 'true' || input.env.ENOVA2_ENABLED === true;
-  const pipelineResults: PipelineReport[] = [];
+  const canaryResults: CanaryReport[] = [];
 
   for (const event of parsed.events) {
     const dedupeKey = computeDedupeKey(event);
@@ -240,10 +240,14 @@ export async function processMetaWebhookPost(input: {
           });
         }
 
-        // PR-T8.16 — pipeline inbound → CRM + memória (sem LLM, sem outbound)
+        // PR-T8.17 — canary pipeline: CRM + memória + LLM (gated) + outbound canary (gated)
         if (enova2Enabled) {
-          const pipelineResult = await runInboundPipeline(event, input.env, ctx);
-          pipelineResults.push(pipelineResult);
+          const canaryResult = await runCanaryPipeline(
+            event,
+            input.env as MetaWorkerEnv & Record<string, unknown>,
+            ctx,
+          );
+          canaryResults.push(canaryResult);
         }
       } else if (event.kind === 'status') {
         emitWebhookEvent(ctx, 'meta.webhook.status.received', 'observed', 'info', {
@@ -265,25 +269,39 @@ export async function processMetaWebhookPost(input: {
     });
   }
 
-  emitWebhookEvent(ctx, 'meta.outbound.blocked', 'blocked', 'info', {
-    route: META_WEBHOOK_ROUTE,
-    reason: 'pr_t811_no_auto_outbound',
-  });
+  const anyDispatch = canaryResults.some((r) => r.external_dispatch);
+  const anyLlm = canaryResults.some((r) => r.llm_invoked);
+  const anyOutbound = canaryResults.some((r) => r.outbound_attempted);
+  const anyReplyText = canaryResults.some((r) => r.reply_text_present);
+  const anyCanary = canaryResults.some((r) => r.canary_allowed);
+  const modeValue = canaryResults.length > 0
+    ? canaryResults[0].mode
+    : (enova2Enabled ? 'crm_memory_only' : 'technical_only');
+
+  if (!anyDispatch) {
+    emitWebhookEvent(ctx, 'meta.outbound.blocked', 'blocked', 'info', {
+      route: META_WEBHOOK_ROUTE,
+      reason: anyOutbound ? 'outbound_attempted_but_failed' : 'no_outbound_this_request',
+    });
+  }
 
   return {
     status: 200,
     body: {
       accepted: true,
       route: META_WEBHOOK_ROUTE,
-      mode: enova2Enabled ? 'crm_memory_only' : 'technical_only',
-      external_dispatch: false,
-      real_meta_integration: false,
-      llm_invoked: false,
+      mode: modeValue,
+      external_dispatch: anyDispatch,
+      real_meta_integration: anyDispatch,
+      llm_invoked: anyLlm,
+      reply_text_present: anyReplyText,
+      outbound_attempted: anyOutbound,
+      canary_allowed: anyCanary,
       pipeline_enabled: enova2Enabled,
       events: reports,
       events_count: reports.length,
       duplicates_count: reports.filter((r) => r.duplicate).length,
-      ...(pipelineResults.length > 0 ? { pipeline: pipelineResults } : {}),
+      ...(canaryResults.length > 0 ? { pipeline: canaryResults } : {}),
     },
   };
 }

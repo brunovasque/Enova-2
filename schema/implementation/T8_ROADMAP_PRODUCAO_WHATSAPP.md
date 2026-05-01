@@ -62,7 +62,7 @@ Gate de entrada: `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true` (já ativos no T
 
 ## Etapa 3 — PR-PROVA da T8.16
 
-**Status: PRÓXIMA PR AUTORIZADA**
+**Status: CONCLUÍDA — PR #169 (41 PASS | 0 FAIL positiva)**
 
 Provar:
 
@@ -76,25 +76,28 @@ Prova deve rodar no Worker TEST (`nv-enova-2-test`) com webhook apontando para T
 
 ---
 
-## Etapa 4 — PR-T8.17 — LLM controlado
+## Etapa 4 — PR-T8.17 — LLM + outbound canary controlado
 
-**Status: aguarda Etapa 3 concluída**
+**Status: CONCLUÍDA — `smoke:meta:canary` 41/41 PASS**
 
-Conectar inbound ao LLM para gerar `reply_text`, gated por flags.
+Conecta inbound ao LLM para geração de `reply_text` e outbound para resposta controlada ao número canary autorizado.
 
-**Obrigatório:**
+**Implementado:**
 
+- `src/llm/client.ts` — cliente LLM mínimo (OpenAI, fetch puro)
+- `src/meta/canary-pipeline.ts` — orquestrador: CRM+memória → LLM → outbound canary
+- Flags: `LLM_REAL_ENABLED`, `OUTBOUND_CANARY_ENABLED`, `OUTBOUND_CANARY_WA_ID`
 - `LLM_REAL_ENABLED=false` por padrão — só ativa com autorização Vasques
-- `CLIENT_REAL_ENABLED=false`
-- LLM é soberano da fala — o mecânico não compõe resposta (ver ADENDO_CANONICO_SOBERANIA_IA)
-- `reply_text` gerado exclusivamente pelo LLM — nunca pelo adapter/webhook
-- Sem resposta real ampla sem autorização explícita de Vasques
+- `OUTBOUND_CANARY_ENABLED=false` por padrão — resposta somente para `OUTBOUND_CANARY_WA_ID`
+- `CLIENT_REAL_ENABLED=false` — canary independe desta flag
+- ROLLBACK_FLAG e MAINTENANCE_MODE bloqueiam LLM e outbound
+- LLM é soberano da fala — adapter nunca compõe reply_text por conta própria
 
 ---
 
 ## Etapa 5 — PR-PROVA da T8.17 em TEST
 
-**Status: aguarda Etapa 4 concluída + autorização Vasques**
+**Status: PRÓXIMA PR AUTORIZADA — aguarda autorização Vasques para flags canary**
 
 Provar em janela curta e controlada:
 
@@ -196,8 +199,8 @@ Somente depois de prova real completa:
 | Diagnóstico do gap | CONCLUÍDO (PR #166) |
 | Acoplamento inbound → CRM | **IMPLEMENTADO (PR-T8.16)** |
 | Acoplamento inbound → memória | **IMPLEMENTADO (PR-T8.16)** |
-| Chamada LLM a partir do inbound | **NÃO IMPLEMENTADO** |
-| Outbound automático | **NÃO ATIVADO** |
+| Chamada LLM a partir do inbound | **IMPLEMENTADO gated (PR-T8.17)** |
+| Outbound canary controlado | **IMPLEMENTADO gated (PR-T8.17)** |
 | Resposta WhatsApp | **NÃO** |
 | Cutover Enova 1 → Enova 2 | **NÃO EXECUTADO** |
 | G8 | **NÃO FECHADO** |
