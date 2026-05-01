@@ -1,5 +1,50 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.12 — Prova Meta/WhatsApp controlada CONCLUÍDA (2026-04-30)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA (bloqueio controlado em P2–P7)  
+**Base**: PR-T8.10 (diagnóstico) + PR-T8.11 (implementação)  
+**Próxima**: PR-T8.13 — Memória evolutiva + telemetria operacional
+
+### Resultado
+
+| Grupo | PASS | FAIL | SKIP |
+|---|---|---|---|
+| P1 — Smokes unitários | 19 | 0 | 0 |
+| P2–P7 — Provas reais | 0 | 0 | 6 |
+| P8 — Invariantes soberania | 6 | 0 | 0 |
+| **Total** | **25** | **0** | **6** |
+
+**Exit code: 0** | `STATUS: PARCIAL — smokes PASS, provas reais SKIPPED (bloqueio controlado)`
+
+### Artefatos criados
+
+- `src/meta/proof-controlled.ts` — script dual-mode (skip sem env / prova com env)
+- `schema/proofs/T8_META_WHATSAPP_PROVA_CONTROLADA.md` — evidência + instruções Vasques
+- `package.json` — `prove:meta-controlada` adicionado (fora de `smoke:all`)
+
+### Bloqueio controlado P2–P7
+
+Secrets `META_VERIFY_TOKEN`, `META_APP_SECRET`, `META_ACCESS_TOKEN`, `META_PHONE_NUMBER_ID` não estão no ambiente Claude Code. Para ativar prova real, Vasques deve:
+
+```bash
+wrangler secret put META_VERIFY_TOKEN
+wrangler secret put META_APP_SECRET
+wrangler secret put META_ACCESS_TOKEN
+wrangler secret put META_PHONE_NUMBER_ID
+# Registrar webhook no painel Meta Developers → /__meta__/webhook
+META_REAL_ENABLED=true ... npx tsx src/meta/proof-controlled.ts
+```
+
+### Invariantes preservadas
+
+- Parser nunca produz `reply_text`/`stage`/`speech_intent`
+- Outbound bloqueado por `CHANNEL_ENABLED=false`/`META_OUTBOUND_ENABLED=false`
+- Zero cliente real, zero WhatsApp real amplo, zero secret exposto
+- `smoke:all` PASS exit 0 retrocompatível
+
+---
+
 ## PR-T8.11 — Implementação Meta/WhatsApp + Worker inbound/outbound CONCLUÍDA (2026-04-30)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
