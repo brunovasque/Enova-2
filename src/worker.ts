@@ -21,6 +21,7 @@ import { handleMetaWebhook, META_WEBHOOK_ROUTE } from './meta/webhook.ts';
 import type { MetaWorkerEnv } from './meta/webhook-env.ts';
 import { handleCrmRequest } from './crm/routes.ts';
 import { handlePanelRequest } from './panel/handler.ts';
+import { handleGoLiveHealth, GOLIVE_HEALTH_ROUTE } from './golive/health.ts';
 import { applyRolloutGuard } from './rollout/controller.ts';
 import { applyE1CoreHook } from './e1/memory.ts';
 import {
@@ -304,6 +305,12 @@ export default {
 
     if (url.pathname === META_WEBHOOK_ROUTE) {
       response = await handleMetaWebhook(request, url, env as MetaWorkerEnv, telemetryContext);
+      emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
+      return response;
+    }
+
+    if (url.pathname === GOLIVE_HEALTH_ROUTE) {
+      response = await handleGoLiveHealth(request, env);
       emitRequestLifecycleCompleted(telemetryContext, 'src/worker.ts', response.status);
       return response;
     }
