@@ -1,5 +1,51 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.12B — Execução real Meta/WhatsApp controlada (2026-04-30) — BLOQUEADA AGUARDANDO VASQUES
+
+**Tipo**: PR-PROVA | **Status**: BLOQUEADA — P2–P7 não executadas por ausência de secrets/deploy/webhook  
+**Base**: PR-T8.12 (harness)  
+**Próxima ação**: Vasques provisiona secrets + publica Worker test + registra webhook → executa P2–P7
+
+### Resultado
+
+| Prova | Status |
+|---|---|
+| P1 — Smokes locais | ✅ PASS (25/0/6) |
+| P2 — Secrets reais | ❌ BLOQUEIO — ausentes no ambiente |
+| P3 — Deploy test | ❌ BLOQUEIO — Worker test não publicado |
+| P4 — Challenge real | ❌ BLOQUEIO — depende de P2+P3 |
+| P5 — Assinatura real | ❌ BLOQUEIO — depende de P2+P3 |
+| P6 — Inbound real | ❌ BLOQUEIO — depende de P2+P3+webhook |
+| P7 — Outbound bloqueado | ✅ PASS (comprovado localmente) |
+| P7 — Outbound real | ⏭ OUTBOUND_REAL_SKIPPED_BY_POLICY |
+| P8 — Invariantes | ✅ PASS (6/6) |
+
+### Bloqueio
+
+```
+BLOQUEIO: secrets Meta ausentes. PR-T8.12B não pode concluir prova real.
+Worker test não publicado. Webhook Meta não registrado.
+```
+
+### Para Vasques ativar
+
+```bash
+wrangler secret put META_VERIFY_TOKEN --env test
+wrangler secret put META_APP_SECRET --env test
+wrangler secret put META_ACCESS_TOKEN --env test
+wrangler secret put META_PHONE_NUMBER_ID --env test
+wrangler deploy --env test
+# Registrar webhook Meta → /__meta__/webhook
+META_REAL_ENABLED=true ... npx tsx src/meta/proof-controlled.ts
+```
+
+### Estado da frente
+
+**Frente Meta/WhatsApp:** `BLOQUEADA_AGUARDANDO_VASQUES`  
+**Não avançar para PR-T8.13 enquanto P2–P7 não passarem com resultado real.**
+
+---
+
 ## PR-T8.12 — Harness de Prova Meta/WhatsApp instalado (2026-04-30) — PROVA REAL PENDENTE
 
 **Tipo**: PR-PROVA | **Status**: HARNESS INSTALADO — prova real NÃO executada  
