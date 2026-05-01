@@ -13,6 +13,7 @@ export interface MetaWorkerEnv {
   META_GRAPH_VERSION?: unknown;
   CHANNEL_ENABLED?: unknown;
   META_OUTBOUND_ENABLED?: unknown;
+  ENOVA2_ENABLED?: unknown;
 }
 
 export function readEnvString(env: MetaWorkerEnv, key: keyof MetaWorkerEnv): string | undefined {

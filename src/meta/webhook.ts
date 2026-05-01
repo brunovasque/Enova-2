@@ -22,6 +22,7 @@ import { computeDedupeKey, parseMetaWebhookPayload, type NormalizedMetaEvent } f
 import { verifyMetaSignature } from './signature.ts';
 import { getSharedDedupeStore, type DedupeStore } from './dedupe.ts';
 import { readEnvString, type MetaWorkerEnv } from './webhook-env.ts';
+import { runInboundPipeline, type PipelineReport } from './pipeline.ts';
 
 export const META_WEBHOOK_ROUTE = '/__meta__/webhook' as const;
 
@@ -208,6 +209,8 @@ export async function processMetaWebhookPost(input: {
 
   const dedupeStore = input.dedupeStore ?? getSharedDedupeStore();
   const reports: InboundEventReport[] = [];
+  const enova2Enabled = input.env.ENOVA2_ENABLED === 'true' || input.env.ENOVA2_ENABLED === true;
+  const pipelineResults: PipelineReport[] = [];
 
   for (const event of parsed.events) {
     const dedupeKey = computeDedupeKey(event);
@@ -235,6 +238,12 @@ export async function processMetaWebhookPost(input: {
             media_mime: event.media_mime_type,
             message_type: event.message_type,
           });
+        }
+
+        // PR-T8.16 — pipeline inbound → CRM + memória (sem LLM, sem outbound)
+        if (enova2Enabled) {
+          const pipelineResult = await runInboundPipeline(event, input.env, ctx);
+          pipelineResults.push(pipelineResult);
         }
       } else if (event.kind === 'status') {
         emitWebhookEvent(ctx, 'meta.webhook.status.received', 'observed', 'info', {
@@ -266,13 +275,15 @@ export async function processMetaWebhookPost(input: {
     body: {
       accepted: true,
       route: META_WEBHOOK_ROUTE,
-      mode: 'technical_only',
+      mode: enova2Enabled ? 'crm_memory_only' : 'technical_only',
       external_dispatch: false,
       real_meta_integration: false,
       llm_invoked: false,
+      pipeline_enabled: enova2Enabled,
       events: reports,
       events_count: reports.length,
       duplicates_count: reports.filter((r) => r.duplicate).length,
+      ...(pipelineResults.length > 0 ? { pipeline: pipelineResults } : {}),
     },
   };
 }

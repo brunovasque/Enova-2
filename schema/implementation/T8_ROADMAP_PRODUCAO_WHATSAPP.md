@@ -3,7 +3,7 @@
 **Tipo:** PR-DOC / GOVERNANÇA  
 **Data:** 2026-05-01  
 **Contrato ativo:** `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md`  
-**Estado atual:** Enova 2 recebe inbound real no Worker TEST — **ainda não responde WhatsApp**
+**Estado atual:** Enova 2 recebe inbound real, cria lead + turno + memória no Worker TEST — **ainda não responde WhatsApp**
 
 ---
 
@@ -33,7 +33,7 @@ Artefato: `schema/diagnostics/T8_META_INBOUND_CUTOVER_DIAGNOSTICO.md`
 
 ## Etapa 2 — PR-T8.16 — inbound → CRM + memória
 
-**Status: PRÓXIMA PR AUTORIZADA**
+**Status: CONCLUÍDA**
 
 Implementar somente:
 
@@ -62,7 +62,7 @@ Gate de entrada: `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true` (já ativos no T
 
 ## Etapa 3 — PR-PROVA da T8.16
 
-**Status: aguarda PR-T8.16**
+**Status: PRÓXIMA PR AUTORIZADA**
 
 Provar:
 
@@ -194,8 +194,8 @@ Somente depois de prova real completa:
 | Secrets Meta TEST | PROVISIONADOS |
 | Inbound real no Worker TEST | RECEBIDO (PR #165) |
 | Diagnóstico do gap | CONCLUÍDO (PR #166) |
-| Acoplamento inbound → CRM | **NÃO IMPLEMENTADO** |
-| Acoplamento inbound → memória | **NÃO IMPLEMENTADO** |
+| Acoplamento inbound → CRM | **IMPLEMENTADO (PR-T8.16)** |
+| Acoplamento inbound → memória | **IMPLEMENTADO (PR-T8.16)** |
 | Chamada LLM a partir do inbound | **NÃO IMPLEMENTADO** |
 | Outbound automático | **NÃO ATIVADO** |
 | Resposta WhatsApp | **NÃO** |
