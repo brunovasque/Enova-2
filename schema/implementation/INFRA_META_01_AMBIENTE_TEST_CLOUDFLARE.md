@@ -202,10 +202,18 @@ Antes de cada passo, confirme:
 
 | Verificação | Comando |
 |---|---|
-| Nenhum secret no repo | `git grep -r "META_APP_SECRET" src/` (deve retornar zero) |
+| Nenhum valor real de secret no repo | ver comando abaixo |
 | Worker test declarado | `grep -A2 '\[env.test\]' wrangler.toml` |
 | Script dual-mode seguro | `npm run prove:meta-controlada` (sem META_REAL_ENABLED — deve PASS 25/0/6) |
 | Rollback ativo se necessário | `ROLLBACK_FLAG=true npm run smoke:golive` |
+
+**Verificação de secrets reais no repo:**
+
+```bash
+git grep -nE "(EAA|EAAG|ghp_|ghs_|sk-|sb-|Bearer )[A-Za-z0-9_./+=:-]{20,}" -- . ':!node_modules' ':!dist' ':!.wrangler'
+```
+
+> **Importante:** nomes de variáveis como `META_APP_SECRET`, `META_ACCESS_TOKEN`, etc., **podem e devem** existir no código-fonte — eles são referências legítimas às variáveis de ambiente. O que **não pode** existir no repo é o *valor real* de um secret ou token (ex.: uma string iniciando com `EAAGm...`, `ghp_...`, `sk-...`). O comando acima detecta padrões de valores reais de tokens/secrets; se retornar zero linhas, o repo está limpo.
 
 ---
 
@@ -311,4 +319,4 @@ Serve exclusivamente como guia operacional seguro para a execução humana por V
 Após execução completa e evidências coletadas:
 1. Atualizar `schema/proofs/T8_META_WHATSAPP_PROVA_REAL_EXECUTADA.md` com evidências reais
 2. Re-executar `npm run prove:g8-readiness` — resultado esperado: 7/7 PASS + G8 APROVADO
-3. Autorizar `CLIENT_REAL_ENABLED=true` + `LLM_REAL_ENABLED=true` + go-live
+3. Autorizar `CLIENT_REAL_ENABLED=true` + `LLM_REAL_ENABLED=true` + `META_OUTBOUND_ENABLED=true` + go-live

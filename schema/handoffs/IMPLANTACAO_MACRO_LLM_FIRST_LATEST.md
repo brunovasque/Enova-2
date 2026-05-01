@@ -33,7 +33,7 @@ Documentar o caminho seguro e completo para Vasques ativar o ambiente TEST Cloud
 6. Registrar webhook no painel Meta Developers com URL + verify token
 7. `META_REAL_ENABLED=true npm run prove:meta-controlada` — esperado `≥27/0/≤4`
 8. Documentar evidências: challenge real, inbound real, logs Cloudflare
-9. Autorizar go-live: `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true` + `LLM_REAL_ENABLED=true` + `CLIENT_REAL_ENABLED=true`
+9. Autorizar go-live: `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true` + `LLM_REAL_ENABLED=true` + `CLIENT_REAL_ENABLED=true` + `META_OUTBOUND_ENABLED=true`
 
 ---
 
@@ -110,7 +110,7 @@ Motivo:    Meta/WhatsApp prova real externa pendente (PR-T8.12B — aguardando V
 7. `npm run prove:meta-controlada` com `META_REAL_ENABLED=true`
 8. Confirmar `≥27 PASS | 0 FAIL | ≤4 SKIP`
 9. Documentar: logs Cloudflare + painel Meta + mensagem real recebida
-10. Autorizar `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true` + `LLM_REAL_ENABLED=true` + `CLIENT_REAL_ENABLED=true`
+10. Autorizar `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true` + `LLM_REAL_ENABLED=true` + `CLIENT_REAL_ENABLED=true` + `META_OUTBOUND_ENABLED=true`
 
 ---
 
