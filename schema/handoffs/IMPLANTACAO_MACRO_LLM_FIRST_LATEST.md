@@ -1,5 +1,69 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-PROVA T8.17 — Prova real canary LLM + outbound controlado (2026-05-01)
+
+**Tipo**: PR-PROVA | **Status**: EM EXECUÇÃO — harness instalado, prova real aguarda Vasques  
+**Base**: PR-T8.17 (#170) — `src/meta/canary-pipeline.ts` implementado  
+**Próxima ação**: **Vasques executa `prove:meta:canary-real` com flags canary ativas no Worker TEST**
+
+### Estado atual
+
+**Harness dual-mode instalado.** Modo local: 31 PASS | 0 FAIL | 5 SKIP. Prova real requer `CANARY_REAL_PROOF_ENABLED=true` + credenciais + flags ativas no Worker TEST.
+
+### Para executar a prova real (Vasques)
+
+Pré-condições no Worker TEST (via wrangler secret put ou dashboard):
+```
+LLM_REAL_ENABLED=true
+OUTBOUND_CANARY_ENABLED=true
+OUTBOUND_CANARY_WA_ID=<seu_wa_id>
+OPENAI_API_KEY=<chave>
+CLIENT_REAL_ENABLED=false
+ROLLBACK_FLAG=false
+MAINTENANCE_MODE=false
+```
+
+Executar com:
+```bash
+npx wrangler tail nv-enova-2-test  # abrir em terminal separado
+
+CANARY_REAL_PROOF_ENABLED=true \
+ENOVA2_TEST_WORKER_URL=https://nv-enova-2-test.brunovasque.workers.dev \
+META_APP_SECRET=<secret> \
+META_PHONE_NUMBER_ID=<número> \
+CRM_ADMIN_KEY=<chave> \
+OUTBOUND_CANARY_WA_ID=<seu_wa_id> \
+npm run prove:meta:canary-real
+```
+
+Resultado esperado: `PASS: 35+ | FAIL: 0 | SKIP: 0`
+
+### Confirmação manual obrigatória por Vasques
+
+Após a prova automatizada:
+- Você recebeu uma mensagem no WhatsApp?
+- O texto está em português, humano, sem promessa de aprovação de financiamento?
+- Nenhum outro número recebeu mensagem?
+
+### Arquivos criados
+
+- `src/meta/canary-real-proof.ts` (NOVO) — harness dual-mode
+- `schema/proofs/T8_LLM_OUTBOUND_CANARY_PROVA_REAL.md` (NOVO)
+
+### Roadmap atualizado
+
+| Etapa | PR | Status |
+|---|---|---|
+| 1 | PR-DIAG inbound/cutover | ✅ CONCLUÍDA — PR #166 |
+| 2 | PR-T8.16 inbound→CRM+memória | ✅ CONCLUÍDA — PR #168 |
+| 3 | PR-PROVA T8.16 | ✅ CONCLUÍDA — PR #169 (positiva) |
+| 4 | PR-T8.17 LLM + outbound canary | ✅ CONCLUÍDA — PR #170 |
+| 5 | PR-PROVA T8.17 (canary real, Vasques) | **EM EXECUÇÃO — esta PR** |
+| 6 | Cutover Enova 1 → Enova 2 PROD | aguarda Etapa 5 |
+| 7 | Closeout / G8 aprovado | aguarda |
+
+---
+
 ## PR-T8.17 — LLM + outbound canary controlado (2026-05-01)
 
 **Tipo**: PR-IMPL acelerada/controlada | **Status**: CONCLUÍDA — 41/41 smokes PASS  
