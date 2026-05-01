@@ -1,25 +1,30 @@
-# PR-T8.12 — Prova Meta/WhatsApp Controlada
+# PR-T8.12 — Harness de Prova Meta/WhatsApp Controlada
 
-**Tipo:** PR-PROVA  
+**Tipo:** PR-PROVA (harness instalado — prova real pendente)  
 **Frente:** Meta/WhatsApp Canal  
-**Data de execução:** 2026-04-30  
+**Data de instalação do harness:** 2026-04-30  
 **Executor:** Claude Code (claude-sonnet-4-6)  
 **Branch:** feat/t8-pr-t8-12-prova-meta-whatsapp-controlada  
 
 ---
 
-## §1 — Declaração de bloqueio controlado
+## §1 — Estado da prova
 
-A prova real de integração Meta/WhatsApp (P2–P7) não pôde ser executada nesta sessão por ausência de secrets reais no ambiente Claude Code.
+**Harness de prova Meta/WhatsApp controlada instalado.**
+
+A prova real (P2–P7) **não foi executada** nesta PR por ausência de secrets Cloudflare, deploy Worker test e registro de webhook Meta.
 
 **BLOQUEIO FORMAL:**
 ```
-BLOQUEIO: secrets Meta ausentes no ambiente. PR-T8.12 não pode concluir
-prova real sem provisionamento dos secrets Cloudflare e registro do
-webhook no painel Meta Developers.
+BLOQUEIO: secrets Meta ausentes no ambiente. PR-T8.12 instalou o harness
+de prova, mas NÃO concluiu a prova real Meta/WhatsApp.
+Prova real pendente de: secrets Cloudflare provisionados, deploy Worker
+em ambiente test, e registro de webhook no painel Meta Developers.
 ```
 
-Este bloqueio é **controlado e esperado** conforme o padrão PR-T8.9/T8.9B. O script de prova (`prove:meta-controlada`) sai com exit 0 em modo skip.
+**Frente Meta/WhatsApp permanece aberta até execução real positiva.**
+
+**Próxima obrigatória: PR-T8.12B — Execução real Meta/WhatsApp controlada.**
 
 ---
 
@@ -34,6 +39,11 @@ Este bloqueio é **controlado e esperado** conforme o padrão PR-T8.9/T8.9B. O s
 | `smoke:all` EXIT 0 | ✅ |
 | Script `prove:meta-controlada` criado | ✅ |
 | Script exit 0 em modo skip | ✅ |
+| Prova real P2–P7 executada | ❌ |
+| Challenge real verificado no painel Meta | ❌ |
+| Webhook registrado e verificado | ❌ |
+| Inbound real recebido | ❌ |
+| Deploy Worker em ambiente test | ❌ |
 
 ---
 
@@ -68,7 +78,7 @@ Executados em 2026-04-30 sem qualquer secret real.
 
 ---
 
-## §4 — Resultados P2–P7 — Provas reais (bloqueio controlado)
+## §4 — Resultados P2–P7 — Provas reais (SKIPPED — não executadas)
 
 ```
 [SKIP] P2: Assinatura HMAC com APP_SECRET real — META_REAL_ENABLED não definido
@@ -79,7 +89,8 @@ Executados em 2026-04-30 sem qualquer secret real.
 [SKIP] P7: Telemetria real — eventos no Supabase — META_REAL_ENABLED não definido
 ```
 
-**Total P2–P7:** 0 PASS | 0 FAIL | 6 SKIP
+**Total P2–P7:** 0 PASS | 0 FAIL | 6 SKIP  
+**Interpretação: P2–P7 NÃO foram provadas. Frente permanece aberta.**
 
 ---
 
@@ -109,13 +120,28 @@ STATUS: PARCIAL — smokes PASS, provas reais SKIPPED (bloqueio controlado)
 Exit code: 0
 ```
 
+**Interpretação correta:** harness instalado e funcionando. Prova real pendente em PR-T8.12B.
+
 ---
 
-## §7 — Instruções para Vasques — ativação da prova real
+## §7 — O que PR-T8.12B deve provar (obrigatório)
 
-Para que a prova real (P2–P7) seja executada, Vasques deve:
+Para que a frente Meta/WhatsApp seja considerada encerrada, PR-T8.12B deve executar com resultado PASS real:
 
-### 7.1 — Provisionar secrets no Cloudflare Worker
+| Prova | Descrição | Critério de aceite |
+|---|---|---|
+| P2 | HMAC com APP_SECRET real → verificação local | PASS com secret real |
+| P3 | processMetaWebhookPost com secrets reais | accepted=true com secret real |
+| P4 | Webhook inbound real via Worker publicado | `meta.webhook.inbound.accepted` nos logs |
+| P5 | Outbound real controlado via Graph API | resposta 200 da API Meta (autorização Vasques) |
+| P6 | Dedupe real: mesmo wamid duas vezes | segundo request retorna `duplicate: true` |
+| P7 | Telemetria real no Supabase | evento persistido no Supabase |
+
+---
+
+## §8 — Instruções para Vasques — ativação da prova real (PR-T8.12B)
+
+### 8.1 — Provisionar secrets no Cloudflare Worker
 
 ```bash
 wrangler secret put META_VERIFY_TOKEN
@@ -131,15 +157,21 @@ wrangler secret put META_PHONE_NUMBER_ID
 # (ID do número de telefone no painel Meta WhatsApp)
 ```
 
-### 7.2 — Registrar webhook no painel Meta Developers
+### 8.2 — Deploy Worker em ambiente test
+
+```bash
+wrangler deploy --env test
+```
+
+### 8.3 — Registrar webhook no painel Meta Developers
 
 1. Acessar Meta Developers → App → WhatsApp → Configuration
 2. Webhook URL: `https://<worker>.workers.dev/__meta__/webhook`
 3. Verify Token: o mesmo valor de `META_VERIFY_TOKEN`
 4. Assinar nos campos: `messages`, `message_deliveries`, `message_reads`
-5. Verificar que o GET challenge retorna 200 no painel
+5. Verificar que o GET challenge retorna 200 no painel — **este é P4 parcial**
 
-### 7.3 — Executar prova real local
+### 8.4 — Executar prova real
 
 ```bash
 META_REAL_ENABLED=true \
@@ -150,25 +182,16 @@ META_PHONE_NUMBER_ID=<phone_number_id> \
 npx tsx src/meta/proof-controlled.ts
 ```
 
-### 7.4 — Resultado esperado (modo real parcial)
+### 8.5 — Resultado esperado (modo real)
 
 ```
-PASS: 25+ | FAIL: 0 | SKIP: 4 (P4–P7 requerem deployment real)
-STATUS: PARCIAL — smokes PASS, provas reais SKIPPED (deployment real)
+PASS: 27+ | FAIL: 0 | SKIP: 0–4 (P4–P7 requerem deployment real + webhook registrado)
+STATUS: PASSOU ou PARCIAL com PASS reais em P2/P3
 ```
-
-### 7.5 — Para P4–P7 (inbound real + outbound real)
-
-Requer:
-- Worker publicado no Cloudflare (`wrangler deploy`)
-- Webhook registrado e verificado no painel Meta
-- Envio de mensagem WhatsApp real ao número de teste
-- Verificação nos logs do Worker: `meta.webhook.inbound.accepted`
-- Para P5 (outbound): ativar `CHANNEL_ENABLED=true` + `META_OUTBOUND_ENABLED=true` (requer autorização de Vasques)
 
 ---
 
-## §8 — Arquivos entregues por PR-T8.12
+## §9 — Arquivos entregues por PR-T8.12
 
 | Arquivo | Tipo | Descrição |
 |---|---|---|
@@ -180,7 +203,7 @@ Requer:
 
 ---
 
-## §9 — Invariantes preservadas
+## §10 — Invariantes preservadas
 
 - ✅ Nenhum secret real foi impresso em stdout/stderr
 - ✅ Script não falha CI quando env ausente (exit 0)
@@ -191,29 +214,21 @@ Requer:
 
 ---
 
-## §10 — Limitações desta prova
+## §11 — Limitações desta PR
 
-1. **P4 — Inbound real**: requer webhook registrado e deployment. Não executável em Claude Code.
-2. **P5 — Outbound real**: requer `META_OUTBOUND_ENABLED=true` (autorização de Vasques) + deployment.
-3. **P6 — Dedupe real**: requer dois POSTs reais via Meta Cloud API ao Worker publicado.
-4. **P7 — Telemetria real**: requer Supabase + Worker deployment + evento real inbound.
+1. **P2/P3 — Assinatura/POST com secrets reais**: requer secrets Meta reais. Não executável em Claude Code.
+2. **P4 — Inbound real**: requer webhook registrado e deployment Worker. Fora do escopo desta PR.
+3. **P5 — Outbound real**: requer `META_OUTBOUND_ENABLED=true` (autorização de Vasques) + deployment.
+4. **P6 — Dedupe real**: requer dois POSTs reais via Meta Cloud API ao Worker publicado.
+5. **P7 — Telemetria real**: requer Supabase + Worker deployment + evento real inbound.
 
-Todas limitações são bloqueios externos ao código — o código está correto e pronto para uso real.
-
----
-
-## §11 — Próximas PRs autorizadas
-
-| PR | Tipo | Frente | Dependência |
-|---|---|---|---|
-| PR-T8.13 | PR-IMPL | Memória evolutiva + telemetria | PR-T8.10 + PR-T8.11 |
-| PR-T8.R | PR-PROVA | Prova operacional real G8 | Todas frentes prontas |
+**Nenhuma limitação é do código — o código está pronto para uso real quando os pré-requisitos externos forem atendidos.**
 
 ---
 
-## §12 — Assinatura de fechamento
+## §12 — Estado da frente
 
-**Frente Meta/WhatsApp — Estado:** `IMPLEMENTADO_PROVA_PARCIAL`  
-**Bloqueio real:** secrets Cloudflare + deployment (externo ao código)  
-**Código:** pronto, testado, sem falhas  
-**Próxima ação por Vasques:** provisionar secrets + registrar webhook + executar `prove:meta-controlada` em modo real
+**Frente Meta/WhatsApp — Estado:** `HARNESS_INSTALADO_PROVA_REAL_PENDENTE`  
+**Bloqueio:** secrets Cloudflare não provisionados + Worker não publicado em test + webhook Meta não registrado  
+**Próxima obrigatória:** PR-T8.12B — Execução real Meta/WhatsApp controlada  
+**Frente permanece aberta até PR-T8.12B executar P2–P7 com resultado PASS real.**

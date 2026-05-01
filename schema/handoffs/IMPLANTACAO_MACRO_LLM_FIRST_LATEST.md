@@ -1,10 +1,10 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
-## PR-T8.12 — Prova Meta/WhatsApp controlada CONCLUÍDA (2026-04-30)
+## PR-T8.12 — Harness de Prova Meta/WhatsApp instalado (2026-04-30) — PROVA REAL PENDENTE
 
-**Tipo**: PR-PROVA | **Status**: CONCLUÍDA (bloqueio controlado em P2–P7)  
+**Tipo**: PR-PROVA | **Status**: HARNESS INSTALADO — prova real NÃO executada  
 **Base**: PR-T8.10 (diagnóstico) + PR-T8.11 (implementação)  
-**Próxima**: PR-T8.13 — Memória evolutiva + telemetria operacional
+**Próxima obrigatória**: PR-T8.12B — Execução real Meta/WhatsApp controlada
 
 ### Resultado
 
@@ -17,24 +17,34 @@
 
 **Exit code: 0** | `STATUS: PARCIAL — smokes PASS, provas reais SKIPPED (bloqueio controlado)`
 
+**P2–P7 NÃO foram provadas. Frente Meta/WhatsApp permanece aberta.**
+
 ### Artefatos criados
 
 - `src/meta/proof-controlled.ts` — script dual-mode (skip sem env / prova com env)
-- `schema/proofs/T8_META_WHATSAPP_PROVA_CONTROLADA.md` — evidência + instruções Vasques
+- `schema/proofs/T8_META_WHATSAPP_PROVA_CONTROLADA.md` — evidência + instruções PR-T8.12B
 - `package.json` — `prove:meta-controlada` adicionado (fora de `smoke:all`)
 
-### Bloqueio controlado P2–P7
+### Bloqueio — PR-T8.12B obrigatória
 
-Secrets `META_VERIFY_TOKEN`, `META_APP_SECRET`, `META_ACCESS_TOKEN`, `META_PHONE_NUMBER_ID` não estão no ambiente Claude Code. Para ativar prova real, Vasques deve:
+P2–P7 SKIPPED por ausência de: secrets Meta (`META_VERIFY_TOKEN`, `META_APP_SECRET`, `META_ACCESS_TOKEN`, `META_PHONE_NUMBER_ID`), Worker publicado em ambiente test, webhook registrado no painel Meta.
+
+Para PR-T8.12B, Vasques deve:
 
 ```bash
 wrangler secret put META_VERIFY_TOKEN
 wrangler secret put META_APP_SECRET
 wrangler secret put META_ACCESS_TOKEN
 wrangler secret put META_PHONE_NUMBER_ID
+wrangler deploy --env test
 # Registrar webhook no painel Meta Developers → /__meta__/webhook
 META_REAL_ENABLED=true ... npx tsx src/meta/proof-controlled.ts
 ```
+
+### Estado da frente
+
+**Frente Meta/WhatsApp:** `HARNESS_INSTALADO_PROVA_REAL_PENDENTE`  
+**Não avançar para PR-T8.13 antes de PR-T8.12B executar P2–P7 com PASS real.**
 
 ### Invariantes preservadas
 
