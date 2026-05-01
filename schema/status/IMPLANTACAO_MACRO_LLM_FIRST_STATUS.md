@@ -8,7 +8,9 @@ Fase macro ativa: **T8 — Diagnóstico técnico de aderência contrato × códi
 
 Gate anterior: G7 — APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS em 2026-04-29 via PR-T7.R.
 
-Gate atual: **G8 — em aberto** — T8 em execução; próxima PR: PR-T8.1.
+Gate atual: **G8 — em aberto** — T8 em execução; **próxima PR autorizada: PR-T8.16** (PR-IMPL acoplamento inbound → CRM + memória, sem LLM).
+
+**Estado Meta/WhatsApp (2026-05-01):** Worker TEST `nv-enova-2-test` publicado; inbound real recebido (PR #165); diagnóstico do gap concluído (PR #166); acoplamento inbound → CRM/memória/LLM/outbound **NÃO implementado**; Enova 2 **ainda NÃO responde WhatsApp**; cutover Enova 1 → Enova 2 **NÃO executado**; G8 **NÃO FECHADO**. Roadmap oficial registrado em `schema/implementation/T8_ROADMAP_PRODUCAO_WHATSAPP.md`. 1 número WhatsApp = 1 webhook ativo por vez — cutover exige janela controlada com Vasques presente e rollback em ~30s via painel Meta.
 
 Restrições operacionais herdadas de G7: telemetria (RA-G7-01), smoke runtime (RA-G7-02), feature flags runtime (RA-G7-05), WhatsApp real (RA-G7-08).
 
