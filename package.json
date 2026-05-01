@@ -23,6 +23,7 @@
     "smoke:panel": "tsx src/panel/smoke.ts",
     "smoke:supabase": "tsx src/supabase/smoke.ts",
     "smoke:memory": "tsx src/memory/smoke.ts",
+    "prove:memory-telemetry": "tsx src/memory/proof.ts",
     "prove:crm-e2e": "tsx src/panel/e2e-smoke.ts",
     "prove:supabase-real": "tsx src/supabase/proof.ts",
     "prove:meta-controlada": "tsx src/meta/proof-controlled.ts",

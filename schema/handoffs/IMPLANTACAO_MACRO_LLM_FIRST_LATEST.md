@@ -1,5 +1,67 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.14 — Prova memória + telemetria + regressão contratual CONCLUÍDA (2026-04-30)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
+**Base**: PR-T8.13 (memória/telemetria implementada) — 17/17 PASS  
+**Próxima**: PR-T8.15 — Preparação final de flags/rollback/go-live (PR-IMPL) — aguarda Vasques
+
+### Resultado
+
+| Suite | Resultado |
+|---|---|
+| `prove:memory-telemetry` (novo) | **9/9 PASS** |
+| `smoke:memory` | 17/17 PASS retrocompat |
+| `smoke:supabase` | 70/70 PASS retrocompat |
+| `smoke:meta:webhook` | 20/20 PASS retrocompat |
+| `smoke:meta` | 14/14 PASS retrocompat |
+| `prove:crm-e2e` | 73/73 PASS retrocompat |
+| `prove:meta-controlada` | 25/0/6 retrocompat (Meta bloqueada) |
+| `smoke:all` | **EXIT 0** |
+
+### Provas executadas
+
+| ID | Prova | Resultado |
+|---|---|---|
+| P1 | Evento de atendimento salvo (8 assertions) | PASS |
+| P2 | Candidato criado como draft — decisão nula (7 assertions) | PASS |
+| P3 | Candidato NÃO promovido automaticamente (10 assertions) | PASS |
+| P4 | Decisão humana exige operator_id+reason; validated/rejected/promoted (11 assertions) | PASS |
+| P5 | Telemetria emite 5 eventos canônicos `f7.core.persistence_signal.memory.*` (8 assertions) | PASS |
+| P6 | Sanitização redige tokens/segredos/headers; trunca strings longas (9 assertions) | PASS |
+| P7 | 6 rotas `/crm/memory/*` via Worker; auth 401 sem key (14 assertions) | PASS |
+| P8 | Regressão soberana: sem reply_text/decide_stage/fact_* em 5 rotas CRM (13 assertions) | PASS |
+| P9 | Invariantes soberanas: 6 flags + 3 status + 2 store + mode (12 assertions) | PASS |
+
+### Artefatos criados
+
+- `src/memory/proof.ts` — script de prova com P1–P9
+- `schema/proofs/T8_MEMORIA_TELEMETRIA_PROVA.md` — doc de prova (16 seções)
+
+### Modificados
+
+- `package.json` — `prove:memory-telemetry` adicionado
+
+### Estado das frentes após PR-T8.14
+
+| Frente | Estado |
+|---|---|
+| CRM backend/frontend | APROVADA (PR-T8.4/T8.5/T8.6) |
+| Supabase leitura real | APROVADA (PR-T8.9B) |
+| Memória/telemetria | **APROVADA_LOCAL_IN_MEMORY** (esta PR) |
+| Meta/WhatsApp | BLOQUEADA_AGUARDANDO_VASQUES (PR-T8.12B) |
+| LLM real | Não iniciado |
+| Go-live / G8 | Não fechado |
+
+### Bloqueios mantidos
+
+- Meta/WhatsApp continua `BLOQUEADA_AGUARDANDO_VASQUES` (PR-T8.12B).
+- Persistência real de memória ainda in-memory (`MEMORY_SUPABASE_ENABLED` — PR futura).
+- G8 NÃO fechado.
+- Atendimento real / cliente real / LLM real / outbound real — TODOS desabilitados.
+
+---
+
 ## PR-T8.13 — Memória evolutiva + telemetria operacional CONCLUÍDA (2026-04-30)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
