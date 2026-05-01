@@ -24,6 +24,8 @@
  */
 
 import { createHmac } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { runInboundPipeline } from './pipeline.ts';
 import type { NormalizedMetaEvent } from './parser.ts';
 
@@ -326,6 +328,43 @@ function phase3Semiauto(): void {
 }
 
 // ---------------------------------------------------------------------------
+// Fase 4 — Validação de artefato de governança (sempre executada)
+// ---------------------------------------------------------------------------
+
+function phase4GovernanceArtifact(): void {
+  console.log('\n=== FASE 4 — Validação de artefato de governança ===\n');
+
+  const proofDocPath = join(process.cwd(), 'schema', 'proofs', 'T8_INBOUND_CRM_MEMORIA_PROVA_REAL.md');
+  let docContent = '';
+
+  try {
+    docContent = readFileSync(proofDocPath, 'utf-8');
+    record('P4-01', 'Fase 4', 'documento de prova legível', 'PASS', proofDocPath);
+  } catch (e) {
+    record('P4-01', 'Fase 4', 'documento de prova legível', 'FAIL', `não encontrado: ${proofDocPath}`);
+    record('P4-02', 'Fase 4', 'marker T8.12B NÃO ENCERRADA presente', 'FAIL', 'documento inacessível');
+    record('P4-03', 'Fase 4', 'marker G8 NÃO FECHADO presente', 'FAIL', 'documento inacessível');
+    record('P4-04', 'Fase 4', 'marker fechamento não permitido presente', 'FAIL', 'documento inacessível');
+    record('P4-05', 'Fase 4', 'Bloco E presente no documento', 'FAIL', 'documento inacessível');
+    return;
+  }
+
+  const hasT812bMarker = docContent.includes('T8.12B: NÃO ENCERRADA — esperado nesta etapa');
+  const hasG8Marker = docContent.includes('G8: NÃO FECHADO — esperado nesta etapa');
+  const hasFechamentoMarker = docContent.includes('Fechamento permitido nesta PR?: NÃO');
+  const hasBlocoE = docContent.includes('BLOCO E') || docContent.includes('Bloco E') || docContent.includes('FECHAMENTO POR PROVA');
+
+  record('P4-02', 'Fase 4', 'marker T8.12B NÃO ENCERRADA presente', hasT812bMarker ? 'PASS' : 'FAIL',
+    hasT812bMarker ? 'encontrado — estado correto' : 'AUSENTE — adicionar marcador explícito ao documento');
+  record('P4-03', 'Fase 4', 'marker G8 NÃO FECHADO presente', hasG8Marker ? 'PASS' : 'FAIL',
+    hasG8Marker ? 'encontrado — estado correto' : 'AUSENTE — adicionar marcador explícito ao documento');
+  record('P4-04', 'Fase 4', 'marker fechamento não permitido nesta PR', hasFechamentoMarker ? 'PASS' : 'FAIL',
+    hasFechamentoMarker ? 'encontrado — fechamento bloqueado corretamente' : 'AUSENTE — adicionar marcador explícito ao documento');
+  record('P4-05', 'Fase 4', 'Bloco E presente no documento', hasBlocoE ? 'PASS' : 'FAIL',
+    hasBlocoE ? 'encontrado — fechamento por prova declarado' : 'AUSENTE — adicionar Bloco E (A00-ADENDO-03)');
+}
+
+// ---------------------------------------------------------------------------
 // Resumo final
 // ---------------------------------------------------------------------------
 
@@ -399,6 +438,9 @@ async function main(): Promise<void> {
     }
     phase3Semiauto();
   }
+
+  // Fase 4: sempre (validação de artefato de governança)
+  phase4GovernanceArtifact();
 
   const ok = printSummary();
   process.exit(ok ? 0 : 1);
