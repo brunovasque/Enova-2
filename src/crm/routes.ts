@@ -220,6 +220,23 @@ export async function handleCrmRequest(
   // ABA 1 — Conversas
   // -------------------------------------------------------------------------
   if (resource === 'conversations') {
+    // PR-T8.16 — POST /crm/conversations — registrar turno de conversa inbound
+    if (method === 'POST' && !segment_a) {
+      const body = await parseBody(request);
+      if (!isRecord(body)) return crmError(400, 'Body JSON inválido.');
+
+      const lead_id = typeof body.lead_id === 'string' ? body.lead_id.trim() : '';
+      const channel_type = typeof body.channel_type === 'string' ? body.channel_type.trim() : 'whatsapp';
+      const raw_input_summary = typeof body.raw_input_summary === 'string' ? body.raw_input_summary.trim() : '';
+
+      if (!lead_id) return crmError(400, 'Campo "lead_id" é obrigatório.');
+      if (!raw_input_summary) return crmError(400, 'Campo "raw_input_summary" é obrigatório.');
+
+      const result = await svc.createConversationTurn(backend, lead_id, channel_type, raw_input_summary);
+      if (!result.success) return crmError(422, result.error ?? 'Falha ao criar turno.');
+      return jsonResponse({ ok: true, record: result.record }, 201);
+    }
+
     if (method !== 'GET') return crmError(405, 'Método não permitido em /crm/conversations.');
 
     if (!segment_a) {

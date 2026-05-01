@@ -382,7 +382,81 @@ export async function resetLead(
 }
 
 // ---------------------------------------------------------------------------
-// 11. Case-file consolidado
+// 11. Upsert por telefone (inbound Meta/WhatsApp — PR-T8.16)
+// Cria ou atualiza lead pelo wa_id (external_ref) e phone_number_id (phone_ref).
+// Nunca sobrescreve external_ref existente com valor diferente.
+// ---------------------------------------------------------------------------
+
+export async function upsertLeadByPhone(
+  backend: CrmBackend,
+  wa_id: string,
+  phone_number_id?: string,
+): Promise<CrmWriteResult<CrmLead>> {
+  if (!wa_id?.trim()) {
+    return fail('wa_id é obrigatório para upsertLeadByPhone.');
+  }
+
+  const existing = await backend.findOne<CrmLead>(
+    'crm_leads',
+    (r) => r.external_ref === wa_id,
+  );
+
+  if (existing) {
+    if (phone_number_id && !existing.phone_ref) {
+      const updated = await backend.update<CrmLead>(
+        'crm_leads',
+        (r) => r.lead_id === existing.lead_id,
+        { phone_ref: phone_number_id, updated_at: nowIso() },
+      );
+      return ok(updated ?? existing);
+    }
+    return ok(existing);
+  }
+
+  const lead: CrmLead = {
+    lead_id: uuid(),
+    external_ref: wa_id,
+    customer_name: null,
+    phone_ref: phone_number_id ?? null,
+    status: 'active',
+    manual_mode: false,
+    created_at: nowIso(),
+    updated_at: nowIso(),
+  };
+
+  await backend.insert('crm_leads', lead);
+  return ok(lead);
+}
+
+// ---------------------------------------------------------------------------
+// 12. Registrar turno de conversa (inbound Meta/WhatsApp — PR-T8.16)
+// ---------------------------------------------------------------------------
+
+export async function createConversationTurn(
+  backend: CrmBackend,
+  lead_id: string,
+  channel_type: string,
+  raw_input_summary: string,
+): Promise<CrmWriteResult<CrmTurn>> {
+  if (!lead_id?.trim()) return fail('lead_id é obrigatório para createConversationTurn.');
+
+  const turn: CrmTurn = {
+    turn_id: uuid(),
+    lead_id,
+    channel_type,
+    raw_input_summary: raw_input_summary.slice(0, 500),
+    stage_at_turn: 'unknown',
+    model_name: null,
+    latency_ms: null,
+    created_at: nowIso(),
+  };
+
+  await backend.insert('crm_turns', turn);
+  return ok(turn);
+}
+
+// ---------------------------------------------------------------------------
+// 13. Case-file consolidado
 // Agrega lead + state + facts + docs + dossier para visão completa do CRM.
 // Não decide aprovação — apenas consolida informação.
 // ---------------------------------------------------------------------------
