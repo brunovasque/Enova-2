@@ -68,6 +68,7 @@ import { getCrmBackend } from './store.ts';
 import { getSupabaseReadiness, getSupabaseReadinessPublic } from '../supabase/readiness.ts';
 import * as svc from './service.ts';
 import * as panel from './panel.ts';
+import { handleMemoryRoute } from '../memory/routes.ts';
 import type {
   CrmLeadFilter,
   CrmLeadStatus,
@@ -350,6 +351,13 @@ export async function handleCrmRequest(
     }
 
     return crmError(404, `Sub-rota de enova-ia não reconhecida: ${segment_a ?? '(vazia)'}`);
+  }
+
+  // -------------------------------------------------------------------------
+  // PR-T8.13 — Memória evolutiva (/crm/memory/*)
+  // -------------------------------------------------------------------------
+  if (resource === 'memory') {
+    return handleMemoryRoute(request, url, segment_a, segment_b, env, telemetryContext);
   }
 
   // -------------------------------------------------------------------------
