@@ -1,5 +1,104 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.18 — Cutover controlado Enova 2 em produção WhatsApp (2026-05-01)
+
+**Tipo**: PR-OPS / GO-LIVE CONTROLADO | **Status**: EM EXECUÇÃO — runbook e checklist prontos  
+**Base**: PR #171 (PROVA T8.17 — 54 PASS | 0 FAIL | 0 SKIP real positivo)  
+**Próxima ação**: **Vasques executa cutover conforme checklist operacional**
+
+### Conceito central
+
+```
+CUTOVER = trocar o destino do webhook Meta do número WhatsApp para a Enova 2 PROD.
+
+ROLLBACK PREFERENCIAL = flags (não webhook):
+  ROLLBACK_FLAG=true           → bloqueia LLM + outbound em segundos
+  MAINTENANCE_MODE=true        → bloqueia atendimento, mantém inbound
+  LLM_REAL_ENABLED=false       → para geração
+  OUTBOUND_CANARY_ENABLED=false → para envio
+
+RETORNO À ENOVA 1 = emergência extrema, não caminho preferencial.
+A Enova 1 não estava funcionalmente completa.
+```
+
+### Endpoint PROD confirmado via wrangler.toml
+
+```toml
+name = "nv-enova-2"   # linha 18
+main = "src/worker.ts"
+[env.test]
+name = "nv-enova-2-test"
+```
+
+```
+Webhook PROD: https://nv-enova-2.brunovasque.workers.dev/__meta__/webhook
+Deploy PROD:  npx wrangler deploy   (sem --env flag)
+Tail PROD:    npx wrangler tail nv-enova-2
+Enova 1 (Nível 3 emergência): https://nv-enova.brunovasque.workers.dev/webhook/meta
+```
+
+### Flags recomendadas para cutover inicial (canary)
+
+```
+ENOVA2_ENABLED=true
+CHANNEL_ENABLED=true
+META_OUTBOUND_ENABLED=true
+LLM_REAL_ENABLED=true
+OUTBOUND_CANARY_ENABLED=true
+OUTBOUND_CANARY_WA_ID=<wa_id_vasques>
+CLIENT_REAL_ENABLED=false      ← não ampliar ainda
+ROLLBACK_FLAG=false
+MAINTENANCE_MODE=false
+```
+
+### Checklist resumido para Vasques
+
+**Fase A — Pré-cutover:**
+1. `git pull origin main` + `npx wrangler deploy`
+2. Provisionar 7 secrets no Worker PROD via `wrangler secret put`
+3. Setar variáveis de ambiente via dashboard
+4. `npx wrangler tail nv-enova-2` aberto + health check
+
+**Fase B — Cutover:**
+1. Meta Developers → Webhook → trocar URL para Enova 2 PROD
+2. Confirm challenge aceito (`meta.webhook.challenge.ok` no tail)
+3. Vasques envia mensagem de teste → confirmar resposta recebida
+4. Verificar ausência de erros
+
+**Fase C — Monitoramento (5–15 min):**
+1. Manter tail aberto
+2. 2–3 mensagens respondidas corretamente
+3. Declarar cutover concluído
+
+### Rollback imediato
+
+```bash
+# Nível 1 — Dashboard → nv-enova-2 → Variables:
+ROLLBACK_FLAG=true     # para tudo em segundos
+
+# Nível 3 — emergência extrema:
+# Meta Developers → Webhook → URL: https://nv-enova.brunovasque.workers.dev/webhook/meta
+```
+
+### Arquivos criados
+
+- `schema/operations/T8_CUTOVER_ENOVA2_PROD.md` — runbook completo (9 seções)
+- `schema/proofs/T8_CUTOVER_PROD_CHECKLIST.md` — checklist por fase (A–E)
+
+### Roadmap atualizado
+
+| Etapa | PR | Status |
+|---|---|---|
+| 1 | PR-DIAG inbound/cutover | ✅ CONCLUÍDA — PR #166 |
+| 2 | PR-T8.16 inbound→CRM+memória | ✅ CONCLUÍDA — PR #168 |
+| 3 | PR-PROVA T8.16 | ✅ CONCLUÍDA — PR #169 (positiva) |
+| 4 | PR-T8.17 LLM + outbound canary | ✅ CONCLUÍDA — PR #170 |
+| 5 | PR-PROVA T8.17 (canary real) | ✅ CONCLUÍDA — PR #171 (54 PASS real) |
+| 6 | Cutover Enova 1 → Enova 2 PROD | **EM EXECUÇÃO — esta PR** |
+| 7 | Closeout / G8 aprovado | aguarda cutover |
+
+---
+
 ## PR-PROVA T8.17 — Prova real canary LLM + outbound controlado (2026-05-01)
 
 **Tipo**: PR-PROVA | **Status**: EM EXECUÇÃO — harness instalado, prova real aguarda Vasques  
