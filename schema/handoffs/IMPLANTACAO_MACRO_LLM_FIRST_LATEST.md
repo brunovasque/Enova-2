@@ -1,5 +1,46 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-DOC — Roadmap oficial produção WhatsApp (2026-05-01)
+
+**Tipo**: PR-DOC / GOVERNANÇA | **Status**: CONCLUÍDA  
+**Base**: PR #166 — diagnóstico inbound/cutover  
+**Próxima ação**: **PR-T8.16 — PR-IMPL acoplamento inbound → CRM + memória (sem LLM)**
+
+### Estado atual
+
+**Enova 2 recebe inbound real no Worker TEST — ainda não responde WhatsApp.**
+
+1 número WhatsApp = 1 webhook ativo por vez. Enova 1 e Enova 2 não podem receber o mesmo webhook simultaneamente. Cutover obrigatório antes de qualquer resposta real. Rollback = voltar webhook para `https://nv-enova.brunovasque.workers.dev/webhook/meta` (~30s).
+
+### Roadmap de 7 etapas
+
+| Etapa | PR | Status |
+|---|---|---|
+| 1 | PR-DIAG inbound/cutover | ✅ CONCLUÍDA — PR #166 |
+| 2 | PR-T8.16 inbound→CRM+memória (sem LLM) | **PRÓXIMA** |
+| 3 | PR-PROVA T8.16 | aguarda |
+| 4 | PR-T8.17 LLM controlado (gated) | aguarda |
+| 5 | PR-PROVA T8.17 em TEST (janela curta, Vasques presente) | aguarda |
+| 6 | Cutover Enova 1 → Enova 2 PROD | aguarda |
+| 7 | Closeout / G8 aprovado | aguarda |
+
+### Próxima PR autorizada
+
+**PR-T8.16 — PR-IMPL acoplamento inbound → CRM + memória (sem LLM)**
+
+- `src/meta/pipeline.ts` (NOVO)
+- `src/crm/service.ts` — `upsertLeadByPhone(wa_id, phone_number_id)`
+- `src/crm/routes.ts` — `POST /crm/conversations`
+- `src/meta/webhook.ts` — chamar pipeline (gated por `ENOVA2_ENABLED`)
+
+LLM_REAL_ENABLED=false. CLIENT_REAL_ENABLED=false. Sem outbound. Sem resposta WhatsApp.
+
+### Artefato criado
+
+- `schema/implementation/T8_ROADMAP_PRODUCAO_WHATSAPP.md` — roadmap oficial com 7 etapas, plano de cutover, rollback
+
+---
+
 ## PR-DIAG — Diagnóstico acoplamento inbound Meta + cutover Enova 1 → Enova 2 (2026-05-01)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
