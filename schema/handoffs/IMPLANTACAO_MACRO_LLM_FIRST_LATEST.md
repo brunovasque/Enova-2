@@ -1,5 +1,42 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## INFRA-META-01 — Preparação do ambiente TEST Cloudflare para PR-T8.12B (2026-04-30)
+
+**Tipo**: INFRA / GOVERNANÇA | **Status**: CONCLUÍDA — documental  
+**Base**: PR-T8.R (NO-GO CONTROLADO — frente Meta bloqueada)  
+**Próxima ação**: PR-T8.12B — **exclusiva de Vasques** (executar passo a passo §4 do documento)
+
+### Objetivo
+
+Documentar o caminho seguro e completo para Vasques ativar o ambiente TEST Cloudflare (`nv-enova-2-test`) e destravar PR-T8.12B. Zero `src/` alterado. Zero `wrangler.toml` alterado. Zero secret exposto. Zero webhook real registrado.
+
+### Artefato entregue
+
+- `schema/implementation/INFRA_META_01_AMBIENTE_TEST_CLOUDFLARE.md` — passo a passo em 9 fases + checklist de 10 itens
+
+### Regressão
+
+| Suite | Resultado |
+|---|---|
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:golive` | 18/18 PASS |
+| `prove:meta-controlada` (sem META_REAL_ENABLED) | 25/0/6 EXIT 0 |
+| `smoke:all` | EXIT 0 |
+
+### Próxima ação — Vasques executa as 9 fases de §4
+
+1. `wrangler secret put META_VERIFY_TOKEN --env test`
+2. `wrangler secret put META_APP_SECRET --env test`
+3. `wrangler secret put META_ACCESS_TOKEN --env test`
+4. `wrangler secret put META_PHONE_NUMBER_ID --env test`
+5. `wrangler deploy --env test` — confirmar URL `nv-enova-2-test.<conta>.workers.dev`
+6. Registrar webhook no painel Meta Developers com URL + verify token
+7. `META_REAL_ENABLED=true npm run prove:meta-controlada` — esperado `≥27/0/≤4`
+8. Documentar evidências: challenge real, inbound real, logs Cloudflare
+9. Autorizar go-live: `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true` + `LLM_REAL_ENABLED=true` + `CLIENT_REAL_ENABLED=true`
+
+---
+
 ## PR-T8.R — Readiness / Closeout G8 com bloqueio formal (2026-04-30)
 
 **Tipo**: PR-PROVA / CLOSEOUT | **Status**: EXECUTADA — NO-GO CONTROLADO  
