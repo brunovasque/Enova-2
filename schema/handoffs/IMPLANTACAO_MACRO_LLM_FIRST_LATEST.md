@@ -1,5 +1,68 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-DIAG — Diagnóstico acoplamento inbound Meta + cutover Enova 1 → Enova 2 (2026-05-01)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Base**: PR #165 — prova parcial real (inbound recebido no TEST)  
+**Próxima ação**: PR-T8.16 — PR-IMPL acoplamento inbound → CRM + memória (sem LLM)
+
+### Veredito do diagnóstico
+
+O `POST /__meta__/webhook` termina em `src/meta/webhook.ts` linha 259 **sem chamar nada downstream**. Nenhum CRM, nenhuma memória, nenhum LLM, nenhum outbound. Apenas valida assinatura + parseia + dedupe in-memory + telemetria in-memory + retorna 200.
+
+### 10 lacunas mapeadas
+
+| LAC-IB | Lacuna |
+|---|---|
+| 01 | Sem pipeline inbound → CRM lead upsert |
+| 02 | Sem pipeline inbound → conversa/turno |
+| 03 | Sem pipeline inbound → memória (`source: 'meta_webhook'`) |
+| 04 | Sem contexto do lead para LLM |
+| 05 | Sem chamada LLM (zero integração) |
+| 06 | `sendMetaOutbound()` não conectada ao inbound |
+| 07 | `LLM_REAL_ENABLED` sem implementação |
+| 08 | `POST /crm/conversations` não implementado |
+| 09 | Sem persistência Supabase do inbound |
+| 10 | Comportamento Enova 1 desconhecido (lacuna para cutover) |
+
+### O que já está pronto
+
+- `sendMetaOutbound()` — biblioteca pronta, não conectada
+- `source: 'meta_webhook'` — tipo válido em `src/memory/routes.ts`
+- `registerMemoryEvent()` — operacional
+- CRM backend operacional
+- `ROLLBACK_FLAG` killswitch operacional
+- Feature flags canônicas operacionais
+- Worker TEST + secrets + inbound real provados
+
+### Próxima PR autorizada
+
+**PR-T8.16 — PR-IMPL acoplamento inbound → CRM + memória (sem LLM)**
+
+Menor patch seguro:
+- `src/meta/pipeline.ts` (NOVO) — orchestrador: parse → lead upsert → memória → 200
+- `src/crm/service.ts` — `upsertLeadByPhone(wa_id, phone_number_id)`
+- `src/crm/routes.ts` — `POST /crm/conversations`
+- `src/meta/webhook.ts` — chamar pipeline (gated por `ENOVA2_ENABLED`)
+
+Gated por: `ENOVA2_ENABLED=true` + `CHANNEL_ENABLED=true`. LLM_REAL_ENABLED e CLIENT_REAL_ENABLED permanecem false.
+
+### Plano cutover (resumo)
+
+```
+FASE B: PR-T8.16 — inbound → CRM + memória
+FASE C: PR-T8.17 — inbound → LLM → outbound (gated LLM_REAL_ENABLED)
+FASE D: CUTOVER — switch webhook → Enova 2 PROD (janela curta, Vasques presente)
+         Rollback: ~30s via painel Meta → https://nv-enova.brunovasque.workers.dev/webhook/meta
+FASE E: G8 fechado após evidência completa
+```
+
+### Artefato criado
+
+- `schema/diagnostics/T8_META_INBOUND_CUTOVER_DIAGNOSTICO.md` — 11 seções
+
+---
+
 ## INFRA-META-01 — Preparação do ambiente TEST Cloudflare para PR-T8.12B (2026-04-30)
 
 **Tipo**: INFRA / GOVERNANÇA | **Status**: CONCLUÍDA — documental  
