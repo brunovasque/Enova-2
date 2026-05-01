@@ -1,5 +1,66 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.13 — Memória evolutiva + telemetria operacional CONCLUÍDA (2026-04-30)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Base**: PR-T8.4/T8.5/T8.6 (CRM operacional) + PR-T8.8/T8.9B (Supabase) + telemetria FRONT-7 existente  
+**Próxima**: PR-T8.14 — Prova memória + telemetria + regressão contratual (PR-PROVA)
+
+### Resultado
+
+| Etapa | Resultado |
+|---|---|
+| `smoke:memory` (novo) | **17/17 PASS** |
+| `smoke:supabase` | 70/70 PASS retrocompat |
+| `smoke:meta:webhook` | 20/20 PASS retrocompat |
+| `smoke:meta` | 14/14 PASS retrocompat |
+| `prove:crm-e2e` | 73/73 PASS retrocompat |
+| `prove:meta-controlada` | 25/0/6 retrocompat (Meta segue bloqueada) |
+| `smoke:all` | **EXIT 0** |
+
+### Artefatos criados
+
+- `src/memory/types.ts` — 7 categorias canônicas, status `draft|validated|rejected|promoted`
+- `src/memory/sanitize.ts` — redação de tokens/segredos/campos sensíveis
+- `src/memory/store.ts` — `MemoryStore` in-memory FIFO + interface estável p/ Supabase futuro
+- `src/memory/service.ts` — API funcional com invariantes declaradas
+- `src/memory/routes.ts` — handler `/crm/memory/*`
+- `src/memory/smoke.ts` — 17 cenários cobrindo invariantes/sanitização/auth/fluxo
+- `schema/implementation/T8_MEMORIA_TELEMETRIA_OPERACIONAL.md` — doc 15 seções
+
+### Modificados
+
+- `src/crm/routes.ts` — branch único `if (resource === 'memory')` delega para handler dedicado
+- `package.json` — `smoke:memory` adicionado e incluído em `smoke:all`
+
+### Endpoints novos (todos sob auth `X-CRM-Admin-Key`)
+
+| Método | Rota |
+|---|---|
+| GET | `/crm/memory/status` |
+| GET | `/crm/memory/lead/:lead_ref` |
+| GET | `/crm/memory/learning-candidates[?status=...]` |
+| POST | `/crm/memory/event` |
+| POST | `/crm/memory/learning-candidate` |
+| POST | `/crm/memory/learning-candidates/:id/decision` |
+
+### Invariantes preservadas
+
+- Aprendizado começa SEMPRE como `draft`; promoção exige decisão humana com `operator_id` E `reason` não vazios.
+- Service NUNCA cria `fact_*`, NUNCA muda `stage`, NUNCA chama LLM, NUNCA dispara outbound.
+- Toda escrita passa por `sanitizeRecord` antes do store.
+- Store in-memory; `MEMORY_SUPABASE_ENABLED` reportada no status mas sem persistência real (PR futura).
+- Worker runtime, painel UI e webhook Meta NÃO foram alterados.
+
+### Bloqueios mantidos
+
+- Meta/WhatsApp continua `BLOQUEADA_AGUARDANDO_VASQUES` (PR-T8.12B).
+- G8 NÃO fechado.
+- Atendimento real NÃO provado.
+- LLM real / cliente real / outbound real / WhatsApp real / migration / workflow — TODOS desabilitados.
+
+---
+
 ## PR-T8.12B — Execução real Meta/WhatsApp controlada (2026-04-30) — BLOQUEADA AGUARDANDO VASQUES
 
 **Tipo**: PR-PROVA | **Status**: BLOQUEADA — P2–P7 não executadas por ausência de secrets/deploy/webhook  

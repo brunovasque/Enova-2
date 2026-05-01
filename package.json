@@ -22,10 +22,11 @@
     "smoke:audio": "tsx src/audio/smoke.ts",
     "smoke:panel": "tsx src/panel/smoke.ts",
     "smoke:supabase": "tsx src/supabase/smoke.ts",
+    "smoke:memory": "tsx src/memory/smoke.ts",
     "prove:crm-e2e": "tsx src/panel/e2e-smoke.ts",
     "prove:supabase-real": "tsx src/supabase/proof.ts",
     "prove:meta-controlada": "tsx src/meta/proof-controlled.ts",
-    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:meta:webhook && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio && npm run smoke:panel && npm run smoke:supabase && npm run prove:crm-e2e",
+    "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:meta:webhook && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio && npm run smoke:panel && npm run smoke:supabase && npm run smoke:memory && npm run prove:crm-e2e",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
