@@ -1,10 +1,75 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.17 — LLM + outbound canary controlado (2026-05-01)
+
+**Tipo**: PR-IMPL acelerada/controlada | **Status**: CONCLUÍDA — 41/41 smokes PASS  
+**Base**: PR #168 (T8.16) + PR #169 (PROVA T8.16 positiva)  
+**Próxima ação**: **PR-PROVA T8.17 — Vasques seta flags canary + executa prova real**
+
+### Estado atual
+
+**Enova 2 recebe inbound real, registra CRM+memória, chama LLM e envia outbound somente para WA canary autorizado — tudo gated por flags, tudo desligado por padrão.**
+
+### Flags para prova canary real
+
+```bash
+# No Worker TEST — setar via wrangler secret put ou dashboard:
+LLM_REAL_ENABLED=true
+OUTBOUND_CANARY_ENABLED=true
+OUTBOUND_CANARY_WA_ID=<wa_id_vasques>
+OPENAI_API_KEY=<chave>
+```
+
+### Fluxo implementado
+
+```
+POST /__meta__/webhook
+  → assinatura HMAC → parser → dedupe
+  → runCanaryPipeline
+      → CRM (lead + turno + memória)
+      → LLM (gated LLM_REAL_ENABLED)
+      → outbound (gated OUTBOUND_CANARY_ENABLED + wa_id autorizado)
+  → CanaryReport + 200
+```
+
+### Smokes
+
+```
+smoke:meta:canary   → 41/41 PASS (41 checks — 8 blocos)
+smoke:meta:webhook  → 20/20 PASS (retrocompatível)
+smoke:meta:pipeline → 26/26 PASS (retrocompatível)
+smoke:golive        → 18/18 PASS (retrocompatível)
+smoke:all           → 73/73 PASS (exit 0)
+```
+
+### Roadmap atualizado
+
+| Etapa | PR | Status |
+|---|---|---|
+| 1 | PR-DIAG inbound/cutover | ✅ CONCLUÍDA — PR #166 |
+| 2 | PR-T8.16 inbound→CRM+memória | ✅ CONCLUÍDA — PR #168 |
+| 3 | PR-PROVA T8.16 | ✅ CONCLUÍDA — PR #169 (41 PASS positivo) |
+| 4 | PR-T8.17 LLM + outbound canary | **✅ CONCLUÍDA — esta PR** |
+| 5 | PR-PROVA T8.17 (canary real, Vasques) | **PRÓXIMA** |
+| 6 | Cutover Enova 1 → Enova 2 PROD | aguarda |
+| 7 | Closeout / G8 aprovado | aguarda |
+
+### Arquivos criados/modificados
+
+- `src/llm/client.ts` (NOVO) — cliente LLM mínimo
+- `src/meta/canary-pipeline.ts` (NOVO) — orquestrador canary
+- `src/meta/canary-smoke.ts` (NOVO) — smoke 41 checks
+- `src/meta/webhook-env.ts` — +6 vars
+- `src/golive/flags.ts` — +2 flags canary
+- `src/meta/webhook.ts` — usa runCanaryPipeline
+- `schema/implementation/T8_LLM_OUTBOUND_CANARY.md` (NOVO)
+
+---
+
 ## PR-PROVA T8.16 — Prova inbound real Meta → CRM + memória (2026-05-01)
 
-**Tipo**: PR-PROVA | **Status**: EM EXECUÇÃO — smokes locais PASS, prova real PENDENTE VASQUES  
-**Base**: PR-T8.16 (#168) — pipeline implementado  
-**Próxima ação**: **Vasques executa `npm run prove:meta:pipeline-real` com credenciais reais**
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA — 41 PASS | 0 FAIL (positiva)  
+**Base**: PR-T8.16 (#168) — pipeline implementado
 
 ### Estado atual
 

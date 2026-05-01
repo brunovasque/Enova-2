@@ -14,6 +14,13 @@ export interface MetaWorkerEnv {
   CHANNEL_ENABLED?: unknown;
   META_OUTBOUND_ENABLED?: unknown;
   ENOVA2_ENABLED?: unknown;
+  // PR-T8.17 — canary LLM + outbound controlado
+  LLM_REAL_ENABLED?: unknown;
+  OUTBOUND_CANARY_ENABLED?: unknown;
+  OUTBOUND_CANARY_WA_ID?: unknown;
+  OPENAI_API_KEY?: unknown;
+  ROLLBACK_FLAG?: unknown;
+  MAINTENANCE_MODE?: unknown;
 }
 
 export function readEnvString(env: MetaWorkerEnv, key: keyof MetaWorkerEnv): string | undefined {

@@ -22,6 +22,9 @@ export interface CanonicalFlags {
   maintenance_mode: boolean;
   golive_harness_enabled: boolean;
   memory_supabase_enabled: boolean;
+  // PR-T8.17
+  outbound_canary_enabled: boolean;
+  outbound_canary_wa_id: string;
 }
 
 function readBool(env: Record<string, unknown>, key: string): boolean {
@@ -29,6 +32,12 @@ function readBool(env: Record<string, unknown>, key: string): boolean {
   if (typeof v === 'string') return v.trim().toLowerCase() === 'true';
   if (typeof v === 'boolean') return v;
   return false;
+}
+
+function readStr(env: Record<string, unknown>, key: string): string {
+  const v = env[key];
+  if (typeof v === 'string') return v.trim();
+  return '';
 }
 
 function readPercent(env: Record<string, unknown>, key: string): number {
@@ -53,6 +62,8 @@ export function readCanonicalFlags(env: Record<string, unknown> = {}): Canonical
     maintenance_mode: readBool(env, 'MAINTENANCE_MODE'),
     golive_harness_enabled: readBool(env, 'GOLIVE_HARNESS_ENABLED'),
     memory_supabase_enabled: readBool(env, 'MEMORY_SUPABASE_ENABLED'),
+    outbound_canary_enabled: readBool(env, 'OUTBOUND_CANARY_ENABLED'),
+    outbound_canary_wa_id: readStr(env, 'OUTBOUND_CANARY_WA_ID'),
   };
 }
 
@@ -68,5 +79,7 @@ export function flagsPublicSummary(flags: CanonicalFlags): Record<string, unknow
     maintenance_mode: flags.maintenance_mode,
     golive_harness_enabled: flags.golive_harness_enabled,
     memory_supabase_enabled: flags.memory_supabase_enabled,
+    outbound_canary_enabled: flags.outbound_canary_enabled,
+    outbound_canary_wa_id_present: flags.outbound_canary_wa_id.length > 0,
   };
 }
