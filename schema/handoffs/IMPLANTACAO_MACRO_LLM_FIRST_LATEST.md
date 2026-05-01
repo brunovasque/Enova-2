@@ -39,10 +39,17 @@ wrangler deploy --env test
 META_REAL_ENABLED=true ... npx tsx src/meta/proof-controlled.ts
 ```
 
+**Resultado esperado do script com secrets (melhor caso):**
+```
+PASS: 27 | FAIL: 0 | SKIP: 4
+STATUS: PARCIAL_COM_PROVA_LOCAL_REAL
+```
+P2/P3 passam localmente com secrets reais. P4–P7 permanecem SKIP no script — requerem evidência externa: challenge real verificado no painel Meta, inbound real documentado, logs Cloudflare confirmados.
+
 ### Estado da frente
 
 **Frente Meta/WhatsApp:** `BLOQUEADA_AGUARDANDO_VASQUES`  
-**Não avançar para PR-T8.13 enquanto P2–P7 não passarem com resultado real.**
+**Não avançar para PR-T8.13 enquanto P2/P3 não passarem localmente com secrets reais E P4–P6 não tiverem evidência externa documentada (challenge real + inbound real + logs Cloudflare).**
 
 ---
 

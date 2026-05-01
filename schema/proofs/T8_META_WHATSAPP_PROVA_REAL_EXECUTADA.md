@@ -229,11 +229,25 @@ META_PHONE_NUMBER_ID=<phone_number_id> \
 npx tsx src/meta/proof-controlled.ts
 ```
 
-**Resultado esperado após ativação:**
+**Resultado esperado após ativação com secrets reais + Worker test + webhook registrado:**
+
+O script `proof-controlled.ts` atual mede P2/P3 localmente com secrets reais, mas P4–P7 continuam dependentes de Worker publicado, webhook Meta registrado, logs reais e inbound real — e o script os mantém como SKIP enquanto essas condições externas não existirem.
+
+Resultados realistas por etapa:
+
+| Etapa concluída | Resultado esperado do script |
+|---|---|
+| Apenas secrets reais (`META_REAL_ENABLED=true` + 4 secrets) | `PASS: 27+ \| FAIL: 0 \| SKIP: 4` — P2/P3 passam localmente; P4–P7 permanecem SKIP |
+| Secrets + Worker test publicado + webhook registrado | P4 (challenge real) só pode ser verificado externamente (painel Meta/logs Cloudflare); script ainda reporta P4–P7 SKIP |
+| Inbound real recebido + logs Cloudflare confirmados | Evidência externa de P6 — script não mede automaticamente |
+
+**Status esperado pelo script em modo real (melhor caso com secrets):**
 ```
-PASS: 27+ | FAIL: 0 | SKIP: 0-2
-STATUS: PASSOU (ou PARCIAL com P4-P6 em modo deploy real)
+PASS: 27 | FAIL: 0 | SKIP: 4
+STATUS: PARCIAL_COM_PROVA_LOCAL_REAL
 ```
+
+P4–P7 só podem ser declarados PASS mediante evidência externa (logs Cloudflare, painel Meta, mensagem WhatsApp enviada e recebida). O script atual não os mede automaticamente — isso é uma limitação conhecida que requer instrumentação adicional ou evidência manual documentada por Vasques.
 
 **5. Para P6 (inbound real):**
 - Enviar mensagem WhatsApp real ao número test
