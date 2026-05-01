@@ -1,5 +1,58 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.15 — Feature flags, rollback técnico e harness de go-live CONCLUÍDA (2026-04-30)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Base**: PR-T8.14 (memória/telemetria provada) + PR-T8.12B (Meta harness, bloqueada)  
+**Próxima**: PR-T8.R — Readiness/Closeout G8 (somente com autorização explícita de Vasques)
+
+### Resultado
+
+| Suite | Resultado |
+|---|---|
+| `smoke:golive` (novo — 18 cenários) | **18/18 PASS** |
+| `smoke:all` | **EXIT 0** |
+| `prove:memory-telemetry` | 9/9 PASS retrocompat |
+| `prove:crm-e2e` | 73/73 PASS retrocompat |
+| `prove:meta-controlada` | 25/0/6 retrocompat (Meta bloqueada — correto) |
+
+### Artefatos criados
+
+- `src/golive/flags.ts` — 10 flags canônicas, `readCanonicalFlags()`, default seguro `false`/`0`
+- `src/golive/rollback.ts` — `isOperationallyAllowed()`, `isFullGoLiveAllowed()`, 8 bloqueios em cascata
+- `src/golive/harness.ts` — `evaluateGoLiveReadiness()`, relatório sem execução real
+- `src/golive/health.ts` — `GET /__admin__/go-live/health`, auth X-CRM-Admin-Key, sem secrets
+- `src/golive/smoke.ts` — 18 cenários smoke operacional
+- `schema/implementation/T8_FLAGS_ROLLBACK_GOLIVE_HARNESS.md` — doc (14 seções)
+
+### Modificados
+
+- `src/worker.ts` — branch `/__admin__/go-live/health` adicionado antes de `/crm/*`
+- `package.json` — `smoke:golive` adicionado
+
+### Estado das frentes após PR-T8.15
+
+| Frente | Estado |
+|---|---|
+| CRM backend/frontend | APROVADA (PR-T8.4/T8.5/T8.6) |
+| Supabase leitura real | APROVADA (PR-T8.9B) |
+| Memória/telemetria | APROVADA_LOCAL_IN_MEMORY (PR-T8.14) |
+| Flags/rollback/go-live | **IMPLEMENTADA** (esta PR) |
+| Meta/WhatsApp | BLOQUEADA_AGUARDANDO_VASQUES (PR-T8.12B) |
+| LLM real | Não iniciado |
+| Cliente real | Não autorizado |
+| G8 | NÃO FECHADO |
+
+### Invariantes preservadas
+
+- Default seguro: env vazio → todas as operações reais bloqueadas.
+- `ROLLBACK_FLAG=true` bloqueia tudo sem exceção.
+- `meta_ready=false` até Vasques concluir PR-T8.12B.
+- `g8_allowed=false` — consequência direta de Meta bloqueada.
+- Nenhum secret aparece em nenhum output.
+
+---
+
 ## PR-T8.14 — Prova memória + telemetria + regressão contratual CONCLUÍDA (2026-04-30)
 
 **Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
