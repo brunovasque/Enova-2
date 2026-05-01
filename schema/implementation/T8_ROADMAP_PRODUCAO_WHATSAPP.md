@@ -97,43 +97,26 @@ Conecta inbound ao LLM para geração de `reply_text` e outbound para resposta c
 
 ## Etapa 5 — PR-PROVA da T8.17 em TEST
 
-**Status: EM EXECUÇÃO — harness instalado, prova real aguarda Vasques**
+**Status: CONCLUÍDA — PR #171 — 54 PASS | 0 FAIL | 0 SKIP (prova real positiva)**
 
-Harness `src/meta/canary-real-proof.ts` instalado. Modo local: 31 PASS | 0 FAIL | 5 SKIP.
-
-Provar em janela curta e controlada:
-
-- Mensagem real → LLM gera resposta → outbound responde no WhatsApp
-
-**Somente com Vasques presente e ativando flags canary no Worker TEST:**
-
-```bash
-LLM_REAL_ENABLED=true
-OUTBOUND_CANARY_ENABLED=true
-OUTBOUND_CANARY_WA_ID=<wa_id_vasques>
-OPENAI_API_KEY=<chave>
-```
-
-Comando de prova:
-```bash
-CANARY_REAL_PROOF_ENABLED=true \
-ENOVA2_TEST_WORKER_URL=https://nv-enova-2-test.brunovasque.workers.dev \
-META_APP_SECRET=<secret> META_PHONE_NUMBER_ID=<número> \
-CRM_ADMIN_KEY=<chave> OUTBOUND_CANARY_WA_ID=<wa_id> \
-npm run prove:meta:canary-real
-```
-
-Evidência obrigatória:
-- Log Cloudflare de inbound recebido
-- Log de chamada LLM com `reply_text` gerado
-- Mensagem respondida no WhatsApp (screenshot)
-- Nenhuma resposta indevida enviada
+Vasques executou prova real com `CANARY_REAL_PROOF_ENABLED=true`:
+- Mensagem real → LLM gerou resposta → outbound respondeu no WhatsApp
+- Confirmado: mensagem chegou somente no WA canary autorizado
+- Confirmado: nenhum outro número recebeu
+- `CLIENT_REAL_ENABLED=false` preservado
 
 ---
 
 ## Etapa 6 — Cutover Enova 1 → Enova 2 PROD
 
-**Status: aguarda Etapa 5 concluída**
+**Status: EM EXECUÇÃO — PR-T8.18 — runbook + checklist prontos, cutover aguarda Vasques**
+
+Runbook: `schema/operations/T8_CUTOVER_ENOVA2_PROD.md`  
+Checklist: `schema/proofs/T8_CUTOVER_PROD_CHECKLIST.md`
+
+**Rollback preferencial = flags (não webhook):**
+- `ROLLBACK_FLAG=true` → bloqueia LLM + outbound em segundos
+- Retorno à Enova 1 = emergência extrema apenas
 
 ### Contexto de 1 número WhatsApp
 
@@ -219,7 +202,8 @@ Somente depois de prova real completa:
 | Acoplamento inbound → memória | **IMPLEMENTADO (PR-T8.16)** |
 | Chamada LLM a partir do inbound | **IMPLEMENTADO gated (PR-T8.17)** |
 | Outbound canary controlado | **IMPLEMENTADO gated (PR-T8.17)** |
-| Prova canary real (harness) | **EM EXECUÇÃO — aguarda Vasques** |
-| Resposta WhatsApp | **NÃO** |
-| Cutover Enova 1 → Enova 2 | **NÃO EXECUTADO** |
+| Prova canary real (harness) | **CONCLUÍDA — PR #171 (54 PASS real)** |
+| Resposta WhatsApp | **NÃO (PROD) — SIM (TEST, canary)** |
+| Runbook de cutover | **CRIADO — schema/operations/T8_CUTOVER_ENOVA2_PROD.md** |
+| Cutover Enova 1 → Enova 2 | **AGUARDA VASQUES — checklist pronto** |
 | G8 | **NÃO FECHADO** |
