@@ -1,5 +1,44 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.12-DIAG — Diagnóstico Supabase write real (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.12-supabase-write-real`  
+**Próxima PR autorizada**: **T9.12 — IMPL Supabase write real (CRM/memória/stage)**
+
+### Veredito executivo
+
+Diagnóstico completo da camada de escrita Supabase. 5 bloqueadores identificados (BLK-WRITE-01..05). 2 tabelas com mapeamento imediato disponível: `crm_lead_state→enova_state` e `crm_leads→crm_lead_meta`. 2 tabelas diferidas aguardando DDL de Vasques: `crm_turns→lead_timeline_events` e `crm_facts→?`.
+
+### Achados principais
+
+| Item | Detalhe |
+|---|---|
+| BLK-WRITE-01 | `SupabaseCrmBackend.insert/update` → writeBuffer, nunca Supabase |
+| BLK-WRITE-02 | `crm_turns`/`crm_facts` sem tabela Supabase mapeada |
+| BLK-WRITE-03 | `SUPABASE_WRITE_ENABLED` declarada mas desconectada do path de escrita |
+| BLK-WRITE-04 | Sem migrations no repo — tabelas novas requerem criação manual por Vasques |
+| BLK-WRITE-05 | `writeBuffer` volátil por-request — dados perdidos entre requisições |
+| Mecanismo disponível | `supabaseInsert()` funcional em `src/supabase/client.ts` — pronto para wiring |
+| Mapeamento pronto | `crm_lead_state↔enova_state` e `crm_leads↔crm_lead_meta` (confirmados em T8.9B) |
+
+### Pré-condições para T9.12-IMPL
+
+| Pré-condição | Estado |
+|---|---|
+| T9.11-PROVA CONCLUÍDA | ✓ (56/56 PASS — PR #194) |
+| `supabaseInsert()` disponível | ✓ `src/supabase/client.ts` |
+| Mapeamento state/leads confirmado | ✓ T8.9B |
+| DDL `lead_timeline_events` confirmado | ✗ Aguarda Vasques |
+| Destino `crm_facts` definido | ✗ Aguarda Vasques |
+| `SUPABASE_WRITE_ENABLED` provisionado no Worker TEST | ✗ Aguarda Vasques |
+
+### Documento de diagnóstico
+
+`schema/diagnostics/T9_SUPABASE_WRITE_REAL_DIAG.md` — 20 seções, 17 questões respondidas, 5 bloqueadores mapeados.
+
+---
+
 ## PR-PROVA T8.17 — Prova real canary LLM + outbound controlado (2026-05-01)
 
 **Tipo**: PR-PROVA | **Status**: EM EXECUÇÃO — harness instalado, prova real aguarda Vasques  
