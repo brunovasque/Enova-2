@@ -1,5 +1,38 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.8-DIAG — Diagnóstico LlmContext estruturado (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.8-llmcontext-estruturado`  
+**Próxima PR autorizada**: **T9.8 — IMPL LlmContext estruturado**
+
+### Veredito executivo
+
+T9.8 viável com patch cirúrgico em 2 arquivos. Nenhum bloqueio real.
+
+### Achados principais
+
+| Achado | Detalhe |
+|---|---|
+| `callLlm` atual | `callLlm(userMessage, env)` — cego ao stage, facts e objetivo |
+| `coreDecision` | Já no escopo externo de `canary-pipeline.ts` (L147) — acessível em Passo 2 ✓ |
+| `factsMap` | **BLK-04**: declarado DENTRO do try block (L187) — NÃO acessível em Passo 2 ✗ → hoist necessário |
+| `LlmContext` shape | `{ stage_current, stage_after, next_objective, block_advance, speech_intent, facts?, recent_history? }` |
+| Compatibilidade | Terceiro parâmetro opcional — todas chamadas antigas sem contexto funcionam sem alteração |
+| Histórico | `getLeadTimeline` já existe; usar `raw_input_summary` ≤ 100 chars, máx 3 turnos |
+| Segurança | `diagLog` nunca loga prompt completo — apenas contagens |
+
+### Arquivos a alterar em T9.8
+
+| Arquivo | Alteração |
+|---|---|
+| `src/llm/client.ts` | Exportar `LlmContext` + `buildDynamicSystemPrompt` + `context?` em `callLlm` |
+| `src/meta/canary-pipeline.ts` | Hoist `cachedFacts`; montar `llmContext`; passar a `llmCaller` |
+| `src/llm/context-smoke.ts` | Criar smoke (mínimo 12 checks) |
+| `package.json` | `"smoke:llm:context"` |
+
+---
+
 ## PR-T9.7 — PROVA facts extraídos e stage avança (2026-05-02)
 
 **Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
