@@ -27,9 +27,13 @@ import type { MetaWorkerEnv } from './webhook-env.ts';
 import type { TelemetryRequestContext } from '../telemetry/types.ts';
 import type { OutboundResult } from './outbound.ts';
 import type { LlmClientResult } from '../llm/client.ts';
+import type { LeadState, CoreDecision } from '../core/types.ts';
 import { runInboundPipeline } from './pipeline.ts';
 import { sendMetaOutbound } from './outbound.ts';
 import { callLlm } from '../llm/client.ts';
+import { runCoreEngine } from '../core/engine.ts';
+import { getCrmBackend } from '../crm/store.ts';
+import { getLeadState, getLeadFacts, upsertLeadState } from '../crm/service.ts';
 import { emitTelemetry } from '../telemetry/emit.ts';
 import { diagLog, maskId } from './prod-diag.ts';
 
@@ -134,6 +138,63 @@ export async function runCanaryPipeline(
     memory_event_id_present: !!crmResult.memory_event_id,
     errors_count: (crmResult.errors ?? []).length,
   });
+
+  // Passo 1.5 — Core mecânico (BLK-01 + BLK-02 fix — T9.4)
+  // Resolvido DEPOIS do CRM e ANTES do LLM.
+  // LLM é soberano da fala — Core é soberano do stage.
+  // Exception nunca bloqueia outbound.
+  let coreDecision: CoreDecision | undefined;
+  if (crmResult.ok && crmResult.lead_id) {
+    try {
+      const coreBackend = await getCrmBackend(env as Record<string, unknown>);
+
+      const stateResult = await getLeadState(coreBackend, crmResult.lead_id);
+      const currentStage = (
+        stateResult.found &&
+        stateResult.record?.stage_current &&
+        stateResult.record.stage_current !== 'unknown'
+          ? stateResult.record.stage_current
+          : 'discovery'
+      ) as LeadState['current_stage'];
+
+      const factsResult = await getLeadFacts(coreBackend, crmResult.lead_id);
+      const factsMap: Record<string, unknown> = {};
+      for (const fact of factsResult.records) {
+        if (fact.status === 'accepted' || fact.status === 'pending') {
+          factsMap[fact.fact_key] = fact.fact_value;
+        }
+      }
+
+      coreDecision = runCoreEngine({
+        lead_id: crmResult.lead_id,
+        current_stage: currentStage,
+        facts: factsMap,
+      });
+
+      await upsertLeadState(coreBackend, crmResult.lead_id, coreDecision);
+
+      diagLog('core.decision', {
+        lead_id_present: true,
+        stage_current: coreDecision.stage_current,
+        stage_after: coreDecision.stage_after,
+        block_advance: coreDecision.block_advance,
+        decision_id: coreDecision.decision_id,
+      });
+
+      emitCanary(ctx, 'core.completed', 'completed', {
+        stage_current: coreDecision.stage_current,
+        stage_after: coreDecision.stage_after,
+      });
+    } catch (e) {
+      errors.push(`core_exception: ${String(e)}`);
+      diagLog('core.decision', {
+        error: String(e),
+        stage_current: 'unknown',
+        stage_after: 'discovery',
+      });
+      emitCanary(ctx, 'core.exception', 'failed', { error: String(e) });
+    }
+  }
 
   // Passo 2 — LLM (soberania da IA)
   const rollbackActive = isFlagOn(env.ROLLBACK_FLAG);

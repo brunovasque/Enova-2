@@ -17,6 +17,7 @@
     "smoke:meta:pipeline": "tsx src/meta/pipeline-smoke.ts",
     "smoke:meta:canary": "tsx src/meta/canary-smoke.ts",
     "smoke:meta:client-real-flag": "tsx src/meta/client-real-flag-smoke.ts",
+    "smoke:meta:core-pipeline": "tsx src/meta/core-pipeline-smoke.ts",
     "smoke:speech": "tsx src/speech/smoke.ts",
     "smoke:context": "tsx src/context/smoke.ts",
     "smoke:adapter": "tsx src/adapter/smoke.ts",
