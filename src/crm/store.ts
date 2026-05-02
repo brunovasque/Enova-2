@@ -23,6 +23,7 @@
  */
 
 import type { CrmBackend, CrmTable } from './types.ts';
+import { diagLog } from '../meta/prod-diag.ts';
 
 // ---------------------------------------------------------------------------
 // Backend in-process — implementação real para PR-T8.4
@@ -118,7 +119,23 @@ export async function getCrmBackend(env: Record<string, unknown>): Promise<CrmBa
       ? (env.SUPABASE_SERVICE_ROLE_KEY as string)
       : '';
 
-  if (!flag || !url || !key) {
+  if (!flag) {
+    diagLog('runtime.guard.in_memory_fallback', {
+      module: 'crm',
+      reason: 'flag_off',
+      persistence_mode: 'in_memory',
+    });
+    return crmBackend;
+  }
+
+  if (!url || !key) {
+    diagLog('runtime.guard.in_memory_fallback', {
+      module: 'crm',
+      reason: 'envs_missing',
+      persistence_mode: 'in_memory',
+      url_present: !!url,
+      key_present: !!key,
+    });
     return crmBackend;
   }
 

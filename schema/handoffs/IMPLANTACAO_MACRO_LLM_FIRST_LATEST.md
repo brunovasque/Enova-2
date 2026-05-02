@@ -1,5 +1,44 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.2 — Fallback guard com telemetria explícita (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.2-crm-fallback-guard-telemetry`  
+**Próxima PR autorizada**: **T9.3 — DIAG integração Core ↔ pipeline**
+
+### O que foi feito
+
+- `src/crm/store.ts`: `getCrmBackend()` agora emite `diagLog('runtime.guard.in_memory_fallback', {...})` com `reason: 'flag_off'` (quando `SUPABASE_REAL_ENABLED !== 'true'`) ou `reason: 'envs_missing'` (quando URL/key ausentes) — fim do fallback silencioso (BLK-05 RESOLVIDO)
+- `src/crm/routes.ts`: `/crm/health` expõe `persistence_mode: getPersistenceMode(env)` (`'in_memory' | 'supabase_read_only' | 'supabase_full'`)
+- `src/golive/health.ts`: `/__admin__/go-live/health` expõe `supabase_runtime_active: getSupabaseReadiness(env).ready && env['SUPABASE_WRITE_ENABLED'] === 'true'` (sem falso positivo quando flags on mas URL/KEY ausentes)
+- `src/runtime/fallback-guard-smoke.ts`: smoke em 8 categorias (C1–C8) com `async function main()` pattern (CJS-safe)
+- `package.json`: script `smoke:runtime:fallback-guard` adicionado
+
+### Smokes
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:runtime:fallback-guard` | **41/41 PASS** |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Bloqueantes resolvidos
+
+- **BLK-05** (Supabase silent fallback) — RESOLVIDO: `getCrmBackend()` agora sempre emite telemetria explícita
+
+### Próxima ação: T9.3 — DIAG integração Core ↔ pipeline
+
+Diagnóstico read-only mapeando exatamente:
+- O que `runCoreEngine` espera como input (`CoreInput`)
+- O que `CoreDecision` retorna
+- Como encaixar no `canary-pipeline.ts` sem quebrar fluxo atual
+- Entregável: `schema/diagnostics/T9_CORE_PIPELINE_INTEGRACAO_DIAG.md`
+
+---
+
 ## PR-T9.1 — Supabase runtime/env readiness (2026-05-02)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
