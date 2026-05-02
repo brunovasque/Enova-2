@@ -1,5 +1,32 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.9-DIAG — Diagnóstico Output Guard para respostas do LLM (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.9-output-guard`  
+**Próxima PR autorizada**: **T9.9 — IMPL Output Guard para respostas do LLM**
+
+### Veredito executivo
+
+T9.9 viável com patch cirúrgico. Sem bloqueio real. Ponto de integração exato identificado.
+
+### Achados principais
+
+| Achado | Detalhe |
+|---|---|
+| Ponto de integração | Entre L288 (`if (llmResult.ok && llmResult.reply_text)`) e L289 (`replyText = llmResult.reply_text`) em `canary-pipeline.ts` |
+| Comportamento de bloqueio | `replyText` permanece `undefined` → outbound gate detecta `'reply_text_missing'` automaticamente |
+| Módulo a criar | `src/llm/output-guard.ts` — puro, sem I/O, zero deps externas |
+| Riscos mapeados | 12 riscos; 7 patterns BLOCK; 2 WARN; anti-falso-positivo documentado |
+| Telemetria | `diagLog('llm.output_guard.result', ...)` com contagens apenas, sem texto |
+| Shape | `LlmOutputGuardResult { allowed, blocked, warned, reason_codes, safe_reply_text?, replacement_used }` |
+
+### Smokes exigidos para T9.9
+
+`smoke:llm:output-guard` ≥20 · `smoke:llm:context` 30 · `smoke:meta:canary` 41 · `smoke:meta:core-pipeline` 23 · `prove:t9.7-facts-stage-advance` 44 · `prove:t9.5-stage-persistence` 58 · `smoke:runtime:env` 53 · `smoke:runtime:fallback-guard` 41 · `prove:g8-readiness` APROVADO
+
+---
+
 ## PR-T9.8-IMPL — IMPL LlmContext estruturado (2026-05-02)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  

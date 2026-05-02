@@ -3,7 +3,26 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL CONCLUÍDAS; próxima: T9.9 — Output Guard para respostas do LLM
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG CONCLUÍDAS; próxima: T9.9 — IMPL Output Guard para respostas do LLM
+
+## T9.9-DIAG — CONCLUÍDA (2026-05-02)
+
+Branch: `diag/t9.9-output-guard`
+
+**Veredito:** T9.9 viável com patch cirúrgico. Ponto de integração exato: entre L288→L289 de `canary-pipeline.ts` (após `if (llmResult.ok && llmResult.reply_text)`, antes de `replyText = llmResult.reply_text`). Zero src/ alterado neste DIAG.
+
+**Achados chave:**
+- Ponto de bloqueio natural: `replyText` permanece `undefined` se guard bloquear → outbound para via `'reply_text_missing'` sem código adicional
+- Módulo a criar: `src/llm/output-guard.ts` — puro, sem I/O, zero deps
+- 12 riscos mapeados; 7 patterns BLOCK; 2 WARN (longo, doc fora de hora)
+- Anti-falso-positivo: regex de intenção (verbo+resultado), não presença de palavra
+- Shape definido: `LlmOutputGuardResult { allowed, blocked, warned, reason_codes, safe_reply_text?, replacement_used }`
+- Telemetria: `diagLog('llm.output_guard.result', ...)` sem texto, sem facts, sem secrets
+- Fallback: ausência de resposta (replyText=undefined) — adapter não inventa fala
+
+**Documento:** `schema/diagnostics/T9_OUTPUT_GUARD_DIAG.md` (17 seções)
+
+---
 
 ## T9.8-IMPL — CONCLUÍDA (2026-05-02)
 
