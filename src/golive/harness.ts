@@ -41,10 +41,9 @@ export function evaluateGoLiveReadiness(env: Record<string, unknown> = {}): GoLi
   // Supabase: leitura real aprovada em PR-T8.9B; escrita real pendente
   const supabase_ready = true;
 
-  // Meta/WhatsApp: implementado em PR-T8.11, harness em PR-T8.12B
-  // mas prova real BLOQUEADA_AGUARDANDO_VASQUES
-  const meta_ready = false;
-  blocking_reasons.push('Meta/WhatsApp BLOQUEADA_AGUARDANDO_VASQUES — secrets, Worker test e webhook Meta não provisionados por Vasques (PR-T8.12B)');
+  // Meta/WhatsApp: PROD aprovado por Vasques — CLIENT_REAL_ENABLED=true, external_dispatch=true (2026-05-01)
+  // Evidência: mode=client_real_outbound, meta_status=200, WhatsApp respondendo naturalmente
+  const meta_ready = true;
 
   // Memória/telemetria: aprovada local/in-memory em PR-T8.14
   const memory_ready = true;
@@ -119,7 +118,7 @@ export function evaluateGoLiveReadiness(env: Record<string, unknown> = {}): GoLi
     g8_allowed,
     blocking_reasons,
     details: {
-      meta_status: 'BLOQUEADA_AGUARDANDO_VASQUES',
+      meta_status: 'APROVADO_PROD_CLIENT_REAL_2026-05-01',
       supabase_write_real: 'pending_pr_future',
       memory_persistence: 'in_memory_only',
       llm_real_status: 'not_activated',

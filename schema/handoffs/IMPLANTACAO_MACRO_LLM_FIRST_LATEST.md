@@ -39,6 +39,843 @@ Diagnóstico completo da camada de escrita Supabase. 5 bloqueadores identificado
 
 ---
 
+
+## PR-T9.11 — PROVA LLM usa contexto sem quebrar stage/guard (2026-05-02)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
+**Branch**: `prove/t9.11-llm-context-guard`  
+**Próxima PR autorizada**: **T9.12 — IMPL Supabase write real (CRM/memória/stage)**
+
+### Veredito executivo
+
+Prova programática confirmada. 56/56 PASS. Soberania verificada em 5 dimensões: Core decide stage, Guard bloqueia perigo sem depender de recent_turns, Guard nunca inventa reply, PII não chega ao prompt, retrocompat preservada.
+
+### Cenários provados
+
+| Cenário | Objetivo | Resultado |
+|---|---|---|
+| C1 | stage_current + recent_turns renderizados | 8/8 PASS |
+| C2 | stage_current ANTES de recent_turns (prioridade Core) | 4/4 PASS |
+| C3 | Guard bloqueia aprovação com recent_turns | 5/5 PASS |
+| C4 | Guard passa reply seguro com recent_turns | 4/4 PASS |
+| C5 | Guard bloqueia CPF exposto | 3/3 PASS |
+| C6 | Guard bloqueia stage interno exposto | 3/3 PASS |
+| C7 | Guard bloqueia secrets | 3/3 PASS |
+| C8 | Negação contextual → guard permite | 3/3 PASS |
+| C9 | Retrocompat sem recent_turns | 5/5 PASS |
+| C10 | Janela máxima 3 turnos | 2/2 PASS |
+| C11 | Truncamento 100 chars por turno | 2/2 PASS |
+| C12 | replacement_used sempre false | 2/2 PASS |
+| C13 | stage_current inalterado pelo guard | 4/4 PASS |
+| C14 | text_too_long → warn, não block | 4/4 PASS |
+| C15 | recent_turns sanitizados → sem PII no prompt | 4/4 PASS |
+
+### Regressões
+
+smoke:llm:short-memory-context 46 · smoke:llm:output-guard 48 · smoke:llm:context 30 · smoke:meta:canary 41 · smoke:meta:core-pipeline 23 · prove:t9.7 44 · smoke:runtime:env 53 · smoke:runtime:fallback-guard 41 · prove:g8-readiness APROVADO
+
+---
+
+## PR-T9.10-IMPL — IMPL Memória curta / contexto histórico controlado (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.10-short-memory-context`  
+**Próxima PR autorizada**: **T9.11 — PROVA LLM usa contexto sem quebrar stage/guard**
+
+### Veredito executivo
+
+Memória curta implementada e validada. 46/46 smoke passes. Soberania preservada — LLM recebe histórico recente como contexto auxiliar; Core decide stage; Guard protege a saída.
+
+### Achados principais
+
+| Item | Detalhe |
+|---|---|
+| Import adicionado | `getLeadTimeline` em `canary-pipeline.ts` |
+| Helper criado | `sanitizeRecentTurnText` — CPF, email, tel, links, tokens → substituídos |
+| Variável hoistada | `recentHistory` no escopo externo (como `cachedFacts`) |
+| Bloco [E] inserido | Passo 1.5 de `canary-pipeline.ts`, após `cachedFacts = factsMap` |
+| Janela | 3 turnos × 100 chars, excluir turno atual, apenas `role: 'user'` |
+| llmContext | `recent_turns: recentHistory` populado quando há turnos |
+| diagLog | `history_turns: recentHistory.length` adicionado ao `llm.context.built` |
+| buildDynamicSystemPrompt | Renderiza `recent_turns` com rótulo "contexto auxiliar, não regra de etapa" |
+| Smoke criado | `src/llm/short-memory-context-smoke.ts` — 46/46 PASS |
+| Regressões | smoke:llm:context 30 · smoke:llm:output-guard 48 · smoke:meta:canary 41 · smoke:meta:core-pipeline 23 · prove:t9.7 44 · prove:t9.5 PASS · smoke:runtime:env 53 · smoke:runtime:fallback-guard 41 · prove:g8-readiness APROVADO |
+
+---
+
+## PR-T9.10-DIAG — Diagnóstico memória curta / contexto histórico controlado (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.10-memoria-curta-contexto`  
+**Próxima PR autorizada**: **T9.10 — IMPL Memória curta / contexto histórico controlado**
+
+### Veredito executivo
+
+T9.10 viável com patch cirúrgico em 2 arquivos (`canary-pipeline.ts`, `client.ts`) + smoke novo. Sem bloqueio real.
+
+### Achados principais
+
+| Achado | Detalhe |
+|---|---|
+| Função de leitura | `getLeadTimeline(backend, lead_id)` em `src/crm/service.ts:147` — já existe, retorna sorted |
+| Campo de texto | `CrmTurn.raw_input_summary` = `text_body.slice(0, 200)` (set em `pipeline.ts:129`) |
+| Campo sem reply | `CrmTurn` não tem campo para resposta do assistente — T9.10 usa `role: 'user'` only |
+| LlmContext | `recent_turns?` já declarado em `client.ts:47` mas nunca populado |
+| buildDynamicSystemPrompt | Não renderiza `recent_turns` — precisa de atualização em T9.10 |
+| Ponto de integração | Bloco [E] no Passo 1.5 de `canary-pipeline.ts`, após `cachedFacts = factsMap` |
+| Fonte correta | CRM timeline (não Memory Service, não Context Module) |
+| Janela | 3 turnos × 100 chars, excluir turno atual, order cronológica |
+| Sanitização | CPF, email, tel, links, tokens → substituir antes de enviar ao LLM |
+
+### Smokes exigidos para T9.10
+
+`smoke:llm:short-memory-context` ≥20 · `smoke:llm:context` 30 · `smoke:llm:output-guard` 48 · `smoke:meta:canary` 41 · `smoke:meta:core-pipeline` 23 · `prove:t9.7-facts-stage-advance` 44 · `prove:t9.5-stage-persistence` 58 · `smoke:runtime:env` 53 · `smoke:runtime:fallback-guard` 41 · `prove:g8-readiness` APROVADO
+
+---
+
+## PR-T9.9-IMPL — Output Guard para respostas do LLM (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.9-output-guard`  
+**Próxima PR autorizada**: **T9.10 — Memória curta / contexto histórico controlado**
+
+### Veredito executivo
+
+Output Guard implementado e validado. 48/48 smoke passes. Soberania preservada — LLM gera a fala, Guard apenas valida segurança, Core decide stage, adapter nunca inventa resposta.
+
+### Achados principais
+
+| Item | Detalhe |
+|---|---|
+| Módulo criado | `src/llm/output-guard.ts` — puro, sem I/O, zero deps externas |
+| Smoke criado | `src/llm/output-guard-smoke.ts` — 48/48 PASS |
+| Integração | `canary-pipeline.ts` — guard entre LLM result e replyText assignment |
+| Bloqueios | 7 SIMPLE_BLOCK_RULES + 1 checkApprovalPromise com detecção de negação contextual |
+| Avisos | 2 warn-only (text_too_long, document_request_out_of_stage) — não bloqueiam outbound |
+| Anti-falso-positivo | "não posso dizer que você está aprovado" → allowed (negação detectada em prefixo 50 chars) |
+| Regressões | smoke:llm:context 30 · smoke:meta:canary 41 · smoke:meta:core-pipeline 23 · prove:t9.7 44 · prove:t9.5 58 · smoke:runtime:env 53 · smoke:runtime:fallback-guard 41 · prove:g8-readiness APROVADO |
+| replacement_used | sempre false — guard nunca inventa resposta |
+
+---
+
+## PR-T9.9-DIAG — Diagnóstico Output Guard para respostas do LLM (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.9-output-guard`  
+**Próxima PR autorizada**: **T9.9 — IMPL Output Guard para respostas do LLM**
+
+### Veredito executivo
+
+T9.9 viável com patch cirúrgico. Sem bloqueio real. Ponto de integração exato identificado.
+
+### Achados principais
+
+| Achado | Detalhe |
+|---|---|
+| Ponto de integração | Entre L288 (`if (llmResult.ok && llmResult.reply_text)`) e L289 (`replyText = llmResult.reply_text`) em `canary-pipeline.ts` |
+| Comportamento de bloqueio | `replyText` permanece `undefined` → outbound gate detecta `'reply_text_missing'` automaticamente |
+| Módulo a criar | `src/llm/output-guard.ts` — puro, sem I/O, zero deps externas |
+| Riscos mapeados | 12 riscos; 7 patterns BLOCK; 2 WARN; anti-falso-positivo documentado |
+| Telemetria | `diagLog('llm.output_guard.result', ...)` com contagens apenas, sem texto |
+| Shape | `LlmOutputGuardResult { allowed, blocked, warned, reason_codes, safe_reply_text?, replacement_used }` |
+
+### Smokes exigidos para T9.9
+
+`smoke:llm:output-guard` ≥20 · `smoke:llm:context` 30 · `smoke:meta:canary` 41 · `smoke:meta:core-pipeline` 23 · `prove:t9.7-facts-stage-advance` 44 · `prove:t9.5-stage-persistence` 58 · `smoke:runtime:env` 53 · `smoke:runtime:fallback-guard` 41 · `prove:g8-readiness` APROVADO
+
+---
+
+## PR-T9.8-IMPL — IMPL LlmContext estruturado (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.8-llmcontext-estruturado`  
+**Próxima PR autorizada**: **T9.9 — Output Guard**
+
+### Veredito executivo
+
+BLK-04 RESOLVIDO. LLM agora recebe stage + objective + facts sanitizados do Core. Retrocompatível — sem quebra de smoke ou prova existente.
+
+### O que foi feito
+
+| Arquivo | Alteração |
+|---|---|
+| `src/llm/client.ts` | Exporta `LlmContext`, `buildDynamicSystemPrompt`, `callLlm(msg, env, context?)` |
+| `src/meta/canary-pipeline.ts` | `cachedFacts` hoistado; `llmContext` montado + sanitizado; `llmCaller` recebe 3 args; `diagLog('llm.context.built', ...)` |
+| `src/llm/context-smoke.ts` | Smoke criado — 30/30 PASS |
+| `package.json` | `"smoke:llm:context": "tsx src/llm/context-smoke.ts"` |
+
+### Resultados dos smokes
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:llm:context` | **30/30 PASS** |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:core-pipeline` | 23/23 PASS |
+| `prove:t9.7-facts-stage-advance` | 44/44 PASS |
+| `prove:t9.5-stage-persistence` | 58/58 PASS |
+| `smoke:core:text-extractor` | PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | G8 APROVADO |
+
+### Segurança
+
+- `renda_principal` e `cpf` sanitizados para `'informado(a)'` antes de ir ao LLM
+- `diagLog` emite apenas contagens — zero texto do cliente, zero valor de fact, zero secret
+- Prompt truncado a 4800 chars (≤1200 tokens)
+
+---
+
+## PR-T9.8-DIAG — Diagnóstico LlmContext estruturado (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.8-llmcontext-estruturado`
+
+### Achados principais
+
+| Achado | Detalhe |
+|---|---|
+| `factsMap` | **BLK-04**: declarado dentro do try block (L187) — NÃO acessível em Passo 2 → hoist necessário |
+| `coreDecision` | Já no escopo externo (L147) — acessível em Passo 2 ✓ |
+| Compatibilidade | Terceiro parâmetro opcional preserva todas as chamadas existentes |
+
+---
+
+## PR-T9.7 — PROVA facts extraídos e stage avança (2026-05-02)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
+**Branch**: `prove/t9.7-facts-stage-advance`  
+**Próxima PR autorizada**: **T9.8 — IMPL LlmContext estruturado**
+
+### Prova confirmada
+
+| Cenário | Texto | Facts extraídos | Stage antes → depois |
+|---|---|---|---|
+| A | "Quero comprar um imóvel pelo Minha Casa Minha Vida" | `customer_goal: 'comprar_imovel'` | `discovery` → `qualification_civil` ✓ |
+| B | "Sou solteiro e vou comprar sozinho" | `estado_civil: 'solteiro'`, `processo: 'solo'` | `qualification_civil` → `qualification_renda` ✓ |
+| C | "Trabalho CLT e ganho R$ 3.500" | `regime_trabalho: 'clt'`, `renda_principal: 3500` | `qualification_renda` → `qualification_eligibility` ✓ |
+| D | "tá bom entendi" | `{}` | `qualification_civil` → `qualification_civil` (sem regressão) ✓ |
+| E | segurança | — | nenhum secret no output ✓ |
+
+### Resultados dos smokes
+
+| Smoke | Resultado |
+|---|---|
+| `prove:t9.7-facts-stage-advance` | **44/44 PASS** |
+| `smoke:core:text-extractor` | 58/58 PASS |
+| `smoke:meta:core-pipeline` | 23/23 PASS |
+| `prove:t9.5-stage-persistence` | 34/34 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+---
+
+## PR-T9.6-IMPL — Extração de facts do texto WhatsApp real (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.6-parsers-texto-real`  
+**Próxima PR autorizada**: **T9.7 — PROVA facts extraídos e stage avança**
+
+### O que foi feito
+
+| Arquivo | Ação |
+|---|---|
+| `src/core/text-extractor.ts` | Criado — `extractFactsFromText(text, stage)` — 6 stages, ~58 patterns |
+| `src/meta/canary-pipeline.ts` | Modificado — blocos [B]+[C] no Passo 1.5 |
+| `src/core/text-extractor-smoke.ts` | Criado — `smoke:core:text-extractor` |
+| `package.json` | `"smoke:core:text-extractor"` adicionado |
+
+### BLK-03 RESOLVIDO
+
+Pipeline: `text_body` → `extractFactsFromText` → `writeLeadFact` (status: `'pending'`) → `getLeadFacts` → `runCoreEngine` (vê facts no mesmo turno).
+
+### Resultados dos smokes
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:core:text-extractor` | **58/58 PASS** |
+| `smoke:meta:core-pipeline` | 23/23 PASS |
+| `prove:t9.5-stage-persistence` | 34/34 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Stages cobertos pelo extrator
+
+| Stage | Facts extraídos |
+|---|---|
+| `discovery` | `customer_goal` |
+| `qualification_civil` | `estado_civil`, `processo` |
+| `qualification_renda` | `regime_trabalho`, `renda_principal` |
+| `qualification_eligibility` | `nacionalidade` |
+| `docs_prep` | `docs_channel_choice` |
+| `visit` | `visit_interest` |
+
+---
+
+## PR-T9.6-DIAG — Diagnóstico extração de facts do texto WhatsApp real (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.6-facts-text-mapping`  
+**Próxima PR autorizada**: **T9.6 IMPL — extrator heurístico + persistência no Passo 1.5**
+
+### O que foi feito
+
+| Arquivo | Ação |
+|---|---|
+| `schema/diagnostics/T9_FACTS_TEXTO_REAL_DIAG.md` | DIAG criado — 16 seções |
+
+### Achados do DIAG
+
+| # | Achado |
+|---|---|
+| 1 | BLK-03: `facts_extracted: {}` em todos os 9 caminhos do Core — confirmado em `engine.ts` |
+| 2 | 25 fact_keys canônicos mapeados por stage/parser (L04–L17) |
+| 3 | `writeLeadFact` já existe e operacional em `service.ts:167` |
+| 4 | `callLlm` retorna apenas `reply_text` — sem extração estruturada (BLK-04, T9.8) |
+| 5 | Ponto de inserção: Passo 1.5 blocos [B]+[C] entre `stateResult` e `getLeadFacts` |
+| 6 | Estratégia: extrator heurístico → persist `'pending'` → `getLeadFacts` inclui → Core vê no mesmo turno |
+| 7 | Zero mudança de interface necessária em T9.6 |
+| 8 | Complexidade baixa — 1 função pura + 2 blocos + 1 smoke |
+
+### Regressões de risco em T9.6 IMPL
+
+`smoke:meta:canary` 41/41, `smoke:meta:core-pipeline` 23/23, `prove:t9.5-stage-persistence` 34/34
+
+---
+
+## PR-T9.5 — PROVA stage_current persiste entre turnos (2026-05-02)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
+**Branch**: `prove/t9.5-stage-persistence`  
+**Próxima PR autorizada**: **T9.6 — IMPL parsers L04–L17 chamados com texto real**
+
+### O que foi feito
+
+| Arquivo | Ação |
+|---|---|
+| `src/meta/stage-persistence-proof.ts` | Prova criada — 5 cenários, 34 checks |
+| `package.json` | `prove:t9.5-stage-persistence` adicionado |
+
+### Prova confirmada — 34/34 PASS
+
+| Cenário | O que prova |
+|---|---|
+| C1 (10 checks) | Lead novo: `stage_current = 'discovery'` persiste, `state_version = 1`, `stage_at_turn ≠ 'unknown'` |
+| C2 (7 checks) | Turno 2 do mesmo lead: `lead_id` idêntico, `state_version = 2`, `stage_at_turn ≠ 'unknown'` |
+| C3 (9 checks) | Stage avançado (`qualification_civil`) NÃO reseta para `discovery`; `stage_at_turn = qualification_civil`; `state_version = 3` |
+| C4 (3 checks) | Pipeline não lança exceção em nenhum cenário |
+| C5 (5 checks) | Nenhum secret no output; `core.decision` presente nos logs |
+
+### Zero bugs encontrados na T9.4
+
+A prova não revelou bug algum. A persistência da T9.4 funciona corretamente.
+
+---
+
+## PR-T9.4 — IMPL chamada runCoreEngine no canary-pipeline (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.4-runcore-canary-pipeline`  
+**Próxima PR autorizada**: **T9.5 — PROVA stage_current persiste entre turnos**
+
+### O que foi feito
+
+| Arquivo | Mudança |
+|---|---|
+| `src/crm/service.ts` | `upsertLeadState(backend, lead_id, decision)` criada — upsert inteligente (insert ou update com incremento de `state_version`) |
+| `src/crm/service.ts` | `createConversationTurn` agora aceita `stage_at_turn?: string` (default: `'unknown'`) |
+| `src/meta/pipeline.ts` | Lê `getLeadState` antes de criar o turno → `stage_at_turn` usa stage real (BLK-02 fix) |
+| `src/meta/canary-pipeline.ts` | Passo 1.5 adicionado: `getLeadState` + `getLeadFacts` + `runCoreEngine` + `upsertLeadState` + `diagLog('core.decision', ...)` |
+| `src/meta/core-pipeline-smoke.ts` | Smoke novo: 23/23 PASS (C1–C8 especificados no DIAG) |
+| `package.json` | `smoke:meta:core-pipeline` adicionado |
+
+### BLKs resolvidos
+
+- **BLK-01 RESOLVIDO**: `runCoreEngine` agora é chamado a cada mensagem WhatsApp recebida
+- **BLK-02 RESOLVIDO**: `stage_current` persistido via `upsertLeadState` após cada decisão do Core
+
+### Smokes / Validação
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:meta:core-pipeline` | **23/23 PASS** (novo) |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:runtime:fallback-guard` | 39/39 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+---
+
+## PR-T9.3 — DIAG integração Core ↔ pipeline (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.3-core-pipeline-integracao`  
+**Próxima PR autorizada**: **T9.4 — IMPL chamada runCoreEngine no canary-pipeline**
+
+### O que foi feito
+
+- `schema/diagnostics/T9_CORE_PIPELINE_INTEGRACAO_DIAG.md` criado (15 seções)
+- Diagnóstico read-only: leitura de `engine.ts`, `types.ts`, `canary-pipeline.ts`, `pipeline.ts`, `service.ts`, `types.ts`, `llm/client.ts`, `topo-parser.ts`
+- Veredito: **T9.4 viável com patch cirúrgico — sem bloqueio estrutural**
+- Zero arquivos `src/` alterados
+
+### Achados principais
+
+| Item | Diagnóstico |
+|---|---|
+| `runCoreEngine` | Síncrono, sem I/O, `LeadState → CoreDecision` |
+| Ponto de integração | `canary-pipeline.ts` entre Passo 1 (CRM) e Passo 2 (LLM) |
+| Parsers L04–L17 | Usam `facts_current` (CRM) — não raw_text direto |
+| `upsertLeadState` | NÃO existe em `service.ts` — T9.4 precisa criar |
+| `stage_at_turn` | Sempre `'unknown'` — bug a corrigir em T9.4 |
+| Default seguro | `stage_current = 'unknown'` → `'discovery'` |
+| BLK-01 | Core nunca chamado no pipeline |
+| BLK-02 | stage_current nunca persistido após decisão |
+
+### Smokes / Validação
+
+- Nenhuma alteração em `src/` — smokes existentes não foram re-executados
+- Documento de diagnóstico verificado por leitura direta dos arquivos fonte
+
+### Próxima ação: T9.4 — IMPL chamada runCoreEngine no canary-pipeline
+
+| Arquivo | Ação |
+|---|---|
+| `src/crm/service.ts` | Criar `upsertLeadState(backend, lead_id, decision)` |
+| `src/meta/canary-pipeline.ts` | Adicionar Passo 1.5: ler estado → chamar Core → persistir stage_after |
+| `src/meta/pipeline.ts` | Corrigir `stage_at_turn: 'unknown'` |
+| `src/meta/core-pipeline-smoke.ts` | Criar smoke 8 checks |
+| `package.json` | Adicionar `smoke:meta:core-pipeline` |
+
+BLK-01 + BLK-02 serão resolvidos em T9.4.
+
+---
+
+## PR-T9.2 — Fallback guard com telemetria explícita (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.2-crm-fallback-guard-telemetry`  
+**Próxima PR autorizada**: **T9.3 — DIAG integração Core ↔ pipeline**
+
+### O que foi feito
+
+- `src/crm/store.ts`: `getCrmBackend()` agora emite `diagLog('runtime.guard.in_memory_fallback', {...})` com `reason: 'flag_off'` (quando `SUPABASE_REAL_ENABLED !== 'true'`) ou `reason: 'envs_missing'` (quando URL/key ausentes) — fim do fallback silencioso (BLK-05 RESOLVIDO)
+- `src/crm/routes.ts`: `/crm/health` expõe `persistence_mode: getPersistenceMode(env)` (`'in_memory' | 'supabase_read_only' | 'supabase_full'`)
+- `src/golive/health.ts`: `/__admin__/go-live/health` expõe `supabase_runtime_active: getSupabaseReadiness(env).ready && env['SUPABASE_WRITE_ENABLED'] === 'true'` (sem falso positivo quando flags on mas URL/KEY ausentes)
+- `src/runtime/fallback-guard-smoke.ts`: smoke em 8 categorias (C1–C8) com `async function main()` pattern (CJS-safe)
+- `package.json`: script `smoke:runtime:fallback-guard` adicionado
+
+### Smokes
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:runtime:fallback-guard` | **41/41 PASS** |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Bloqueantes resolvidos
+
+- **BLK-05** (Supabase silent fallback) — RESOLVIDO: `getCrmBackend()` agora sempre emite telemetria explícita
+
+### Próxima ação: T9.3 — DIAG integração Core ↔ pipeline
+
+Diagnóstico read-only mapeando exatamente:
+- O que `runCoreEngine` espera como input (`CoreInput`)
+- O que `CoreDecision` retorna
+- Como encaixar no `canary-pipeline.ts` sem quebrar fluxo atual
+- Entregável: `schema/diagnostics/T9_CORE_PIPELINE_INTEGRACAO_DIAG.md`
+
+---
+
+## PR-T9.1 — Supabase runtime/env readiness (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.1-supabase-runtime-env-readiness`  
+**Próxima PR autorizada**: **T9.2 — Fallback guard com telemetria explícita**
+
+### O que foi feito
+
+- `wrangler.toml`: bloco `[vars]` com 12 vars não sensíveis + defaults seguros (`false`/`0`); `[env.test.vars]` espelhado; 8 secrets documentados em comentário (nunca commitados)
+- `src/runtime/env-validator.ts`: 20 envs canônicas (`CANONICAL_ENVS`), separação `var`/`secret`, `validateEnvs(env)` retorna relatório seguro sem vazar valores, `getPersistenceMode(env)` retorna `'in_memory' | 'supabase_read_only' | 'supabase_full'`
+- `src/runtime/env-smoke.ts`: smoke em 7 categorias (C1–C7)
+- `package.json`: script `smoke:runtime:env` adicionado
+
+### Smokes
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:runtime:env` | **53/53 PASS** |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Não alterado
+
+- Zero src/meta, src/core, src/llm, src/supabase, src/crm alterados
+- Supabase real NÃO habilitado (flags permanecem `false`)
+- Pipeline WhatsApp intacto; G8 preservado
+
+---
+
+## PR-T9.0 — Contrato executivo T9 (2026-05-01)
+
+**Tipo**: PR-DOC | **Status**: CONCLUÍDA  
+**Branch**: `docs/t9-contrato-llm-funil-supabase-runtime`  
+**Contrato aberto**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
+**Próxima PR autorizada**: **T9.1 — Supabase runtime/env readiness**
+
+### O que foi criado
+
+- `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` — contrato executivo: objetivo macro, regra soberana (10 cláusulas invioláveis), arquitetura alvo, ordem de execução obrigatória (15 PRs), critérios G9 (10 critérios), 6 bloqueantes, opcionais, riscos, regras de execução
+- `schema/implementation/T9_PLANO_EXECUTIVO_LLM_FUNIL_SUPABASE.md` — detalhamento técnico de cada PR (T9.0–T9.R): escopo, entregáveis, smoke mínimo, restrições
+- `schema/handoffs/T9_LLM_FUNIL_SUPABASE_HANDOFF.md` — estado atual, próxima ação T9.1 detalhada, arquivos-chave, decisões pendentes, invariantes
+
+### Decisões pendentes para Vasques
+
+A. **Supabase real é pré-condição de T9 ou paralela?** (Recomendação: paralela — in-memory até T9.11)  
+B. **Output guard LLM: hard-fail ou soft-fail?** (Recomendação: hard-fail para promessas de aprovação MCMV)  
+C. **Quanto histórico passar ao LLM?** (Recomendação: 3 últimos turnos + facts atuais)
+
+### Próxima PR — T9.1
+
+Branch sugerido: `feat/t9.1-wrangler-env-bindings`  
+Escopo: adicionar `[vars]` no `wrangler.toml` + `src/runtime/env-validator.ts` + `smoke:runtime:env`  
+Objetivo: `wrangler.toml` declara todas as envs esperadas; fallback seguro documentado
+
+### Não alterado nesta PR
+
+- Zero runtime, zero código funcional, zero flags, zero secrets
+- G8 frente WhatsApp APROVADO intacto
+
+---
+
+## PR-DIAG LLM-FUNIL-SISTEMA-INTEIRO-READONLY (2026-05-01)
+
+**Tipo**: PR-DIAG / READ-ONLY | **Status**: CONCLUÍDA (PR #177)  
+**Base**: PR #176 (closeout G8 WhatsApp, mergeada)  
+**Próxima ação**: ~~Abrir contrato T9~~ — FEITO via PR-T9.0
+
+### Veredito do diagnóstico
+
+A Enova 2 responde WhatsApp em PROD, mas o **LLM e o funil mecânico são dois sistemas paralelos isolados em runtime**. O LLM gera fala sem saber stage/facts/históriço; o Core mecânico decide stages corretamente, mas só roda em rota técnica isolada. Persistência Supabase em PROD está silenciosamente desligada — fallback in-memory sem telemetria.
+
+### Top 6 achados
+
+1. `runCoreEngine` nunca chamado por `src/meta/*` (grep confirmou 0 matches)
+2. `callLlm(text_body)` recebe apenas mensagem atual — sem stage, facts ou históriço
+3. `CrmLeadState.stage_current` nunca escrito em runtime real (`stage_at_turn='unknown'` literal)
+4. `getCrmBackend` cai em in-memory silenciosamente quando flag OFF (sem telemetria)
+5. `wrangler.toml` declara zero bindings (linhas 15-16 explicitam)
+6. `src/context/{schema,living-memory,multi-signal}.ts` existem mas nunca são chamados
+
+### Documentos entregues
+
+- `schema/diagnostics/LLM_FUNIL_SISTEMA_INTEIRO_READONLY.md` — raio-x principal (16 seções)
+- `schema/diagnostics/LLM_FUNIL_MAPA_CONEXOES.md` — mapa visual de conexões (atual + proposto)
+- `schema/diagnostics/SUPABASE_RUNTIME_READINESS.md` — diagnóstico operacional Supabase
+- `schema/handoffs/LLM_FUNIL_NEXT_CONTRACT_HANDOFF.md` — handoff para abrir T9
+
+### Smokes (todos retrocompat)
+
+| Smoke | Resultado |
+|---|---|
+| `prove:g8-readiness` | 7/7 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:client-real-flag` | 35/35 PASS |
+
+### Plano canônico T9 (resumo)
+
+15 micro-PRs separados em frentes:
+- **Runtime**: T9.1 (wrangler bindings), T9.2 (Supabase fallback guard)
+- **Funil**: T9.3 (DIAG), T9.4 (IMPL Core no pipeline), T9.5 (PROVA), T9.6 (parsers L04-L17), T9.7 (PROVA)
+- **LLM**: T9.8 (LlmContext), T9.9 (output guard), T9.10 (PROVA conversa real)
+- **Persistência**: T9.11 (Supabase write real), T9.12 (PROVA restart)
+- **Telemetria**: T9.13 (trace ponta-a-ponta)
+- **Closeout**: T9.R (G9)
+
+### Decisões pendentes para Vasques (em handoff)
+
+A. Persistência Supabase real é pré-condição de T9 ou paralela?  
+B. Output guard LLM é hard-fail ou soft-fail para promessas de aprovação?  
+C. Quanto contexto histórico passar ao LLM (3, 5, 10 turnos)?
+
+### Não alterado nesta PR
+
+- Zero alteração de runtime
+- Zero implementação
+- Zero alteração de flags/envs/secrets/rotas
+- T8/G8 frente WhatsApp APROVADO permanece intacto
+
+---
+
+## PR-T8.R CLOSEOUT — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01)
+
+**Tipo**: PR-PROVA/CLOSEOUT | **Status**: CONCLUÍDA  
+**Base**: PR #175 (fix CLIENT_REAL_ENABLED gate, mergeada)  
+**Próxima frente**: **Integração LLM ↔ funil mecânico / stages / regras MCMV**
+
+### Veredito
+
+**G8 APROVADO — FRENTE WHATSAPP PROD + LLM + OUTBOUND**
+
+Vasques confirmou em 2026-05-01: PROD respondendo WhatsApp naturalmente com LLM. `external_dispatch=true`, `mode=client_real_outbound`, conversa sobre MCMV funcionando.
+
+**Ressalva:** Não aprova funil completo. Próxima frente: stages/qualificação/regras MCMV.
+
+### Smokes finais
+
+| Smoke | Resultado |
+|---|---|
+| `prove:g8-readiness` | 7/7 PASS — G8 APROVADO |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:client-real-flag` | 35/35 PASS |
+
+### Arquivos alterados
+
+- `src/golive/harness.ts` — `meta_ready=true`, artificial trava removida
+- `src/golive/closeout-smoke.ts` — R3/R5/R7 refletem PROD aprovado
+- `schema/proofs/T8_G8_WHATSAPP_PROD_CLOSEOUT.md` — evidência completa
+- `schema/implementation/T8_ROADMAP_PRODUCAO_WHATSAPP.md` — Etapas 6+7 CONCLUÍDA
+- `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` — G8 APROVADO
+- `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` — este arquivo
+
+### Rollback
+
+`ROLLBACK_FLAG=true` bloqueia LLM + outbound em segundos. Soberano acima de tudo.
+
+---
+
+## fix/PR-IMPL T8 — CLIENT_REAL_ENABLED gate corrigido (2026-05-01)
+
+**Tipo**: fix/PR-IMPL | **Status**: MERGEADA (PR #175)  
+**Base**: PR #174 (telemetria DIAG)  
+**Próxima ação**: **Encerrado — gate funcionando, G8 aprovado**
+
+### Causa raiz confirmada
+
+`canary-pipeline.ts` não lia `CLIENT_REAL_ENABLED` em lugar algum. O gate só tinha caminho canary (`wa_id === OUTBOUND_CANARY_WA_ID`). Com `CLIENT_REAL_ENABLED=true` e WA diferente do canary → `wa_not_allowed`.
+
+### Correção
+
+```typescript
+// ANTES: sem caminho client_real
+} else if (inboundWaId !== canaryWaId) {
+  canaryBlockReason = 'wa_not_allowed';
+
+// DEPOIS: caminho client_real antes dos checks canary
+} else if (clientRealEnabled) {
+  // CLIENT_REAL path: qualquer WA permitido
+  canaryAllowed = true;
+  clientRealAllowed = true;
+} else if (!canaryEnabled) { ...canary checks...
+```
+
+### Logs PROD esperados após correção
+
+```json
+{"diag":"meta.prod.outbound.gate",   "allowed":true, "client_real_allowed":true, "block_reason":null}
+{"diag":"meta.prod.webhook.final",   "external_dispatch":true, "mode":"client_real_outbound"}
+```
+
+### Smoke
+
+`smoke:meta:client-real-flag` — **35/35 PASS** (7 cenários)  
+`smoke:meta:canary` — 41/41 PASS (regressão OK)
+
+### Roadmap T8
+
+| Etapa | Status |
+|---|---|
+| 5 — prova T8.17 real | CONCLUÍDA (PR #171 — 54 PASS real) |
+| 6 — cutover + diagnóstico + fix | **EM CORREÇÃO** |
+| 7 — G8 closeout | NÃO FECHADO |
+
+---
+
+## PR-DIAG T8 — Telemetria cirúrgica PROD (2026-05-01)
+
+**Tipo**: PR-DIAG | **Status**: EM EXECUÇÃO — instrumentação completa, aguarda deploy PROD e inspeção  
+**Contexto**: cutover executado, PROD recebeu POST `/__meta__/webhook` OK, resposta WhatsApp **não chegou**  
+**Causa**: `emitTelemetry` vai para buffer em memória — não aparece no `wrangler tail` — bloqueio era opaco  
+**Próxima ação**: **Vasques deploya esta PR no PROD, envia 1 mensagem WhatsApp, inspeciona `wrangler tail nv-enova-2`**
+
+### 11 logs adicionados (visíveis no wrangler tail)
+
+```json
+{"diag":"meta.prod.webhook.received",   "has_signature":true, "body_size":412, "prod_marker":true}
+{"diag":"meta.prod.webhook.signature",  "ok":true, "reason":null}
+{"diag":"meta.prod.webhook.parsed",     "accepted":true, "event_kind":"message", "text_present":true, ...}
+{"diag":"meta.prod.dedupe",             "duplicate":false, "message_id_masked":"wam****xyz"}
+{"diag":"meta.prod.flags.snapshot",     "ENOVA2_ENABLED":true, "LLM_REAL_ENABLED":true, "ROLLBACK_FLAG":false,
+                                         "OUTBOUND_CANARY_WA_ID_present":true, ...}
+{"diag":"meta.prod.pipeline.result",    "crm_ok":true, "lead_id_present":true, "errors_count":0}
+{"diag":"meta.prod.llm.gate",           "allowed":true, "block_reason":null}
+{"diag":"meta.prod.llm.result",         "success":true, "reply_text_present":true, "reply_text_length":87}
+{"diag":"meta.prod.outbound.gate",      "allowed":true, "wa_matches_canary":true, "canary_allowed":true}
+{"diag":"meta.prod.outbound.result",    "external_dispatch":true, "meta_status":200, "message_id_present":true}
+{"diag":"meta.prod.webhook.final",      "llm_invoked":true, "external_dispatch":true, "total_latency_ms":1850}
+```
+
+### Árvore de diagnóstico resumida
+
+```
+Log 1 ausente? → POST não chegou no Worker (problema de webhook/deploy)
+Log 2 ok=false? → META_APP_SECRET errado no PROD
+Log 3 accepted=false? → payload malformado / evento de status
+Log 5 flags? → ROLLBACK_FLAG=true / LLM_REAL_ENABLED=false / OUTBOUND_CANARY_WA_ID_present=false
+Log 7 allowed=false? → block_reason revela gate exato
+Log 8 success=false? → error_type revela: key missing / API error (sem secret)
+Log 9 wa_matches_canary=false? → wa_id inbound ≠ OUTBOUND_CANARY_WA_ID (número enviando errado)
+Log 10 external_dispatch=false? → meta_status + error_body_sanitized → problema Graph API
+```
+
+### Arquivos modificados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/meta/prod-diag.ts` | NOVO — maskId + diagLog |
+| `src/meta/webhook.ts` | Logs 1, 2, 3, 4, 5, 11 |
+| `src/meta/canary-pipeline.ts` | Logs 6, 7, 8, 9, 10 |
+| `src/meta/outbound.ts` | `error_body_sanitized` em OutboundResult |
+
+### Smokes
+
+| Suite | Resultado |
+|---|---|
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+
+### Roadmap T8
+
+| Etapa | Status |
+|---|---|
+| 2 — inbound → CRM + memória | CONCLUÍDA (PR #168) |
+| 3 — prova T8.16 | CONCLUÍDA (PR #169) |
+| 4 — LLM + outbound canary | CONCLUÍDA (PR #170) |
+| 5 — prova T8.17 real | CONCLUÍDA (PR #171 — 54 PASS real) |
+| 6 — cutover Enova 1 → Enova 2 PROD | EXECUTADO — resposta WA não chegou — **EM DIAGNÓSTICO** |
+| 7 — G8 closeout | NÃO FECHADO |
+
+---
+
+## PR-T8.18 — Cutover controlado Enova 2 em produção WhatsApp (2026-05-01)
+
+**Tipo**: PR-OPS / GO-LIVE CONTROLADO | **Status**: EM EXECUÇÃO — runbook e checklist prontos  
+**Base**: PR #171 (PROVA T8.17 — 54 PASS | 0 FAIL | 0 SKIP real positivo)  
+**Próxima ação**: **Vasques executa cutover conforme checklist operacional**
+
+### Conceito central
+
+```
+CUTOVER = trocar o destino do webhook Meta do número WhatsApp para a Enova 2 PROD.
+
+ROLLBACK PREFERENCIAL = flags (não webhook):
+  ROLLBACK_FLAG=true           → bloqueia LLM + outbound em segundos
+  MAINTENANCE_MODE=true        → bloqueia atendimento, mantém inbound
+  LLM_REAL_ENABLED=false       → para geração
+  OUTBOUND_CANARY_ENABLED=false → para envio
+
+RETORNO À ENOVA 1 = emergência extrema, não caminho preferencial.
+A Enova 1 não estava funcionalmente completa.
+```
+
+### Endpoint PROD confirmado via wrangler.toml
+
+```toml
+name = "nv-enova-2"   # linha 18
+main = "src/worker.ts"
+[env.test]
+name = "nv-enova-2-test"
+```
+
+```
+Webhook PROD: https://nv-enova-2.brunovasque.workers.dev/__meta__/webhook
+Deploy PROD:  npx wrangler deploy   (sem --env flag)
+Tail PROD:    npx wrangler tail nv-enova-2
+Enova 1 (Nível 3 emergência): https://nv-enova.brunovasque.workers.dev/webhook/meta
+```
+
+### Flags recomendadas para cutover inicial (canary)
+
+```
+ENOVA2_ENABLED=true
+CHANNEL_ENABLED=true
+META_OUTBOUND_ENABLED=true
+LLM_REAL_ENABLED=true
+OUTBOUND_CANARY_ENABLED=true
+OUTBOUND_CANARY_WA_ID=<wa_id_vasques>
+CLIENT_REAL_ENABLED=false      ← não ampliar ainda
+ROLLBACK_FLAG=false
+MAINTENANCE_MODE=false
+```
+
+### Checklist resumido para Vasques
+
+**Fase A — Pré-cutover:**
+1. `git pull origin main` + `npx wrangler deploy`
+2. Provisionar 7 secrets no Worker PROD via `wrangler secret put`
+3. Setar variáveis de ambiente via dashboard
+4. `npx wrangler tail nv-enova-2` aberto + health check
+
+**Fase B — Cutover:**
+1. Meta Developers → Webhook → trocar URL para Enova 2 PROD
+2. Confirm challenge aceito (`meta.webhook.challenge.ok` no tail)
+3. Vasques envia mensagem de teste → confirmar resposta recebida
+4. Verificar ausência de erros
+
+**Fase C — Monitoramento (5–15 min):**
+1. Manter tail aberto
+2. 2–3 mensagens respondidas corretamente
+3. Declarar cutover concluído
+
+### Rollback imediato
+
+```bash
+# Nível 1 — Dashboard → nv-enova-2 → Variables:
+ROLLBACK_FLAG=true     # para tudo em segundos
+
+# Nível 3 — emergência extrema:
+# Meta Developers → Webhook → URL: https://nv-enova.brunovasque.workers.dev/webhook/meta
+```
+
+### Arquivos criados
+
+- `schema/operations/T8_CUTOVER_ENOVA2_PROD.md` — runbook completo (9 seções)
+- `schema/proofs/T8_CUTOVER_PROD_CHECKLIST.md` — checklist por fase (A–E)
+
+### Roadmap atualizado
+
+| Etapa | PR | Status |
+|---|---|---|
+| 1 | PR-DIAG inbound/cutover | ✅ CONCLUÍDA — PR #166 |
+| 2 | PR-T8.16 inbound→CRM+memória | ✅ CONCLUÍDA — PR #168 |
+| 3 | PR-PROVA T8.16 | ✅ CONCLUÍDA — PR #169 (positiva) |
+| 4 | PR-T8.17 LLM + outbound canary | ✅ CONCLUÍDA — PR #170 |
+| 5 | PR-PROVA T8.17 (canary real) | ✅ CONCLUÍDA — PR #171 (54 PASS real) |
+| 6 | Cutover Enova 1 → Enova 2 PROD | **EM EXECUÇÃO — esta PR** |
+| 7 | Closeout / G8 aprovado | aguarda cutover |
+
+---
+
 ## PR-PROVA T8.17 — Prova real canary LLM + outbound controlado (2026-05-01)
 
 **Tipo**: PR-PROVA | **Status**: EM EXECUÇÃO — harness instalado, prova real aguarda Vasques  

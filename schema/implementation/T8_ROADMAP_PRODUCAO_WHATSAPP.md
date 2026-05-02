@@ -97,25 +97,26 @@ Conecta inbound ao LLM para geração de `reply_text` e outbound para resposta c
 
 ## Etapa 5 — PR-PROVA da T8.17 em TEST
 
-**Status: PRÓXIMA PR AUTORIZADA — aguarda autorização Vasques para flags canary**
+**Status: CONCLUÍDA — PR #171 — 54 PASS | 0 FAIL | 0 SKIP (prova real positiva)**
 
-Provar em janela curta e controlada:
-
-- Mensagem real → LLM gera resposta → outbound responde no WhatsApp
-
-**Somente com Vasques presente e autorizando `LLM_REAL_ENABLED=true` no TEST.**
-
-Evidência obrigatória:
-- Log Cloudflare de inbound recebido
-- Log de chamada LLM com `reply_text` gerado
-- Mensagem respondida no WhatsApp (screenshot)
-- Nenhuma resposta indevida enviada
+Vasques executou com `CANARY_REAL_PROOF_ENABLED=true`:
+- Mensagem real → LLM gerou resposta → outbound respondeu no WhatsApp
+- Mensagem chegou somente no WA canary autorizado
+- Nenhum outro número recebeu
+- `CLIENT_REAL_ENABLED=false` preservado
 
 ---
 
 ## Etapa 6 — Cutover Enova 1 → Enova 2 PROD
 
-**Status: aguarda Etapa 5 concluída**
+**Status: CONCLUÍDA — Vasques executou cutover + PROD confirmado (2026-05-01)**
+
+Runbook: `schema/operations/T8_CUTOVER_ENOVA2_PROD.md`  
+Checklist: `schema/proofs/T8_CUTOVER_PROD_CHECKLIST.md`
+
+**Rollback preferencial = flags:**
+- `ROLLBACK_FLAG=true` → bloqueia LLM + outbound em segundos
+- Retorno à Enova 1 = emergência extrema (Nível 3), não caminho padrão
 
 ### Contexto de 1 número WhatsApp
 
@@ -163,16 +164,14 @@ Com apenas 1 número WhatsApp, apenas 1 webhook pode estar ativo no painel Meta 
 
 ## Etapa 7 — Closeout / G8 aprovado
 
-**Status: aguarda Etapa 6 concluída**
+**Status: CONCLUÍDA — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01)**
 
-Somente depois de prova real completa:
-
-- Re-executar `npm run prove:g8-readiness` — resultado esperado: 7/7 PASS + G8 APROVADO
-- Atualizar `src/golive/harness.ts` — remover `meta_ready = false` hardcoded
-- Documentar evidência completa: lead real atendido, resposta real enviada, logs Cloudflare
-- Declarar T8.12B encerrada
-- Declarar G8 aprovado operacionalmente
-- Enova 2 oficialmente em produção
+- `prove:g8-readiness` re-executado: 7/7 PASS + G8 APROVADO FRENTE WHATSAPP
+- `src/golive/harness.ts` atualizado — `meta_ready=true`, artificial trava removida
+- Evidência completa documentada em `schema/proofs/T8_G8_WHATSAPP_PROD_CLOSEOUT.md`
+- Frente WhatsApp PROD encerrada
+- G8 aprovado para frente WhatsApp — Enova 2 em produção respondendo WhatsApp
+- **Ressalva:** funil completo (stages/MCMV) é a próxima frente obrigatória
 
 ---
 
@@ -201,6 +200,9 @@ Somente depois de prova real completa:
 | Acoplamento inbound → memória | **IMPLEMENTADO (PR-T8.16)** |
 | Chamada LLM a partir do inbound | **IMPLEMENTADO gated (PR-T8.17)** |
 | Outbound canary controlado | **IMPLEMENTADO gated (PR-T8.17)** |
-| Resposta WhatsApp | **NÃO** |
-| Cutover Enova 1 → Enova 2 | **NÃO EXECUTADO** |
-| G8 | **NÃO FECHADO** |
+| Prova canary real (harness) | **CONCLUÍDA — PR #171 (54 PASS real)** |
+| Resposta WhatsApp | **SIM — PROD funcionando (Vasques, 2026-05-01)** |
+| Runbook cutover PROD | **CRIADO — schema/operations/T8_CUTOVER_ENOVA2_PROD.md** |
+| Checklist cutover PROD | **CRIADO — schema/proofs/T8_CUTOVER_PROD_CHECKLIST.md** |
+| Cutover Enova 1 → Enova 2 | **CONCLUÍDO — PROD ativo (2026-05-01)** |
+| G8 | **APROVADO — FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01)** |

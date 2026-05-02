@@ -33,6 +33,57 @@ export interface LlmClientResult {
   llm_invoked: boolean;
 }
 
+// Contexto estruturado que o Core passa ao LLM — soberania da fala.
+// Core decide stage; LLM decide apenas o que dizer.
+export interface LlmContext {
+  stage_current: string;
+  stage_after: string;
+  next_objective: string;
+  facts_count: number;
+  // Valores sanitizados: sem CPF, sem renda_principal bruta, sem secrets.
+  facts_summary: Record<string, string>;
+  speech_intent?: string;
+  // Histórico recente — máx 3 turnos, truncado a 100 chars/mensagem.
+  recent_turns?: Array<{ role: 'user' | 'assistant'; content: string }>;
+}
+
+// Constrói system prompt dinâmico a partir do LlmContext.
+// Orçamento máximo: ≤1200 tokens (~4800 chars). Nunca imprime secrets ou renda bruta.
+export function buildDynamicSystemPrompt(context: LlmContext): string {
+  const lines: string[] = [SYSTEM_PROMPT, ''];
+
+  lines.push(`Etapa atual do cliente: ${context.stage_current}.`);
+  if (context.stage_after !== context.stage_current) {
+    lines.push(`Próxima etapa prevista: ${context.stage_after}.`);
+  }
+  lines.push(`Objetivo atual: ${context.next_objective}.`);
+
+  if (context.speech_intent) {
+    lines.push(`Intenção de fala recomendada: ${context.speech_intent}.`);
+  }
+
+  const factEntries = Object.entries(context.facts_summary);
+  if (factEntries.length > 0) {
+    lines.push('\nInformações já coletadas:');
+    for (const [k, v] of factEntries.slice(0, 8)) {
+      lines.push(`  - ${k}: ${v}`);
+    }
+  }
+
+  if (context.recent_turns && context.recent_turns.length > 0) {
+    lines.push('');
+    lines.push('Contexto recente da conversa (para continuidade natural, não para regras de etapa):');
+    for (const turn of context.recent_turns.slice(0, 3)) {
+      const content = turn.content.slice(0, 100);
+      lines.push(`- ${turn.role}: ${content}`);
+    }
+  }
+
+  const prompt = lines.join('\n');
+  // Safety truncation: never exceed 4800 chars (~1200 tokens)
+  return prompt.slice(0, 4800);
+}
+
 function readApiKey(env: Record<string, unknown>): string | null {
   const v = env.OPENAI_API_KEY;
   if (typeof v === 'string' && v.length > 0) return v;
@@ -42,6 +93,7 @@ function readApiKey(env: Record<string, unknown>): string | null {
 export async function callLlm(
   userMessage: string,
   env: Record<string, unknown>,
+  context?: LlmContext,
 ): Promise<LlmClientResult> {
   const apiKey = readApiKey(env);
   if (!apiKey) {
@@ -51,6 +103,8 @@ export async function callLlm(
   if (!msg) {
     return { ok: false, error: 'user_message_empty', llm_invoked: false };
   }
+
+  const systemPrompt = context ? buildDynamicSystemPrompt(context) : SYSTEM_PROMPT;
 
   const t0 = Date.now();
   try {
@@ -63,7 +117,7 @@ export async function callLlm(
       body: JSON.stringify({
         model: LLM_MODEL,
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: msg.slice(0, 2000) },
         ],
         max_tokens: LLM_MAX_TOKENS,
