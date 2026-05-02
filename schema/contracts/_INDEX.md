@@ -25,16 +25,17 @@ Toda abertura de contrato de frente deve declarar conformidade com os três aden
 
 ## Contrato macro ativo
 
-Contrato macro ativo: **T8 — aberta formalmente em 2026-04-29 via PR-T8.0** (G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS; restrições RA-G7-01..08 herdadas).
+Contrato macro ativo: **T9 — aberto formalmente em 2026-05-01 via PR-T9.0** (G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND em 2026-05-01).
 
 | Fase | Status | Próximo passo autorizado |
 |------|--------|--------------------------|
-| T8 — Diagnóstico técnico de aderência contrato × código real + implementação operacional real | **aberto** — PR-T8.0 executada em 2026-04-29; contrato ativo em `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md` | PR-T8.1 — Inventário técnico real do Repo2 (tipo: PR-DIAG) |
+| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — PR-T9.0 executada em 2026-05-01; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **T9.1 — Supabase runtime/env readiness** (tipo: PR-IMPL; branch: `feat/t9.1-wrangler-env-bindings`) |
 
 ## Contratos encerrados
 
 | Fase | Contrato arquivado | Status | Gate | Data de encerramento | PR que encerrou |
 |------|-------------------|--------|------|----------------------|-----------------|
+| T8 — Diagnóstico técnico de aderência + implementação operacional real | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md` | encerrado — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND | G8 — APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01) | 2026-05-01 | PR-T8.R (PR #176) |
 | T7 — Shadow, canary, cutover e rollback | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` | encerrado — G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS | G7 — APROVADO DOCUMENTALMENTE (restrições RA-G7-01..08 herdadas para T8) | 2026-04-29 | PR-T7.R |
 | T6 — Docs, multimodalidade e superfícies de canal | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md` | encerrado | G6 — APROVADO em 2026-04-28 | 2026-04-28 | PR-T6.R |
 | T5 — Migração do funil core e integração de canal | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T5_2026-04-28.md` | encerrado | G5 — APROVADO com atenções aceitas | 2026-04-28 | PR-T5.R |
@@ -140,6 +141,10 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
+- 2026-05-01 — Sincronização de governança T9: contrato macro ativo atualizado de T8 → T9; T8 movido para contratos encerrados (G8 APROVADO frente WhatsApp PROD + LLM + outbound); CLAUDE.md atualizado para ler contrato ativo via _INDEX.md em vez de path fixo T8; próxima PR autorizada: T9.1 — Supabase runtime/env readiness.
+- 2026-05-01 — PR-T9.0 executada (PR #178): contrato T9 aberto via `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`; plano executivo `schema/implementation/T9_PLANO_EXECUTIVO_LLM_FUNIL_SUPABASE.md`; handoff `schema/handoffs/T9_LLM_FUNIL_SUPABASE_HANDOFF.md`; 15 micro-PRs planejadas (T9.0–T9.R); critérios G9-01..G9-10 declarados.
+- 2026-05-01 — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (PR #176): `prove:g8-readiness` 7/7 PASS; `meta_ready=true`; WhatsApp PROD respondendo naturalmente via LLM (confirmado Vasques); `external_dispatch=true`, `mode=client_real_outbound`; Ressalva: funil completo (stages/MCMV) segue em T9.
+- 2026-05-01 — PR-DIAG LLM-FUNIL-SISTEMA-INTEIRO-READONLY (PR #177): 6 bloqueantes identificados (BLK-01..06); 2 sistemas paralelos isolados em runtime (pipeline WhatsApp + Core mecânico nunca se cruzam); Supabase silenciosamente desligado em PROD; 4 documentos diagnósticos criados.
 - 2026-04-28 — PR-T6.7 executada: `schema/implantation/T6_ADAPTER_META_WHATSAPP.md` criado — contrato declarativo do adapter Meta/WhatsApp governado; fluxo inbound 16 etapas + 8 invariantes INV-AD-01..08; fluxo outbound 11 etapas + 5 invariantes INV-AD-09..13; verificação de webhook WH-01..07; assinatura SIG-01..09; idempotência IDP-01..10; dedupe DD-01..08; retry RTI/RTO; 14 erros; rate limit; 14 regras de mídia; status events; separação canal/cérebro; segurança SEC-01..10; 13 eventos de observabilidade; 20 proibições PROB-AD-01..20; 21 critérios CA-T6.7-01..21; zero reply_text; zero fact_*; zero webhook real; zero runtime. PR-T6.8 desbloqueada.
 - 2026-04-28 — PR-T6.6 executada: `schema/implantation/T6_STICKER_MIDIA_INUTIL.md` criado — contrato declarativo para sticker, mídia inútil e mensagens não textuais; princípio-mãe "sujeira de canal não é decisão"; 21+ subtipos em 9 categorias; fluxo EM-01..EM-06; tratamento de sticker, emoji/reação, imagem ambígua, print confuso, áudio inaudível, mídia repetida, arquivo corrompido, mensagem vazia/fraca; 8 limites de persistência LP-01..08; 20 proibições PROB-STK-01..20; 20 critérios CA-T6.6-01..20; zero reply_text; zero fact_*; zero stage decision; zero runtime. PR-T6.7 desbloqueada.
 - 2026-04-28 — PR-T6.5 executada: `schema/implantation/T6_AUDIO_CEREBRO_CONVERSACIONAL.md` criado — contrato declarativo de áudio no mesmo cérebro conversacional; fluxo EA-01..EA-08; 15+ tipos de áudio; âncora T2_POLITICA_CONFIANCA §3.3 (O3 AUDIO_TRANSCRIPT: audio_good→captured / audio_medium→captured/low / audio_poor→hypothesis); 7 níveis de confiança; 14 informações críticas com confirmação obrigatória; STT como lacuna futura (T6-LA-01); 13 casos problemáticos; 20 proibições PROB-AUD-01..20; 23 critérios CA-T6.5-01..23; zero reply_text; zero fact_*; zero stage decision; zero STT real. PR-T6.6 desbloqueada.
