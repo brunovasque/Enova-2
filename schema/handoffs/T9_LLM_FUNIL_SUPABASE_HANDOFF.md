@@ -3,7 +3,27 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG CONCLUÍDAS; próxima: T9.10 — IMPL Memória curta / contexto histórico controlado
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL CONCLUÍDAS; próxima: T9.11 — PROVA LLM usa contexto sem quebrar stage/guard
+
+## T9.10-IMPL — CONCLUÍDA (2026-05-02)
+
+PR: `feat/t9.10-short-memory-context`
+
+**Memória curta implementada e validada. 46/46 PASS. Soberania preservada.**
+
+**Arquivos criados/alterados:**
+- `src/meta/canary-pipeline.ts` — import `getLeadTimeline`, helper `sanitizeRecentTurnText`, `recentHistory` hoistado, Bloco [E], `recent_turns` no llmContext, `history_turns` no diagLog
+- `src/llm/client.ts` — `buildDynamicSystemPrompt` renderiza `recent_turns` com rótulo auxiliar
+- `src/llm/short-memory-context-smoke.ts` — smoke 46/46 PASS
+- `package.json` — `"smoke:llm:short-memory-context"` adicionado
+
+**Decisões técnicas:**
+- Fonte: `getLeadTimeline` do CRM (não Memory Service, não Context Module)
+- Janela: 3 turnos × 100 chars, excluir turno atual, role: 'user' only
+- Sanitização: CPF → [cpf], email → [email], tel → [tel], links → [link], sk-/Bearer/sb- → [token]
+- Exception em getLeadTimeline não bloqueia LLM nem outbound
+
+---
 
 ## T9.10-DIAG — CONCLUÍDA (2026-05-02)
 
