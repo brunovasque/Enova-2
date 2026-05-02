@@ -3,13 +3,45 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5 CONCLUÍDAS; próxima: T9.6 (IMPL)
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG CONCLUÍDAS; próxima: T9.6 IMPL
+
+## T9.6-DIAG — CONCLUÍDA (2026-05-02)
+
+DIAG READ-ONLY extração de facts do texto WhatsApp real. `schema/diagnostics/T9_FACTS_TEXTO_REAL_DIAG.md` criado (16 seções).
+
+**Achados principais:**
+- BLK-03 localizado: `facts_extracted: {}` em todos os 9 caminhos do Core (`engine.ts`)
+- Mapa completo de 25 fact_keys canônicos por stage/parser (L04–L17) documentado
+- `writeLeadFact` já existe em `service.ts` e está operacional
+- Estratégia: extrator heurístico `extractFactsFromText(text, stage)` → `writeLeadFact` → `getLeadFacts` → `runCoreEngine` (mesmo turno)
+- Ponto de inserção: Passo 1.5 em `canary-pipeline.ts`, blocos [B]+[C] entre leitura de estado e leitura de facts
+- `callLlm` intocado (T9.8); `runCoreEngine` intocado; zero mudança de interface
+- Complexidade baixa; veredito: VIÁVEL
+
+**Próxima ação autorizada: T9.6 IMPL — extrator heurístico + persistência no Passo 1.5**
+
+### O que T9.6 IMPL deve fazer
+1. Criar `src/core/text-extractor.ts` — função pura `extractFactsFromText(text: string, stage: StageId): Record<string, unknown>`
+2. Modificar `src/meta/canary-pipeline.ts` — adicionar blocos [B]+[C] no Passo 1.5 (dentro do try/catch existente)
+3. Criar `src/core/text-extractor-smoke.ts` — `smoke:core:text-extractor` (mínimo 20 checks)
+4. Atualizar `package.json` com `"smoke:core:text-extractor"`
+5. Regressões: `smoke:meta:core-pipeline` 23/23, `smoke:meta:canary` 41/41, `prove:t9.5-stage-persistence` 34/34
+
+### O que T9.6 IMPL NÃO deve fazer
+- NÃO alterar `callLlm` (T9.8)
+- NÃO alterar `runCoreEngine` ou assinaturas de parsers
+- NÃO alterar `writeLeadFact` ou `getLeadFacts`
+- NÃO ativar Supabase write real (T9.11)
+- NÃO alterar outbound, webhook, HMAC
+- NÃO fechar G9
+
+---
 
 ## T9.5 — CONCLUÍDA (2026-05-02)
 
 Prova `stage_current` persiste entre turnos: 5 cenários, **34/34 PASS**. Lead novo (C1–C2), lead com stage avançado (C3), resiliência a exceção (C4), sem secrets (C5). Zero bugs na T9.4. `prove:t9.5-stage-persistence` adicionado ao `package.json`.
 
-**Próxima ação autorizada: T9.6 — IMPL parsers L04–L17 chamados com texto real**
+**Próxima ação autorizada foi: T9.6-DIAG → T9.6 IMPL**
 
 ### O que T9.6 deve fazer
 1. Conectar a extração de facts do texto WhatsApp real aos parsers L04–L17

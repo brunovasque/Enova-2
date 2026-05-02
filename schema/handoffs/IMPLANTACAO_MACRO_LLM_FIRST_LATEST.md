@@ -1,5 +1,36 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.6-DIAG — Diagnóstico extração de facts do texto WhatsApp real (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.6-facts-text-mapping`  
+**Próxima PR autorizada**: **T9.6 IMPL — extrator heurístico + persistência no Passo 1.5**
+
+### O que foi feito
+
+| Arquivo | Ação |
+|---|---|
+| `schema/diagnostics/T9_FACTS_TEXTO_REAL_DIAG.md` | DIAG criado — 16 seções |
+
+### Achados do DIAG
+
+| # | Achado |
+|---|---|
+| 1 | BLK-03: `facts_extracted: {}` em todos os 9 caminhos do Core — confirmado em `engine.ts` |
+| 2 | 25 fact_keys canônicos mapeados por stage/parser (L04–L17) |
+| 3 | `writeLeadFact` já existe e operacional em `service.ts:167` |
+| 4 | `callLlm` retorna apenas `reply_text` — sem extração estruturada (BLK-04, T9.8) |
+| 5 | Ponto de inserção: Passo 1.5 blocos [B]+[C] entre `stateResult` e `getLeadFacts` |
+| 6 | Estratégia: extrator heurístico → persist `'pending'` → `getLeadFacts` inclui → Core vê no mesmo turno |
+| 7 | Zero mudança de interface necessária em T9.6 |
+| 8 | Complexidade baixa — 1 função pura + 2 blocos + 1 smoke |
+
+### Regressões de risco em T9.6 IMPL
+
+`smoke:meta:canary` 41/41, `smoke:meta:core-pipeline` 23/23, `prove:t9.5-stage-persistence` 34/34
+
+---
+
 ## PR-T9.5 — PROVA stage_current persiste entre turnos (2026-05-02)
 
 **Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
