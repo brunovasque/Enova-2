@@ -1,26 +1,73 @@
-# wrangler.toml — Bootstrap técnico do Cloudflare Worker da ENOVA 2
+# wrangler.toml — Cloudflare Worker ENOVA 2
 #
 # PRODUÇÃO: nv-enova-2
-#   - Worker principal da ENOVA 2
-#   - main branch representa produção
-#   - deploy via `wrangler deploy` (sem --env flag) aponta para este ambiente
+#   - deploy via `wrangler deploy` (sem --env flag)
 #
 # TESTE: nv-enova-2-test (env.test)
-#   - Worker de validação controlada antes de promoção para produção
 #   - deploy via `wrangler deploy --env test`
 #
-# IMPORTANTE
-#   - deploy em test e prod usam o mesmo código-fonte; muda apenas o target env
-#   - este wrangler.toml prepara o repo para o pipeline de deploy, mas não o cria
-#   - nenhuma binding, secret, KV, R2, D1, queue ou var foi declarada neste bootstrap
-#   - quando implementação funcional começar, abrir PR dedicada para adicionar bindings
+# IMPORTANTE — secrets (valores sensíveis)
+#   Nunca colocar secrets neste arquivo. Usar exclusivamente:
+#     wrangler secret put <NOME>
+#     wrangler secret put <NOME> --env test
+#
+#   Lista canônica de secrets esperados:
+#     SUPABASE_URL              — URL completa do projeto Supabase
+#     SUPABASE_SERVICE_ROLE_KEY — chave de service role (nunca expor em log)
+#     META_APP_SECRET           — secret HMAC para validação de assinatura Meta
+#     META_VERIFY_TOKEN         — token de verificação do webhook Meta
+#     META_ACCESS_TOKEN         — token de acesso Meta para outbound
+#     META_PHONE_NUMBER_ID      — ID do número de telefone Meta
+#     OPENAI_API_KEY            — chave OpenAI para LLM
+#     CRM_ADMIN_KEY             — chave de autenticação admin do CRM
 
 name            = "nv-enova-2"
 main            = "src/worker.ts"
 compatibility_date = "2026-04-20"
 
 # ---------------------------------------------------------------------------
+# Vars não sensíveis — defaults seguros para produção
+# Alterar via dashboard Cloudflare ou wrangler deploy --var, nunca via secret.
+# Para habilitar funcionalidades reais, alterar o valor no dashboard/CI.
+# ---------------------------------------------------------------------------
+[vars]
+# --- Supabase ---
+SUPABASE_REAL_ENABLED   = "false"   # habilitar leitura Supabase real
+SUPABASE_WRITE_ENABLED  = "false"   # habilitar escrita Supabase real (T9.11)
+MEMORY_SUPABASE_ENABLED = "false"   # habilitar memória via Supabase
+
+# --- LLM ---
+LLM_REAL_ENABLED        = "false"   # habilitar chamadas OpenAI reais
+
+# --- WhatsApp / outbound ---
+CLIENT_REAL_ENABLED     = "false"   # libera outbound para qualquer wa_id
+ENOVA2_ENABLED          = "false"   # habilita pipeline inbound completo
+OUTBOUND_CANARY_ENABLED = "false"   # habilita outbound para wa_id canary
+OUTBOUND_CANARY_WA_ID   = ""        # wa_id autorizado para canary outbound
+CANARY_PERCENT          = "0"       # percentual de canary (0 = desligado)
+
+# --- Operacional ---
+ROLLBACK_FLAG           = "false"   # bloqueia tudo imediatamente quando "true"
+MAINTENANCE_MODE        = "false"   # bloqueia atendimento quando "true"
+GOLIVE_HARNESS_ENABLED  = "false"   # habilita harness de go-live
+
+# ---------------------------------------------------------------------------
 # Ambiente de teste — validação controlada antes de promoção para produção
 # ---------------------------------------------------------------------------
 [env.test]
 name = "nv-enova-2-test"
+
+# Mesmo conjunto de vars para o ambiente de teste (defaults seguros)
+[env.test.vars]
+SUPABASE_REAL_ENABLED   = "false"
+SUPABASE_WRITE_ENABLED  = "false"
+MEMORY_SUPABASE_ENABLED = "false"
+LLM_REAL_ENABLED        = "false"
+CLIENT_REAL_ENABLED     = "false"
+ENOVA2_ENABLED          = "false"
+OUTBOUND_CANARY_ENABLED = "false"
+OUTBOUND_CANARY_WA_ID   = ""
+CANARY_PERCENT          = "0"
+ROLLBACK_FLAG           = "false"
+MAINTENANCE_MODE        = "false"
+GOLIVE_HARNESS_ENABLED  = "false"

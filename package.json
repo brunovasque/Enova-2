@@ -27,6 +27,7 @@
     "smoke:supabase": "tsx src/supabase/smoke.ts",
     "smoke:memory": "tsx src/memory/smoke.ts",
     "smoke:golive": "tsx src/golive/smoke.ts",
+    "smoke:runtime:env": "tsx src/runtime/env-smoke.ts",
     "prove:g8-readiness": "tsx src/golive/closeout-smoke.ts",
     "prove:memory-telemetry": "tsx src/memory/proof.ts",
     "prove:crm-e2e": "tsx src/panel/e2e-smoke.ts",
