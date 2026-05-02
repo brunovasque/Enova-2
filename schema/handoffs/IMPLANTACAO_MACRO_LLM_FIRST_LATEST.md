@@ -1,5 +1,38 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.7 — PROVA facts extraídos e stage avança (2026-05-02)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
+**Branch**: `prove/t9.7-facts-stage-advance`  
+**Próxima PR autorizada**: **T9.8 — IMPL LlmContext estruturado**
+
+### Prova confirmada
+
+| Cenário | Texto | Facts extraídos | Stage antes → depois |
+|---|---|---|---|
+| A | "Quero comprar um imóvel pelo Minha Casa Minha Vida" | `customer_goal: 'comprar_imovel'` | `discovery` → `qualification_civil` ✓ |
+| B | "Sou solteiro e vou comprar sozinho" | `estado_civil: 'solteiro'`, `processo: 'solo'` | `qualification_civil` → `qualification_renda` ✓ |
+| C | "Trabalho CLT e ganho R$ 3.500" | `regime_trabalho: 'clt'`, `renda_principal: 3500` | `qualification_renda` → `qualification_eligibility` ✓ |
+| D | "tá bom entendi" | `{}` | `qualification_civil` → `qualification_civil` (sem regressão) ✓ |
+| E | segurança | — | nenhum secret no output ✓ |
+
+### Resultados dos smokes
+
+| Smoke | Resultado |
+|---|---|
+| `prove:t9.7-facts-stage-advance` | **44/44 PASS** |
+| `smoke:core:text-extractor` | 58/58 PASS |
+| `smoke:meta:core-pipeline` | 23/23 PASS |
+| `prove:t9.5-stage-persistence` | 34/34 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+---
+
 ## PR-T9.6-IMPL — Extração de facts do texto WhatsApp real (2026-05-02)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  

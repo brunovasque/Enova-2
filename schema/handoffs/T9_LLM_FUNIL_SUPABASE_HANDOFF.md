@@ -3,7 +3,28 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL CONCLUÍDAS; próxima: T9.7 (PROVA facts extraídos e stage avança)
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7 CONCLUÍDAS; próxima: T9.8 (IMPL LlmContext estruturado)
+
+## T9.7 — CONCLUÍDA (2026-05-02)
+
+Prova end-to-end confirmada: texto WhatsApp real → fact extraído → fact persistido (pending) → Core lê → stage avança.
+
+**Arquivos:**
+- `src/meta/facts-stage-advance-proof.ts` — `prove:t9.7-facts-stage-advance` **44/44 PASS**
+- `package.json` — `"prove:t9.7-facts-stage-advance"` adicionado
+
+**Cenários provados:**
+| Cenário | Texto | Facts | Stage antes | Stage depois |
+|---|---|---|---|---|
+| A | "Quero comprar um imóvel pelo Minha Casa Minha Vida" | `customer_goal: 'comprar_imovel'` | `discovery` | `qualification_civil` ✓ |
+| B | "Sou solteiro e vou comprar sozinho" | `estado_civil: 'solteiro'`, `processo: 'solo'` | `qualification_civil` | `qualification_renda` ✓ |
+| C | "Trabalho CLT e ganho R$ 3.500" | `regime_trabalho: 'clt'`, `renda_principal: 3500` | `qualification_renda` | `qualification_eligibility` ✓ |
+| D | "tá bom entendi" | `{}` (vazio) | `qualification_civil` | `qualification_civil` (sem regressão) ✓ |
+| E | (segurança) | — | — | nenhum secret no output ✓ |
+
+**Regressões:** `smoke:core:text-extractor` 58/58, `smoke:meta:core-pipeline` 23/23, `prove:t9.5-stage-persistence` 34/34, `smoke:meta:canary` 41/41, `smoke:meta:webhook` 20/20, `smoke:meta:pipeline` 26/26, `smoke:runtime:fallback-guard` 41/41, `smoke:runtime:env` 53/53, `prove:g8-readiness` 7/7 PASS.
+
+**Próxima ação autorizada: T9.8 — IMPL LlmContext estruturado**
 
 ## T9.6-IMPL — CONCLUÍDA (2026-05-02)
 
