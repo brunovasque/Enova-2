@@ -1,5 +1,50 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.3 — DIAG integração Core ↔ pipeline (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.3-core-pipeline-integracao`  
+**Próxima PR autorizada**: **T9.4 — IMPL chamada runCoreEngine no canary-pipeline**
+
+### O que foi feito
+
+- `schema/diagnostics/T9_CORE_PIPELINE_INTEGRACAO_DIAG.md` criado (15 seções)
+- Diagnóstico read-only: leitura de `engine.ts`, `types.ts`, `canary-pipeline.ts`, `pipeline.ts`, `service.ts`, `types.ts`, `llm/client.ts`, `topo-parser.ts`
+- Veredito: **T9.4 viável com patch cirúrgico — sem bloqueio estrutural**
+- Zero arquivos `src/` alterados
+
+### Achados principais
+
+| Item | Diagnóstico |
+|---|---|
+| `runCoreEngine` | Síncrono, sem I/O, `LeadState → CoreDecision` |
+| Ponto de integração | `canary-pipeline.ts` entre Passo 1 (CRM) e Passo 2 (LLM) |
+| Parsers L04–L17 | Usam `facts_current` (CRM) — não raw_text direto |
+| `upsertLeadState` | NÃO existe em `service.ts` — T9.4 precisa criar |
+| `stage_at_turn` | Sempre `'unknown'` — bug a corrigir em T9.4 |
+| Default seguro | `stage_current = 'unknown'` → `'discovery'` |
+| BLK-01 | Core nunca chamado no pipeline |
+| BLK-02 | stage_current nunca persistido após decisão |
+
+### Smokes / Validação
+
+- Nenhuma alteração em `src/` — smokes existentes não foram re-executados
+- Documento de diagnóstico verificado por leitura direta dos arquivos fonte
+
+### Próxima ação: T9.4 — IMPL chamada runCoreEngine no canary-pipeline
+
+| Arquivo | Ação |
+|---|---|
+| `src/crm/service.ts` | Criar `upsertLeadState(backend, lead_id, decision)` |
+| `src/meta/canary-pipeline.ts` | Adicionar Passo 1.5: ler estado → chamar Core → persistir stage_after |
+| `src/meta/pipeline.ts` | Corrigir `stage_at_turn: 'unknown'` |
+| `src/meta/core-pipeline-smoke.ts` | Criar smoke 8 checks |
+| `package.json` | Adicionar `smoke:meta:core-pipeline` |
+
+BLK-01 + BLK-02 serão resolvidos em T9.4.
+
+---
+
 ## PR-T9.2 — Fallback guard com telemetria explícita (2026-05-02)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
