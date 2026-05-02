@@ -1,10 +1,42 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.0 — Contrato executivo T9 (2026-05-01)
+
+**Tipo**: PR-DOC | **Status**: CONCLUÍDA  
+**Branch**: `docs/t9-contrato-llm-funil-supabase-runtime`  
+**Contrato aberto**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
+**Próxima PR autorizada**: **T9.1 — Supabase runtime/env readiness**
+
+### O que foi criado
+
+- `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` — contrato executivo: objetivo macro, regra soberana (10 cláusulas invioláveis), arquitetura alvo, ordem de execução obrigatória (15 PRs), critérios G9 (10 critérios), 6 bloqueantes, opcionais, riscos, regras de execução
+- `schema/implementation/T9_PLANO_EXECUTIVO_LLM_FUNIL_SUPABASE.md` — detalhamento técnico de cada PR (T9.0–T9.R): escopo, entregáveis, smoke mínimo, restrições
+- `schema/handoffs/T9_LLM_FUNIL_SUPABASE_HANDOFF.md` — estado atual, próxima ação T9.1 detalhada, arquivos-chave, decisões pendentes, invariantes
+
+### Decisões pendentes para Vasques
+
+A. **Supabase real é pré-condição de T9 ou paralela?** (Recomendação: paralela — in-memory até T9.11)  
+B. **Output guard LLM: hard-fail ou soft-fail?** (Recomendação: hard-fail para promessas de aprovação MCMV)  
+C. **Quanto histórico passar ao LLM?** (Recomendação: 3 últimos turnos + facts atuais)
+
+### Próxima PR — T9.1
+
+Branch sugerido: `feat/t9.1-wrangler-env-bindings`  
+Escopo: adicionar `[vars]` no `wrangler.toml` + `src/runtime/env-validator.ts` + `smoke:runtime:env`  
+Objetivo: `wrangler.toml` declara todas as envs esperadas; fallback seguro documentado
+
+### Não alterado nesta PR
+
+- Zero runtime, zero código funcional, zero flags, zero secrets
+- G8 frente WhatsApp APROVADO intacto
+
+---
+
 ## PR-DIAG LLM-FUNIL-SISTEMA-INTEIRO-READONLY (2026-05-01)
 
-**Tipo**: PR-DIAG / READ-ONLY | **Status**: EM EXECUÇÃO  
+**Tipo**: PR-DIAG / READ-ONLY | **Status**: CONCLUÍDA (PR #177)  
 **Base**: PR #176 (closeout G8 WhatsApp, mergeada)  
-**Próxima ação**: **Abrir contrato T9** com plano canônico de 15 micro-PRs
+**Próxima ação**: ~~Abrir contrato T9~~ — FEITO via PR-T9.0
 
 ### Veredito do diagnóstico
 

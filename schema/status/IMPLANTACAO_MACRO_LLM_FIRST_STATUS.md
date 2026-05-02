@@ -2,13 +2,19 @@
 
 ## Estado atual
 
-Fase macro ativa: **T8 — Diagnóstico técnico de aderência contrato × código real + implementação operacional real** — contrato T8 aberto formalmente em 2026-04-29 via PR-T8.0.
+Fase macro ativa: **T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria** — contrato T9 aberto formalmente em 2026-05-01 via PR-T9.0 (docs/t9-contrato-llm-funil-supabase-runtime). Contrato T8 ENCERRADO — G8 APROVADO frente WhatsApp PROD + LLM + Outbound.
 
 **Veredito G7: APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS** — PR-T7.R executada em 2026-04-29.
 
 Gate anterior: G7 — APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS em 2026-04-29 via PR-T7.R.
 
-Gate atual: **G8 — APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND** (2026-05-01) — PR-T8.16 CONCLUÍDA + PROVADA (PR #168 + PR #169); PR-T8.17 CONCLUÍDA (PR #170); PR-PROVA T8.17 CONCLUÍDA (PR #171) — 54 PASS real positivo; PR-T8.18 MERGEADA — runbook cutover; **PR-DIAG T8 (PR #174)** — 11 logs `console.log` cirúrgicos; **fix/t8-prod-client-real-flag (PR #175)** — gate `CLIENT_REAL_ENABLED` implementado no pipeline; **PR-T8.R CLOSEOUT** — `prove:g8-readiness` 7/7 PASS, `meta_ready=true`, G8 APROVADO frente WhatsApp; smokes 41/41 + 26/26 + 20/20 + 35/35 PASS. **Ressalva:** G8 frente WhatsApp apenas — funil completo (stages/MCMV) é a próxima frente.
+Gate anterior: **G8 — APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND** (2026-05-01)
+
+Gate atual: **G9 — ABERTO** — contrato T9 aberto 2026-05-01; próxima PR autorizada: T9.1 (Supabase runtime/env readiness).
+
+**Estado T9 (2026-05-01):** PR-T9.0 (contrato executivo) criada; 3 documentos criados: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`, `schema/implementation/T9_PLANO_EXECUTIVO_LLM_FUNIL_SUPABASE.md`, `schema/handoffs/T9_LLM_FUNIL_SUPABASE_HANDOFF.md`; 6 bloqueantes identificados (BLK-01..06); 15 micro-PRs planejadas (T9.0–T9.R); critérios G9-01..G9-10 declarados; decisões pendentes para Vasques (A: Supabase pré-condição, B: output guard hard/soft-fail, C: contexto histórico LLM). **Próxima PR autorizada: T9.1 — Supabase runtime/env readiness (wrangler.toml + env-validator).**
+
+Gate anterior T9: **G8 — APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND** (2026-05-01) — PR-T8.16 CONCLUÍDA + PROVADA (PR #168 + PR #169); PR-T8.17 CONCLUÍDA (PR #170); PR-PROVA T8.17 CONCLUÍDA (PR #171) — 54 PASS real positivo; PR-T8.18 MERGEADA — runbook cutover; **PR-DIAG T8 (PR #174)** — 11 logs `console.log` cirúrgicos; **fix/t8-prod-client-real-flag (PR #175)** — gate `CLIENT_REAL_ENABLED` implementado no pipeline; **PR-T8.R CLOSEOUT** — `prove:g8-readiness` 7/7 PASS, `meta_ready=true`, G8 APROVADO frente WhatsApp; smokes 41/41 + 26/26 + 20/20 + 35/35 PASS. **Ressalva:** G8 frente WhatsApp apenas — funil completo (stages/MCMV) é a próxima frente.
 
 **Estado Meta/WhatsApp (2026-05-01):** Worker PROD `nv-enova-2` publicado; cutover concluído; PROD recebeu inbound real; pipeline completo inbound → CRM → memória → LLM → outbound executado; **WhatsApp respondendo naturalmente** com LLM (Vasques confirmou PROD); `external_dispatch=true`, `meta_status=200`, `mode=client_real_outbound`; diagnóstico PR-DIAG + fix `CLIENT_REAL_ENABLED` resolveram o gap; **G8 APROVADO frente WhatsApp**. Roadmap oficial: `schema/implementation/T8_ROADMAP_PRODUCAO_WHATSAPP.md`. Próxima frente: integração LLM ↔ funil mecânico/stages/regras MCMV.
 
