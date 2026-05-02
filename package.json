@@ -20,6 +20,7 @@
     "smoke:meta:core-pipeline": "tsx src/meta/core-pipeline-smoke.ts",
     "smoke:core:text-extractor": "tsx src/core/text-extractor-smoke.ts",
     "prove:t9.5-stage-persistence": "tsx src/meta/stage-persistence-proof.ts",
+    "prove:t9.7-facts-stage-advance": "tsx src/meta/facts-stage-advance-proof.ts",
     "smoke:speech": "tsx src/speech/smoke.ts",
     "smoke:context": "tsx src/context/smoke.ts",
     "smoke:adapter": "tsx src/adapter/smoke.ts",
