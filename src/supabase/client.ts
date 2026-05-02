@@ -239,3 +239,76 @@ export async function supabaseInsert<T>(
     http_status: response.status,
   };
 }
+
+/**
+ * Upsert (insert-or-update) via PostgREST resolution=merge-duplicates.
+ * Usado em T9.12 para escrita real de crm_lead_meta e enova_state.
+ * Nunca lança em erro de rede — encapsula em result.ok=false.
+ * Nunca expõe serviceRoleKey em mensagem de erro.
+ */
+export async function supabaseUpsert<T>(
+  cfg: SupabaseConfig,
+  table: string,
+  row: T,
+): Promise<SupabaseQueryResult<T>> {
+  const url = `${cfg.url.replace(/\/$/, '')}/rest/v1/${encodeURIComponent(table)}`;
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        accept: 'application/json',
+        prefer: 'resolution=merge-duplicates,return=representation',
+        apikey: cfg.serviceRoleKey,
+        authorization: `Bearer ${cfg.serviceRoleKey}`,
+      },
+      body: JSON.stringify(row),
+    });
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : 'fetch_failed';
+    return {
+      ok: false,
+      rows: [],
+      total: 0,
+      error: safeErrorMessage(`network_error: ${detail}`, cfg.serviceRoleKey),
+      http_status: null,
+    };
+  }
+
+  let bodyText = '';
+  try {
+    bodyText = await response.text();
+  } catch {
+    bodyText = '';
+  }
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      rows: [],
+      total: 0,
+      error: safeErrorMessage(`http_${response.status}: ${bodyText}`, cfg.serviceRoleKey),
+      http_status: response.status,
+    };
+  }
+
+  let parsed: unknown = [];
+  if (bodyText.length > 0) {
+    try {
+      parsed = JSON.parse(bodyText);
+    } catch {
+      parsed = [];
+    }
+  }
+  const upsertedRows = Array.isArray(parsed) ? (parsed as T[]) : [];
+
+  return {
+    ok: true,
+    rows: upsertedRows,
+    total: upsertedRows.length,
+    error: null,
+    http_status: response.status,
+  };
+}

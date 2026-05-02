@@ -1,32 +1,30 @@
 /**
- * ENOVA 2 — Supabase operacional controlado (PR-T8.8)
+ * ENOVA 2 — Supabase operacional controlado (PR-T8.8 + T9.12)
  *
  * SupabaseCrmBackend — implementação de `CrmBackend` que LÊ do Supabase real
  * mapeando para o schema canônico CRM (`crm_*`) declarado em `src/crm/types.ts`.
  *
- * REGRA DE OURO desta PR:
+ * REGRA DE OURO T9.12:
  *   - Leitura: real, com mapeamento mínimo, limite de 100 linhas por padrão.
- *   - Escrita: NÃO toca o banco real. Escrita real fica em PR-T8.9+ quando
- *     schema, RLS e bucket policies forem confirmados.
- *   - Reset/delete: PROIBIDOS nesta PR.
+ *   - Escrita real: habilitada via `SUPABASE_WRITE_ENABLED=true` SOMENTE para:
+ *       crm_leads    → crm_lead_meta
+ *       crm_lead_state → enova_state
+ *   - Escrita diferida (writeBuffer): crm_turns, crm_facts e demais tabelas.
+ *     Aguardam confirmação de schema/destino Supabase por Vasques.
+ *   - Fallback garantido: se escrita real falhar, writeBuffer absorve.
+ *   - Reset/delete: PROIBIDOS.
  *
- * Por que escrita não vai pro Supabase real aqui:
- *   1. Schema real (`crm_lead_meta`, `enova_state`, `enova_docs` etc) é
- *      diferente do schema canônico CRM (`crm_leads`, `crm_lead_state`,
- *      `crm_documents` etc). Diagnóstico em PR-T8.7 confirmou nomenclatura
- *      tripla não consolidada.
- *   2. Várias tabelas alvo têm RLS desativado (lead_auditoria,
- *      lead_timeline_events, crm_override_log, enova_docs etc). Escrita
- *      sem policy correta é risco operacional.
- *   3. Tabelas têm dados reais/legados (enova_log: 50k linhas, enova_state:
- *      20 linhas). Append acidental polui histórico.
+ * Por que crm_turns e crm_facts ficam no writeBuffer:
+ *   Schema de lead_timeline_events e destino de crm_facts não confirmados
+ *   por Vasques (T9.12-DIAG §9, §10, BLK-WRITE-02, BLK-WRITE-04).
  *
  * RESTRIÇÕES INVIOLÁVEIS:
  *   - Sem reply_text.
  *   - Sem decisão de stage.
  *   - Sem alteração de schema/RLS/bucket.
  *   - Sem delete real.
- *   - Sem amplificação de carga (limites baixos por padrão).
+ *   - Secrets nunca em log/error/response.
+ *   - Amplificação de carga proibida (limites baixos por padrão).
  */
 
 import type {
@@ -42,6 +40,7 @@ import type {
 import { CrmInMemoryBackend } from '../crm/store.ts';
 import {
   supabaseSelect,
+  supabaseUpsert,
 } from './client.ts';
 import type {
   CrmLeadMetaRow,
@@ -151,20 +150,56 @@ function mapOverrideFromCrmOverrideLog(row: CrmOverrideLogRow, fallbackId: numbe
 }
 
 // ---------------------------------------------------------------------------
+// Mapeadores reversos: registro canônico CRM → linha Supabase (T9.12)
+// Usados apenas para escrita real nas tabelas mapeadas.
+// ---------------------------------------------------------------------------
+
+function mapLeadToMeta(lead: CrmLead): CrmLeadMetaRow {
+  return {
+    lead_id: lead.lead_id,
+    external_ref: lead.external_ref,
+    customer_name: lead.customer_name,
+    phone_ref: lead.phone_ref,
+    status: lead.status,
+    manual_mode: lead.manual_mode,
+    updated_at: lead.updated_at,
+  };
+}
+
+function mapLeadStateToEnovaState(state: CrmLeadState): EnovaStateRow {
+  return {
+    lead_id: state.lead_id,
+    stage_current: state.stage_current,
+    next_objective: state.next_objective,
+    block_advance: state.block_advance,
+    state_version: state.state_version,
+    updated_at: state.updated_at,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // SupabaseCrmBackend — implementa CrmBackend
 // ---------------------------------------------------------------------------
 
 export class SupabaseCrmBackend implements CrmBackend {
   private readonly cfg: SupabaseConfig;
   /**
-   * Buffer in-memory para escritas. Nesta PR, escrita REAL no Supabase é
-   * proibida (PR-T8.8 §regras de escrita). Toda mutação fica em buffer
-   * volátil — o operador pode validar via /crm/case-file mesmo no modo real.
+   * Indica se escrita real está habilitada (SUPABASE_WRITE_ENABLED=true).
+   * Quando true, insert/update de tabelas mapeadas vai para Supabase real.
+   * Quando false, comportamento idêntico a PR-T8.8 (writeBuffer).
+   */
+  private readonly writeEnabled: boolean;
+  /**
+   * Buffer in-memory para escritas. Usado como fallback quando:
+   *   - writeEnabled=false (comportamento PR-T8.8)
+   *   - writeEnabled=true mas tabela não tem mapeamento confirmado
+   *   - writeEnabled=true mas escrita Supabase falhou
    */
   private readonly writeBuffer: CrmInMemoryBackend = new CrmInMemoryBackend();
 
-  constructor(cfg: SupabaseConfig) {
+  constructor(cfg: SupabaseConfig, writeEnabled = false) {
     this.cfg = cfg;
+    this.writeEnabled = writeEnabled;
   }
 
   // -------------------------------------------------------------------------
@@ -232,7 +267,7 @@ export class SupabaseCrmBackend implements CrmBackend {
       return [...real, ...buffered];
     }
 
-    // Tabelas sem mapeamento confirmado nesta PR (turns, facts, dossier,
+    // Tabelas sem mapeamento confirmado (turns, facts, dossier,
     // policy_events, manual_mode_log) — retornam apenas writeBuffer.
     return buffered;
   }
@@ -248,22 +283,84 @@ export class SupabaseCrmBackend implements CrmBackend {
   }
 
   // -------------------------------------------------------------------------
-  // Escritas — APENAS in-memory nesta PR
+  // Escritas — reais para tabelas mapeadas quando writeEnabled=true
   // -------------------------------------------------------------------------
 
   /**
-   * Escrita NÃO toca Supabase real nesta PR. Vai para o writeBuffer interno.
-   * Justificativa em §6 de T8_SUPABASE_OPERACIONAL.md.
+   * Tenta upsert real em crm_lead_meta para um lead.
+   * Retorna true em sucesso, false em falha (sem lançar).
+   */
+  private async supabaseWriteLead(lead: CrmLead): Promise<boolean> {
+    const mapped = mapLeadToMeta(lead);
+    const result = await supabaseUpsert<CrmLeadMetaRow>(this.cfg, 'crm_lead_meta', mapped);
+    return result.ok;
+  }
+
+  /**
+   * Tenta upsert real em enova_state para um estado de lead.
+   * Retorna true em sucesso, false em falha (sem lançar).
+   */
+  private async supabaseWriteLeadState(state: CrmLeadState): Promise<boolean> {
+    const mapped = mapLeadStateToEnovaState(state);
+    const result = await supabaseUpsert<EnovaStateRow>(this.cfg, 'enova_state', mapped);
+    return result.ok;
+  }
+
+  /**
+   * Insert com escrita real condicional (T9.12).
+   *
+   * - crm_leads + writeEnabled=true  → upsert Supabase crm_lead_meta;
+   *   fallback writeBuffer se falhar.
+   * - crm_lead_state + writeEnabled=true → upsert Supabase enova_state;
+   *   fallback writeBuffer se falhar.
+   * - Demais tabelas (crm_turns, crm_facts, etc.) → sempre writeBuffer
+   *   (schema/destino Supabase não confirmados — T9.12-DIAG BLK-WRITE-02).
+   * - writeEnabled=false → writeBuffer em todos os casos (comportamento T8.8).
    */
   async insert<T>(table: CrmTable, row: T): Promise<T> {
+    if (this.writeEnabled) {
+      if (table === 'crm_leads') {
+        const ok = await this.supabaseWriteLead(row as unknown as CrmLead);
+        if (ok) return row;
+      } else if (table === 'crm_lead_state') {
+        const ok = await this.supabaseWriteLeadState(row as unknown as CrmLeadState);
+        if (ok) return row;
+      }
+      // crm_turns, crm_facts e demais: fallthrough para writeBuffer
+    }
     return this.writeBuffer.insert<T>(table, row);
   }
 
+  /**
+   * Update com escrita real condicional (T9.12).
+   *
+   * Para crm_leads e crm_lead_state com writeEnabled=true:
+   *   1. Busca o registro completo atual (Supabase + writeBuffer via findOne).
+   *   2. Mescla o patch.
+   *   3. Faz upsert real no Supabase.
+   *   4. Em falha Supabase → fallback writeBuffer.
+   *
+   * Para demais tabelas ou writeEnabled=false → writeBuffer.
+   */
   async update<T>(
     table: CrmTable,
     matcher: (row: T) => boolean,
     patch: Partial<T>,
   ): Promise<T | null> {
+    if (this.writeEnabled && (table === 'crm_leads' || table === 'crm_lead_state')) {
+      const existing = await this.findOne<T>(table, matcher);
+      if (existing) {
+        const merged = { ...existing, ...patch } as T;
+        let ok = false;
+        if (table === 'crm_leads') {
+          ok = await this.supabaseWriteLead(merged as unknown as CrmLead);
+        } else {
+          ok = await this.supabaseWriteLeadState(merged as unknown as CrmLeadState);
+        }
+        if (ok) return merged;
+      }
+      // Fallback: se não encontrou ou Supabase falhou → writeBuffer
+    }
     return this.writeBuffer.update<T>(table, matcher, patch);
   }
 }

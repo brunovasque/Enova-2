@@ -1,5 +1,36 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.12-IMPL — Supabase write real habilitado (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.12-supabase-write-real-state-leads`  
+**Próxima PR autorizada**: **T9.12-PROVA — confirmar em Worker TEST com SUPABASE_WRITE_ENABLED=true**
+
+### Veredito executivo
+
+Escrita real Supabase habilitada para `crm_leads→crm_lead_meta` e `crm_lead_state→enova_state` quando `SUPABASE_WRITE_ENABLED=true`. Fallback automático para writeBuffer em falha de rede — nunca lança exceção. crm_turns e crm_facts mantidos em writeBuffer (DDL Supabase não confirmado — BLK-WRITE-02/04). 32/32 smoke:supabase:write-real PASS. Secrets nunca expostos.
+
+### Arquivos alterados
+
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/client.ts` | `supabaseUpsert()` adicionado — PostgREST `resolution=merge-duplicates` |
+| `src/supabase/crm-store.ts` | `writeEnabled` constructor param + reverse mappers + `supabaseWriteLead/LeadState` + insert/update condicional |
+| `src/crm/store.ts` | `getCrmBackend` passa `writeEnabled` ao singleton; singleton invalidado se flag muda |
+| `src/supabase/write-real-smoke.ts` | Smoke T9.12 — 10 seções (S1–S10), 32 checks |
+| `package.json` | `smoke:supabase:write-real` adicionado |
+
+### Resultado dos smokes
+
+| Smoke | Resultado |
+|---|---|
+| smoke:supabase:write-real | 32/32 PASS |
+| smoke:supabase | 70/70 PASS |
+| smoke:meta:canary | 41/41 PASS |
+| prove:g8-readiness | 7/7 PASS |
+
+---
+
 ## PR-T9.12-DIAG — Diagnóstico Supabase write real (2026-05-02)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
