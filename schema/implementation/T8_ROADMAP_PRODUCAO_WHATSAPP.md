@@ -97,31 +97,13 @@ Conecta inbound ao LLM para geração de `reply_text` e outbound para resposta c
 
 ## Etapa 5 — PR-PROVA da T8.17 em TEST
 
-**Status: EM EXECUÇÃO — harness instalado, prova real aguarda Vasques**
-
-Harness `src/meta/canary-real-proof.ts` instalado. Modo local: 31 PASS | 0 FAIL | 5 SKIP.
+**Status: PRÓXIMA PR AUTORIZADA — aguarda autorização Vasques para flags canary**
 
 Provar em janela curta e controlada:
 
 - Mensagem real → LLM gera resposta → outbound responde no WhatsApp
 
-**Somente com Vasques presente e ativando flags canary no Worker TEST:**
-
-```bash
-LLM_REAL_ENABLED=true
-OUTBOUND_CANARY_ENABLED=true
-OUTBOUND_CANARY_WA_ID=<wa_id_vasques>
-OPENAI_API_KEY=<chave>
-```
-
-Comando de prova:
-```bash
-CANARY_REAL_PROOF_ENABLED=true \
-ENOVA2_TEST_WORKER_URL=https://nv-enova-2-test.brunovasque.workers.dev \
-META_APP_SECRET=<secret> META_PHONE_NUMBER_ID=<número> \
-CRM_ADMIN_KEY=<chave> OUTBOUND_CANARY_WA_ID=<wa_id> \
-npm run prove:meta:canary-real
-```
+**Somente com Vasques presente e autorizando `LLM_REAL_ENABLED=true` no TEST.**
 
 Evidência obrigatória:
 - Log Cloudflare de inbound recebido
@@ -219,7 +201,6 @@ Somente depois de prova real completa:
 | Acoplamento inbound → memória | **IMPLEMENTADO (PR-T8.16)** |
 | Chamada LLM a partir do inbound | **IMPLEMENTADO gated (PR-T8.17)** |
 | Outbound canary controlado | **IMPLEMENTADO gated (PR-T8.17)** |
-| Prova canary real (harness) | **EM EXECUÇÃO — aguarda Vasques** |
 | Resposta WhatsApp | **NÃO** |
 | Cutover Enova 1 → Enova 2 | **NÃO EXECUTADO** |
 | G8 | **NÃO FECHADO** |

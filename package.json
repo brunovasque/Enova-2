@@ -32,7 +32,6 @@
     "prove:supabase-real": "tsx src/supabase/proof.ts",
     "prove:meta-controlada": "tsx src/meta/proof-controlled.ts",
     "prove:meta:pipeline-real": "tsx src/meta/pipeline-real-proof.ts",
-    "prove:meta:canary-real": "tsx src/meta/canary-real-proof.ts",
     "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:meta:webhook && npm run smoke:meta:pipeline && npm run smoke:meta:canary && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio && npm run smoke:panel && npm run smoke:supabase && npm run smoke:memory && npm run prove:crm-e2e",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
