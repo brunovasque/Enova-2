@@ -3,7 +3,26 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL CONCLUÍDAS; próxima: T9.11 — PROVA LLM usa contexto sem quebrar stage/guard
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11 CONCLUÍDAS; próxima: T9.12 — IMPL Supabase write real (CRM/memória/stage)
+
+## T9.11 — PROVA LLM usa contexto sem quebrar stage/guard — CONCLUÍDA (2026-05-02)
+
+PR: `prove/t9.11-llm-context-guard`
+
+**56/56 PASS. Frente LLM/funil (T9.8/T9.9/T9.10/T9.11) APROVADA.**
+
+**Script:** `src/llm/context-guard-proof.ts` — 15 cenários (C1–C15)
+
+**Soberania verificada:**
+- Core decide stage (C2: stage_current ANTES de recent_turns; C13: stage inalterado pelo guard)
+- Guard bloqueia aprovação/CPF/stage/secrets independente de recent_turns (C3/C5/C6/C7)
+- Guard nunca inventa reply — replacement_used sempre false (C12)
+- PII não chega ao prompt via sanitização prévia (C15)
+- Retrocompatibilidade: sem recent_turns, sistema funciona igual (C9)
+
+**Próxima:** T9.12 — IMPL Supabase write real (CRM/memória/stage)
+
+---
 
 ## T9.10-IMPL — CONCLUÍDA (2026-05-02)
 

@@ -1,5 +1,41 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.11 — PROVA LLM usa contexto sem quebrar stage/guard (2026-05-02)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
+**Branch**: `prove/t9.11-llm-context-guard`  
+**Próxima PR autorizada**: **T9.12 — IMPL Supabase write real (CRM/memória/stage)**
+
+### Veredito executivo
+
+Prova programática confirmada. 56/56 PASS. Soberania verificada em 5 dimensões: Core decide stage, Guard bloqueia perigo sem depender de recent_turns, Guard nunca inventa reply, PII não chega ao prompt, retrocompat preservada.
+
+### Cenários provados
+
+| Cenário | Objetivo | Resultado |
+|---|---|---|
+| C1 | stage_current + recent_turns renderizados | 8/8 PASS |
+| C2 | stage_current ANTES de recent_turns (prioridade Core) | 4/4 PASS |
+| C3 | Guard bloqueia aprovação com recent_turns | 5/5 PASS |
+| C4 | Guard passa reply seguro com recent_turns | 4/4 PASS |
+| C5 | Guard bloqueia CPF exposto | 3/3 PASS |
+| C6 | Guard bloqueia stage interno exposto | 3/3 PASS |
+| C7 | Guard bloqueia secrets | 3/3 PASS |
+| C8 | Negação contextual → guard permite | 3/3 PASS |
+| C9 | Retrocompat sem recent_turns | 5/5 PASS |
+| C10 | Janela máxima 3 turnos | 2/2 PASS |
+| C11 | Truncamento 100 chars por turno | 2/2 PASS |
+| C12 | replacement_used sempre false | 2/2 PASS |
+| C13 | stage_current inalterado pelo guard | 4/4 PASS |
+| C14 | text_too_long → warn, não block | 4/4 PASS |
+| C15 | recent_turns sanitizados → sem PII no prompt | 4/4 PASS |
+
+### Regressões
+
+smoke:llm:short-memory-context 46 · smoke:llm:output-guard 48 · smoke:llm:context 30 · smoke:meta:canary 41 · smoke:meta:core-pipeline 23 · prove:t9.7 44 · smoke:runtime:env 53 · smoke:runtime:fallback-guard 41 · prove:g8-readiness APROVADO
+
+---
+
 ## PR-T9.10-IMPL — IMPL Memória curta / contexto histórico controlado (2026-05-02)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  

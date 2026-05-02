@@ -24,6 +24,7 @@
     "smoke:llm:short-memory-context": "tsx src/llm/short-memory-context-smoke.ts",
     "prove:t9.5-stage-persistence": "tsx src/meta/stage-persistence-proof.ts",
     "prove:t9.7-facts-stage-advance": "tsx src/meta/facts-stage-advance-proof.ts",
+    "prove:t9.11-context-guard": "tsx src/llm/context-guard-proof.ts",
     "smoke:speech": "tsx src/speech/smoke.ts",
     "smoke:context": "tsx src/context/smoke.ts",
     "smoke:adapter": "tsx src/adapter/smoke.ts",
