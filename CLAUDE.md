@@ -32,7 +32,7 @@ Toda sessão do Claude Code deve seguir este ciclo antes de qualquer alteração
 5. Ler schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md.
 6. Identificar a última PR concluída e a próxima PR autorizada.
 7. Ler no contrato ativo a seção específica da próxima PR antes de iniciar.
-8. Declarar o tipo da PR: PR-DIAG, PR-IMPL ou PR-PROVA.
+8. Declarar o tipo da PR: PR-DIAG, PR-IMPL, PR-PROVA ou PR-DOC.
 9. Confirmar que a PR anterior exigida está concluída.
 10. Se for PR-IMPL, confirmar que existe PR-DIAG anterior da mesma frente.
 11. Se for fechamento de frente, confirmar que existe PR-PROVA.
