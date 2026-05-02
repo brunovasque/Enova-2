@@ -3,7 +3,47 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1 CONCLUÍDA; aguardando execução T9.2
+**Status contrato:** ABERTO — T9.1 CONCLUÍDA; T9.2 CONCLUÍDA; T9.3 CONCLUÍDA; próxima: T9.4 (IMPL)
+
+## T9.3 — CONCLUÍDA (2026-05-02)
+
+Diagnóstico read-only `schema/diagnostics/T9_CORE_PIPELINE_INTEGRACAO_DIAG.md` criado.
+
+**Veredito:** T9.4 viável com patch cirúrgico — sem bloqueio estrutural.
+
+**Achados principais:**
+- `runCoreEngine(state: LeadState): CoreDecision` — síncrono, sem I/O externo
+- Input mínimo: `{ lead_id, current_stage: StageId, facts: Record<string, unknown> }`
+- Output: `{ stage_after, next_objective, block_advance, speech_intent, decision_id, ... }`
+- Parsers L04–L17 usam `facts_current` (já no CRM), **não raw_text** diretamente
+- Ponto de integração: `canary-pipeline.ts` entre Passo 1 (CRM) e Passo 2 (LLM)
+- `stage_at_turn: 'unknown'` — bug a corrigir em T9.4
+- `upsertLeadState` não existe em `service.ts` — T9.4 precisa criar
+- Default seguro: `stage_current = 'unknown'` → `'discovery'`
+
+**Próxima ação autorizada: T9.4 — IMPL chamada runCoreEngine no canary-pipeline**
+
+### O que T9.4 deve fazer
+1. Criar `upsertLeadState(backend, lead_id, decision)` em `src/crm/service.ts`
+2. Em `canary-pipeline.ts` Passo 1.5 (entre CRM e LLM): ler estado CRM → chamar `runCoreEngine` → persistir `stage_after`
+3. Corrigir `stage_at_turn` em `createConversationTurn` para usar stage real (não `'unknown'`)
+4. Criar `smoke:meta:core-pipeline` (8 checks mínimos documentados no DIAG)
+5. Todas as regressões PASS: `smoke:meta:canary` 41/41, `smoke:meta:webhook` 20/20, `smoke:meta:pipeline` 26/26, `prove:g8-readiness` 7/7
+
+### O que T9.4 NÃO deve fazer
+- NÃO alterar `src/core/engine.ts` ou `src/core/types.ts`
+- NÃO alterar `callLlm` (LlmContext é T9.8)
+- NÃO habilitar facts extraction de raw_text (T9.6)
+- NÃO ativar Supabase write real (T9.11)
+- NÃO alterar outbound/webhook
+
+---
+
+## T9.2 — CONCLUÍDA (2026-05-02)
+
+Fallback guard telemetria: `diagLog` com `reason: 'flag_off' | 'envs_missing'`; `/crm/health` expõe `persistence_mode`; `/__admin__/go-live/health` expõe `supabase_runtime_active`; `smoke:runtime:fallback-guard` **39/39 PASS**. BLK-05 RESOLVIDO.
+
+---
 
 ## T9.1 — CONCLUÍDA (2026-05-02)
 
