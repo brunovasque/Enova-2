@@ -31,6 +31,7 @@ import type { LeadState, CoreDecision } from '../core/types.ts';
 import { runInboundPipeline } from './pipeline.ts';
 import { sendMetaOutbound } from './outbound.ts';
 import { callLlm } from '../llm/client.ts';
+import { applyOutputGuard } from '../llm/output-guard.ts';
 import { runCoreEngine } from '../core/engine.ts';
 import { getCrmBackend } from '../crm/store.ts';
 import { getLeadState, getLeadFacts, upsertLeadState, writeLeadFact } from '../crm/service.ts';
@@ -286,19 +287,42 @@ export async function runCanaryPipeline(
         const llmResult = await llmCaller(userText, env as Record<string, unknown>, llmContext);
         llmInvoked = llmResult.llm_invoked;
         if (llmResult.ok && llmResult.reply_text) {
-          replyText = llmResult.reply_text;
-          // Log 8 — llm.result (success)
-          diagLog('meta.prod.llm.result', {
-            success: true,
-            reply_text_present: true,
-            reply_text_length: replyText.length,
-            latency_ms: llmResult.latency_ms ?? null,
-            error_type: null,
+          // Output Guard — valida reply_text antes do outbound (T9.9).
+          // Guard não decide stage — apenas valida segurança da fala.
+          const guardResult = applyOutputGuard(
+            llmResult.reply_text,
+            coreDecision ? { stage_current: coreDecision.stage_current } : undefined,
+          );
+          diagLog('llm.output_guard.result', {
+            allowed: guardResult.allowed,
+            blocked: guardResult.blocked,
+            warned: guardResult.warned,
+            reason_codes: guardResult.reason_codes,
+            reply_text_length: llmResult.reply_text.length,
+            replacement_used: guardResult.replacement_used,
+            stage_current: coreDecision?.stage_current ?? null,
           });
-          emitCanary(ctx, 'llm.completed', 'completed', {
-            llm_invoked: true,
-            reply_text_length: replyText.length,
-          });
+          if (guardResult.allowed) {
+            replyText = guardResult.safe_reply_text ?? llmResult.reply_text;
+            // Log 8 — llm.result (success + guard passed)
+            diagLog('meta.prod.llm.result', {
+              success: true,
+              reply_text_present: true,
+              reply_text_length: replyText.length,
+              latency_ms: llmResult.latency_ms ?? null,
+              error_type: null,
+            });
+            emitCanary(ctx, 'llm.completed', 'completed', {
+              llm_invoked: true,
+              reply_text_length: replyText.length,
+            });
+          } else {
+            errors.push(`output_guard_blocked: ${guardResult.reason_codes.join(',')}`);
+            emitCanary(ctx, 'llm.output_guard.blocked', 'blocked', {
+              reason_codes: guardResult.reason_codes,
+            });
+            // replyText permanece undefined → outbound para via 'reply_text_missing'
+          }
         } else {
           // Log 8 — llm.result (failure)
           diagLog('meta.prod.llm.result', {

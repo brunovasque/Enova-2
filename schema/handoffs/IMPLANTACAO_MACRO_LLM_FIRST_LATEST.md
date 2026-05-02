@@ -1,5 +1,30 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.9-IMPL — Output Guard para respostas do LLM (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.9-output-guard`  
+**Próxima PR autorizada**: **T9.10 — Memória curta / contexto histórico controlado**
+
+### Veredito executivo
+
+Output Guard implementado e validado. 48/48 smoke passes. Soberania preservada — LLM gera a fala, Guard apenas valida segurança, Core decide stage, adapter nunca inventa resposta.
+
+### Achados principais
+
+| Item | Detalhe |
+|---|---|
+| Módulo criado | `src/llm/output-guard.ts` — puro, sem I/O, zero deps externas |
+| Smoke criado | `src/llm/output-guard-smoke.ts` — 48/48 PASS |
+| Integração | `canary-pipeline.ts` — guard entre LLM result e replyText assignment |
+| Bloqueios | 7 SIMPLE_BLOCK_RULES + 1 checkApprovalPromise com detecção de negação contextual |
+| Avisos | 2 warn-only (text_too_long, document_request_out_of_stage) — não bloqueiam outbound |
+| Anti-falso-positivo | "não posso dizer que você está aprovado" → allowed (negação detectada em prefixo 50 chars) |
+| Regressões | smoke:llm:context 30 · smoke:meta:canary 41 · smoke:meta:core-pipeline 23 · prove:t9.7 44 · prove:t9.5 58 · smoke:runtime:env 53 · smoke:runtime:fallback-guard 41 · prove:g8-readiness APROVADO |
+| replacement_used | sempre false — guard nunca inventa resposta |
+
+---
+
 ## PR-T9.9-DIAG — Diagnóstico Output Guard para respostas do LLM (2026-05-02)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
