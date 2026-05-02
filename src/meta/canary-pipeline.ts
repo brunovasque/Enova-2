@@ -46,7 +46,7 @@ export type CanaryBlockReason =
 
 export interface CanaryReport {
   ok: boolean;
-  mode: 'canary_llm_outbound';
+  mode: 'canary_llm_outbound' | 'client_real_outbound';
   lead_id?: string;
   turn_id?: string;
   memory_event_id?: string;
@@ -56,6 +56,7 @@ export interface CanaryReport {
   outbound_attempted: boolean;
   external_dispatch: boolean;
   canary_allowed: boolean;
+  client_real_allowed: boolean;
   canary_block_reason?: CanaryBlockReason;
   outbound_message_id?: string;
   errors?: string[];
@@ -209,22 +210,34 @@ export async function runCanaryPipeline(
     }
   }
 
-  // Passo 3 — Outbound canary controlado
+  // Passo 3 — Outbound: caminho client_real (amplo) ou canary (controlado)
   const canaryEnabled = isFlagOn(env.OUTBOUND_CANARY_ENABLED);
   const canaryWaId = readStr(env.OUTBOUND_CANARY_WA_ID);
+  const clientRealEnabled = isFlagOn(env.CLIENT_REAL_ENABLED);
   const inboundWaId = event.wa_id ?? '';
 
   let outboundAttempted = false;
   let externalDispatch = false;
   let canaryAllowed = false;
+  let clientRealAllowed = false;
   let canaryBlockReason: CanaryBlockReason | undefined;
   let outboundMessageId: string | undefined;
 
-  // Validação em cascata dos gates canary
+  // Cascata de gates: rollback/maintenance bloqueiam tudo.
+  // CLIENT_REAL_ENABLED=true abre para qualquer WA (não exige OUTBOUND_CANARY_WA_ID).
+  // CLIENT_REAL_ENABLED=false → verifica caminho canary.
   if (rollbackActive) {
     canaryBlockReason = 'rollback_active';
   } else if (maintenanceActive) {
     canaryBlockReason = 'maintenance_active';
+  } else if (clientRealEnabled) {
+    // Caminho client_real: qualquer WA permitido, reply_text obrigatório
+    if (!replyText) {
+      canaryBlockReason = 'reply_text_missing';
+    } else {
+      canaryAllowed = true;
+      clientRealAllowed = true;
+    }
   } else if (!canaryEnabled) {
     canaryBlockReason = 'canary_disabled';
   } else if (!canaryWaId) {
@@ -242,8 +255,8 @@ export async function runCanaryPipeline(
     allowed: canaryAllowed,
     block_reason: canaryBlockReason ?? null,
     wa_id_masked: maskId(inboundWaId || null),
-    canary_allowed: canaryAllowed,
-    client_real_allowed: false,
+    canary_allowed: canaryAllowed && !clientRealAllowed,
+    client_real_allowed: clientRealAllowed,
     wa_matches_canary: canaryWaId.length > 0 && inboundWaId === canaryWaId,
     outbound_attempted: canaryAllowed,
   });
@@ -309,11 +322,12 @@ export async function runCanaryPipeline(
     outbound_attempted: outboundAttempted,
     external_dispatch: externalDispatch,
     canary_allowed: canaryAllowed,
+    client_real_allowed: clientRealAllowed,
   });
 
   return {
     ok,
-    mode: 'canary_llm_outbound',
+    mode: clientRealAllowed ? 'client_real_outbound' : 'canary_llm_outbound',
     ...(crmResult.lead_id ? { lead_id: crmResult.lead_id } : {}),
     ...(crmResult.turn_id ? { turn_id: crmResult.turn_id } : {}),
     ...(crmResult.memory_event_id ? { memory_event_id: crmResult.memory_event_id } : {}),
@@ -323,6 +337,7 @@ export async function runCanaryPipeline(
     outbound_attempted: outboundAttempted,
     external_dispatch: externalDispatch,
     canary_allowed: canaryAllowed,
+    client_real_allowed: clientRealAllowed,
     ...(canaryBlockReason ? { canary_block_reason: canaryBlockReason } : {}),
     ...(outboundMessageId ? { outbound_message_id: outboundMessageId } : {}),
     ...(errors.length > 0 ? { errors } : {}),

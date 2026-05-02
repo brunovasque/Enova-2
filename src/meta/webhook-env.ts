@@ -21,6 +21,8 @@ export interface MetaWorkerEnv {
   OPENAI_API_KEY?: unknown;
   ROLLBACK_FLAG?: unknown;
   MAINTENANCE_MODE?: unknown;
+  // PR-T8.18 — cliente amplo após cutover confirmado
+  CLIENT_REAL_ENABLED?: unknown;
 }
 
 export function readEnvString(env: MetaWorkerEnv, key: keyof MetaWorkerEnv): string | undefined {
