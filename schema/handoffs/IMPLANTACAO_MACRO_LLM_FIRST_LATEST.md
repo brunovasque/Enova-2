@@ -1,5 +1,52 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## fix/PR-IMPL T8 — CLIENT_REAL_ENABLED gate corrigido (2026-05-01)
+
+**Tipo**: fix/PR-IMPL | **Status**: EM EXECUÇÃO — 35 PASS, aguarda merge + deploy PROD  
+**Base**: PR #174 (telemetria DIAG)  
+**Próxima ação**: **Merge desta PR → `npx wrangler deploy` → verificar logs no wrangler tail**
+
+### Causa raiz confirmada
+
+`canary-pipeline.ts` não lia `CLIENT_REAL_ENABLED` em lugar algum. O gate só tinha caminho canary (`wa_id === OUTBOUND_CANARY_WA_ID`). Com `CLIENT_REAL_ENABLED=true` e WA diferente do canary → `wa_not_allowed`.
+
+### Correção
+
+```typescript
+// ANTES: sem caminho client_real
+} else if (inboundWaId !== canaryWaId) {
+  canaryBlockReason = 'wa_not_allowed';
+
+// DEPOIS: caminho client_real antes dos checks canary
+} else if (clientRealEnabled) {
+  // CLIENT_REAL path: qualquer WA permitido
+  canaryAllowed = true;
+  clientRealAllowed = true;
+} else if (!canaryEnabled) { ...canary checks...
+```
+
+### Logs PROD esperados após correção
+
+```json
+{"diag":"meta.prod.outbound.gate",   "allowed":true, "client_real_allowed":true, "block_reason":null}
+{"diag":"meta.prod.webhook.final",   "external_dispatch":true, "mode":"client_real_outbound"}
+```
+
+### Smoke
+
+`smoke:meta:client-real-flag` — **35/35 PASS** (7 cenários)  
+`smoke:meta:canary` — 41/41 PASS (regressão OK)
+
+### Roadmap T8
+
+| Etapa | Status |
+|---|---|
+| 5 — prova T8.17 real | CONCLUÍDA (PR #171 — 54 PASS real) |
+| 6 — cutover + diagnóstico + fix | **EM CORREÇÃO** |
+| 7 — G8 closeout | NÃO FECHADO |
+
+---
+
 ## PR-DIAG T8 — Telemetria cirúrgica PROD (2026-05-01)
 
 **Tipo**: PR-DIAG | **Status**: EM EXECUÇÃO — instrumentação completa, aguarda deploy PROD e inspeção  
