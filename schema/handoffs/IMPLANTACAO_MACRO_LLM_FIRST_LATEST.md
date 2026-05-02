@@ -1,10 +1,49 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T8.R CLOSEOUT — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01)
+
+**Tipo**: PR-PROVA/CLOSEOUT | **Status**: CONCLUÍDA  
+**Base**: PR #175 (fix CLIENT_REAL_ENABLED gate, mergeada)  
+**Próxima frente**: **Integração LLM ↔ funil mecânico / stages / regras MCMV**
+
+### Veredito
+
+**G8 APROVADO — FRENTE WHATSAPP PROD + LLM + OUTBOUND**
+
+Vasques confirmou em 2026-05-01: PROD respondendo WhatsApp naturalmente com LLM. `external_dispatch=true`, `mode=client_real_outbound`, conversa sobre MCMV funcionando.
+
+**Ressalva:** Não aprova funil completo. Próxima frente: stages/qualificação/regras MCMV.
+
+### Smokes finais
+
+| Smoke | Resultado |
+|---|---|
+| `prove:g8-readiness` | 7/7 PASS — G8 APROVADO |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:client-real-flag` | 35/35 PASS |
+
+### Arquivos alterados
+
+- `src/golive/harness.ts` — `meta_ready=true`, artificial trava removida
+- `src/golive/closeout-smoke.ts` — R3/R5/R7 refletem PROD aprovado
+- `schema/proofs/T8_G8_WHATSAPP_PROD_CLOSEOUT.md` — evidência completa
+- `schema/implementation/T8_ROADMAP_PRODUCAO_WHATSAPP.md` — Etapas 6+7 CONCLUÍDA
+- `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` — G8 APROVADO
+- `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` — este arquivo
+
+### Rollback
+
+`ROLLBACK_FLAG=true` bloqueia LLM + outbound em segundos. Soberano acima de tudo.
+
+---
+
 ## fix/PR-IMPL T8 — CLIENT_REAL_ENABLED gate corrigido (2026-05-01)
 
-**Tipo**: fix/PR-IMPL | **Status**: EM EXECUÇÃO — 35 PASS, aguarda merge + deploy PROD  
+**Tipo**: fix/PR-IMPL | **Status**: MERGEADA (PR #175)  
 **Base**: PR #174 (telemetria DIAG)  
-**Próxima ação**: **Merge desta PR → `npx wrangler deploy` → verificar logs no wrangler tail**
+**Próxima ação**: **Encerrado — gate funcionando, G8 aprovado**
 
 ### Causa raiz confirmada
 

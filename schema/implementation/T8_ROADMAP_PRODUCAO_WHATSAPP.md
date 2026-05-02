@@ -109,7 +109,7 @@ Vasques executou com `CANARY_REAL_PROOF_ENABLED=true`:
 
 ## Etapa 6 — Cutover Enova 1 → Enova 2 PROD
 
-**Status: EM EXECUÇÃO — PR-T8.18 — runbook + checklist prontos, cutover aguarda Vasques**
+**Status: CONCLUÍDA — Vasques executou cutover + PROD confirmado (2026-05-01)**
 
 Runbook: `schema/operations/T8_CUTOVER_ENOVA2_PROD.md`  
 Checklist: `schema/proofs/T8_CUTOVER_PROD_CHECKLIST.md`
@@ -164,16 +164,14 @@ Com apenas 1 número WhatsApp, apenas 1 webhook pode estar ativo no painel Meta 
 
 ## Etapa 7 — Closeout / G8 aprovado
 
-**Status: aguarda Etapa 6 concluída**
+**Status: CONCLUÍDA — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01)**
 
-Somente depois de prova real completa:
-
-- Re-executar `npm run prove:g8-readiness` — resultado esperado: 7/7 PASS + G8 APROVADO
-- Atualizar `src/golive/harness.ts` — remover `meta_ready = false` hardcoded
-- Documentar evidência completa: lead real atendido, resposta real enviada, logs Cloudflare
-- Declarar T8.12B encerrada
-- Declarar G8 aprovado operacionalmente
-- Enova 2 oficialmente em produção
+- `prove:g8-readiness` re-executado: 7/7 PASS + G8 APROVADO FRENTE WHATSAPP
+- `src/golive/harness.ts` atualizado — `meta_ready=true`, artificial trava removida
+- Evidência completa documentada em `schema/proofs/T8_G8_WHATSAPP_PROD_CLOSEOUT.md`
+- Frente WhatsApp PROD encerrada
+- G8 aprovado para frente WhatsApp — Enova 2 em produção respondendo WhatsApp
+- **Ressalva:** funil completo (stages/MCMV) é a próxima frente obrigatória
 
 ---
 
@@ -203,8 +201,8 @@ Somente depois de prova real completa:
 | Chamada LLM a partir do inbound | **IMPLEMENTADO gated (PR-T8.17)** |
 | Outbound canary controlado | **IMPLEMENTADO gated (PR-T8.17)** |
 | Prova canary real (harness) | **CONCLUÍDA — PR #171 (54 PASS real)** |
-| Resposta WhatsApp | **NÃO (PROD) — SIM (TEST, canary confirmado)** |
+| Resposta WhatsApp | **SIM — PROD funcionando (Vasques, 2026-05-01)** |
 | Runbook cutover PROD | **CRIADO — schema/operations/T8_CUTOVER_ENOVA2_PROD.md** |
 | Checklist cutover PROD | **CRIADO — schema/proofs/T8_CUTOVER_PROD_CHECKLIST.md** |
-| Cutover Enova 1 → Enova 2 | **NÃO EXECUTADO — aguarda Vasques** |
-| G8 | **NÃO FECHADO** |
+| Cutover Enova 1 → Enova 2 | **CONCLUÍDO — PROD ativo (2026-05-01)** |
+| G8 | **APROVADO — FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01)** |
