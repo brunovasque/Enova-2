@@ -1,5 +1,35 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.10-DIAG — Diagnóstico memória curta / contexto histórico controlado (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.10-memoria-curta-contexto`  
+**Próxima PR autorizada**: **T9.10 — IMPL Memória curta / contexto histórico controlado**
+
+### Veredito executivo
+
+T9.10 viável com patch cirúrgico em 2 arquivos (`canary-pipeline.ts`, `client.ts`) + smoke novo. Sem bloqueio real.
+
+### Achados principais
+
+| Achado | Detalhe |
+|---|---|
+| Função de leitura | `getLeadTimeline(backend, lead_id)` em `src/crm/service.ts:147` — já existe, retorna sorted |
+| Campo de texto | `CrmTurn.raw_input_summary` = `text_body.slice(0, 200)` (set em `pipeline.ts:129`) |
+| Campo sem reply | `CrmTurn` não tem campo para resposta do assistente — T9.10 usa `role: 'user'` only |
+| LlmContext | `recent_turns?` já declarado em `client.ts:47` mas nunca populado |
+| buildDynamicSystemPrompt | Não renderiza `recent_turns` — precisa de atualização em T9.10 |
+| Ponto de integração | Bloco [E] no Passo 1.5 de `canary-pipeline.ts`, após `cachedFacts = factsMap` |
+| Fonte correta | CRM timeline (não Memory Service, não Context Module) |
+| Janela | 3 turnos × 100 chars, excluir turno atual, order cronológica |
+| Sanitização | CPF, email, tel, links, tokens → substituir antes de enviar ao LLM |
+
+### Smokes exigidos para T9.10
+
+`smoke:llm:short-memory-context` ≥20 · `smoke:llm:context` 30 · `smoke:llm:output-guard` 48 · `smoke:meta:canary` 41 · `smoke:meta:core-pipeline` 23 · `prove:t9.7-facts-stage-advance` 44 · `prove:t9.5-stage-persistence` 58 · `smoke:runtime:env` 53 · `smoke:runtime:fallback-guard` 41 · `prove:g8-readiness` APROVADO
+
+---
+
 ## PR-T9.9-IMPL — Output Guard para respostas do LLM (2026-05-02)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  

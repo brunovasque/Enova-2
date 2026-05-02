@@ -3,7 +3,28 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL CONCLUÍDAS; próxima: T9.10 — Memória curta / contexto histórico controlado
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG CONCLUÍDAS; próxima: T9.10 — IMPL Memória curta / contexto histórico controlado
+
+## T9.10-DIAG — CONCLUÍDA (2026-05-02)
+
+PR: `diag/t9.10-memoria-curta-contexto`
+
+**Diagnóstico read-only confirmado. T9.10 viável com patch cirúrgico. Sem bloqueio real.**
+
+**Achados principais:**
+- `getLeadTimeline(backend, lead_id)` já existe em `src/crm/service.ts:147`
+- `CrmTurn.raw_input_summary` = `text_body.slice(0, 200)` — primeira fatia do texto do usuário
+- `LlmContext.recent_turns` já declarado em `client.ts:47` mas **nunca populado**
+- `buildDynamicSystemPrompt` **não renderiza `recent_turns`** — precisa ser atualizado
+- Ponto de integração: Bloco [E] no Passo 1.5 de `canary-pipeline.ts`, após `cachedFacts = factsMap`
+- Fonte: CRM timeline (não Memory Service, não Context Module)
+- Janela: 3 turnos × 100 chars, excluir turno atual, role: 'user' only
+- Sanitização obrigatória: CPF, email, tel, links, tokens
+- Context Module (`living-memory.ts`) existe mas não está conectado ao runtime — não usar em T9.10
+
+**Documento criado:** `schema/diagnostics/T9_SHORT_MEMORY_CONTEXT_DIAG.md`
+
+---
 
 ## T9.9-IMPL — CONCLUÍDA (2026-05-02)
 
