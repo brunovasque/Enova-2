@@ -1,35 +1,58 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
-## PR-T9.8-DIAG — Diagnóstico LlmContext estruturado (2026-05-02)
+## PR-T9.8-IMPL — IMPL LlmContext estruturado (2026-05-02)
 
-**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
-**Branch**: `diag/t9.8-llmcontext-estruturado`  
-**Próxima PR autorizada**: **T9.8 — IMPL LlmContext estruturado**
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.8-llmcontext-estruturado`  
+**Próxima PR autorizada**: **T9.9 — Output Guard**
 
 ### Veredito executivo
 
-T9.8 viável com patch cirúrgico em 2 arquivos. Nenhum bloqueio real.
+BLK-04 RESOLVIDO. LLM agora recebe stage + objective + facts sanitizados do Core. Retrocompatível — sem quebra de smoke ou prova existente.
+
+### O que foi feito
+
+| Arquivo | Alteração |
+|---|---|
+| `src/llm/client.ts` | Exporta `LlmContext`, `buildDynamicSystemPrompt`, `callLlm(msg, env, context?)` |
+| `src/meta/canary-pipeline.ts` | `cachedFacts` hoistado; `llmContext` montado + sanitizado; `llmCaller` recebe 3 args; `diagLog('llm.context.built', ...)` |
+| `src/llm/context-smoke.ts` | Smoke criado — 30/30 PASS |
+| `package.json` | `"smoke:llm:context": "tsx src/llm/context-smoke.ts"` |
+
+### Resultados dos smokes
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:llm:context` | **30/30 PASS** |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:core-pipeline` | 23/23 PASS |
+| `prove:t9.7-facts-stage-advance` | 44/44 PASS |
+| `prove:t9.5-stage-persistence` | 58/58 PASS |
+| `smoke:core:text-extractor` | PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | G8 APROVADO |
+
+### Segurança
+
+- `renda_principal` e `cpf` sanitizados para `'informado(a)'` antes de ir ao LLM
+- `diagLog` emite apenas contagens — zero texto do cliente, zero valor de fact, zero secret
+- Prompt truncado a 4800 chars (≤1200 tokens)
+
+---
+
+## PR-T9.8-DIAG — Diagnóstico LlmContext estruturado (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA  
+**Branch**: `diag/t9.8-llmcontext-estruturado`
 
 ### Achados principais
 
 | Achado | Detalhe |
 |---|---|
-| `callLlm` atual | `callLlm(userMessage, env)` — cego ao stage, facts e objetivo |
-| `coreDecision` | Já no escopo externo de `canary-pipeline.ts` (L147) — acessível em Passo 2 ✓ |
-| `factsMap` | **BLK-04**: declarado DENTRO do try block (L187) — NÃO acessível em Passo 2 ✗ → hoist necessário |
-| `LlmContext` shape | `{ stage_current, stage_after, next_objective, block_advance, speech_intent, facts?, recent_history? }` |
-| Compatibilidade | Terceiro parâmetro opcional — todas chamadas antigas sem contexto funcionam sem alteração |
-| Histórico | `getLeadTimeline` já existe; usar `raw_input_summary` ≤ 100 chars, máx 3 turnos |
-| Segurança | `diagLog` nunca loga prompt completo — apenas contagens |
-
-### Arquivos a alterar em T9.8
-
-| Arquivo | Alteração |
-|---|---|
-| `src/llm/client.ts` | Exportar `LlmContext` + `buildDynamicSystemPrompt` + `context?` em `callLlm` |
-| `src/meta/canary-pipeline.ts` | Hoist `cachedFacts`; montar `llmContext`; passar a `llmCaller` |
-| `src/llm/context-smoke.ts` | Criar smoke (mínimo 12 checks) |
-| `package.json` | `"smoke:llm:context"` |
+| `factsMap` | **BLK-04**: declarado dentro do try block (L187) — NÃO acessível em Passo 2 → hoist necessário |
+| `coreDecision` | Já no escopo externo (L147) — acessível em Passo 2 ✓ |
+| Compatibilidade | Terceiro parâmetro opcional preserva todas as chamadas existentes |
 
 ---
 

@@ -26,7 +26,7 @@ import type { NormalizedMetaEvent } from './parser.ts';
 import type { MetaWorkerEnv } from './webhook-env.ts';
 import type { TelemetryRequestContext } from '../telemetry/types.ts';
 import type { OutboundResult } from './outbound.ts';
-import type { LlmClientResult } from '../llm/client.ts';
+import type { LlmClientResult, LlmContext } from '../llm/client.ts';
 import type { LeadState, CoreDecision } from '../core/types.ts';
 import { runInboundPipeline } from './pipeline.ts';
 import { sendMetaOutbound } from './outbound.ts';
@@ -67,7 +67,7 @@ export interface CanaryReport {
   errors?: string[];
 }
 
-type LlmCaller = (msg: string, env: Record<string, unknown>) => Promise<LlmClientResult>;
+type LlmCaller = (msg: string, env: Record<string, unknown>, context?: LlmContext) => Promise<LlmClientResult>;
 type OutboundSender = (intent: Parameters<typeof sendMetaOutbound>[0], env: MetaWorkerEnv) => Promise<OutboundResult>;
 
 function isFlagOn(value: unknown): boolean {
@@ -145,6 +145,8 @@ export async function runCanaryPipeline(
   // LLM é soberano da fala — Core é soberano do stage.
   // Exception nunca bloqueia outbound.
   let coreDecision: CoreDecision | undefined;
+  // Hoisted to outer scope so Passo 2 (LLM) can read facts built in Passo 1.5 (BLK-04 fix — T9.8).
+  let cachedFacts: Record<string, unknown> = {};
   if (crmResult.ok && crmResult.lead_id) {
     try {
       const coreBackend = await getCrmBackend(env as Record<string, unknown>);
@@ -190,6 +192,8 @@ export async function runCanaryPipeline(
           factsMap[fact.fact_key] = fact.fact_value;
         }
       }
+
+      cachedFacts = factsMap;
 
       coreDecision = runCoreEngine({
         lead_id: crmResult.lead_id,
@@ -254,7 +258,32 @@ export async function runCanaryPipeline(
       emitCanary(ctx, 'llm.blocked', 'blocked', { reason: 'llm_no_text' });
     } else {
       try {
-        const llmResult = await llmCaller(userText, env as Record<string, unknown>);
+        // Constrói LlmContext a partir do coreDecision e facts hoistados (BLK-04 fix — T9.8).
+        // Core decide stage; LLM recebe contexto para decidir apenas a fala.
+        let llmContext: LlmContext | undefined;
+        if (coreDecision) {
+          const factsSummary: Record<string, string> = {};
+          for (const [k, v] of Object.entries(cachedFacts)) {
+            // Sanitiza valores sensíveis — nunca expõe renda bruta ou CPF ao LLM.
+            factsSummary[k] = (k === 'renda_principal' || k === 'cpf') ? 'informado(a)' : String(v).slice(0, 50);
+          }
+          llmContext = {
+            stage_current: coreDecision.stage_current,
+            stage_after: coreDecision.stage_after,
+            next_objective: coreDecision.next_objective,
+            facts_count: Object.keys(cachedFacts).length,
+            facts_summary: factsSummary,
+            speech_intent: coreDecision.speech_intent,
+          };
+          diagLog('llm.context.built', {
+            stage_current: llmContext.stage_current,
+            stage_after: llmContext.stage_after,
+            facts_count: llmContext.facts_count,
+            speech_intent_present: !!llmContext.speech_intent,
+            next_objective_length: llmContext.next_objective.length,
+          });
+        }
+        const llmResult = await llmCaller(userText, env as Record<string, unknown>, llmContext);
         llmInvoked = llmResult.llm_invoked;
         if (llmResult.ok && llmResult.reply_text) {
           replyText = llmResult.reply_text;
