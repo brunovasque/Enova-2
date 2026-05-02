@@ -31,6 +31,7 @@ import { runInboundPipeline } from './pipeline.ts';
 import { sendMetaOutbound } from './outbound.ts';
 import { callLlm } from '../llm/client.ts';
 import { emitTelemetry } from '../telemetry/emit.ts';
+import { diagLog, maskId } from './prod-diag.ts';
 
 export type CanaryBlockReason =
   | 'rollback_active'
@@ -124,6 +125,15 @@ export async function runCanaryPipeline(
     turn_id: crmResult.turn_id ?? null,
   });
 
+  // Log 6 — pipeline.result
+  diagLog('meta.prod.pipeline.result', {
+    crm_ok: crmResult.ok,
+    lead_id_present: !!crmResult.lead_id,
+    turn_id_present: !!crmResult.turn_id,
+    memory_event_id_present: !!crmResult.memory_event_id,
+    errors_count: (crmResult.errors ?? []).length,
+  });
+
   // Passo 2 — LLM (soberania da IA)
   const rollbackActive = isFlagOn(env.ROLLBACK_FLAG);
   const maintenanceActive = isFlagOn(env.MAINTENANCE_MODE);
@@ -131,6 +141,18 @@ export async function runCanaryPipeline(
 
   let llmInvoked = false;
   let replyText: string | undefined;
+
+  // Log 7 — llm.gate (computed antes de qualquer branch)
+  const llmGateBlockReason = rollbackActive ? 'rollback_active'
+    : maintenanceActive ? 'maintenance_active'
+    : !llmEnabled ? 'llm_disabled'
+    : !event.text_body?.trim() ? 'llm_no_text'
+    : null;
+  diagLog('meta.prod.llm.gate', {
+    allowed: llmGateBlockReason === null,
+    block_reason: llmGateBlockReason,
+    llm_invoked: llmGateBlockReason === null,
+  });
 
   if (rollbackActive) {
     emitCanary(ctx, 'llm.blocked', 'blocked', { reason: 'rollback_active' });
@@ -148,15 +170,39 @@ export async function runCanaryPipeline(
         llmInvoked = llmResult.llm_invoked;
         if (llmResult.ok && llmResult.reply_text) {
           replyText = llmResult.reply_text;
+          // Log 8 — llm.result (success)
+          diagLog('meta.prod.llm.result', {
+            success: true,
+            reply_text_present: true,
+            reply_text_length: replyText.length,
+            latency_ms: llmResult.latency_ms ?? null,
+            error_type: null,
+          });
           emitCanary(ctx, 'llm.completed', 'completed', {
             llm_invoked: true,
             reply_text_length: replyText.length,
           });
         } else {
+          // Log 8 — llm.result (failure)
+          diagLog('meta.prod.llm.result', {
+            success: false,
+            reply_text_present: false,
+            reply_text_length: 0,
+            latency_ms: llmResult.latency_ms ?? null,
+            error_type: llmResult.error ?? 'unknown',
+          });
           errors.push(`llm_error: ${llmResult.error ?? 'unknown'}`);
           emitCanary(ctx, 'llm.failed', 'failed', { error: llmResult.error });
         }
       } catch (e) {
+        // Log 8 — llm.result (exception)
+        diagLog('meta.prod.llm.result', {
+          success: false,
+          reply_text_present: false,
+          reply_text_length: 0,
+          latency_ms: null,
+          error_type: 'llm_exception',
+        });
         errors.push(`llm_exception: ${String(e)}`);
         emitCanary(ctx, 'llm.exception', 'failed', { error: String(e) });
       }
@@ -191,6 +237,17 @@ export async function runCanaryPipeline(
     canaryAllowed = true;
   }
 
+  // Log 9 — outbound.gate
+  diagLog('meta.prod.outbound.gate', {
+    allowed: canaryAllowed,
+    block_reason: canaryBlockReason ?? null,
+    wa_id_masked: maskId(inboundWaId || null),
+    canary_allowed: canaryAllowed,
+    client_real_allowed: false,
+    wa_matches_canary: canaryWaId.length > 0 && inboundWaId === canaryWaId,
+    outbound_attempted: canaryAllowed,
+  });
+
   if (canaryBlockReason) {
     emitCanary(ctx, 'outbound.blocked', 'blocked', {
       reason: canaryBlockReason,
@@ -209,6 +266,15 @@ export async function runCanaryPipeline(
       if (outboundResult.outbound_message_id) {
         outboundMessageId = outboundResult.outbound_message_id;
       }
+      // Log 10 — outbound.result
+      diagLog('meta.prod.outbound.result', {
+        attempted: true,
+        external_dispatch: externalDispatch,
+        meta_status: outboundResult.http_status ?? null,
+        message_id_present: !!outboundResult.outbound_message_id,
+        error_type: externalDispatch ? null : (outboundResult.blocked_reason ?? 'unknown'),
+        error_body_sanitized: outboundResult.error_body_sanitized ?? null,
+      });
       if (!outboundResult.external_dispatch && outboundResult.blocked_reason) {
         errors.push(`outbound_blocked: ${outboundResult.blocked_reason}`);
         emitCanary(ctx, 'outbound.failed', 'failed', { reason: outboundResult.blocked_reason });
@@ -220,6 +286,15 @@ export async function runCanaryPipeline(
         });
       }
     } catch (e) {
+      // Log 10 — outbound.result (exception)
+      diagLog('meta.prod.outbound.result', {
+        attempted: true,
+        external_dispatch: false,
+        meta_status: null,
+        message_id_present: false,
+        error_type: 'outbound_exception',
+        error_body_sanitized: null,
+      });
       errors.push(`outbound_exception: ${String(e)}`);
       emitCanary(ctx, 'outbound.exception', 'failed', { error: String(e) });
     }

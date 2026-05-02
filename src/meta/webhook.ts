@@ -23,6 +23,8 @@ import { verifyMetaSignature } from './signature.ts';
 import { getSharedDedupeStore, type DedupeStore } from './dedupe.ts';
 import { readEnvString, type MetaWorkerEnv } from './webhook-env.ts';
 import { runCanaryPipeline, type CanaryReport } from './canary-pipeline.ts';
+import { readCanonicalFlags } from '../golive/flags.ts';
+import { diagLog, maskId } from './prod-diag.ts';
 
 export const META_WEBHOOK_ROUTE = '/__meta__/webhook' as const;
 
@@ -156,10 +158,27 @@ export async function processMetaWebhookPost(input: {
   telemetryContext?: Pick<TelemetryRequestContext, 'trace_id' | 'correlation_id' | 'request_id'>;
   dedupeStore?: DedupeStore;
 }): Promise<MetaWebhookPostResult> {
+  const t0 = Date.now();
   const ctx = safeContext(input.telemetryContext);
   const appSecret = readEnvString(input.env, 'META_APP_SECRET');
 
+  // Log 1 — received
+  diagLog('meta.prod.webhook.received', {
+    method: 'POST',
+    pathname: META_WEBHOOK_ROUTE,
+    has_signature: input.signatureHeader !== null,
+    body_size: input.rawBody.length,
+    prod_marker: true,
+  });
+
   const sig = await verifyMetaSignature(input.rawBody, input.signatureHeader, appSecret ?? null);
+
+  // Log 2 — signature
+  diagLog('meta.prod.webhook.signature', {
+    ok: sig.ok,
+    reason: sig.ok ? null : sig.reason,
+  });
+
   if (!sig.ok) {
     emitWebhookEvent(ctx, 'meta.webhook.signature.fail', 'rejected', 'warn', {
       route: META_WEBHOOK_ROUTE,
@@ -196,6 +215,21 @@ export async function processMetaWebhookPost(input: {
   }
 
   const parsed = parseMetaWebhookPayload(payload);
+  const firstEv = parsed.ok && parsed.events.length > 0 ? parsed.events[0] : null;
+
+  // Log 3 — parsed
+  diagLog('meta.prod.webhook.parsed', {
+    accepted: parsed.ok,
+    reason: parsed.ok ? null : (parsed.reason ?? 'unknown'),
+    events_count: parsed.ok ? parsed.events.length : 0,
+    event_kind: firstEv?.kind ?? null,
+    wa_id_masked: firstEv ? maskId(firstEv.wa_id) : null,
+    phone_number_id_masked: firstEv ? maskId(firstEv.phone_number_id) : null,
+    message_id_masked: firstEv ? maskId(firstEv.wa_message_id) : null,
+    message_type: firstEv?.message_type ?? null,
+    text_present: firstEv ? firstEv.text_body !== null : false,
+  });
+
   if (!parsed.ok) {
     emitWebhookEvent(ctx, 'meta.webhook.inbound.invalid', 'rejected', 'warn', {
       route: META_WEBHOOK_ROUTE,
@@ -212,9 +246,30 @@ export async function processMetaWebhookPost(input: {
   const enova2Enabled = input.env.ENOVA2_ENABLED === 'true' || input.env.ENOVA2_ENABLED === true;
   const canaryResults: CanaryReport[] = [];
 
+  // Log 5 — flags.snapshot (uma vez por request, antes do loop de eventos)
+  const flags = readCanonicalFlags(input.env as unknown as Record<string, unknown>);
+  diagLog('meta.prod.flags.snapshot', {
+    ENOVA2_ENABLED: flags.enova2_enabled,
+    CHANNEL_ENABLED: flags.channel_enabled,
+    META_OUTBOUND_ENABLED: flags.meta_outbound_enabled,
+    LLM_REAL_ENABLED: flags.llm_real_enabled,
+    OUTBOUND_CANARY_ENABLED: flags.outbound_canary_enabled,
+    CLIENT_REAL_ENABLED: flags.client_real_enabled,
+    ROLLBACK_FLAG: flags.rollback_flag,
+    MAINTENANCE_MODE: flags.maintenance_mode,
+    OUTBOUND_CANARY_WA_ID_present: flags.outbound_canary_wa_id.length > 0,
+    OUTBOUND_CANARY_WA_ID_masked: maskId(flags.outbound_canary_wa_id || null),
+  });
+
   for (const event of parsed.events) {
     const dedupeKey = computeDedupeKey(event);
     const duplicate = dedupeStore.has(dedupeKey);
+
+    // Log 4 — dedupe
+    diagLog('meta.prod.dedupe', {
+      duplicate,
+      message_id_masked: maskId(event.wa_message_id),
+    });
 
     if (duplicate) {
       emitWebhookEvent(ctx, 'meta.webhook.inbound.duplicate', 'observed', 'info', {
@@ -284,6 +339,19 @@ export async function processMetaWebhookPost(input: {
       reason: anyOutbound ? 'outbound_attempted_but_failed' : 'no_outbound_this_request',
     });
   }
+
+  // Log 11 — webhook.final
+  diagLog('meta.prod.webhook.final', {
+    http_status: 200,
+    mode: modeValue,
+    llm_invoked: anyLlm,
+    reply_text_present: anyReplyText,
+    outbound_attempted: anyOutbound,
+    external_dispatch: anyDispatch,
+    canary_block_reason: canaryResults.length > 0 ? (canaryResults[0].canary_block_reason ?? null) : 'no_pipeline_ran',
+    client_block_reason: flags.client_real_enabled ? null : 'client_real_disabled',
+    total_latency_ms: Date.now() - t0,
+  });
 
   return {
     status: 200,

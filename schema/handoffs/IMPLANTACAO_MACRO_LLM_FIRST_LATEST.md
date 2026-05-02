@@ -1,5 +1,72 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-DIAG T8 — Telemetria cirúrgica PROD (2026-05-01)
+
+**Tipo**: PR-DIAG | **Status**: EM EXECUÇÃO — instrumentação completa, aguarda deploy PROD e inspeção  
+**Contexto**: cutover executado, PROD recebeu POST `/__meta__/webhook` OK, resposta WhatsApp **não chegou**  
+**Causa**: `emitTelemetry` vai para buffer em memória — não aparece no `wrangler tail` — bloqueio era opaco  
+**Próxima ação**: **Vasques deploya esta PR no PROD, envia 1 mensagem WhatsApp, inspeciona `wrangler tail nv-enova-2`**
+
+### 11 logs adicionados (visíveis no wrangler tail)
+
+```json
+{"diag":"meta.prod.webhook.received",   "has_signature":true, "body_size":412, "prod_marker":true}
+{"diag":"meta.prod.webhook.signature",  "ok":true, "reason":null}
+{"diag":"meta.prod.webhook.parsed",     "accepted":true, "event_kind":"message", "text_present":true, ...}
+{"diag":"meta.prod.dedupe",             "duplicate":false, "message_id_masked":"wam****xyz"}
+{"diag":"meta.prod.flags.snapshot",     "ENOVA2_ENABLED":true, "LLM_REAL_ENABLED":true, "ROLLBACK_FLAG":false,
+                                         "OUTBOUND_CANARY_WA_ID_present":true, ...}
+{"diag":"meta.prod.pipeline.result",    "crm_ok":true, "lead_id_present":true, "errors_count":0}
+{"diag":"meta.prod.llm.gate",           "allowed":true, "block_reason":null}
+{"diag":"meta.prod.llm.result",         "success":true, "reply_text_present":true, "reply_text_length":87}
+{"diag":"meta.prod.outbound.gate",      "allowed":true, "wa_matches_canary":true, "canary_allowed":true}
+{"diag":"meta.prod.outbound.result",    "external_dispatch":true, "meta_status":200, "message_id_present":true}
+{"diag":"meta.prod.webhook.final",      "llm_invoked":true, "external_dispatch":true, "total_latency_ms":1850}
+```
+
+### Árvore de diagnóstico resumida
+
+```
+Log 1 ausente? → POST não chegou no Worker (problema de webhook/deploy)
+Log 2 ok=false? → META_APP_SECRET errado no PROD
+Log 3 accepted=false? → payload malformado / evento de status
+Log 5 flags? → ROLLBACK_FLAG=true / LLM_REAL_ENABLED=false / OUTBOUND_CANARY_WA_ID_present=false
+Log 7 allowed=false? → block_reason revela gate exato
+Log 8 success=false? → error_type revela: key missing / API error (sem secret)
+Log 9 wa_matches_canary=false? → wa_id inbound ≠ OUTBOUND_CANARY_WA_ID (número enviando errado)
+Log 10 external_dispatch=false? → meta_status + error_body_sanitized → problema Graph API
+```
+
+### Arquivos modificados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/meta/prod-diag.ts` | NOVO — maskId + diagLog |
+| `src/meta/webhook.ts` | Logs 1, 2, 3, 4, 5, 11 |
+| `src/meta/canary-pipeline.ts` | Logs 6, 7, 8, 9, 10 |
+| `src/meta/outbound.ts` | `error_body_sanitized` em OutboundResult |
+
+### Smokes
+
+| Suite | Resultado |
+|---|---|
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+
+### Roadmap T8
+
+| Etapa | Status |
+|---|---|
+| 2 — inbound → CRM + memória | CONCLUÍDA (PR #168) |
+| 3 — prova T8.16 | CONCLUÍDA (PR #169) |
+| 4 — LLM + outbound canary | CONCLUÍDA (PR #170) |
+| 5 — prova T8.17 real | CONCLUÍDA (PR #171 — 54 PASS real) |
+| 6 — cutover Enova 1 → Enova 2 PROD | EXECUTADO — resposta WA não chegou — **EM DIAGNÓSTICO** |
+| 7 — G8 closeout | NÃO FECHADO |
+
+---
+
 ## PR-T8.18 — Cutover controlado Enova 2 em produção WhatsApp (2026-05-01)
 
 **Tipo**: PR-OPS / GO-LIVE CONTROLADO | **Status**: EM EXECUÇÃO — runbook e checklist prontos  
