@@ -39,6 +39,7 @@ export interface OutboundResult {
   blocked_reason?: OutboundBlockedReason;
   http_status?: number;
   outbound_message_id?: string;
+  error_body_sanitized?: string;
 }
 
 const DEFAULT_GRAPH_VERSION = 'v20.0';
@@ -109,10 +110,16 @@ export async function sendMetaOutbound(intent: OutboundIntent, env: MetaWorkerEn
     });
 
     if (!response.ok) {
+      let errorBodySanitized: string | undefined;
+      try {
+        const errText = await response.text();
+        errorBodySanitized = errText.slice(0, 120).replace(/[\r\n]+/g, ' ').trim();
+      } catch { /* ignore */ }
       return {
         external_dispatch: false,
         blocked_reason: 'graph_api_error',
         http_status: response.status,
+        error_body_sanitized: errorBodySanitized,
       };
     }
 
