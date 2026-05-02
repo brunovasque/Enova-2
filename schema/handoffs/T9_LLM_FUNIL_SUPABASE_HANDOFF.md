@@ -3,7 +3,28 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11 CONCLUÍDAS; próxima: T9.12 — IMPL Supabase write real (CRM/memória/stage)
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11/T9.12-DIAG CONCLUÍDAS; próxima: T9.12 — IMPL Supabase write real (CRM/memória/stage)
+
+## T9.12-DIAG — Diagnóstico Supabase write real — CONCLUÍDA (2026-05-02)
+
+PR: `diag/t9.12-supabase-write-real` (#195)
+
+**Diagnóstico completo da camada de escrita Supabase. 5 bloqueadores identificados (BLK-WRITE-01..05).**
+
+**Bloqueadores:**
+- BLK-WRITE-01: `SupabaseCrmBackend.insert/update` → writeBuffer, nunca Supabase (CRÍTICO)
+- BLK-WRITE-02: `crm_turns`/`crm_facts` sem tabela Supabase mapeada (BLOQUEANTE PARCIAL)
+- BLK-WRITE-03: `SUPABASE_WRITE_ENABLED` declarada mas desconectada do path de escrita (BLOQUEANTE)
+- BLK-WRITE-04: sem migrations no repo — novas tabelas requerem DDL manual por Vasques (BLOQUEANTE PARCIAL)
+- BLK-WRITE-05: `writeBuffer` volátil por-request — dados perdidos entre requests (CRÍTICO)
+
+**Mapeamento pronto:** `crm_lead_state↔enova_state` e `crm_leads↔crm_lead_meta` (T8.9B)  
+**Mecanismo disponível:** `supabaseInsert()` funcional em `src/supabase/client.ts`  
+**Diferidos (aguardam Vasques):** `crm_turns→lead_timeline_events` (DDL), `crm_facts→?` (destino)
+
+**Próxima:** T9.12 — IMPL Supabase write real (CRM/memória/stage)
+
+---
 
 ## T9.11 — PROVA LLM usa contexto sem quebrar stage/guard — CONCLUÍDA (2026-05-02)
 
