@@ -3,7 +3,32 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7 CONCLUÍDAS; próxima: T9.8 (IMPL LlmContext estruturado)
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG CONCLUÍDAS; próxima: T9.8 (IMPL LlmContext estruturado)
+
+## T9.8-DIAG — CONCLUÍDA (2026-05-02)
+
+Diagnóstico READ-ONLY para T9.8. `schema/diagnostics/T9_LLM_CONTEXT_DIAG.md` criado.
+
+**Veredito:** T9.8 viável com patch cirúrgico. Dois arquivos `src/` a alterar.
+
+**Achados críticos:**
+- BLK-04 identificado: `factsMap` declarado dentro do try block de Passo 1.5 — não acessível no Passo 2 (LLM). Hoist necessário.
+- `coreDecision` já no escopo externo — pronto para uso.
+- `callLlm` atual: `callLlm(userMessage, env)` — cego ao stage, facts, objetivo.
+- Estratégia: terceiro parâmetro opcional `context?: LlmContext` — compatibilidade total com chamadas atuais.
+- `LlmContext` shape mínimo: `{ stage_current, stage_after, next_objective, block_advance, speech_intent, facts?, recent_history? }`.
+- Histórico: `getLeadTimeline` já existe; usar `raw_input_summary ≤ 100 chars`, máx 3 turnos.
+- Segurança: `diagLog` registra apenas contagens — prompt completo nunca logado.
+
+**Archivos do T9.8:**
+- `src/llm/client.ts` — exportar `LlmContext` + `buildDynamicSystemPrompt` + `context?`
+- `src/meta/canary-pipeline.ts` — hoist `cachedFacts`; bloco [D]; `llmCaller(text, env, llmContext)`
+- `src/llm/context-smoke.ts` — `smoke:llm:context` (mín. 12 checks)
+- `package.json` — `"smoke:llm:context"` adicionado
+
+**Próxima ação autorizada: T9.8 — IMPL LlmContext estruturado**
+
+---
 
 ## T9.7 — CONCLUÍDA (2026-05-02)
 
