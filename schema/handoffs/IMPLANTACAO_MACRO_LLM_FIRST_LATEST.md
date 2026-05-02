@@ -1,5 +1,36 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.1 — Supabase runtime/env readiness (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.1-supabase-runtime-env-readiness`  
+**Próxima PR autorizada**: **T9.2 — Fallback guard com telemetria explícita**
+
+### O que foi feito
+
+- `wrangler.toml`: bloco `[vars]` com 12 vars não sensíveis + defaults seguros (`false`/`0`); `[env.test.vars]` espelhado; 8 secrets documentados em comentário (nunca commitados)
+- `src/runtime/env-validator.ts`: 20 envs canônicas (`CANONICAL_ENVS`), separação `var`/`secret`, `validateEnvs(env)` retorna relatório seguro sem vazar valores, `getPersistenceMode(env)` retorna `'in_memory' | 'supabase_read_only' | 'supabase_full'`
+- `src/runtime/env-smoke.ts`: smoke em 7 categorias (C1–C7)
+- `package.json`: script `smoke:runtime:env` adicionado
+
+### Smokes
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:runtime:env` | **53/53 PASS** |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Não alterado
+
+- Zero src/meta, src/core, src/llm, src/supabase, src/crm alterados
+- Supabase real NÃO habilitado (flags permanecem `false`)
+- Pipeline WhatsApp intacto; G8 preservado
+
+---
+
 ## PR-T9.0 — Contrato executivo T9 (2026-05-01)
 
 **Tipo**: PR-DOC | **Status**: CONCLUÍDA  

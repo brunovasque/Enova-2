@@ -1,9 +1,31 @@
 # Handoff T9 — LLM ↔ Funil ↔ Supabase ↔ Telemetria
 
 **Tipo:** Handoff de sessão  
-**Data:** 2026-05-01  
+**Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — aguardando execução T9.1
+**Status contrato:** ABERTO — T9.1 CONCLUÍDA; aguardando execução T9.2
+
+## T9.1 — CONCLUÍDA (2026-05-02)
+
+`wrangler.toml` declarou 12 vars com defaults seguros (`false`/`0`) + 8 secrets documentados em comentário.  
+`src/runtime/env-validator.ts` — 20 envs canônicas, `validateEnvs()`, `getPersistenceMode()`, nunca vaza valores.  
+`src/runtime/env-smoke.ts` + `smoke:runtime:env` — **53/53 PASS**.  
+Regressões: `smoke:meta:canary` 41/41, `smoke:meta:webhook` 20/20, `smoke:meta:pipeline` 26/26, `prove:g8-readiness` 7/7 PASS.
+
+**Próxima ação autorizada: T9.2 — Fallback guard com telemetria explícita**
+
+### O que T9.2 deve fazer
+1. Em `src/crm/store.ts` (`getCrmBackend`): emitir `diagLog` quando cai em `CrmInMemoryBackend` silenciosamente
+2. Em `/crm/health`: expor `persistence_mode: 'in_memory' | 'supabase_read_only' | 'supabase_full'` (usar `getPersistenceMode` de `src/runtime/env-validator.ts`)
+3. Em `/__admin__/go-live/health`: adicionar `supabase_runtime_active: boolean`
+4. Mesmo padrão para `getMemoryStore(env)` quando `MEMORY_SUPABASE_ENABLED === false`
+5. Smoke `smoke:runtime:fallback-guard` — verifica fallback emite telemetria e health reporta modo
+
+### O que T9.2 NÃO deve fazer
+- NÃO habilitar Supabase real
+- NÃO alterar pipeline WhatsApp
+- NÃO alterar Core/funil
+- NÃO alterar LLM
 
 ---
 
