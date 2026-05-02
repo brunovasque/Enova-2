@@ -1,5 +1,51 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.6-IMPL — Extração de facts do texto WhatsApp real (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.6-parsers-texto-real`  
+**Próxima PR autorizada**: **T9.7 — PROVA facts extraídos e stage avança**
+
+### O que foi feito
+
+| Arquivo | Ação |
+|---|---|
+| `src/core/text-extractor.ts` | Criado — `extractFactsFromText(text, stage)` — 6 stages, ~58 patterns |
+| `src/meta/canary-pipeline.ts` | Modificado — blocos [B]+[C] no Passo 1.5 |
+| `src/core/text-extractor-smoke.ts` | Criado — `smoke:core:text-extractor` |
+| `package.json` | `"smoke:core:text-extractor"` adicionado |
+
+### BLK-03 RESOLVIDO
+
+Pipeline: `text_body` → `extractFactsFromText` → `writeLeadFact` (status: `'pending'`) → `getLeadFacts` → `runCoreEngine` (vê facts no mesmo turno).
+
+### Resultados dos smokes
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:core:text-extractor` | **58/58 PASS** |
+| `smoke:meta:core-pipeline` | 23/23 PASS |
+| `prove:t9.5-stage-persistence` | 34/34 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Stages cobertos pelo extrator
+
+| Stage | Facts extraídos |
+|---|---|
+| `discovery` | `customer_goal` |
+| `qualification_civil` | `estado_civil`, `processo` |
+| `qualification_renda` | `regime_trabalho`, `renda_principal` |
+| `qualification_eligibility` | `nacionalidade` |
+| `docs_prep` | `docs_channel_choice` |
+| `visit` | `visit_interest` |
+
+---
+
 ## PR-T9.6-DIAG — Diagnóstico extração de facts do texto WhatsApp real (2026-05-02)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA  

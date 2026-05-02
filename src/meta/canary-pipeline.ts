@@ -33,7 +33,8 @@ import { sendMetaOutbound } from './outbound.ts';
 import { callLlm } from '../llm/client.ts';
 import { runCoreEngine } from '../core/engine.ts';
 import { getCrmBackend } from '../crm/store.ts';
-import { getLeadState, getLeadFacts, upsertLeadState } from '../crm/service.ts';
+import { getLeadState, getLeadFacts, upsertLeadState, writeLeadFact } from '../crm/service.ts';
+import { extractFactsFromText } from '../core/text-extractor.ts';
 import { emitTelemetry } from '../telemetry/emit.ts';
 import { diagLog, maskId } from './prod-diag.ts';
 
@@ -156,6 +157,31 @@ export async function runCanaryPipeline(
           ? stateResult.record.stage_current
           : 'discovery'
       ) as LeadState['current_stage'];
+
+      // Bloco [B] — Extração de facts do texto WhatsApp real (T9.6 — BLK-03 fix)
+      // Função pura: sem I/O, nunca lança exceção.
+      // Texto completo do cliente nunca é logado.
+      const extractedFacts = extractFactsFromText(event.text_body ?? '', currentStage);
+      const extractedKeys = Object.keys(extractedFacts);
+
+      // Bloco [C] — Persistência de facts extraídos (status: 'pending')
+      // Facts ficam 'pending' até confirmação — LLM/operador promove para 'accepted'.
+      for (const [factKey, factValue] of Object.entries(extractedFacts)) {
+        await writeLeadFact(coreBackend, {
+          lead_id: crmResult.lead_id,
+          fact_key: factKey,
+          fact_value: factValue,
+          confidence: factKey === 'renda_principal' ? 0.9 : 0.7,
+          status: 'pending',
+          source_turn_id: crmResult.turn_id ?? null,
+        });
+      }
+
+      diagLog('text_extractor.result', {
+        stage_current: currentStage,
+        facts_extracted_count: extractedKeys.length,
+        fact_keys: extractedKeys,
+      });
 
       const factsResult = await getLeadFacts(coreBackend, crmResult.lead_id);
       const factsMap: Record<string, unknown> = {};

@@ -3,7 +3,36 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG CONCLUÍDAS; próxima: T9.6 IMPL
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL CONCLUÍDAS; próxima: T9.7 (PROVA facts extraídos e stage avança)
+
+## T9.6-IMPL — CONCLUÍDA (2026-05-02)
+
+BLK-03 RESOLVIDO. Pipeline agora extrai facts do texto WhatsApp, persiste como `'pending'` e o Core os vê no mesmo turno.
+
+**Arquivos:**
+- `src/core/text-extractor.ts` — `extractFactsFromText(text, stage)` função pura (6 stages, 58 patterns)
+- `src/meta/canary-pipeline.ts` — blocos [B]+[C] no Passo 1.5
+- `src/core/text-extractor-smoke.ts` — `smoke:core:text-extractor` **58/58 PASS**
+- `package.json` — `"smoke:core:text-extractor"` adicionado
+
+**Regressões:** `smoke:meta:core-pipeline` 23/23, `prove:t9.5-stage-persistence` 34/34, `smoke:meta:canary` 41/41, `smoke:meta:webhook` 20/20, `smoke:meta:pipeline` 26/26, `smoke:runtime:fallback-guard` 41/41, `smoke:runtime:env` 53/53, `prove:g8-readiness` 7/7 PASS.
+
+**Próxima ação autorizada: T9.7 — PROVA facts extraídos e stage avança**
+
+### O que T9.7 deve fazer
+1. Prova end-to-end: lead envia texto com facts → `extractFactsFromText` extrai → `writeLeadFact` persiste → Core lê → stage avança de `discovery` para `qualification_civil`
+2. Verificar `state_version` incrementa corretamente após avanço
+3. Verificar `stage_at_turn` reflete stage correto (já validado em T9.5 mas agora com facts reais)
+4. Verificar facts `'pending'` aparecem em `getLeadFacts`
+5. Regressões: `smoke:core:text-extractor` 58/58, `smoke:meta:core-pipeline` 23/23, `prove:t9.5-stage-persistence` 34/34
+
+### O que T9.7 NÃO deve fazer
+- NÃO alterar `callLlm` (T9.8)
+- NÃO alterar `text-extractor.ts` (a não ser correção de bug comprovada por T9.7)
+- NÃO ativar Supabase write real (T9.11)
+- NÃO fechar G9
+
+---
 
 ## T9.6-DIAG — CONCLUÍDA (2026-05-02)
 
