@@ -1,5 +1,66 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-DIAG LLM-FUNIL-SISTEMA-INTEIRO-READONLY (2026-05-01)
+
+**Tipo**: PR-DIAG / READ-ONLY | **Status**: EM EXECUÇÃO  
+**Base**: PR #176 (closeout G8 WhatsApp, mergeada)  
+**Próxima ação**: **Abrir contrato T9** com plano canônico de 15 micro-PRs
+
+### Veredito do diagnóstico
+
+A Enova 2 responde WhatsApp em PROD, mas o **LLM e o funil mecânico são dois sistemas paralelos isolados em runtime**. O LLM gera fala sem saber stage/facts/históriço; o Core mecânico decide stages corretamente, mas só roda em rota técnica isolada. Persistência Supabase em PROD está silenciosamente desligada — fallback in-memory sem telemetria.
+
+### Top 6 achados
+
+1. `runCoreEngine` nunca chamado por `src/meta/*` (grep confirmou 0 matches)
+2. `callLlm(text_body)` recebe apenas mensagem atual — sem stage, facts ou históriço
+3. `CrmLeadState.stage_current` nunca escrito em runtime real (`stage_at_turn='unknown'` literal)
+4. `getCrmBackend` cai em in-memory silenciosamente quando flag OFF (sem telemetria)
+5. `wrangler.toml` declara zero bindings (linhas 15-16 explicitam)
+6. `src/context/{schema,living-memory,multi-signal}.ts` existem mas nunca são chamados
+
+### Documentos entregues
+
+- `schema/diagnostics/LLM_FUNIL_SISTEMA_INTEIRO_READONLY.md` — raio-x principal (16 seções)
+- `schema/diagnostics/LLM_FUNIL_MAPA_CONEXOES.md` — mapa visual de conexões (atual + proposto)
+- `schema/diagnostics/SUPABASE_RUNTIME_READINESS.md` — diagnóstico operacional Supabase
+- `schema/handoffs/LLM_FUNIL_NEXT_CONTRACT_HANDOFF.md` — handoff para abrir T9
+
+### Smokes (todos retrocompat)
+
+| Smoke | Resultado |
+|---|---|
+| `prove:g8-readiness` | 7/7 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:meta:client-real-flag` | 35/35 PASS |
+
+### Plano canônico T9 (resumo)
+
+15 micro-PRs separados em frentes:
+- **Runtime**: T9.1 (wrangler bindings), T9.2 (Supabase fallback guard)
+- **Funil**: T9.3 (DIAG), T9.4 (IMPL Core no pipeline), T9.5 (PROVA), T9.6 (parsers L04-L17), T9.7 (PROVA)
+- **LLM**: T9.8 (LlmContext), T9.9 (output guard), T9.10 (PROVA conversa real)
+- **Persistência**: T9.11 (Supabase write real), T9.12 (PROVA restart)
+- **Telemetria**: T9.13 (trace ponta-a-ponta)
+- **Closeout**: T9.R (G9)
+
+### Decisões pendentes para Vasques (em handoff)
+
+A. Persistência Supabase real é pré-condição de T9 ou paralela?  
+B. Output guard LLM é hard-fail ou soft-fail para promessas de aprovação?  
+C. Quanto contexto histórico passar ao LLM (3, 5, 10 turnos)?
+
+### Não alterado nesta PR
+
+- Zero alteração de runtime
+- Zero implementação
+- Zero alteração de flags/envs/secrets/rotas
+- T8/G8 frente WhatsApp APROVADO permanece intacto
+
+---
+
 ## PR-T8.R CLOSEOUT — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01)
 
 **Tipo**: PR-PROVA/CLOSEOUT | **Status**: CONCLUÍDA  
