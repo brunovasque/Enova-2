@@ -3,7 +3,59 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG CONCLUÍDAS; próxima: T9.9 — IMPL Output Guard para respostas do LLM
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL CONCLUÍDAS; próxima: T9.10 — Memória curta / contexto histórico controlado
+
+## T9.9-IMPL — CONCLUÍDA (2026-05-02)
+
+PR: #191 — `feat/t9.9-output-guard`
+
+**Output Guard implementado e validado. Soberania preservada — LLM gera a fala, Guard apenas valida segurança, Core decide stage, adapter nunca inventa resposta.**
+
+**Arquivos criados/alterados:**
+- `src/llm/output-guard.ts` — módulo puro, sem I/O, zero deps externas
+- `src/llm/output-guard-smoke.ts` — smoke 48/48 PASS
+- `src/meta/canary-pipeline.ts` — `applyOutputGuard` integrado antes de `replyText` virar outbound
+- `package.json` — `"smoke:llm:output-guard"` adicionado
+
+**Bloqueios críticos (BLOCK):**
+- promessa de aprovação (ex: "você está aprovado", "crédito aprovado")
+- garantia de financiamento
+- stage interno exposto (ex: "stage 3", "estágio interno")
+- IDs internos (leadId, whatsappId, UUIDs)
+- CPF ou dados pessoais brutos
+- secrets/tokens
+- texto vazio ou apenas whitespace
+
+**Avisos não bloqueantes (WARN):**
+- texto longo (>800 chars) — warn `text_too_long`, outbound não bloqueado
+- pedido de documento fora de stage — warn `document_request_out_of_stage`, outbound não bloqueado
+
+**Comportamento de bloqueio:**
+- Se o guard bloquear → `replyText` permanece `undefined` → outbound para via `reply_text_missing`
+- `replacement_used` sempre `false` — adapter nunca inventa fallback
+- Guard nunca gera resposta substituta
+
+**Anti-falso-positivo:**
+- Negação detectada em prefixo de 50 chars: "não posso dizer que você está aprovado" → allowed
+
+**Resultados:**
+| Smoke | Resultado |
+|---|---|
+| `smoke:llm:output-guard` | **48/48 PASS** |
+| `smoke:llm:context` | 30/30 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:core-pipeline` | 23/23 PASS |
+| `prove:t9.7-facts-stage-advance` | 44/44 PASS |
+| `prove:t9.5-stage-persistence` | 58/58 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | G8 APROVADO |
+
+**G9 permanece aberto** — T9.10 é o próximo passo.
+
+**Próxima ação autorizada: T9.10 — Memória curta / contexto histórico controlado**
+
+---
 
 ## T9.9-DIAG — CONCLUÍDA (2026-05-02)
 
