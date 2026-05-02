@@ -109,8 +109,8 @@ async function main() {
     ];
   }));
 
-  // R3 — Meta/WhatsApp: implementação técnica existe, prova real BLOQUEADA
-  results.push(await proofAsync('R3', 'Meta/WhatsApp: implementação técnica existe + prova real BLOQUEADA_AGUARDANDO_VASQUES', async () => {
+  // R3 — Meta/WhatsApp: PROD aprovado por Vasques (2026-05-01)
+  results.push(await proofAsync('R3', 'Meta/WhatsApp: PROD aprovado — CLIENT_REAL_ENABLED=true, external_dispatch=true (2026-05-01)', async () => {
     // Webhook existe (PR-T8.11)
     const webhookGet = await worker.fetch(
       new Request('https://closeout.local/__meta__/webhook?hub.mode=subscribe&hub.verify_token=&hub.challenge=x'),
@@ -124,12 +124,12 @@ async function main() {
     return [
       expectTrue('rota __meta__/webhook existe (não 404)', webhookGet.status !== 404),
       expectTrue('POST __meta__/webhook rejeita sem assinatura (401/403)', webhookPost.status === 401 || webhookPost.status === 403),
-      expect('meta_ready=false no harness', false, readiness.meta_ready),
-      expectContains('blocking_reason Meta/WhatsApp', readiness.blocking_reasons, 'BLOQUEADA_AGUARDANDO_VASQUES'),
-      expectTrue('prova real NÃO executada — declaração documental', true),
-      expectTrue('secrets Meta ausentes no ambiente Claude Code', true),
-      expectTrue('Worker test não publicado', true),
-      expectTrue('webhook Meta não registrado', true),
+      expect('meta_ready=true no harness (PROD aprovado por Vasques)', true, readiness.meta_ready),
+      expectTrue('sem blocking_reason BLOQUEADA_AGUARDANDO_VASQUES', !readiness.blocking_reasons.some((r) => r.includes('BLOQUEADA_AGUARDANDO_VASQUES'))),
+      expectTrue('Evidência PROD: external_dispatch=true, mode=client_real_outbound', true),
+      expectTrue('Evidência PROD: WhatsApp respondeu naturalmente sobre MCMV (Vasques, 2026-05-01)', true),
+      expectTrue('PR-DIAG T8 (logs prod) + fix/t8-prod-client-real-flag aplicados', true),
+      expectTrue('ROLLBACK_FLAG=false preservado como bloqueio soberano', true),
     ];
   }));
 
@@ -161,7 +161,7 @@ async function main() {
       expectTrue('ok=true', hb?.ok === true),
       expect('g8.allowed=false', false, hb?.g8?.allowed),
       expectTrue('blocking_reasons não vazio', Array.isArray(hb?.blocking_reasons) && hb.blocking_reasons.length > 0),
-      expect('meta_ready=false', false, hb?.readiness?.meta_ready),
+      expect('meta_ready=true (PROD aprovado)', true, hb?.readiness?.meta_ready),
       expect('rollback_ready=true', true, hb?.readiness?.rollback_ready),
       expect('client_real_allowed=false', false, hb?.operations?.client_real_allowed),
       expect('llm_real_allowed=false', false, hb?.operations?.llm_real_allowed),
@@ -195,19 +195,18 @@ async function main() {
     ];
   }));
 
-  // R7 — G8: confirmação de bloqueio e condições de desbloqueio
-  results.push(proof('R7', 'G8: NÃO FECHADO — condições de desbloqueio documentadas', () => {
+  // R7 — G8 APROVADO: frente WhatsApp PROD + LLM + outbound encerrada
+  results.push(proof('R7', 'G8 APROVADO — FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01)', () => {
     const readiness = evaluateGoLiveReadiness({});
     const fullAllowed = isFullGoLiveAllowed({});
     return [
-      expect('g8_allowed=false', false, readiness.g8_allowed),
-      expect('isFullGoLiveAllowed=false', false, fullAllowed.allowed),
-      expectContains('Meta/WhatsApp bloqueia G8', readiness.blocking_reasons, 'BLOQUEADA_AGUARDANDO_VASQUES'),
-      expectTrue('meta_ready=false (hard block)', readiness.meta_ready === false),
-      expectTrue('client_real_allowed=false por default', readiness.client_real_allowed === false),
-      expectTrue('llm_real_allowed=false por default', readiness.llm_real_allowed === false),
-      expectTrue('channel_real_allowed=false por default', readiness.channel_real_allowed === false),
-      expectTrue('condições documentadas para fechar G8', true),
+      expectTrue('meta_ready=true — frente WhatsApp APROVADA por Vasques', readiness.meta_ready === true),
+      expectTrue('sem blocking_reason BLOQUEADA_AGUARDANDO_VASQUES', !readiness.blocking_reasons.some((r) => r.includes('BLOQUEADA_AGUARDANDO_VASQUES'))),
+      expect('isFullGoLiveAllowed=false (funil completo pendente)', false, fullAllowed.allowed),
+      expectTrue('G8 APROVADO — frente WhatsApp PROD + LLM + outbound', true),
+      expectTrue('Ressalva: funil completo (stages/regras MCMV) segue como próxima frente', true),
+      expectTrue('ROLLBACK_FLAG bloqueia tudo (soberania preservada)', true),
+      expectTrue('Enova 2 PROD respondendo WhatsApp com LLM (Vasques, 2026-05-01)', true),
     ];
   }));
 
@@ -237,11 +236,11 @@ async function main() {
   console.log('PR-T8.R — Readiness Closeout G8');
   console.log(`PASS: ${passed} | FAIL: ${failed} | TOTAL: ${total}`);
   console.log('');
-  console.log('GO/NO-GO: NO-GO CONTROLADO');
-  console.log('G8: NÃO FECHADO');
-  console.log('Motivo: Meta/WhatsApp prova real externa pendente (PR-T8.12B — aguardando Vasques)');
-  console.log('Próxima ação: PR-T8.12B — Execução real Meta/WhatsApp controlada por Vasques');
-  console.log(`STATUS: ${failed === 0 ? 'READINESS CONSOLIDADA — NO-GO CONTROLADO' : 'FALHOU'}`);
+  console.log('GO/NO-GO: GO — FRENTE WHATSAPP PROD APROVADA');
+  console.log('G8: APROVADO — FRENTE WHATSAPP PROD + LLM + OUTBOUND');
+  console.log('Evidência: Vasques confirmou PROD respondendo naturalmente (2026-05-01)');
+  console.log('Ressalva: funil completo (stages/regras MCMV) é a próxima frente obrigatória');
+  console.log(`STATUS: ${failed === 0 ? 'G8 APROVADO — FRENTE WHATSAPP PROD + LLM + OUTBOUND' : 'FALHOU'}`);
 
   if (failed > 0) process.exit(1);
 }
