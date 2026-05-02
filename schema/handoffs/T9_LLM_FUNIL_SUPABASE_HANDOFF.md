@@ -3,7 +3,28 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4 CONCLUÍDAS; próxima: T9.5 (PROVA)
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5 CONCLUÍDAS; próxima: T9.6 (IMPL)
+
+## T9.5 — CONCLUÍDA (2026-05-02)
+
+Prova `stage_current` persiste entre turnos: 5 cenários, **34/34 PASS**. Lead novo (C1–C2), lead com stage avançado (C3), resiliência a exceção (C4), sem secrets (C5). Zero bugs na T9.4. `prove:t9.5-stage-persistence` adicionado ao `package.json`.
+
+**Próxima ação autorizada: T9.6 — IMPL parsers L04–L17 chamados com texto real**
+
+### O que T9.6 deve fazer
+1. Conectar a extração de facts do texto WhatsApp real aos parsers L04–L17
+2. `callLlm` deve retornar `facts_extracted` além de `reply_text` (ou pipeline extrai facts separadamente)
+3. Facts extraídos devem ser persistidos via `writeLeadFact` no CRM
+4. Core recebe `facts_current` atualizado com facts do turno anterior
+5. Regressões: smoke:meta:core-pipeline 23/23, smoke:meta:canary 41/41, prove:t9.5-stage-persistence 34/34
+
+### O que T9.6 NÃO deve fazer
+- NÃO alterar LlmContext estruturado (T9.8)
+- NÃO ativar Supabase write real (T9.11)
+- NÃO alterar outbound/webhook/HMAC
+- NÃO fechar G9
+
+---
 
 ## T9.4 — CONCLUÍDA (2026-05-02)
 

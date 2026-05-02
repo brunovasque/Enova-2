@@ -1,5 +1,34 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.5 — PROVA stage_current persiste entre turnos (2026-05-02)
+
+**Tipo**: PR-PROVA | **Status**: CONCLUÍDA  
+**Branch**: `prove/t9.5-stage-persistence`  
+**Próxima PR autorizada**: **T9.6 — IMPL parsers L04–L17 chamados com texto real**
+
+### O que foi feito
+
+| Arquivo | Ação |
+|---|---|
+| `src/meta/stage-persistence-proof.ts` | Prova criada — 5 cenários, 34 checks |
+| `package.json` | `prove:t9.5-stage-persistence` adicionado |
+
+### Prova confirmada — 34/34 PASS
+
+| Cenário | O que prova |
+|---|---|
+| C1 (10 checks) | Lead novo: `stage_current = 'discovery'` persiste, `state_version = 1`, `stage_at_turn ≠ 'unknown'` |
+| C2 (7 checks) | Turno 2 do mesmo lead: `lead_id` idêntico, `state_version = 2`, `stage_at_turn ≠ 'unknown'` |
+| C3 (9 checks) | Stage avançado (`qualification_civil`) NÃO reseta para `discovery`; `stage_at_turn = qualification_civil`; `state_version = 3` |
+| C4 (3 checks) | Pipeline não lança exceção em nenhum cenário |
+| C5 (5 checks) | Nenhum secret no output; `core.decision` presente nos logs |
+
+### Zero bugs encontrados na T9.4
+
+A prova não revelou bug algum. A persistência da T9.4 funciona corretamente.
+
+---
+
 ## PR-T9.4 — IMPL chamada runCoreEngine no canary-pipeline (2026-05-02)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
