@@ -3,7 +3,27 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1 CONCLUÍDA; T9.2 CONCLUÍDA; T9.3 CONCLUÍDA; próxima: T9.4 (IMPL)
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4 CONCLUÍDAS; próxima: T9.5 (PROVA)
+
+## T9.4 — CONCLUÍDA (2026-05-02)
+
+Passo 1.5 adicionado ao `canary-pipeline.ts`: lê estado CRM → chama `runCoreEngine` → persiste `stage_after` via `upsertLeadState`. `stage_at_turn` em `createConversationTurn` corrigido (não mais `'unknown'`). `smoke:meta:core-pipeline` **23/23 PASS**. BLK-01 e BLK-02 RESOLVIDOS.
+
+**Próxima ação autorizada: T9.5 — PROVA stage_current persiste entre turnos**
+
+### O que T9.5 deve fazer
+1. Criar smoke/prova que verifica: lead recebe 2+ mensagens → `stage_current` do CRM persiste entre turnos (não reseta para `'discovery'` em cada turno)
+2. Verificar que `state_version` incrementa a cada turno
+3. Verificar que `stage_at_turn` no turno reflete o stage no momento da mensagem
+4. Regressões: `smoke:meta:canary` 41/41, `smoke:meta:webhook` 20/20, `smoke:meta:pipeline` 26/26, `smoke:meta:core-pipeline` 23/23, `prove:g8-readiness` 7/7
+
+### O que T9.5 NÃO deve fazer
+- NÃO alterar `callLlm` (T9.8)
+- NÃO habilitar facts extraction de raw_text (T9.6)
+- NÃO ativar Supabase write real (T9.11)
+- NÃO alterar outbound/webhook
+
+---
 
 ## T9.3 — CONCLUÍDA (2026-05-02)
 

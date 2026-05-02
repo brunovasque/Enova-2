@@ -18,7 +18,7 @@ import type { NormalizedMetaEvent } from './parser.ts';
 import type { MetaWorkerEnv } from './webhook-env.ts';
 import type { TelemetryRequestContext } from '../telemetry/types.ts';
 import { getCrmBackend } from '../crm/store.ts';
-import { upsertLeadByPhone, createConversationTurn } from '../crm/service.ts';
+import { upsertLeadByPhone, createConversationTurn, getLeadState } from '../crm/service.ts';
 import { registerMemoryEvent } from '../memory/service.ts';
 import { emitTelemetry } from '../telemetry/emit.ts';
 
@@ -118,10 +118,18 @@ export async function runInboundPipeline(
   if (lead_id) {
     try {
       const backend = await getCrmBackend(env as Record<string, unknown>);
+
+      // Ler stage atual para registrar stage_at_turn corretamente (BLK-02 fix)
+      let stageAtTurn = 'discovery';
+      const stateRes = await getLeadState(backend, lead_id);
+      if (stateRes.found && stateRes.record?.stage_current && stateRes.record.stage_current !== 'unknown') {
+        stageAtTurn = stateRes.record.stage_current;
+      }
+
       const summary = event.text_body
         ? event.text_body.slice(0, 200)
         : `[${event.message_type ?? event.kind}]`;
-      const result = await createConversationTurn(backend, lead_id, 'whatsapp', summary);
+      const result = await createConversationTurn(backend, lead_id, 'whatsapp', summary, stageAtTurn);
       if (result.success && result.record) {
         turn_id = result.record.turn_id;
         emitPipeline(ctx, 'crm.turn_created', 'completed', { lead_id, turn_id });

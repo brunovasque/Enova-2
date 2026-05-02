@@ -1,5 +1,41 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.4 — IMPL chamada runCoreEngine no canary-pipeline (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.4-runcore-canary-pipeline`  
+**Próxima PR autorizada**: **T9.5 — PROVA stage_current persiste entre turnos**
+
+### O que foi feito
+
+| Arquivo | Mudança |
+|---|---|
+| `src/crm/service.ts` | `upsertLeadState(backend, lead_id, decision)` criada — upsert inteligente (insert ou update com incremento de `state_version`) |
+| `src/crm/service.ts` | `createConversationTurn` agora aceita `stage_at_turn?: string` (default: `'unknown'`) |
+| `src/meta/pipeline.ts` | Lê `getLeadState` antes de criar o turno → `stage_at_turn` usa stage real (BLK-02 fix) |
+| `src/meta/canary-pipeline.ts` | Passo 1.5 adicionado: `getLeadState` + `getLeadFacts` + `runCoreEngine` + `upsertLeadState` + `diagLog('core.decision', ...)` |
+| `src/meta/core-pipeline-smoke.ts` | Smoke novo: 23/23 PASS (C1–C8 especificados no DIAG) |
+| `package.json` | `smoke:meta:core-pipeline` adicionado |
+
+### BLKs resolvidos
+
+- **BLK-01 RESOLVIDO**: `runCoreEngine` agora é chamado a cada mensagem WhatsApp recebida
+- **BLK-02 RESOLVIDO**: `stage_current` persistido via `upsertLeadState` após cada decisão do Core
+
+### Smokes / Validação
+
+| Smoke | Resultado |
+|---|---|
+| `smoke:meta:core-pipeline` | **23/23 PASS** (novo) |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:webhook` | 20/20 PASS |
+| `smoke:meta:pipeline` | 26/26 PASS |
+| `smoke:runtime:fallback-guard` | 39/39 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+---
+
 ## PR-T9.3 — DIAG integração Core ↔ pipeline (2026-05-02)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA  

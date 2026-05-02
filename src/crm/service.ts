@@ -37,6 +37,7 @@ import type {
   CrmTurn,
   CrmWriteResult,
 } from './types.ts';
+import type { CoreDecision } from '../core/types.ts';
 
 // ---------------------------------------------------------------------------
 // Helpers internos
@@ -437,6 +438,7 @@ export async function createConversationTurn(
   lead_id: string,
   channel_type: string,
   raw_input_summary: string,
+  stage_at_turn?: string,
 ): Promise<CrmWriteResult<CrmTurn>> {
   if (!lead_id?.trim()) return fail('lead_id é obrigatório para createConversationTurn.');
 
@@ -445,7 +447,7 @@ export async function createConversationTurn(
     lead_id,
     channel_type,
     raw_input_summary: raw_input_summary.slice(0, 500),
-    stage_at_turn: 'unknown',
+    stage_at_turn: stage_at_turn ?? 'unknown',
     model_name: null,
     latency_ms: null,
     created_at: nowIso(),
@@ -456,7 +458,58 @@ export async function createConversationTurn(
 }
 
 // ---------------------------------------------------------------------------
-// 13. Case-file consolidado
+// 13. Upsert estado do lead a partir de decisão do Core (T9.4)
+//
+// Invariante: stage_current é projetado do Core — CRM nunca calcula diretamente.
+// Apenas aplica decision.stage_after recebido de runCoreEngine.
+// ---------------------------------------------------------------------------
+
+export async function upsertLeadState(
+  backend: CrmBackend,
+  lead_id: string,
+  decision: CoreDecision,
+): Promise<CrmWriteResult<CrmLeadState>> {
+  if (!lead_id?.trim()) return fail('lead_id é obrigatório para upsertLeadState.');
+
+  const existing = await backend.findOne<CrmLeadState>(
+    'crm_lead_state',
+    (r) => r.lead_id === lead_id,
+  );
+
+  if (existing) {
+    const patch = {
+      stage_current: decision.stage_after,
+      next_objective: decision.next_objective,
+      block_advance: decision.block_advance,
+      state_version: (existing.state_version ?? 0) + 1,
+      updated_at: nowIso(),
+    };
+    const updated = await backend.update<CrmLeadState>(
+      'crm_lead_state',
+      (r) => r.lead_id === lead_id,
+      patch,
+    );
+    return ok(updated ?? { ...existing, ...patch });
+  }
+
+  const stateRecord: CrmLeadState = {
+    state_id: uuid(),
+    lead_id,
+    stage_current: decision.stage_after,
+    next_objective: decision.next_objective,
+    block_advance: decision.block_advance,
+    policy_flags: {},
+    risk_flags: null,
+    state_version: 1,
+    updated_at: nowIso(),
+  };
+
+  await backend.insert('crm_lead_state', stateRecord);
+  return ok(stateRecord);
+}
+
+// ---------------------------------------------------------------------------
+// 14. Case-file consolidado
 // Agrega lead + state + facts + docs + dossier para visão completa do CRM.
 // Não decide aprovação — apenas consolida informação.
 // ---------------------------------------------------------------------------
