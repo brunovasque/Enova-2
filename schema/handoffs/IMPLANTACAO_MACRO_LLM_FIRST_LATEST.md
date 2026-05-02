@@ -10,15 +10,15 @@
 
 - `src/crm/store.ts`: `getCrmBackend()` agora emite `diagLog('runtime.guard.in_memory_fallback', {...})` com `reason: 'flag_off'` (quando `SUPABASE_REAL_ENABLED !== 'true'`) ou `reason: 'envs_missing'` (quando URL/key ausentes) — fim do fallback silencioso (BLK-05 RESOLVIDO)
 - `src/crm/routes.ts`: `/crm/health` expõe `persistence_mode: getPersistenceMode(env)` (`'in_memory' | 'supabase_read_only' | 'supabase_full'`)
-- `src/golive/health.ts`: `/__admin__/go-live/health` expõe `supabase_runtime_active: getPersistenceMode(env) === 'supabase_full'`
-- `src/runtime/fallback-guard-smoke.ts`: smoke em 7 categorias (C1–C7) com `async function main()` pattern (CJS-safe)
+- `src/golive/health.ts`: `/__admin__/go-live/health` expõe `supabase_runtime_active: getSupabaseReadiness(env).ready && env['SUPABASE_WRITE_ENABLED'] === 'true'` (sem falso positivo quando flags on mas URL/KEY ausentes)
+- `src/runtime/fallback-guard-smoke.ts`: smoke em 8 categorias (C1–C8) com `async function main()` pattern (CJS-safe)
 - `package.json`: script `smoke:runtime:fallback-guard` adicionado
 
 ### Smokes
 
 | Smoke | Resultado |
 |---|---|
-| `smoke:runtime:fallback-guard` | **39/39 PASS** |
+| `smoke:runtime:fallback-guard` | **41/41 PASS** |
 | `smoke:runtime:env` | 53/53 PASS |
 | `smoke:meta:webhook` | 20/20 PASS |
 | `smoke:meta:pipeline` | 26/26 PASS |
