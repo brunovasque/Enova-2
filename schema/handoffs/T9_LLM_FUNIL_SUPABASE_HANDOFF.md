@@ -3,7 +3,46 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG CONCLUÍDAS; próxima: T9.8 (IMPL LlmContext estruturado)
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL CONCLUÍDAS; próxima: T9.9 — Output Guard para respostas do LLM
+
+## T9.8-IMPL — CONCLUÍDA (2026-05-02)
+
+PR: #189 — `feat/t9.8-llmcontext-estruturado`
+
+**BLK-04 RESOLVIDO:** `factsMap` estava escoped dentro do try block de Passo 1.5 — inacessível em Passo 2 (LLM). Fix: hoist para escopo externo como `cachedFacts`.
+
+**Alterações cirúrgicas:**
+- `src/llm/client.ts` — exporta `LlmContext` + `buildDynamicSystemPrompt` + `callLlm(msg, env, context?)`
+- `src/meta/canary-pipeline.ts` — `cachedFacts` hoistado; `llmContext` montado + sanitizado; `llmCaller` recebe 3 args; `diagLog('llm.context.built', ...)`
+- `src/llm/context-smoke.ts` — smoke novo **30/30 PASS**
+- `package.json` — `"smoke:llm:context"` adicionado
+
+**Decisão de segurança — shape `facts_summary` sanitizado (T9.8):**
+A implementação usou `facts_summary` sanitizado em vez de `facts` bruto, combinado com `facts_count`, para evitar envio de `renda_principal` e `cpf` (valores brutos sensíveis) ao LLM. `renda_principal` e `cpf` são substituídos por `'informado(a)'`. Esta é uma decisão de segurança deliberada da T9.8: o LLM recebe o contexto suficiente para gerar a fala adequada ao stage, sem processar dados financeiros ou pessoais do lead. `diagLog` emite apenas contagens — zero texto do cliente, zero valor de fact, zero secret.
+
+**Soberania preservada:**
+- Core decide stage; LLM recebe contexto apenas para decidir a **fala**
+- Prompt truncado a 4800 chars (≤1200 tokens)
+- Terceiro parâmetro opcional — todas chamadas `callLlm(msg, env)` existentes sem alteração (retrocompatível)
+
+**Resultados:**
+| Smoke | Resultado |
+|---|---|
+| `smoke:llm:context` | **30/30 PASS** |
+| `smoke:meta:canary` | 41/41 PASS |
+| `smoke:meta:core-pipeline` | 23/23 PASS |
+| `prove:t9.7-facts-stage-advance` | 44/44 PASS |
+| `prove:t9.5-stage-persistence` | 58/58 PASS |
+| `smoke:core:text-extractor` | PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | G8 APROVADO |
+
+**G9 permanece aberto** — T9.9 (Output Guard) é o próximo passo.
+
+**Próxima ação autorizada: T9.9 — Output Guard para respostas do LLM**
+
+---
 
 ## T9.8-DIAG — CONCLUÍDA (2026-05-02)
 
