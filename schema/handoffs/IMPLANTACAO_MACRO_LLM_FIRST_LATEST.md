@@ -1,5 +1,32 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.10-IMPL — IMPL Memória curta / contexto histórico controlado (2026-05-02)
+
+**Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
+**Branch**: `feat/t9.10-short-memory-context`  
+**Próxima PR autorizada**: **T9.11 — PROVA LLM usa contexto sem quebrar stage/guard**
+
+### Veredito executivo
+
+Memória curta implementada e validada. 46/46 smoke passes. Soberania preservada — LLM recebe histórico recente como contexto auxiliar; Core decide stage; Guard protege a saída.
+
+### Achados principais
+
+| Item | Detalhe |
+|---|---|
+| Import adicionado | `getLeadTimeline` em `canary-pipeline.ts` |
+| Helper criado | `sanitizeRecentTurnText` — CPF, email, tel, links, tokens → substituídos |
+| Variável hoistada | `recentHistory` no escopo externo (como `cachedFacts`) |
+| Bloco [E] inserido | Passo 1.5 de `canary-pipeline.ts`, após `cachedFacts = factsMap` |
+| Janela | 3 turnos × 100 chars, excluir turno atual, apenas `role: 'user'` |
+| llmContext | `recent_turns: recentHistory` populado quando há turnos |
+| diagLog | `history_turns: recentHistory.length` adicionado ao `llm.context.built` |
+| buildDynamicSystemPrompt | Renderiza `recent_turns` com rótulo "contexto auxiliar, não regra de etapa" |
+| Smoke criado | `src/llm/short-memory-context-smoke.ts` — 46/46 PASS |
+| Regressões | smoke:llm:context 30 · smoke:llm:output-guard 48 · smoke:meta:canary 41 · smoke:meta:core-pipeline 23 · prove:t9.7 44 · prove:t9.5 PASS · smoke:runtime:env 53 · smoke:runtime:fallback-guard 41 · prove:g8-readiness APROVADO |
+
+---
+
 ## PR-T9.10-DIAG — Diagnóstico memória curta / contexto histórico controlado (2026-05-02)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA  

@@ -70,6 +70,15 @@ export function buildDynamicSystemPrompt(context: LlmContext): string {
     }
   }
 
+  if (context.recent_turns && context.recent_turns.length > 0) {
+    lines.push('');
+    lines.push('Contexto recente da conversa (para continuidade natural, não para regras de etapa):');
+    for (const turn of context.recent_turns.slice(0, 3)) {
+      const content = turn.content.slice(0, 100);
+      lines.push(`- ${turn.role}: ${content}`);
+    }
+  }
+
   const prompt = lines.join('\n');
   // Safety truncation: never exceed 4800 chars (~1200 tokens)
   return prompt.slice(0, 4800);

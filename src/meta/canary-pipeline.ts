@@ -34,7 +34,7 @@ import { callLlm } from '../llm/client.ts';
 import { applyOutputGuard } from '../llm/output-guard.ts';
 import { runCoreEngine } from '../core/engine.ts';
 import { getCrmBackend } from '../crm/store.ts';
-import { getLeadState, getLeadFacts, upsertLeadState, writeLeadFact } from '../crm/service.ts';
+import { getLeadState, getLeadFacts, upsertLeadState, writeLeadFact, getLeadTimeline } from '../crm/service.ts';
 import { extractFactsFromText } from '../core/text-extractor.ts';
 import { emitTelemetry } from '../telemetry/emit.ts';
 import { diagLog, maskId } from './prod-diag.ts';
@@ -73,6 +73,22 @@ type OutboundSender = (intent: Parameters<typeof sendMetaOutbound>[0], env: Meta
 
 function isFlagOn(value: unknown): boolean {
   return value === true || value === 'true' || value === '1';
+}
+
+// Sanitiza texto de turno antes de enviar ao LLM (T9.10).
+// Remove dados sensíveis e trunca. Sem I/O, sem deps externas.
+function sanitizeRecentTurnText(text: string, maxLen = 100): string {
+  return text
+    .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[cpf]')
+    .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[email]')
+    .replace(/\(?\d{2}\)?\s*\d{4,5}-?\d{4}/g, '[tel]')
+    .replace(/https?:\/\/\S+/gi, '[link]')
+    .replace(/[a-z0-9]{20,}\.supabase\.co\S*/gi, '[link]')
+    .replace(/\bsk-[A-Za-z0-9_\-]{10,}/gi, '[token]')
+    .replace(/Bearer\s+\S{10,}/gi, '[token]')
+    .replace(/\bsb-[A-Za-z0-9_\-]{10,}/gi, '[token]')
+    .trim()
+    .slice(0, maxLen);
 }
 
 function readStr(value: unknown): string {
@@ -148,6 +164,8 @@ export async function runCanaryPipeline(
   let coreDecision: CoreDecision | undefined;
   // Hoisted to outer scope so Passo 2 (LLM) can read facts built in Passo 1.5 (BLK-04 fix — T9.8).
   let cachedFacts: Record<string, unknown> = {};
+  // Hoisted to outer scope — memória curta para o LLM (T9.10).
+  let recentHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
   if (crmResult.ok && crmResult.lead_id) {
     try {
       const coreBackend = await getCrmBackend(env as Record<string, unknown>);
@@ -195,6 +213,33 @@ export async function runCanaryPipeline(
       }
 
       cachedFacts = factsMap;
+
+      // Bloco [E] — Memória curta / histórico recente controlado (T9.10)
+      // Lê os últimos 3 turnos anteriores ao turno atual e sanitiza para o LLM.
+      // Nunca inclui turno atual (evita duplicação da mensagem do cliente).
+      // Apenas role: 'user' — CrmTurn não persiste reply_text da assistente.
+      // Texto completo do cliente nunca é logado.
+      try {
+        const timelineResult = await getLeadTimeline(coreBackend, crmResult.lead_id);
+        const currentTurnId = crmResult.turn_id ?? null;
+
+        recentHistory = timelineResult.records
+          .filter((turn) => turn.turn_id !== currentTurnId)
+          .slice(-3)
+          .map((turn) => ({
+            role: 'user' as const,
+            content: sanitizeRecentTurnText(turn.raw_input_summary, 100),
+          }))
+          .filter((turn) => turn.content.length > 0);
+
+        diagLog('short_memory.built', {
+          turns_total: timelineResult.records.length,
+          turns_included: recentHistory.length,
+        });
+      } catch (e) {
+        // Falha em memória curta nunca bloqueia LLM nem outbound.
+        diagLog('short_memory.built', { turns_total: 0, turns_included: 0, error: String(e) });
+      }
 
       coreDecision = runCoreEngine({
         lead_id: crmResult.lead_id,
@@ -275,6 +320,7 @@ export async function runCanaryPipeline(
             facts_count: Object.keys(cachedFacts).length,
             facts_summary: factsSummary,
             speech_intent: coreDecision.speech_intent,
+            ...(recentHistory.length > 0 ? { recent_turns: recentHistory } : {}),
           };
           diagLog('llm.context.built', {
             stage_current: llmContext.stage_current,
@@ -282,6 +328,7 @@ export async function runCanaryPipeline(
             facts_count: llmContext.facts_count,
             speech_intent_present: !!llmContext.speech_intent,
             next_objective_length: llmContext.next_objective.length,
+            history_turns: recentHistory.length,
           });
         }
         const llmResult = await llmCaller(userText, env as Record<string, unknown>, llmContext);
