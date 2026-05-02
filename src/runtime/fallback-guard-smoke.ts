@@ -130,10 +130,12 @@ async function main(): Promise<void> {
   check('go-live health preserva campo readiness', 'readiness' in goLiveBody);
   check('go-live health preserva campo flags', 'flags' in goLiveBody);
 
-  // go-live com supabase_full
+  // go-live com supabase_full + envs presentes → runtime ativo
   const goLiveEnvFull: Record<string, unknown> = {
     SUPABASE_REAL_ENABLED: 'true',
     SUPABASE_WRITE_ENABLED: 'true',
+    SUPABASE_URL: 'https://fake-project.supabase.co',
+    SUPABASE_SERVICE_ROLE_KEY: 'fake-service-role-key-for-smoke',
     CRM_ALLOW_DEV_TOKEN: 'true',
     CRM_ADMIN_KEY: 'dev-crm-local',
   };
@@ -176,6 +178,25 @@ async function main(): Promise<void> {
   check('health tem real_whatsapp = false', healthBodyOff['real_whatsapp'] === false);
   check('health tem supabase_readiness', 'supabase_readiness' in healthBodyOff);
   check('health tem panel_tabs', Array.isArray(healthBodyOff['panel_tabs']));
+
+  // --- C8: flags on mas envs ausentes → supabase_runtime_active: false ---
+  console.log('\nC8: flags on mas SUPABASE_URL/KEY ausentes → supabase_runtime_active: false');
+  const goLiveEnvFlagsOnNoEnvs: Record<string, unknown> = {
+    SUPABASE_REAL_ENABLED: 'true',
+    SUPABASE_WRITE_ENABLED: 'true',
+    CRM_ALLOW_DEV_TOKEN: 'true',
+    CRM_ADMIN_KEY: 'dev-crm-local',
+  };
+  const goLiveReqFlagsOnNoEnvs = new Request('http://localhost/__admin__/go-live/health', {
+    method: 'GET',
+    headers: { 'x-crm-admin-key': 'dev-crm-local' },
+  });
+  const goLiveResFlagsOnNoEnvs = await handleGoLiveHealth(goLiveReqFlagsOnNoEnvs, goLiveEnvFlagsOnNoEnvs);
+  check('go-live health retorna 200 (flags on, sem URL/KEY)', goLiveResFlagsOnNoEnvs.status === 200);
+
+  const goLiveBodyFlagsOnNoEnvs = await goLiveResFlagsOnNoEnvs.json() as Record<string, unknown>;
+  check('supabase_runtime_active = false quando flags on mas URL/KEY ausentes',
+    goLiveBodyFlagsOnNoEnvs['supabase_runtime_active'] === false);
 
   // --- Resultado ---
   console.log(`\n=== Resultado: ${pass} PASS | ${fail} FAIL ===\n`);
