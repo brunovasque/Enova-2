@@ -11,6 +11,7 @@
 import { flagsPublicSummary, readCanonicalFlags } from './flags.ts';
 import { evaluateGoLiveReadiness } from './harness.ts';
 import { isOperationallyAllowed } from './rollback.ts';
+import { getPersistenceMode } from '../runtime/env-validator.ts';
 
 export const GOLIVE_HEALTH_ROUTE = '/__admin__/go-live/health' as const;
 
@@ -50,6 +51,7 @@ export async function handleGoLiveHealth(
     route: GOLIVE_HEALTH_ROUTE,
     timestamp: new Date().toISOString(),
     status: readiness.g8_allowed ? 'g8_ready' : 'g8_blocked',
+    supabase_runtime_active: getPersistenceMode(env) === 'supabase_full',
     flags: flagsPublicSummary(flags),
     blocking_reasons: readiness.blocking_reasons,
     readiness: {

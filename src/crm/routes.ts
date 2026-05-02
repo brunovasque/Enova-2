@@ -66,6 +66,7 @@ import type { TelemetryRequestContext } from '../telemetry/types.ts';
 import { emitRuntimeGuard, emitTelemetry } from '../telemetry/emit.ts';
 import { getCrmBackend } from './store.ts';
 import { getSupabaseReadiness, getSupabaseReadinessPublic } from '../supabase/readiness.ts';
+import { getPersistenceMode } from '../runtime/env-validator.ts';
 import * as svc from './service.ts';
 import * as panel from './panel.ts';
 import { handleMemoryRoute } from '../memory/routes.ts';
@@ -186,6 +187,7 @@ export async function handleCrmRequest(
       real_supabase: supabaseReadiness.ready,
       real_llm: false,
       real_whatsapp: false,
+      persistence_mode: getPersistenceMode(env),
       panel_tabs: [
         'conversations',
         'bases',
