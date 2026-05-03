@@ -1,9 +1,38 @@
 # Handoff T9 — LLM ↔ Funil ↔ Supabase ↔ Telemetria
 
 **Tipo:** Handoff de sessão  
-**Data:** 2026-05-02  
+**Data:** 2026-05-03  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11/T9.12-DIAG/T9.12-IMPL CONCLUÍDAS; próxima: T9.13 — PROVA Supabase write real state/leads em TEST
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11/T9.12-DIAG/T9.12-IMPL/T9.13-PROVA-PARCIAL CONCLUÍDAS; próxima: **T9.13B — Execução real da prova Supabase write em TEST por Vasques**
+
+## T9.13-PROVA — Prova Supabase write real (state/leads) em TEST — PARCIAL (2026-05-03)
+
+PR: `prove/t9.13-supabase-write-real-test` (PR #197 em aberto)
+
+**Harness dual-mode instalado. Modo local 19/19 PASS. Modo TEST real SKIP — aguarda Vasques.**
+
+**Arquivos:**
+- `src/supabase/write-real-test-proof.ts` — script dual-mode P1–P9
+- `package.json` — `prove:t9.13-supabase-write-real-test`
+- `schema/proofs/T9_SUPABASE_WRITE_REAL_TEST_PROOF.md`
+
+**Resultado:**
+- Modo local: 19/19 PASS
+- Modo TEST real: SKIP — `SUPABASE_WRITE_REAL_TEST_ENABLED` não setado
+
+**Para Vasques executar a prova real:**
+```
+SUPABASE_WRITE_REAL_TEST_ENABLED=true
+SUPABASE_REAL_ENABLED=true
+SUPABASE_WRITE_ENABLED=true
+SUPABASE_URL=<url>
+SUPABASE_SERVICE_ROLE_KEY=<key>
+npm run prove:t9.13-supabase-write-real-test
+```
+
+**Próxima:** T9.13B — Execução real da prova Supabase write em TEST por Vasques
+
+---
 
 ## T9.12-IMPL — Supabase write real condicional (crm_leads/crm_lead_state) — CONCLUÍDA (2026-05-03)
 

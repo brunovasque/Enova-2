@@ -1,5 +1,53 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.13-PROVA — Prova Supabase write real (state/leads) em TEST (2026-05-03)
+
+**Tipo**: PR-PROVA | **Status**: PARCIAL — modo local PASS, modo TEST real SKIP aguarda Vasques  
+**Branch**: `prove/t9.13-supabase-write-real-test`  
+**Próxima PR autorizada**: **T9.13B — Execução real por Vasques** (ou T9.14 se prova real confirmar PASS)
+
+### Veredito executivo
+
+Harness dual-mode instalado. Modo local: 19/19 PASS. Modo real SKIP — aguarda `SUPABASE_WRITE_REAL_TEST_ENABLED=true` + credenciais Supabase reais por Vasques. G9 permanece aberto.
+
+### Arquivos alterados
+
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/write-real-test-proof.ts` | Script dual-mode T9.13 — P1–P9 (19 checks locais + 38 reais) |
+| `package.json` | `prove:t9.13-supabase-write-real-test` adicionado |
+| `schema/proofs/T9_SUPABASE_WRITE_REAL_TEST_PROOF.md` | Documento de prova completo |
+
+### Resultado modo local
+
+| Bloco | Resultado |
+|---|---|
+| P1 (flag OFF → writeBuffer) | 6/6 PASS |
+| P2 (flag ON + URL falsa → fallback) | 4/4 PASS |
+| P3 (crm_turns/crm_facts writeBuffer) | 6/6 PASS |
+| P4 (secrets não vazam) | 3/3 PASS |
+| **Total modo local** | **19/19 PASS** |
+
+### Resultado modo TEST real
+
+| Status | Detalhe |
+|---|---|
+| SKIP | `SUPABASE_WRITE_REAL_TEST_ENABLED` não setado |
+| P5–P9 | 38 checks programados — execução pendente |
+
+### Para executar a prova real (Vasques)
+
+```bash
+SUPABASE_WRITE_REAL_TEST_ENABLED=true \
+SUPABASE_REAL_ENABLED=true \
+SUPABASE_WRITE_ENABLED=true \
+SUPABASE_URL=<url> \
+SUPABASE_SERVICE_ROLE_KEY=<key> \
+npm run prove:t9.13-supabase-write-real-test
+```
+
+---
+
 ## PR-T9.12-IMPL — Supabase write real habilitado (2026-05-02)
 
 **Tipo**: PR-IMPL | **Status**: CONCLUÍDA  
