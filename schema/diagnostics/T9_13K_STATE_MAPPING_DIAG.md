@@ -359,3 +359,142 @@ após o merge desta PR.
 - `smoke:runtime:env`: 53/53 PASS
 - `smoke:runtime:fallback-guard`: 41/41 PASS
 - `prove:g8-readiness`: 7/7 PASS
+
+---
+
+## 16. Matriz de compatibilidade CRM legado × stage_current Enova 2
+
+**Data de complemento**: 2026-05-03 (mesma branch `diag/t9.13k-state-mapping`, PR #209)
+
+### 16.1 Decisões de Vasques (contexto)
+
+Vasques forneceu SQL com resultado real do banco PROD e confirmou as seguintes regras:
+
+1. **Não criar colunas novas** no schema Supabase real.
+2. **Não renomear colunas legadas** — preservar nomes da Enova 1.
+3. **O runtime (Enova 2) se adapta ao legado** — não o contrário.
+
+Consequência direta: `mapLeadStateToEnovaState` precisa de uma **camada de tradução explícita**
+que converta valores canônicos T9 (`'discovery'`, `'qualification_civil'`, etc.) para os valores
+legados existentes em `fase_conversa` antes de gravar no Supabase real.
+
+### 16.2 Schema real confirmado por SQL (Vasques, 2026-05-03)
+
+```
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns
+WHERE table_name = 'enova_state'
+  AND column_name IN ('fase_conversa', 'intro_etapa', 'last_processed_stage', 'last_user_stage');
+```
+
+| Coluna | data_type | is_nullable | column_default |
+|---|---|---|---|
+| `fase_conversa` | text | YES | `'inicio'::text` |
+| `intro_etapa` | text | YES | NULL |
+| `last_processed_stage` | text | YES | NULL |
+| `last_user_stage` | text | YES | NULL |
+
+**Observações relevantes:**
+- `fase_conversa` tem default `'inicio'` — confirma que é o campo de entrada padrão do funil.
+- Os demais candidatos não têm default — são opcionais/legados de menor controle.
+- Todas as colunas são nullable — escrita parcial é segura (sem risco de NOT NULL violation).
+
+### 16.3 Distribuição real de `fase_conversa` (Vasques, 2026-05-03)
+
+```
+SELECT fase_conversa, COUNT(*) as cnt
+FROM enova_state
+GROUP BY fase_conversa
+ORDER BY cnt DESC;
+```
+
+Valores confirmados presentes no banco PROD:
+
+| Valor legado | Semântica provável (Enova 1) |
+|---|---|
+| `inicio` | Entrada padrão — lead recém-criado ou sem stage definido |
+| `inicio_nome` | Etapa de coleta de nome |
+| `inicio_programa` | Etapa de apresentação do programa MCMV |
+| `docs_opcao` | Etapa de escolha/apresentação de documentos |
+| `confirmar_interesse` | Confirmação de interesse do lead |
+| `primeiro` | Não identificado — possivelmente etapa de primeiro contato |
+| `proxy_teste_5` | Valor de teste — não operacional |
+| `clt_renda_perfil_informativo` | Etapa de qualificação de renda CLT |
+| `quem_pode_somar` | Etapa de composição de renda — quem pode somar |
+| `system_counter` | Valor de sistema interno — não operacional |
+
+### 16.4 Matriz de tradução: T9 canônico → legado `fase_conversa`
+
+| Stage canônico T9 | Coluna real | Valor legado candidato | Confiança | Risco CRM/panel | Decisão |
+|---|---|---|---|---|---|
+| `discovery` | `fase_conversa` | `inicio` | **ALTA** — default já é 'inicio', entrada padrão | BAIXO — valor já existe em produção | Mapear `discovery → 'inicio'` |
+| `qualification_civil` | `fase_conversa` | (sem equivalente direto na distribuição) | **BAIXA** — nenhum valor legado com nome claro | **ALTO** — panel pode não reconhecer valor novo | **BLOQUEADO** — aguardar Vasques |
+| `qualification_renda` | `fase_conversa` | `clt_renda_perfil_informativo` | MÉDIA — nome sugere qualificação de renda CLT | MÉDIO — valor existe mas pode ser subconjunto | Candidato — aguardar Vasques |
+| `qualification_eligibility` | `fase_conversa` | `quem_pode_somar` | MÉDIA — "quem pode somar" = composição de renda | MÉDIO — semântica parcial | Candidato — aguardar Vasques |
+| `docs_prep` | `fase_conversa` | `docs_opcao` | **ALTA** — "docs_opcao" = opção de documentos | BAIXO — valor já existe em produção | Candidato forte — aguardar Vasques |
+| `visit` | `fase_conversa` | (sem equivalente na distribuição) | **BAIXA** — nenhum valor `visita_*` na distribuição | **ALTO** — panel pode não reconhecer valor novo | **BLOQUEADO** — aguardar Vasques |
+
+### 16.5 Gap registrado: CRM/panel antigo não acessível
+
+**Tentativa de acesso:**
+```sh
+git remote -v
+# → origin https://github.com/brunovasque/Enova-2.git
+git submodule status
+# → (sem saída — nenhum submódulo)
+```
+
+**Resultado**: O repositório do CRM/panel Enova 1 **não está acessível** nesta execução.
+Não há submodules, não há repositório irmão montado, não há path local para o código legado.
+
+**Impacto**:
+- Não é possível verificar diretamente qual código do panel consome `fase_conversa`.
+- Não é possível confirmar quais valores o panel renderiza ou espera.
+- A verificação de risco de compatibilidade é baseada em inferência por nome de coluna
+  e distribuição de valores — não em análise direta do código do panel.
+
+**Decisão**: BLK permanece ativo. Nenhuma escrita em `fase_conversa` ocorre antes de
+Vasques confirmar explicitamente a tabela de tradução (§16.6).
+
+### 16.6 Tabela de tradução proposta (aguardando confirmação de Vasques)
+
+```typescript
+// PROPOSTA — NÃO implementar sem confirmação explícita de Vasques
+// Ver: schema/diagnostics/T9_13K_STATE_MAPPING_DIAG.md §16.6
+const STAGE_TO_FASE_CONVERSA: Record<string, string> = {
+  'discovery':               'inicio',                       // alta confiança
+  'qualification_civil':     '???',                          // BLOQUEADO — sem candidato
+  'qualification_renda':     'clt_renda_perfil_informativo', // candidato — confirmar
+  'qualification_eligibility': 'quem_pode_somar',            // candidato — confirmar
+  'docs_prep':               'docs_opcao',                   // alta confiança
+  'visit':                   '???',                          // BLOQUEADO — sem candidato
+};
+```
+
+Esta tabela **não está implementada** em `src/`. Quando Vasques confirmar os mapeamentos
+faltantes, a implementação ocorrerá em PR-FIX posterior (T9.13K-FIX ou T9.14-IMPL).
+
+### 16.7 Risco de não usar camada de tradução
+
+Se o runtime gravar os valores canônicos T9 diretamente em `fase_conversa`
+(ex: `'discovery'`, `'qualification_civil'`, `'qualification_renda'`) sem tradução:
+
+| Risco | Impacto |
+|---|---|
+| Panel Enova 1 não reconhece o valor | UI do painel pode exibir estado vazio ou inválido |
+| Workflows legados que leem `fase_conversa` param | Outros processos dependentes de `fase_conversa` quebram |
+| Dados históricos corrompidos conceitualmente | Métricas de distribuição de stage ficam inconsistentes |
+| Reversão difícil em PROD | Valores novos propagados para todos os leads ativos |
+
+**Conclusão**: A camada de tradução é **obrigatória** antes de qualquer escrita real em `fase_conversa`.
+
+### 16.8 Estado do bloqueio após este complemento
+
+| Item | Status |
+|---|---|
+| `fase_conversa` confirmada como candidata principal | **CONFIRMADO** (por SQL Vasques) |
+| Schema real das colunas candidatas | **CONFIRMADO** (por SQL Vasques) |
+| Distribuição de valores legados | **CONFIRMADO** (por SQL Vasques) |
+| Tabela de tradução completa | **INCOMPLETO** — 2 stages sem candidato (`qualification_civil`, `visit`) |
+| CRM/panel antigo acessível para verificação | **NÃO** — gap registrado (§16.5) |
+| `BLK-T9.13-STATE-MAPPING` | **PERMANECE ATIVO** — aguardando confirmação Vasques dos mapeamentos faltantes |
