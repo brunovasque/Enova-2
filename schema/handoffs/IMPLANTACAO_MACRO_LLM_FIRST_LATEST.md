@@ -1,5 +1,49 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13E-FIX — Alinhar colunas do payload Supabase ao schema real (2026-05-02)
+
+**Tipo**: fix de schema | **Status**: CONCLUÍDA — smokes PASS  
+**Branch**: `fix/t9.13e-schema-col-align`  
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
+**Próximo passo autorizado**: T9.13E — Vasques reexecuta prova real Supabase após ajuste de colunas reais
+
+### Causa confirmada (logs T9.13D-DIAG)
+| Tabela | Coluna | Erro PostgREST | Causa |
+|---|---|---|---|
+| `crm_lead_meta` | `customer_name` | PGRST204 | Coluna não existe no schema real |
+| `enova_state` | `block_advance` | PGRST204 | Coluna não existe no schema real |
+
+Origem do erro: T9.12-DIAG §8/§11 listou colunas por **inferência** dos tipos TypeScript, não por DDL real.  
+Os PGRST204 reais são autoritativos e prevalecem.
+
+### Correção aplicada
+
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/types.ts` | Removida `customer_name` de `CrmLeadMetaRow`; removida `block_advance` de `EnovaStateRow` |
+| `src/supabase/crm-store.ts` | `mapLeadToMeta`: omite `customer_name`; `mapLeadStateToEnovaState`: omite `block_advance` |
+| `src/supabase/write-real-test-proof.ts` | P5.10 removida (`customer_name` não existe no Supabase real) |
+
+### Campos preservados no CRM canônico
+- `CrmLead.customer_name` permanece inalterado (CRM canônico + writeBuffer)
+- `CrmLeadState.block_advance` permanece inalterado (CRM canônico + writeBuffer)
+- Estes campos existem na camada CRM mas não no Supabase real
+
+### Smokes
+| Suite | Resultado |
+|---|---|
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `prove:t9.13` modo local | 19/19 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Se aparecer novo PGRST204
+Se após esta correção outro PGRST204 aparecer (ex: `external_ref`, `phone_ref`, `status`, `manual_mode`): NÃO criar coluna no Supabase. Criar nova PR-DIAG/FIX removendo a coluna do payload e documentando. Regra: payload Supabase deve conter apenas colunas comprovadas no schema real.
+
+---
+
 ## T9.13D-DIAG — Telemetria writeLog upsert real P5/P6/P7/P8 (2026-05-02)
 
 **Tipo**: PR-DIAG | **Status**: CONCLUÍDA — smokes PASS  

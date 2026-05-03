@@ -3,7 +3,38 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX/T9.13D-DIAG CONCLUÍDAS; próxima: **T9.13D — Vasques re-executa prova real e envia `[DIAG WRITE P5/P6/P7/P8]`**
+**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX/T9.13D-DIAG/T9.13E-FIX CONCLUÍDAS; próxima: **T9.13E — Vasques re-executa prova real Supabase após ajuste de colunas reais**
+
+## T9.13E-FIX — Alinhar payload Supabase ao schema real (2026-05-02)
+
+PR: `fix/t9.13e-schema-col-align` (nova)
+
+**Causa raiz confirmada pelos logs T9.13D-DIAG:**
+
+| Tabela | Coluna problemática | Erro PostgREST |
+|---|---|---|
+| `crm_lead_meta` | `customer_name` | `PGRST204: Could not find the 'customer_name' column` |
+| `enova_state` | `block_advance` | `PGRST204: Could not find the 'block_advance' column` |
+
+**Origem do erro:** T9.12-DIAG §8/§11 declarou colunas como "confirmadas" mas baseado em **inferência** dos tipos TypeScript (comentário no documento: "inferido de T8.9B + `mapLeadFromMeta`"). As PGRST204 reais prevalecem sobre qualquer inferência.
+
+**Correções aplicadas:**
+
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/types.ts` | `CrmLeadMetaRow`: removida `customer_name`; `EnovaStateRow`: removida `block_advance` |
+| `src/supabase/crm-store.ts` | `mapLeadToMeta`: omite `customer_name` do payload; `mapLeadStateToEnovaState`: omite `block_advance` do payload |
+| `src/supabase/write-real-test-proof.ts` | P5.10 removida (`customer_name` não existe no Supabase real) |
+
+**Campos preservados no CRM canônico:**
+- `CrmLead.customer_name` inalterado — existe na camada CRM e writeBuffer, mas não no Supabase
+- `CrmLeadState.block_advance` inalterado — idem
+
+**Smokes:** `smoke:supabase:write-real` 39/39 | `prove:t9.13` local 19/19 | `smoke:supabase` 70/70 | `smoke:runtime:env` 53/53 | `smoke:runtime:fallback-guard` 41/41 | `prove:g8-readiness` 7/7 PASS
+
+**Próxima ação:** Vasques re-executa prova real. Se novo PGRST204 aparecer (ex: `external_ref`, `phone_ref`), nova PR-FIX remove a coluna do payload sem criar migração.
+
+---
 
 ## T9.13D-DIAG — Telemetria writeLog no upsert (P5/P6/P7/P8) — CONCLUÍDA (2026-05-02)
 
