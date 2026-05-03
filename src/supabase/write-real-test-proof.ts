@@ -278,10 +278,10 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
 
   console.log('\n── P0: Schema discovery (SELECT * limit=1 — sem valores em stdout) ──');
 
-  // Chaves que mapLeadToMeta envia ao Supabase (pós T9.13H — wa_id + lead_pool + updated_at).
-  // lead_pool adicionado em T9.13H-FIX: NOT NULL confirmado por 23502; valor de prova 't9_13_test'.
-  // BLK-T9.13H-LEAD-POOL-VALUE: valor canônico de produção pendente confirmação de Vasques.
-  const payloadKeysLead = ['wa_id', 'lead_pool', 'updated_at'];
+  // Chaves que mapLeadToMeta envia ao Supabase (T9.13J-FIX — wa_id + lead_pool + lead_temp + updated_at).
+  // lead_pool='COLD_POOL' e lead_temp='COLD': NOT NULL sem DEFAULT confirmados por SQL direto (T9.13J).
+  // Valores canônicos definidos por Vasques: todo lead novo entra como base fria.
+  const payloadKeysLead = ['wa_id', 'lead_pool', 'lead_temp', 'updated_at'];
   // Chaves que mapLeadStateToEnovaState envia ao Supabase (pós T9.13G — apenas lead_id + updated_at;
   // escrita real BLOQUEADA pelo backend — BLK-T9.13-STATE-MAPPING).
   const payloadKeysState = ['lead_id', 'updated_at'];
@@ -484,9 +484,11 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   const foundLead = readLeadResult.rows[0];
   check('P5.6: lead encontrado em crm_lead_meta', foundLead !== undefined);
   check('P5.7: wa_id correto no Supabase', foundLead?.wa_id === testWaId);
-  check('P5.8: lead_pool gravado no Supabase (NOT NULL T9.13H)', foundLead?.lead_pool === 't9_13_test',
-    `lead_pool=${String(foundLead?.lead_pool ?? 'null')} — BLK-T9.13H-LEAD-POOL-VALUE`);
-  // P5.9–P5.10 REMOVIDAS (T9.13E/T9.13F/T9.13G) —
+  check('P5.8: lead_pool=COLD_POOL gravado no Supabase (NOT NULL T9.13J)', foundLead?.lead_pool === 'COLD_POOL',
+    `lead_pool=${String(foundLead?.lead_pool ?? 'null')}`);
+  check('P5.9: lead_temp=COLD gravado no Supabase (NOT NULL T9.13J)', foundLead?.lead_temp === 'COLD',
+    `lead_temp=${String(foundLead?.lead_temp ?? 'null')}`);
+  // P5.10+ REMOVIDAS (T9.13E/T9.13F/T9.13G) —
   // external_ref, phone_ref, status, manual_mode, customer_name não existem em crm_lead_meta no Supabase real.
   // Estes campos são preservados apenas no CRM canônico (CrmLead) e writeBuffer.
 
@@ -552,8 +554,10 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   logSelectResult('P7', 'crm_lead_meta', testWaId, readUpdatedLead);
   const updatedRow = readUpdatedLead.rows[0];
   check('P7.5: Supabase reflete wa_id após update', updatedRow?.wa_id === testWaId);
-  check('P7.6: lead_pool preservado após update', updatedRow?.lead_pool === 't9_13_test',
+  check('P7.6: lead_pool=COLD_POOL preservado após update', updatedRow?.lead_pool === 'COLD_POOL',
     `lead_pool=${String(updatedRow?.lead_pool ?? 'null')}`);
+  check('P7.7: lead_temp=COLD preservado após update', updatedRow?.lead_temp === 'COLD',
+    `lead_temp=${String(updatedRow?.lead_temp ?? 'null')}`);
   // phone_ref/manual_mode não são mais escritos — não há checks no Supabase para eles.
 
   // ── P8: Update crm_lead_state → BLK-T9.13-STATE-MAPPING → writeBuffer ────

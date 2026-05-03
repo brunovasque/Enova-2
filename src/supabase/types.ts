@@ -144,7 +144,8 @@ export interface SupabaseQueryResult<T> {
 }
 
 /**
- * Linha bruta de `crm_lead_meta` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F/T9.13G/T9.13H.
+ * Linha bruta de `crm_lead_meta` — schema real confirmado por SQL direto (T9.13J) e
+ * execuções T9.13C/T9.13E/T9.13F/T9.13G/T9.13H/T9.13I.
  * PK real: wa_id (TEXT UNIQUE) = WhatsApp ID do cliente = CrmLead.external_ref.
  *
  * Histórico de PGRST204 confirmados (não existem no schema real — não criar):
@@ -153,9 +154,21 @@ export interface SupabaseQueryResult<T> {
  *   T9.13F: external_ref (PGRST204)
  *   T9.13G: phone_ref, status, manual_mode (PGRST204)
  *
- * NOT NULL confirmados por 23502 (T9.13H):
- *   lead_pool — NOT NULL sem DEFAULT; valor canônico de produção pendente confirmação de Vasques.
- *   BLK-T9.13H-LEAD-POOL-VALUE: prova usa 't9_13_test'; produção bloqueada até definição.
+ * NOT NULL sem DEFAULT confirmados por SQL direto (T9.13J) e por 23502 (T9.13H/T9.13I):
+ *   wa_id       — NOT NULL sem DEFAULT (PK)
+ *   lead_pool   — NOT NULL sem DEFAULT; canônico: 'COLD_POOL' (lead novo entra como base fria)
+ *   lead_temp   — NOT NULL sem DEFAULT; canônico: 'COLD' (lead novo entra como frio)
+ *
+ * NOT NULL com DEFAULT (PostgREST preenche automaticamente — não enviar):
+ *   tags                   — jsonb NOT NULL default '[]::jsonb'
+ *   auto_outreach_enabled  — boolean NOT NULL default false
+ *   is_paused              — boolean NOT NULL default false
+ *   created_at             — timestamp NOT NULL default now()
+ *   updated_at             — timestamp NOT NULL default now()
+ *   is_archived            — boolean NOT NULL default false
+ *
+ * CHECK constraint confirmado por SQL direto (T9.13J):
+ *   crm_lead_meta_lead_pool_check — aceita 'COLD_POOL', 'WARM_POOL', entre outros.
  *
  * Schema real (subset relevante, T9.13G P0): wa_id, created_at, updated_at, nome,
  * telefone, status_operacional, ultima_acao, ultimo_contato_at, lead_pool, lead_temp,
@@ -173,7 +186,8 @@ export interface SupabaseQueryResult<T> {
  */
 export interface CrmLeadMetaRow {
   wa_id?: string;            // PK real — WhatsApp ID (ex: '5511999990001')
-  lead_pool?: string | null; // NOT NULL no Supabase real (23502 T9.13H). BLK-T9.13H-LEAD-POOL-VALUE.
+  lead_pool?: string | null; // NOT NULL sem DEFAULT. Canônico: 'COLD_POOL' (T9.13J).
+  lead_temp?: string | null; // NOT NULL sem DEFAULT. Canônico: 'COLD' (T9.13J).
   created_at?: string | null;
   updated_at?: string | null;
   // external_ref/customer_name/phone_ref/status/manual_mode OMITIDAS — colunas não existem
