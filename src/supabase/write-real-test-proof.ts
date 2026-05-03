@@ -297,7 +297,7 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   check('P5.7: wa_id correto no Supabase', foundLead?.wa_id === testWaId);
   check('P5.8: external_ref correto no Supabase', foundLead?.external_ref === lead.external_ref);
   check('P5.9: phone_ref correto no Supabase', foundLead?.phone_ref === lead.phone_ref);
-  check('P5.10: customer_name correto', foundLead?.customer_name === lead.customer_name);
+  // P5.10 REMOVIDA — customer_name não existe em crm_lead_meta no Supabase real (PGRST204 T9.13E).
 
   // ── P6: Insert crm_lead_state → enova_state ───────────────────────────────
 
