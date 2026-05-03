@@ -358,8 +358,14 @@ export class SupabaseCrmBackend implements CrmBackend {
           ok = await this.supabaseWriteLeadState(merged as unknown as CrmLeadState);
         }
         if (ok) return merged;
+        // Supabase falhou → writeBuffer absorve o registro completo mesclado
+        const buffered = await this.writeBuffer.update<T>(table, matcher, patch);
+        if (buffered !== null) return buffered;
+        // Registro não existe no writeBuffer (veio só do Supabase real) → insere mesclado
+        await this.writeBuffer.insert<T>(table, merged);
+        return merged;
       }
-      // Fallback: se não encontrou ou Supabase falhou → writeBuffer
+      // Fallback: se não encontrou → writeBuffer
     }
     return this.writeBuffer.update<T>(table, matcher, patch);
   }

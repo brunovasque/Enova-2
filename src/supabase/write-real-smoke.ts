@@ -200,6 +200,55 @@ async function run(): Promise<void> {
   check('S9.2: phone_ref preservado', s9lead.phone_ref === '5511999990009');
   check('S9.3: lead_id preservado', s9lead.lead_id === 'lead-s9');
 
+  // ─── S11: update fallback — Supabase falha → writeBuffer absorve ─────────
+  //
+  // Testa o caminho de fallback do update() quando writeEnabled=true e o
+  // upsert Supabase falha. O writeBuffer deve absorver o registro mesclado,
+  // mesmo que o registro original venha do Supabase real (não exista no buffer).
+  // Aqui simulamos via backendOn com URL falsa: insert cai no writeBuffer,
+  // depois update encontra no buffer, Supabase falha, buffer absorve.
+
+  console.log('\n── S11: update com flag ON + Supabase falha → writeBuffer absorve ──');
+
+  const backendOnFallback = new SupabaseCrmBackend({ url: FAKE_URL, serviceRoleKey: FAKE_SECRET }, true);
+
+  // S11.1–S11.2: insert via backendOnFallback → Supabase falha → writeBuffer absorve
+  let s11lead: CrmLead | null = null;
+  let s11threw = false;
+  try {
+    s11lead = await backendOnFallback.insert<CrmLead>('crm_leads', {
+      ...LEAD,
+      lead_id: 'lead-s11',
+      phone_ref: '5511000000011',
+    });
+  } catch {
+    s11threw = true;
+  }
+  check('S11.1: insert com flag ON + URL falsa não lança', !s11threw);
+  check('S11.2: insert fallback retorna lead com lead_id correto', s11lead?.lead_id === 'lead-s11');
+
+  // S11.3–S11.6: update via backendOnFallback → Supabase falha → writeBuffer absorve mesclado
+  let s11updated: CrmLead | null = null;
+  let s11updateThrew = false;
+  try {
+    s11updated = await backendOnFallback.update<CrmLead>(
+      'crm_leads',
+      (r) => r.lead_id === 'lead-s11',
+      { customer_name: 'Smoke Fallback Update', status: 'inactive' as const },
+    );
+  } catch {
+    s11updateThrew = true;
+  }
+  check('S11.3: update com flag ON + URL falsa não lança', !s11updateThrew);
+  check('S11.4: update fallback retorna lead não nulo', s11updated !== null);
+  check('S11.5: customer_name atualizado no fallback', s11updated?.customer_name === 'Smoke Fallback Update');
+  check('S11.6: lead_id preservado após update fallback', s11updated?.lead_id === 'lead-s11');
+
+  // S11.7: registro mesclado encontrável no writeBuffer via findAll
+  const s11all = await backendOnFallback.findAll<CrmLead>('crm_leads');
+  const s11found = s11all.find((r) => r.lead_id === 'lead-s11');
+  check('S11.7: registro mesclado encontrado no writeBuffer após update fallback', s11found?.customer_name === 'Smoke Fallback Update');
+
   // ─── S10: sem conteúdo sensível em output ────────────────────────────────
 
   console.log('\n── S10: sem conteúdo sensível em output do smoke ──');
