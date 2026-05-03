@@ -4,7 +4,7 @@
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t9.13k-state-mapping`
 **Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
-**Próximo passo autorizado**: Vasques executa SQL de consulta no Supabase SQL Editor e confirma qual coluna real recebe `stage_current`; após confirmação, PR-FIX posterior aplica mapeamento e remove `BLK-T9.13-STATE-MAPPING`
+**Próximo passo autorizado**: Vasques confirma tabela de tradução completa — mapeamentos de `qualification_civil` e `visit` para valores legados em `fase_conversa`; após confirmação, PR-T9.13K-FIX ou PR-T9.14-IMPL implementa `mapLeadStateToEnovaState` com `STAGE_TO_FASE_CONVERSA` e remove `BLK-T9.13-STATE-MAPPING`
 
 ### Contexto herdado — T9.13J-FIX VALIDADA (PR #208)
 
@@ -48,6 +48,40 @@ SELECT column_name, data_type FROM information_schema.columns
 WHERE table_name='enova_state' AND column_name IN ('fase_conversa','last_processed_stage','last_user_stage','intro_etapa');
 ```
 
+### SQL confirmado por Vasques + Matriz de compatibilidade (2026-05-03)
+
+Vasques executou o SQL e forneceu os resultados. Seção §16 adicionada ao diag `T9_13K_STATE_MAPPING_DIAG.md`.
+
+**Schema confirmado:**
+
+| Coluna | Tipo | Nullable | Default |
+|---|---|---|---|
+| `fase_conversa` | text | YES | `'inicio'` |
+| `intro_etapa` | text | YES | NULL |
+| `last_processed_stage` | text | YES | NULL |
+| `last_user_stage` | text | YES | NULL |
+
+**Distribuição real de `fase_conversa` (PROD):**
+`inicio`, `inicio_nome`, `inicio_programa`, `docs_opcao`, `confirmar_interesse`,
+`primeiro`, `proxy_teste_5`, `clt_renda_perfil_informativo`, `quem_pode_somar`, `system_counter`
+
+**Matriz de tradução T9 → legado (parcial):**
+
+| Stage T9 canônico | Valor legado candidato | Confiança | Status |
+|---|---|---|---|
+| `discovery` | `inicio` | ALTA | Confirmar |
+| `docs_prep` | `docs_opcao` | ALTA | Confirmar |
+| `qualification_renda` | `clt_renda_perfil_informativo` | MÉDIA | Confirmar |
+| `qualification_eligibility` | `quem_pode_somar` | MÉDIA | Confirmar |
+| `qualification_civil` | (sem candidato claro) | — | **BLOQUEADO** |
+| `visit` | (sem candidato claro) | — | **BLOQUEADO** |
+
+**Gap registrado:** CRM/panel antigo NÃO acessível nesta execução (apenas remote `Enova-2`, sem submodule).
+Sem verificação direta do código legado que consome `fase_conversa`.
+
+**Decisão de Vasques:** runtime adapta-se ao legado — não criar colunas novas, não renomear colunas existentes.
+Camada de tradução explícita obrigatória em `mapLeadStateToEnovaState` antes de qualquer escrita real.
+
 ### Bloqueios formais
 
 | ID | Status | Causa |
@@ -63,12 +97,17 @@ WHERE table_name='enova_state' AND column_name IN ('fase_conversa','last_process
 
 ### Próxima ação
 
-**Vasques** executa SQL de consulta e declara:
-1. `stage_current` → coluna real: `____` (esperado: `fase_conversa`)
-2. Valores aceitos pela coluna (compatíveis com `'discovery'`, `'qualification_civil'`, etc.)
-3. `next_objective` → omitir ou mapear para `____`
+**Vasques** confirma os mapeamentos faltantes:
+1. `qualification_civil` → valor legado `fase_conversa`: `____` (sem candidato claro na distribuição)
+2. `visit` → valor legado `fase_conversa`: `____` (sem candidato claro na distribuição)
+3. Confirmar/ajustar os 4 candidatos com confiança ALTA/MÉDIA da tabela acima
 
-Após confirmação → **PR-FIX** (T9.13K-FIX ou T9.14) aplica mapper atualizado e remove o BLK.
+Após confirmação → **PR-T9.13K-FIX** (ou PR-T9.14-IMPL) implementa:
+- `STAGE_TO_FASE_CONVERSA` completo em `src/supabase/crm-store.ts`
+- `mapLeadStateToEnovaState` traduz `stage_current` → `fase_conversa` antes do upsert
+- `SupabaseCrmBackend` desbloqueado para `crm_lead_state`
+- `BLK-T9.13-STATE-MAPPING` removido
+- Prova real: `prove:t9.13-supabase-write-real-test` deve mostrar escrita real de `enova_state`
 
 ---
 
