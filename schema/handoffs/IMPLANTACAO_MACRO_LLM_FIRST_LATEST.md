@@ -1,5 +1,60 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13F-FIX — Correção em lote + schema discovery P0 (2026-05-03)
+
+**Tipo**: fix de schema em lote + diagnóstico preventivo | **Status**: CONCLUÍDA — smokes PASS  
+**Branch**: `fix/t9.13f-schema-col-align`  
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
+**Próximo passo autorizado**: Vasques re-executa prova real — P0 produz `[SCHEMA DIAG]` com colunas reais confirmadas
+
+### Causa confirmada (PGRST204 pós-T9.13E)
+| Tabela | Coluna | Erro PostgREST |
+|---|---|---|
+| `crm_lead_meta` | `external_ref` | PGRST204 — coluna não existe |
+| `enova_state` | `next_objective` | PGRST204 — coluna não existe |
+
+### Correção em lote
+
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/types.ts` | Removida `external_ref` de `CrmLeadMetaRow`; removida `next_objective` de `EnovaStateRow` |
+| `src/supabase/crm-store.ts` | `mapLeadToMeta`: omite `external_ref`; `mapLeadStateToEnovaState`: omite `next_objective` |
+| `src/supabase/write-real-test-proof.ts` | P5.8 removida; P6.9 removida; **sonda P0 de schema discovery adicionada** |
+
+### Sonda P0 — schema discovery (novo mecanismo preventivo)
+
+No início de `runRealProofs`, antes de qualquer upsert:
+1. `SELECT * limit=1` em `crm_lead_meta` e `enova_state`
+2. `Object.keys(row[0])` revela colunas reais sem PGRST204
+3. Imprime `[SCHEMA DIAG <tabela>]` com `real_columns`, `payload_keys`, `missing_from_real`, `kept`
+4. P0.1–P0.4 checam automaticamente que payload não contém coluna ausente
+
+**Saída esperada quando alinhado:**
+```
+[SCHEMA DIAG crm_lead_meta]
+  real_columns=[wa_id, phone_ref, status, manual_mode, updated_at, ...]
+  payload_keys=[wa_id, phone_ref, status, manual_mode, updated_at]
+  missing_from_real=[]
+  kept=[wa_id, phone_ref, status, manual_mode, updated_at]
+```
+
+### Payloads após T9.13F
+```
+crm_lead_meta : [wa_id, phone_ref, status, manual_mode, updated_at]
+enova_state   : [lead_id, stage_current, state_version, updated_at]
+```
+
+### Smokes
+| Suite | Resultado |
+|---|---|
+| `prove:t9.13` modo local | 19/19 PASS |
+| Core smoke | PASS |
+
+### Próxima ação
+Vasques re-executa `prove:t9.13` com credenciais reais. Se P0.3/P0.4 PASS → nenhum novo PGRST204 esperado. Se P0.3/P0.4 FAIL → `missing_from_real` indica coluna a remover (sem precisar esperar P5–P8 falhar).
+
+---
+
 ## T9.13E-FIX — Alinhar colunas do payload Supabase ao schema real (2026-05-02)
 
 **Tipo**: fix de schema | **Status**: CONCLUÍDA — smokes PASS  

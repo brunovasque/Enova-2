@@ -161,9 +161,9 @@ function mapLeadToMeta(lead: CrmLead): CrmLeadMetaRow {
   return {
     // wa_id é a PK real de crm_lead_meta; external_ref é o wa_id no CRM (T9.13C).
     wa_id: lead.external_ref ?? lead.lead_id,
-    external_ref: lead.external_ref,
+    // external_ref OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13F).
     // customer_name OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13E).
-    // Preservada apenas no CRM canônico (CrmLead) e no writeBuffer.
+    // Ambas preservadas apenas no CRM canônico (CrmLead) e no writeBuffer.
     phone_ref: lead.phone_ref,
     status: lead.status,
     manual_mode: lead.manual_mode,
@@ -175,9 +175,9 @@ function mapLeadStateToEnovaState(state: CrmLeadState): EnovaStateRow {
   return {
     lead_id: state.lead_id,
     stage_current: state.stage_current,
-    next_objective: state.next_objective,
+    // next_objective OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13F).
     // block_advance OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13E).
-    // Preservada apenas no CRM canônico (CrmLeadState) e no writeBuffer.
+    // Ambas preservadas apenas no CRM canônico (CrmLeadState) e no writeBuffer.
     state_version: state.state_version,
     updated_at: state.updated_at,
   };

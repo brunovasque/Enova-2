@@ -1,9 +1,46 @@
 # Handoff T9 — LLM ↔ Funil ↔ Supabase ↔ Telemetria
 
 **Tipo:** Handoff de sessão  
-**Data:** 2026-05-02  
+**Data:** 2026-05-03  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX/T9.13D-DIAG/T9.13E-FIX CONCLUÍDAS; próxima: **T9.13E — Vasques re-executa prova real Supabase após ajuste de colunas reais**
+**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX/T9.13D-DIAG/T9.13E-FIX/T9.13F-FIX CONCLUÍDAS; próxima: **Vasques re-executa prova real — P0 produz [SCHEMA DIAG] com colunas reais; upsert deve PASS sem novos PGRST204**
+
+## T9.13F-FIX — Correção em lote + schema discovery P0 (2026-05-03)
+
+PR: `fix/t9.13f-schema-col-align` (nova)
+
+**Causa raiz:** Iteração PGRST204 coluna-a-coluna. Após T9.13E, novos PGRST204:
+
+| Tabela | Coluna problemática | Erro PostgREST |
+|---|---|---|
+| `crm_lead_meta` | `external_ref` | `PGRST204: Could not find the 'external_ref' column` |
+| `enova_state` | `next_objective` | `PGRST204: Could not find the 'next_objective' column` |
+
+**Solução em lote:**
+
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/types.ts` | `CrmLeadMetaRow`: removida `external_ref`; `EnovaStateRow`: removida `next_objective` |
+| `src/supabase/crm-store.ts` | `mapLeadToMeta`: omite `external_ref`; `mapLeadStateToEnovaState`: omite `next_objective` |
+| `src/supabase/write-real-test-proof.ts` | P5.8 removida (`external_ref`); P6.9 removida (`next_objective`); **P0 schema discovery adicionado** |
+
+**Sonda P0 — schema discovery (novo):**
+- SELECT * limit=1 em `crm_lead_meta` e `enova_state` no início de `runRealProofs`
+- `Object.keys(row[0])` → revela todas as colunas reais sem lançar PGRST204
+- Imprime `[SCHEMA DIAG <tabela>]` com `real_columns`, `payload_keys`, `missing_from_real`, `kept`
+- P0.1–P0.4: checks automáticos que provam payload limpo antes do upsert
+
+**Payloads após T9.13F (apenas colunas confirmadas ou não-verificadas):**
+```
+crm_lead_meta : [wa_id, phone_ref, status, manual_mode, updated_at]
+enova_state   : [lead_id, stage_current, state_version, updated_at]
+```
+
+**Smokes:** `prove:t9.13` local 19/19 PASS | core smoke PASS
+
+**Próxima ação:** Vasques re-executa prova real com credenciais. P0 imprime `[SCHEMA DIAG]` confirmando colunas reais. Se P0.3 e P0.4 passam → upsert deve ser limpo (zero PGRST204). Se P0.3 ou P0.4 falham → `missing_from_real` indica próxima coluna a remover, sem precisar rodar P5–P8 primeiro.
+
+---
 
 ## T9.13E-FIX — Alinhar payload Supabase ao schema real (2026-05-02)
 
