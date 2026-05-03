@@ -1,14 +1,13 @@
 /**
- * ENOVA 2 — T9.13I-DIAG — Probe NOT NULL completo para `crm_lead_meta`
+ * ENOVA 2 — T9.13I/T9.13J — Probes NOT NULL e CHECK constraint para `crm_lead_meta`
  *
- * Descobre TODAS as colunas NOT NULL de uma tabela em uma única execução
- * automatizada, sem alterar schema, sem dados reais, sem logar details/secrets.
+ * Descobre constraints de schema sem alterar banco, sem dados reais, sem logar
+ * details/payload/secrets.
  *
- * Estratégia em cascata:
- *   1. information_schema.columns via PostgREST (esperado: blocked)
- *   2. pg_catalog.pg_attribute via PostgREST (esperado: blocked)
- *   3. incremental_probe: upsert com wa_id isolado; extrai violated_column de
- *      pg_message de cada 23502; repete até PASS ou limite de iterações.
+ * Módulos:
+ *   - runNotNullFullDiag (T9.13I): cascata information_schema → pg_catalog → incremental_probe
+ *   - runCheckConstraintProbe (T9.13J): cascata information_schema.check_constraints
+ *     → pg_catalog.pg_constraint → candidate_probe (testa conjunto fixo de valores)
  *
  * RESTRIÇÕES INVIOLÁVEIS:
  *   - Nunca logar details (contém valores reais de linha).
@@ -16,7 +15,7 @@
  *   - Nunca logar serviceRoleKey.
  *   - Nunca alterar schema/RLS/bucket.
  *   - wa_id de probe completamente isolado (prefixo `t9_13_probe_`).
- *   - MAX_ITERATIONS = 20 — hard stop contra loop infinito.
+ *   - MAX_ITERATIONS = 20 (NOT NULL probe); MAX_CANDIDATES = 20 (CHECK probe).
  */
 
 import { supabaseSelect, supabaseUpsert } from './client.ts';
@@ -280,5 +279,260 @@ export function printNotNullFullDiag(result: NotNullProbeResult): void {
   } else {
     console.log('  RESULTADO: upsert probe PASSOU — payload completo descoberto');
     console.log('  PRÓXIMO: aplicar values_suggested em mapLeadToMeta via PR-T9.13I-FIX');
+  }
+}
+
+// =============================================================================
+// T9.13J-DIAG — CHECK constraint probe para crm_lead_meta.lead_pool
+// =============================================================================
+
+export type CheckProbeSource =
+  | 'information_schema'
+  | 'pg_catalog'
+  | 'candidate_probe'
+  | 'blocked';
+
+export interface CheckConstraintProbeResult {
+  constraint_name: string;
+  column: string;
+  source: CheckProbeSource;
+  check_clause: string | null;        // expressão SQL, se acessível via metadata
+  allowed_values: string[];           // valores que passaram (candidate_probe)
+  accepted_value: string | null;      // primeiro valor aceito no probe
+  rejected_values: string[];          // valores rejeitados com 23514
+  other_error_value: string | null;   // valor que causou erro diferente de 23514 (ex: 23502 lead_temp)
+  remaining_error: string | null;
+  information_schema_error: string | null;
+  pg_catalog_error: string | null;
+  iterations: number;
+}
+
+// Candidatos a testar — ordem: valores PT-BR mais prováveis primeiro,
+// depois EN, depois valores genéricos.
+// Fontes: padrões de CRM legado Brasil + busca no repo (zero uso canônico encontrado).
+const LEAD_POOL_CANDIDATES: readonly string[] = [
+  'fria', 'morna', 'quente',      // temperatura BR (mais provável em legado E1)
+  'nova', 'ativo', 'inativo',     // status genérico BR
+  'cold', 'warm', 'hot',          // temperatura EN
+  'novo', 'prospect', 'ativo',    // termos CRM genéricos
+  'importado', 'manual', 'api',   // origem do lead
+  'default', 'geral', 'teste',    // valores de fallback genérico
+];
+
+// ---------------------------------------------------------------------------
+// Tentativa 1 — information_schema.check_constraints
+// ---------------------------------------------------------------------------
+
+async function tryCheckInformationSchema(
+  cfg: SupabaseConfig,
+  constraintName: string,
+): Promise<{ check_clause: string } | { error: string }> {
+  const r = await supabaseSelect<Record<string, unknown>>(
+    cfg,
+    'information_schema.check_constraints',
+    {
+      select: 'check_clause',
+      filters: { constraint_name: `eq.${constraintName}` },
+      limit: 1,
+    },
+  );
+  if (!r.ok) return { error: r.error ?? 'unknown' };
+  if (r.rows.length === 0) return { error: 'constraint_not_found_in_information_schema' };
+  return { check_clause: String(r.rows[0].check_clause ?? '') };
+}
+
+// ---------------------------------------------------------------------------
+// Tentativa 2 — pg_catalog.pg_constraint (via PostgREST)
+// PostgREST não expõe pg_catalog por padrão — documentar bloqueio.
+// ---------------------------------------------------------------------------
+
+async function tryCheckPgCatalog(
+  cfg: SupabaseConfig,
+  constraintName: string,
+): Promise<{ check_clause: string } | { error: string }> {
+  const r = await supabaseSelect<Record<string, unknown>>(
+    cfg,
+    'pg_catalog.pg_constraint',
+    {
+      select: 'conname,consrc',
+      filters: { conname: `eq.${constraintName}`, contype: 'eq.c' },
+      limit: 1,
+    },
+  );
+  if (!r.ok) return { error: r.error ?? 'unknown' };
+  if (r.rows.length === 0) return { error: 'constraint_not_found_in_pg_catalog' };
+  return { check_clause: String(r.rows[0].consrc ?? '') };
+}
+
+// ---------------------------------------------------------------------------
+// Tentativa 3 — candidate probe
+// Testa candidatos de lead_pool um por um.
+// Inclui lead_temp='t9_13_test' (NOT NULL confirmado T9.13I; sem CHECK próprio confirmado).
+// wa_id isolado: t9_13_probe_pool_*
+// Nunca loga details/payload/secrets.
+// ---------------------------------------------------------------------------
+
+async function runCandidateProbe(
+  cfg: SupabaseConfig,
+  probeWaId: string,
+): Promise<CheckConstraintProbeResult> {
+  const rejected: string[] = [];
+  const accepted: string[] = [];
+  let acceptedValue: string | null = null;
+  let otherErrorValue: string | null = null;
+  let remainingError: string | null = null;
+  let iterations = 0;
+
+  for (const candidate of LEAD_POOL_CANDIDATES) {
+    if (iterations >= 20) break;    // hard stop
+    iterations++;
+
+    const payload: Record<string, unknown> = {
+      wa_id: probeWaId,
+      lead_pool: candidate,
+      lead_temp: SAFE_STRING_VALUE,   // NOT NULL sem CHECK próprio confirmado (T9.13I)
+      updated_at: new Date().toISOString(),
+    };
+
+    const result = await supabaseUpsert<Record<string, unknown>>(cfg, 'crm_lead_meta', payload);
+
+    if (result.ok) {
+      accepted.push(candidate);
+      acceptedValue = candidate;
+      remainingError = null;
+      break;    // primeiro aceito — para o probe
+    }
+
+    const pgCode = /pg_code=(\d+)/.exec(result.error ?? '')?.[1] ?? null;
+    remainingError = result.error;
+
+    if (pgCode === '23514') {
+      // CHECK constraint rejeitou este valor
+      rejected.push(candidate);
+      continue;
+    }
+
+    // Outro erro (ex: 23502 para lead_temp, tipo inválido, etc.) — para
+    otherErrorValue = candidate;
+    break;
+  }
+
+  return {
+    constraint_name: 'crm_lead_meta_lead_pool_check',
+    column: 'lead_pool',
+    source: 'candidate_probe',
+    check_clause: null,
+    allowed_values: accepted,
+    accepted_value: acceptedValue,
+    rejected_values: rejected,
+    other_error_value: otherErrorValue,
+    remaining_error: remainingError,
+    information_schema_error: null,
+    pg_catalog_error: null,
+    iterations,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Entrada pública — runCheckConstraintProbe
+// ---------------------------------------------------------------------------
+
+/**
+ * Descobre valores permitidos pelo CHECK constraint de `crm_lead_meta.lead_pool`.
+ *
+ * @param cfg - Configuração Supabase (service role — server-side apenas)
+ * @param probeWaId - wa_id único de prova (prefixo t9_13_probe_pool_); NUNCA usar wa_id real
+ */
+export async function runCheckConstraintProbe(
+  cfg: SupabaseConfig,
+  probeWaId: string,
+): Promise<CheckConstraintProbeResult> {
+  const constraintName = 'crm_lead_meta_lead_pool_check';
+
+  // Tentativa 1: information_schema.check_constraints
+  const isResult = await tryCheckInformationSchema(cfg, constraintName);
+  if ('check_clause' in isResult) {
+    return {
+      constraint_name: constraintName,
+      column: 'lead_pool',
+      source: 'information_schema',
+      check_clause: isResult.check_clause,
+      allowed_values: [],
+      accepted_value: null,
+      rejected_values: [],
+      other_error_value: null,
+      remaining_error: null,
+      information_schema_error: null,
+      pg_catalog_error: null,
+      iterations: 1,
+    };
+  }
+  const isError = isResult.error;
+
+  // Tentativa 2: pg_catalog.pg_constraint
+  const pgResult = await tryCheckPgCatalog(cfg, constraintName);
+  if ('check_clause' in pgResult) {
+    return {
+      constraint_name: constraintName,
+      column: 'lead_pool',
+      source: 'pg_catalog',
+      check_clause: pgResult.check_clause,
+      allowed_values: [],
+      accepted_value: null,
+      rejected_values: [],
+      other_error_value: null,
+      remaining_error: null,
+      information_schema_error: isError,
+      pg_catalog_error: null,
+      iterations: 1,
+    };
+  }
+  const pgError = pgResult.error;
+
+  // Tentativa 3: candidate probe
+  const probeResult = await runCandidateProbe(cfg, probeWaId);
+  probeResult.information_schema_error = isError;
+  probeResult.pg_catalog_error = pgError;
+  return probeResult;
+}
+
+// ---------------------------------------------------------------------------
+// Formatação do diagnóstico CHECK para stdout
+// ---------------------------------------------------------------------------
+
+/**
+ * Imprime [CHECK DIAG crm_lead_meta.lead_pool] em stdout.
+ * Nunca imprime details, payload completo ou serviceRoleKey.
+ */
+export function printCheckConstraintDiag(result: CheckConstraintProbeResult): void {
+  console.log('\n[CHECK DIAG crm_lead_meta.lead_pool]');
+  console.log(`  constraint=${result.constraint_name}`);
+  console.log(`  source=${result.source}`);
+  if (result.information_schema_error) {
+    console.log(`  information_schema_error=${result.information_schema_error}`);
+  }
+  if (result.pg_catalog_error) {
+    console.log(`  pg_catalog_error=${result.pg_catalog_error}`);
+  }
+  if (result.check_clause) {
+    console.log(`  check_clause=${result.check_clause}`);
+  }
+  console.log(`  allowed_values=[${result.allowed_values.join(', ')}]`);
+  console.log(`  accepted_value=${result.accepted_value ?? 'none'}`);
+  console.log(`  rejected_values=[${result.rejected_values.join(', ')}]`);
+  if (result.other_error_value) {
+    console.log(`  other_error_value=${result.other_error_value}`);
+    console.log('  nota: erro diferente de 23514 — pode indicar 23502 em lead_temp ou tipo inválido');
+  }
+  console.log(`  remaining_error=${result.remaining_error ?? 'none'}`);
+  console.log(`  iterations=${result.iterations}`);
+  if (result.accepted_value) {
+    console.log(`  RESULTADO: valor aceito encontrado = "${result.accepted_value}"`);
+    console.log('  BLOQUEIO: BLK-T9.13H-LEAD-POOL-VALUE — confirmar valor canônico de produção com Vasques');
+    console.log('  NÃO aplicar em mapLeadToMeta sem confirmação — esta PR é DIAG');
+  } else if (result.source === 'information_schema' || result.source === 'pg_catalog') {
+    console.log(`  RESULTADO: check_clause obtida via ${result.source} — candidatos inferidos`);
+  } else {
+    console.log('  RESULTADO: nenhum candidato aceito — expandir lista ou aguardar Vasques');
   }
 }
