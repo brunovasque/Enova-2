@@ -1,5 +1,90 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13H-DIAG — NOT NULL constraints em `crm_lead_meta` (2026-05-03)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t9.13h-not-null-constraints`
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
+**Próximo passo autorizado**: Vasques reexecuta prova real para capturar `[NOT_NULL INFERENCE]`
+
+### Contexto (resultado pós-PR #203 T9.13G)
+
+Prova real pós-T9.13G: **50 PASS | 6 FAIL | 0 SKIP**.
+- P0.3/P0.4 PASS — payload alinhado ao schema real (zero PGRST204)
+- P6/P8 PASS — BLK-T9.13-STATE-MAPPING ativo e correto (writeBuffer)
+- P5/P7 FAIL — `crm_lead_meta` upsert retorna **Postgres 23502** (NOT NULL violation)
+  - `http_status=400`, `pg_code=23502`
+  - Payload `[wa_id, updated_at]` está omitindo coluna(s) com NOT NULL sem DEFAULT
+
+### Causa do 23502
+
+`23502 = not_null_violation`: upsert fornece `null` para coluna que exige valor não-nulo e não tem DEFAULT.
+- O campo `message` do erro PostgREST 23502 nomeia a coluna violada.
+- O campo `details` contém os valores reais da linha — **NUNCA logar** (dados de cliente).
+
+### Implementações T9.13H-DIAG
+
+**1. `src/supabase/client.ts` — `parsePgError` + erro estruturado em `supabaseUpsert`**
+
+Nova função `parsePgError(bodyText): PgErrorMeta | null` extrai `code`, `message`, `hint` do JSON de erro PostgREST. `details` **OMITIDO** (dados de cliente).
+
+`supabaseUpsert` usa `parsePgError` para emitir erro estruturado:
+```
+Antes: error=http_400: {"code":"23502","details":"Failing row contains (...)", ...}
+Depois: error=http_400: pg_code=23502 pg_message=null value in column "X" of relation...
+```
+- `details` não mais exposto no campo `error`
+- `code` e `message` expostos — são metadados de schema, não dados de usuário
+
+**2. `src/supabase/write-real-test-proof.ts` — P0.5, P0.6 e `[NOT_NULL INFERENCE]`**
+
+- **P0.5**: Tenta `information_schema.columns` via PostgREST (`select=column_name`, `is_nullable=eq.NO`). Esperado: `source=blocked` (PostgREST não expõe information_schema por padrão). Sempre PASS (informacional).
+- **P0.6**: Documenta mecanismo de inferência via `pg_message` do erro 23502.
+- **`[NOT_NULL INFERENCE crm_lead_meta]`**: emitido em P5 se `pg_code=23502`. Extrai coluna violada de `pg_message` via regex `/null value in column "([^"]+)"/`. Imprime `violated_column=X` e ação T9.13H-FIX sugerida.
+
+**3. `schema/diagnostics/T9_13H_NOT_NULL_CONSTRAINTS.md`** — documento completo do diagnóstico.
+
+### Candidatos NOT NULL (análise schema legado E1)
+
+| coluna | razão |
+|---|---|
+| `nome` | equivalente `customer_name` removido em T9.13E — provável NOT NULL em legado |
+| `telefone` | equivalente `phone_ref` removido em T9.13G — provável NOT NULL em legado |
+| `status_operacional` | equivalente `status` removido em T9.13G — provável NOT NULL em legado |
+| `is_paused` | BOOLEAN NOT NULL comum em schemas legado E1 |
+| `auto_outreach_enabled` | BOOLEAN NOT NULL comum em schemas legado E1 |
+
+**Confirmação pendente**: Vasques reexecuta prova — `[NOT_NULL INFERENCE]` revela `violated_column`.
+
+### Novo bloqueio
+
+| ID | Status | Descrição |
+|---|---|---|
+| BLK-T9.13H-NOT-NULL | **ATIVO** | `crm_lead_meta` upsert falha com 23502; coluna NOT NULL não identificada; aguarda prova real |
+
+### Smokes T9.13H-DIAG
+
+| Suite | Resultado |
+|---|---|
+| `prove:t9.13` modo local | 19 PASS / 0 FAIL / 1 SKIP |
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:worker` | PASS |
+| `smoke` (core) | PASS |
+
+### Próxima ação
+
+Vasques reexecuta `npm run prove:t9.13-supabase-write-real-test` com credenciais reais.
+
+**Resultado esperado:**
+- P0.3/P0.4 PASS (sem mudança de payload)
+- P0.5 PASS com `source=blocked|information_schema`
+- P0.6 PASS
+- P5 FAIL com `pg_code=23502`
+- `[NOT_NULL INFERENCE crm_lead_meta]` emite `violated_column=X`
+- Vasques confirma valor canônico de `X` → PR-T9.13H-FIX preencherá campo no payload
+
+---
+
 ## T9.13G-DIAG/FIX — Fail-fast P0 + BLK-T9.13-STATE-MAPPING (2026-05-03)
 
 **Tipo**: PR-FIX (T9.13G) — fail-fast preventivo + bloqueio formal de mapeamento sem prova canônica  

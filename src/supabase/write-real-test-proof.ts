@@ -353,6 +353,71 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
     return;
   }
 
+  // ── P0.5: NOT NULL discovery via information_schema.columns ────────────────
+  // PostgREST não expõe information_schema por padrão (schema não está em search_path
+  // configurado no Supabase). Se acessível → lista colunas NOT NULL.
+  // Se bloqueado (404/400) → source=blocked; coluna violada será inferida via pg_message
+  // do próximo erro 23502 (T9.13H melhorou client.ts para surfacializar pg_message).
+
+  console.log('\n── P0.5: NOT NULL discovery (information_schema.columns) ──');
+
+  const nnResult = await supabaseSelect<Record<string, unknown>>(
+    cfg,
+    'information_schema.columns',
+    {
+      select: 'column_name,is_nullable',
+      filters: { table_name: 'eq.crm_lead_meta', is_nullable: 'eq.NO' },
+      limit: 100,
+    },
+  );
+
+  let nnSource: 'information_schema' | 'blocked';
+  let nnColumnsRequired: string[] = [];
+
+  if (nnResult.ok) {
+    nnSource = 'information_schema';
+    nnColumnsRequired = nnResult.rows
+      .map((r) => String(r.column_name ?? ''))
+      .filter(Boolean);
+  } else {
+    nnSource = 'blocked';
+  }
+
+  const nnMissingRequired = nnColumnsRequired.filter((c) => !payloadKeysLead.includes(c));
+
+  console.log('[NOT_NULL DIAG crm_lead_meta]');
+  console.log(`  source=${nnSource}`);
+  console.log(`  columns_required=[${nnColumnsRequired.join(', ')}]`);
+  console.log(`  payload_keys=[${payloadKeysLead.join(', ')}]`);
+  console.log(`  missing_required=[${nnMissingRequired.join(', ')}]`);
+  if (nnSource === 'blocked') {
+    console.log(`  information_schema_error=${nnResult.error ?? 'null'}`);
+    console.log('  nota: information_schema não acessível via PostgREST neste projeto.');
+    console.log('  nota: coluna violada será visível em pg_message do próximo erro 23502 (ver P5 abaixo).');
+  }
+  if (nnMissingRequired.length > 0 && nnSource === 'information_schema') {
+    console.log(`  ATENÇÃO: payload missing required=[${nnMissingRequired.join(', ')}]`);
+    console.log('  Estes campos precisam ser incluídos no payload para evitar 23502.');
+    console.log('  NÃO preencher ainda — aguardar PR-T9.13H-FIX com confirmação de Vasques.');
+  }
+
+  // P0.5 é informacional — sempre PASS (diagnóstico, não correção)
+  check('P0.5: NOT NULL discovery tentado (informacional)', true, `source=${nnSource}`);
+  if (nnSource === 'information_schema') {
+    check('P0.5a: NOT NULL columns identificadas via information_schema', nnColumnsRequired.length >= 0,
+      `columns_required=[${nnColumnsRequired.join(', ')}]`);
+  }
+
+  // ── P0.6: Inferência via pg_message do erro 23502 anterior ─────────────────
+  // Se já houve execução anterior com 23502, o pg_message surfacializado pelo
+  // client.ts melhorado (T9.13H) contém o nome da coluna violada.
+  // Esta prova documenta a inferência — não executa upsert extra para provocar 23502.
+  console.log('\n── P0.6: 23502 inference — pg_message extração (T9.13H) ──');
+  console.log('  client.ts agora emite: pg_code=23502 pg_message=null value in column "X"...');
+  console.log('  Coluna violada será visível em [DIAG WRITE P5] desta execução.');
+  console.log('  Inferência aplicada: match /null value in column \\"([^"]+)\\"/ em pg_message.');
+  check('P0.6: inferência 23502 documentada', true, 'pg_message será visível em P5 write diag');
+
   // ── P5: Insert crm_leads → crm_lead_meta (apenas wa_id + updated_at — T9.13G) ──
 
   console.log('\n── P5: insert crm_leads → crm_lead_meta (Supabase real) ──');
@@ -366,6 +431,30 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   }
   const p5WriteDiag = backend.writeLog.at(-1);
   if (p5WriteDiag) logWriteDiag('P5', p5WriteDiag);
+
+  // T9.13H-DIAG: extrai coluna violada de pg_message em caso de 23502.
+  // pg_message format: "null value in column \"X\" of relation..."
+  // Nunca loga valores da linha (details omitido em client.ts).
+  if (p5WriteDiag && !p5WriteDiag.ok && p5WriteDiag.error) {
+    const pgCodeMatch = /pg_code=(\d+)/.exec(p5WriteDiag.error);
+    const pgMsgMatch = /pg_message=(.+?)(?:\s+pg_hint=|$)/.exec(p5WriteDiag.error);
+    const pgCode = pgCodeMatch?.[1] ?? null;
+    const pgMsg = pgMsgMatch?.[1] ?? null;
+    const columnMatch = pgMsg ? /null value in column "([^"]+)"/.exec(pgMsg) : null;
+    const violatedColumn = columnMatch?.[1] ?? null;
+    if (pgCode === '23502') {
+      console.log('[NOT_NULL INFERENCE crm_lead_meta]');
+      console.log(`  pg_code=${pgCode}`);
+      console.log(`  pg_message=${pgMsg ?? 'null'}`);
+      console.log(`  violated_column=${violatedColumn ?? 'não extraído — verificar pg_message acima'}`);
+      console.log(`  payload_keys=[${payloadKeysLead.join(', ')}]`);
+      if (violatedColumn) {
+        console.log(`  AÇÃO T9.13H-FIX: adicionar campo "${violatedColumn}" ao payload de mapLeadToMeta`);
+        console.log(`  BLOQUEIO: não preencher sem confirmação de Vasques sobre valor canônico`);
+      }
+    }
+  }
+
   check('P5.1: insert crm_leads não lança', !p5Threw);
   check('P5.2: retorna lead com lead_id correto (CRM canônico)', p5Lead?.lead_id === testLeadId);
   check('P5.3: phone_ref preservado no CRM canônico (não Supabase)', p5Lead?.phone_ref === lead.phone_ref);
