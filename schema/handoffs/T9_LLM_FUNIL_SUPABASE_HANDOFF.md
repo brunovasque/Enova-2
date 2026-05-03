@@ -5,22 +5,42 @@
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
 **Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11/T9.12-DIAG/T9.12-IMPL/T9.13-PROVA-PARCIAL CONCLUÍDAS; próxima: **T9.13B — Execução real da prova Supabase write em TEST por Vasques**
 
+## T9.13B-FIX — Correção cirúrgica P8.4 stage_current — CONCLUÍDA (2026-05-03)
+
+PR: `fix/t9.13b-update-return-fix` (nova)
+
+**Prova real rodada por Vasques resultou em 34 PASS | 1 FAIL (P8.4 stage_current). Fix aplicado.**
+
+**Causa:** `SupabaseCrmBackend.update()` usava `{ ...existing, ...patch } as T`. Fix: `Object.assign({}, existing, patch)` — patch garantidamente aplicado ao retorno sem depender do PostgREST.
+
+**Arquivo alterado:** `src/supabase/crm-store.ts` — método `update()`, linha 353.
+
+**Log diagnóstico:** `write-real-test-proof.ts` agora emite `[DIAG P8] lead_id=... stage_current=... state_version=...` antes dos checks P8.
+
+**Resultados pós-fix:**
+- `smoke:supabase:write-real`: 39/39 PASS
+- `prove:t9.13` local: 19/19 PASS
+- `smoke:supabase`: 70/70 PASS
+- `smoke:runtime:env`: 53/53 PASS
+- `smoke:runtime:fallback-guard`: 41/41 PASS
+- `prove:g8-readiness`: 7/7 PASS
+
+**Próxima:** T9.13B (re-execução) — Vasques re-executa prova real com fix aplicado; resultado esperado: 35/35 PASS.
+
+---
+
 ## T9.13-PROVA — Prova Supabase write real (state/leads) em TEST — PARCIAL (2026-05-03)
 
 PR: `prove/t9.13-supabase-write-real-test` (PR #197 em aberto)
 
-**Harness dual-mode instalado. Modo local 19/19 PASS. Modo TEST real SKIP — aguarda Vasques.**
+**Harness dual-modo instalado. Modo local 19/19 PASS. Modo TEST real: 34 PASS | 1 FAIL (P8.4).**
 
 **Arquivos:**
 - `src/supabase/write-real-test-proof.ts` — script dual-mode P1–P9
 - `package.json` — `prove:t9.13-supabase-write-real-test`
 - `schema/proofs/T9_SUPABASE_WRITE_REAL_TEST_PROOF.md`
 
-**Resultado:**
-- Modo local: 19/19 PASS
-- Modo TEST real: SKIP — `SUPABASE_WRITE_REAL_TEST_ENABLED` não setado
-
-**Para Vasques executar a prova real:**
+**Para Vasques re-executar a prova real (após fix):**
 ```
 SUPABASE_WRITE_REAL_TEST_ENABLED=true
 SUPABASE_REAL_ENABLED=true
@@ -30,7 +50,7 @@ SUPABASE_SERVICE_ROLE_KEY=<key>
 npm run prove:t9.13-supabase-write-real-test
 ```
 
-**Próxima:** T9.13B — Execução real da prova Supabase write em TEST por Vasques
+**Resultado esperado:** 35/35 PASS (incluindo P8.4)
 
 ---
 

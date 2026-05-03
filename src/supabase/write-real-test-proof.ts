@@ -339,6 +339,7 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   } catch {
     p8Threw = true;
   }
+  console.log(`  [DIAG P8] lead_id=${p8Updated?.lead_id ?? 'null'} stage_current=${p8Updated?.stage_current ?? 'null'} state_version=${p8Updated?.state_version ?? 'null'}`);
   check('P8.1: update crm_lead_state não lança', !p8Threw);
   check('P8.2: retorna state atualizado', p8Updated !== null);
   check('P8.3: lead_id preservado após update', p8Updated?.lead_id === testLeadId);
