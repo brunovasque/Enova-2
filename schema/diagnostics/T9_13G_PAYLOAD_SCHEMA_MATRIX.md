@@ -35,10 +35,12 @@ qual a **decisão T9.13G**, e o **motivo**.
 | `phone_ref` | NÃO | **REMOVIDO em T9.13G** | PGRST204 confirmado T9.13F real-run; equivalente legado: `telefone` (não confirmado como destino canônico) |
 | `status` | NÃO | **REMOVIDO em T9.13G** | PGRST204 confirmado T9.13F real-run; equivalente legado: `status_operacional` (semântica diferente — operacional vs lifecycle) |
 | `manual_mode` | NÃO | **REMOVIDO em T9.13G** | PGRST204 confirmado T9.13F real-run; sem equivalente direto no schema legado |
+| `lead_pool` | **SIM** | **ADICIONADO em T9.13H-FIX** | NOT NULL sem DEFAULT — 23502 confirmado em T9.13H real-run. Sem valor canônico no repo. Valor de prova: `'t9_13_test'`. BLK-T9.13H-LEAD-POOL-VALUE. |
 | `created_at` | SIM | NÃO no payload de write | Timestamp de criação preservado; gerenciado pelo Supabase |
 | `updated_at` | SIM | **MANTIDO** no payload | Confirmado pelo P0 real; permite upsert determinístico com timestamp de cliente |
 
 **Payload final T9.13G**: `[wa_id, updated_at]`
+**Payload final T9.13H-FIX**: `[wa_id, lead_pool, updated_at]`
 
 **Campos preservados no CRM canônico (`CrmLead`) e writeBuffer** (não escritos no Supabase real):
 `external_ref`, `customer_name`, `phone_ref`, `status`, `manual_mode`.
