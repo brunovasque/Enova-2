@@ -32,6 +32,7 @@ import { randomUUID } from 'crypto';
 import { SupabaseCrmBackend } from './crm-store.ts';
 import type { WriteDiagEntry } from './crm-store.ts';
 import { supabaseSelect } from './client.ts';
+import { runNotNullFullDiag, printNotNullFullDiag } from './not-null-probe.ts';
 import type { CrmLead, CrmLeadState } from '../crm/types.ts';
 import type { SupabaseConfig } from './types.ts';
 
@@ -355,70 +356,50 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
     return;
   }
 
-  // ── P0.5: NOT NULL discovery via information_schema.columns ────────────────
-  // PostgREST não expõe information_schema por padrão (schema não está em search_path
-  // configurado no Supabase). Se acessível → lista colunas NOT NULL.
-  // Se bloqueado (404/400) → source=blocked; coluna violada será inferida via pg_message
-  // do próximo erro 23502 (T9.13H melhorou client.ts para surfacializar pg_message).
+  // ── P0.5: NOT NULL FULL DIAG — descobre TODAS as colunas NOT NULL em uma execução ──
+  // T9.13I-DIAG: substitui o probe coluna-por-coluna por probe incremental automático.
+  //
+  // Estratégia em cascata (sem alterar schema):
+  //   1. information_schema.columns (esperado: blocked — PostgREST não expõe)
+  //   2. pg_catalog.pg_attribute   (esperado: blocked — PostgREST não expõe)
+  //   3. incremental_probe: upsert com wa_id isolado (t9_13_probe_*);
+  //      extrai violated_column de pg_message a cada 23502;
+  //      adiciona valor de prova seguro; repete até PASS ou MAX_ITERATIONS.
+  //
+  // wa_id do probe é DISTINTO do testWaId do fluxo P5/P7.
+  // Nunca loga details, payload completo ou secrets.
 
-  console.log('\n── P0.5: NOT NULL discovery (information_schema.columns) ──');
+  console.log('\n── P0.5: NOT NULL FULL DIAG (probe incremental automático — T9.13I) ──');
 
-  const nnResult = await supabaseSelect<Record<string, unknown>>(
-    cfg,
-    'information_schema.columns',
-    {
-      select: 'column_name,is_nullable',
-      filters: { table_name: 'eq.crm_lead_meta', is_nullable: 'eq.NO' },
-      limit: 100,
-    },
-  );
+  const probeWaId = `t9_13_probe_${ts}`;   // wa_id isolado — nunca conflita com P5
+  console.log(`  [INFO] probe wa_id (isolado de P5): ${probeWaId}`);
+  console.log(`  [INFO] Tentando information_schema → pg_catalog → incremental_probe`);
 
-  let nnSource: 'information_schema' | 'blocked';
-  let nnColumnsRequired: string[] = [];
+  const notNullDiag = await runNotNullFullDiag(cfg, probeWaId);
+  printNotNullFullDiag(notNullDiag);
 
-  if (nnResult.ok) {
-    nnSource = 'information_schema';
-    nnColumnsRequired = nnResult.rows
-      .map((r) => String(r.column_name ?? ''))
-      .filter(Boolean);
+  check('P0.5: NOT NULL FULL DIAG executado', true, `source=${notNullDiag.source}`);
+  check('P0.5a: required_columns descobertos (≥1)', notNullDiag.required_columns.length >= 1,
+    `required_columns=[${notNullDiag.required_columns.join(', ')}]`);
+  check('P0.5b: probe não entrou em loop infinito', notNullDiag.iterations < 20,
+    `iterations=${notNullDiag.iterations}`);
+
+  // P0.5c: informacional — se probe PASS, payload completo foi descoberto.
+  if (notNullDiag.probe_succeeded) {
+    check('P0.5c: probe incremental upsert PASSOU (payload completo descoberto)',
+      notNullDiag.probe_succeeded, `required_columns=[${notNullDiag.required_columns.join(', ')}]`);
   } else {
-    nnSource = 'blocked';
+    // probe FAIL ainda é diagnóstico válido — revela colunas descobertas até o erro
+    check('P0.5c: probe incremental executado (pode ter remaining_error)',
+      true, `remaining_error=${notNullDiag.remaining_error ?? 'none'}`);
   }
 
-  const nnMissingRequired = nnColumnsRequired.filter((c) => !payloadKeysLead.includes(c));
-
-  console.log('[NOT_NULL DIAG crm_lead_meta]');
-  console.log(`  source=${nnSource}`);
-  console.log(`  columns_required=[${nnColumnsRequired.join(', ')}]`);
-  console.log(`  payload_keys=[${payloadKeysLead.join(', ')}]`);
-  console.log(`  missing_required=[${nnMissingRequired.join(', ')}]`);
-  if (nnSource === 'blocked') {
-    console.log(`  information_schema_error=${nnResult.error ?? 'null'}`);
-    console.log('  nota: information_schema não acessível via PostgREST neste projeto.');
-    console.log('  nota: coluna violada será visível em pg_message do próximo erro 23502 (ver P5 abaixo).');
-  }
-  if (nnMissingRequired.length > 0 && nnSource === 'information_schema') {
-    console.log(`  ATENÇÃO: payload missing required=[${nnMissingRequired.join(', ')}]`);
-    console.log('  Estes campos precisam ser incluídos no payload para evitar 23502.');
-    console.log('  NÃO preencher ainda — aguardar PR-T9.13H-FIX com confirmação de Vasques.');
-  }
-
-  // P0.5 é informacional — sempre PASS (diagnóstico, não correção)
-  check('P0.5: NOT NULL discovery tentado (informacional)', true, `source=${nnSource}`);
-  if (nnSource === 'information_schema') {
-    check('P0.5a: NOT NULL columns identificadas via information_schema', nnColumnsRequired.length >= 0,
-      `columns_required=[${nnColumnsRequired.join(', ')}]`);
-  }
-
-  // ── P0.6: Inferência via pg_message do erro 23502 anterior ─────────────────
-  // Se já houve execução anterior com 23502, o pg_message surfacializado pelo
-  // client.ts melhorado (T9.13H) contém o nome da coluna violada.
-  // Esta prova documenta a inferência — não executa upsert extra para provocar 23502.
-  console.log('\n── P0.6: 23502 inference — pg_message extração (T9.13H) ──');
-  console.log('  client.ts agora emite: pg_code=23502 pg_message=null value in column "X"...');
-  console.log('  Coluna violada será visível em [DIAG WRITE P5] desta execução.');
-  console.log('  Inferência aplicada: match /null value in column \\"([^"]+)\\"/ em pg_message.');
-  check('P0.6: inferência 23502 documentada', true, 'pg_message será visível em P5 write diag');
+  // ── P0.6: Inferência via pg_message do erro 23502 (mantida — T9.13H) ─────────
+  console.log('\n── P0.6: 23502 inference — pg_message extração (T9.13H mantido) ──');
+  console.log('  client.ts emite: pg_code=23502 pg_message=null value in column "X"...');
+  console.log('  Coluna violada do fluxo principal P5 visível em [DIAG WRITE P5] abaixo.');
+  console.log('  Inferência: match /null value in column \\"([^"]+)\\"/ em pg_message.');
+  check('P0.6: inferência 23502 documentada', true, 'pg_message visível em P5 write diag');
 
   // ── P5: Insert crm_leads → crm_lead_meta (apenas wa_id + updated_at — T9.13G) ──
 
