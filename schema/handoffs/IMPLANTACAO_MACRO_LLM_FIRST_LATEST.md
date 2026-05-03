@@ -1,5 +1,72 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13J-FIX — `lead_pool='COLD_POOL'` e `lead_temp='COLD'` canônicos em `crm_lead_meta` (2026-05-03)
+
+**Tipo**: PR-FIX | **Branch**: `fix/t9.13j-lead-pool-lead-temp-canonical`
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
+**Próximo passo autorizado**: Vasques reexecuta prova real com payload NOT NULL/CHECK confirmado
+
+### Contexto
+
+Vasques consultou o Supabase SQL Editor diretamente e confirmou:
+- CHECK `crm_lead_meta_lead_pool_check` aceita `'COLD_POOL'`, `'WARM_POOL'` entre outros
+- NOT NULL sem DEFAULT: `wa_id`, `lead_pool`, `lead_temp`
+- NOT NULL com DEFAULT (não enviar): `tags`, `auto_outreach_enabled`, `is_paused`, `created_at`, `updated_at`, `is_archived`
+
+Decisão canônica (Vasques): todo lead novo entra como base fria.
+
+### Correções aplicadas
+
+**`src/supabase/crm-store.ts`** — `mapLeadToMeta()`:
+```typescript
+lead_pool: 'COLD_POOL',  // NOT NULL sem DEFAULT — canônico T9.13J
+lead_temp: 'COLD',       // NOT NULL sem DEFAULT — canônico T9.13J
+```
+
+**`src/supabase/types.ts`** — `CrmLeadMetaRow`:
+- `lead_temp?: string | null` adicionado
+- JSDoc atualizado: SQL direto confirmado, NOT NULL documentados, BLKs removidos
+
+**`src/supabase/write-real-test-proof.ts`**:
+- `payloadKeysLead = ['wa_id', 'lead_pool', 'lead_temp', 'updated_at']`
+- P5.8: `lead_pool === 'COLD_POOL'`
+- P5.9: `lead_temp === 'COLD'` (novo)
+- P7.6: `lead_pool === 'COLD_POOL'`
+- P7.7: `lead_temp === 'COLD'` (novo)
+
+### Bloqueios removidos
+
+| ID | Status anterior | Status atual |
+|---|---|---|
+| BLK-T9.13H-LEAD-POOL-VALUE | ATIVO | **RESOLVIDO** — `lead_pool='COLD_POOL'` canônico |
+| BLK-T9.13I-NOT-NULL-FULL | ATIVO | **RESOLVIDO** — `lead_temp='COLD'` canônico |
+| BLK-T9.13J-CHECK-CONSTRAINT | ATIVO | **RESOLVIDO** — CHECK satisfeito por `'COLD_POOL'` |
+
+Bloqueio ainda ativo: **BLK-T9.13-STATE-MAPPING** (`enova_state` em writeBuffer — fora de escopo desta PR).
+
+### Smokes
+
+| Suite | Resultado |
+|---|---|
+| `prove:t9.13` modo local | 19/19 PASS / 0 FAIL / 1 SKIP |
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Próxima ação
+
+Vasques reexecuta `npm run prove:t9.13-supabase-write-real-test` com credenciais reais.
+
+Esperado:
+- P0.5: `[NOT_NULL FULL DIAG]` — `probe_succeeded=true` (payload completo descoberto)
+- P0.7: `[CHECK DIAG]` — `accepted_value='COLD_POOL'`
+- P5.8/P5.9: `lead_pool=COLD_POOL`, `lead_temp=COLD` gravados
+- P7.6/P7.7: preservados após update
+
+---
+
 ## T9.13J-DIAG — CHECK constraint probe `crm_lead_meta.lead_pool` (2026-05-03)
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t9.13j-check-constraint-lead-pool`

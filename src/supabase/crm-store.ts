@@ -161,15 +161,17 @@ function mapLeadToMeta(lead: CrmLead): CrmLeadMetaRow {
   return {
     // wa_id é a PK real de crm_lead_meta; external_ref é o wa_id no CRM (T9.13C).
     wa_id: lead.external_ref ?? lead.lead_id,
-    // lead_pool: NOT NULL no Supabase real (23502 confirmado em T9.13H).
-    // Valor canônico de produção NÃO definido no repo — sem uso existente encontrado (T9.13H-FIX).
-    // BLK-T9.13H-LEAD-POOL-VALUE: valor de prova 't9_13_test'; produção bloqueada.
-    // Vasques deve confirmar o valor canônico antes de go-live real.
-    lead_pool: 't9_13_test',
+    // lead_pool + lead_temp: NOT NULL sem DEFAULT confirmados por SQL direto (T9.13J).
+    // Valores canônicos definidos por Vasques: todo lead novo entra como base fria.
+    // Mudança para WARM_POOL/WARM só ocorre por regra comercial comprovada de aquecimento.
+    lead_pool: 'COLD_POOL',
+    lead_temp: 'COLD',
     updated_at: lead.updated_at,
     // PGRST204 confirmados em T9.13E/T9.13F/T9.13G — colunas não existem no Supabase real:
     //   external_ref, customer_name, phone_ref, status, manual_mode.
     // Todos os 5 campos preservados no CRM canônico (CrmLead) e writeBuffer.
+    // NOT NULL com DEFAULT — não enviar (PostgREST preenche automaticamente):
+    //   tags, auto_outreach_enabled, is_paused, created_at, is_archived.
   };
 }
 
