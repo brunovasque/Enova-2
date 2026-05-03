@@ -161,25 +161,34 @@ function mapLeadToMeta(lead: CrmLead): CrmLeadMetaRow {
   return {
     // wa_id é a PK real de crm_lead_meta; external_ref é o wa_id no CRM (T9.13C).
     wa_id: lead.external_ref ?? lead.lead_id,
-    // external_ref OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13F).
-    // customer_name OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13E).
-    // Ambas preservadas apenas no CRM canônico (CrmLead) e no writeBuffer.
-    phone_ref: lead.phone_ref,
-    status: lead.status,
-    manual_mode: lead.manual_mode,
     updated_at: lead.updated_at,
+    // PGRST204 confirmados em T9.13E/T9.13F/T9.13G — colunas não existem no Supabase real:
+    //   external_ref, customer_name, phone_ref, status, manual_mode.
+    // Todos os 5 campos preservados no CRM canônico (CrmLead) e writeBuffer.
   };
 }
 
+/**
+ * BLOQUEADO — BLK-T9.13-STATE-MAPPING (T9.13G).
+ *
+ * Esta função NÃO deve ser chamada pelo runtime. enova_state real não tem schema
+ * compatível com CrmLeadState canônico:
+ *   - PGRST204 T9.13E: block_advance não existe
+ *   - PGRST204 T9.13F: next_objective não existe
+ *   - PGRST204 T9.13G: stage_current, state_version não existem
+ *
+ * Candidatos legado (sem prova canônica): fase_conversa, last_processed_stage,
+ * last_user_stage, intro_etapa. Múltiplos coexistem; sem confirmação de Vasques
+ * sobre qual é o destino correto, escrita real fica bloqueada.
+ *
+ * Mantida no código apenas para retrocompatibilidade do tipo. Toda escrita de
+ * crm_lead_state vai para writeBuffer (ver SupabaseCrmBackend.insert/update).
+ */
 function mapLeadStateToEnovaState(state: CrmLeadState): EnovaStateRow {
   return {
     lead_id: state.lead_id,
-    stage_current: state.stage_current,
-    // next_objective OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13F).
-    // block_advance OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13E).
-    // Ambas preservadas apenas no CRM canônico (CrmLeadState) e no writeBuffer.
-    state_version: state.state_version,
     updated_at: state.updated_at,
+    // BLK-T9.13-STATE-MAPPING — demais campos omitidos por ausência no schema real.
   };
 }
 
@@ -342,12 +351,18 @@ export class SupabaseCrmBackend implements CrmBackend {
   }
 
   /**
-   * Insert com escrita real condicional (T9.12).
+   * Insert com escrita real condicional (T9.12 + T9.13G).
    *
    * - crm_leads + writeEnabled=true  → upsert Supabase crm_lead_meta;
+   *   payload reduzido a colunas reais confirmadas: wa_id, updated_at (T9.13G);
    *   fallback writeBuffer se falhar.
-   * - crm_lead_state + writeEnabled=true → upsert Supabase enova_state;
-   *   fallback writeBuffer se falhar.
+   * - crm_lead_state → SEMPRE writeBuffer (BLK-T9.13-STATE-MAPPING).
+   *   enova_state real não tem schema compatível com CrmLeadState canônico
+   *   (PGRST204: stage_current/state_version/next_objective/block_advance ausentes).
+   *   Múltiplos candidatos legado coexistem (fase_conversa, last_processed_stage,
+   *   last_user_stage, intro_etapa) sem prova canônica de qual é o destino correto.
+   *   writeLog registra o bloqueio explicitamente (used_fallback=true,
+   *   attempted_real_write=false, error='BLK-T9.13-STATE-MAPPING').
    * - Demais tabelas (crm_turns, crm_facts, etc.) → sempre writeBuffer
    *   (schema/destino Supabase não confirmados — T9.12-DIAG BLK-WRITE-02).
    * - writeEnabled=false → writeBuffer em todos os casos (comportamento T8.8).
@@ -377,22 +392,21 @@ export class SupabaseCrmBackend implements CrmBackend {
         });
         if (result.ok) return row;
       } else if (table === 'crm_lead_state') {
+        // BLK-T9.13-STATE-MAPPING — escrita real bloqueada; vai direto para writeBuffer.
         const state = row as unknown as CrmLeadState;
-        const result = await this.supabaseWriteLeadState(state);
         const testId = typeof state.lead_id === 'string' ? state.lead_id : '(non-test)';
         this.writeLog.push({
           table,
           target_table: 'enova_state',
           write_enabled: true,
-          attempted_real_write: true,
-          used_fallback: !result.ok,
-          ok: result.ok,
-          http_status: result.http_status,
-          rows: result.rows.length,
-          error: result.error,
+          attempted_real_write: false,
+          used_fallback: true,
+          ok: false,
+          http_status: null,
+          rows: 0,
+          error: 'BLK-T9.13-STATE-MAPPING: enova_state schema incompatível com CrmLeadState canônico',
           test_id: testId,
         });
-        if (result.ok) return row;
       }
       // crm_turns, crm_facts e demais: fallthrough para writeBuffer
     }
@@ -400,13 +414,17 @@ export class SupabaseCrmBackend implements CrmBackend {
   }
 
   /**
-   * Update com escrita real condicional (T9.12).
+   * Update com escrita real condicional (T9.12 + T9.13G).
    *
-   * Para crm_leads e crm_lead_state com writeEnabled=true:
+   * Para crm_leads com writeEnabled=true:
    *   1. Busca o registro completo atual (Supabase + writeBuffer via findOne).
    *   2. Mescla o patch.
-   *   3. Faz upsert real no Supabase.
+   *   3. Faz upsert real no Supabase (apenas wa_id + updated_at — T9.13G).
    *   4. Em falha Supabase → fallback writeBuffer.
+   *
+   * Para crm_lead_state → SEMPRE writeBuffer (BLK-T9.13-STATE-MAPPING).
+   *   Mesma razão do insert: enova_state schema incompatível com CrmLeadState canônico.
+   *   writeLog registra o bloqueio explicitamente.
    *
    * Para demais tabelas ou writeEnabled=false → writeBuffer.
    * T9.13D-DIAG: resultado do upsert acumulado em writeLog para inspeção.
@@ -416,62 +434,55 @@ export class SupabaseCrmBackend implements CrmBackend {
     matcher: (row: T) => boolean,
     patch: Partial<T>,
   ): Promise<T | null> {
-    if (this.writeEnabled && (table === 'crm_leads' || table === 'crm_lead_state')) {
+    if (this.writeEnabled && table === 'crm_leads') {
       const existing = await this.findOne<T>(table, matcher);
       if (existing) {
         // Object.assign garante que o patch é aplicado ao objeto retornado,
         // sem depender do retorno do PostgREST. T9.13B-FIX.
         const merged: T = Object.assign({}, existing, patch);
-        if (table === 'crm_leads') {
-          const lead = merged as unknown as CrmLead;
-          const result = await this.supabaseWriteLead(lead);
-          const testId =
-            typeof lead.external_ref === 'string' && lead.external_ref.startsWith('t9_13_')
-              ? lead.external_ref
-              : '(non-test)';
-          this.writeLog.push({
-            table,
-            target_table: 'crm_lead_meta',
-            write_enabled: true,
-            attempted_real_write: true,
-            used_fallback: !result.ok,
-            ok: result.ok,
-            http_status: result.http_status,
-            rows: result.rows.length,
-            error: result.error,
-            test_id: testId,
-          });
-          if (result.ok) return merged;
-          // Supabase falhou → writeBuffer absorve o registro completo mesclado
-          const bufferedLead = await this.writeBuffer.update<T>(table, matcher, patch);
-          if (bufferedLead !== null) return bufferedLead;
-          await this.writeBuffer.insert<T>(table, merged);
-          return merged;
-        } else {
-          const state = merged as unknown as CrmLeadState;
-          const result = await this.supabaseWriteLeadState(state);
-          const testId = typeof state.lead_id === 'string' ? state.lead_id : '(non-test)';
-          this.writeLog.push({
-            table,
-            target_table: 'enova_state',
-            write_enabled: true,
-            attempted_real_write: true,
-            used_fallback: !result.ok,
-            ok: result.ok,
-            http_status: result.http_status,
-            rows: result.rows.length,
-            error: result.error,
-            test_id: testId,
-          });
-          if (result.ok) return merged;
-          // Supabase falhou → writeBuffer absorve o registro completo mesclado
-          const bufferedState = await this.writeBuffer.update<T>(table, matcher, patch);
-          if (bufferedState !== null) return bufferedState;
-          await this.writeBuffer.insert<T>(table, merged);
-          return merged;
-        }
+        const lead = merged as unknown as CrmLead;
+        const result = await this.supabaseWriteLead(lead);
+        const testId =
+          typeof lead.external_ref === 'string' && lead.external_ref.startsWith('t9_13_')
+            ? lead.external_ref
+            : '(non-test)';
+        this.writeLog.push({
+          table,
+          target_table: 'crm_lead_meta',
+          write_enabled: true,
+          attempted_real_write: true,
+          used_fallback: !result.ok,
+          ok: result.ok,
+          http_status: result.http_status,
+          rows: result.rows.length,
+          error: result.error,
+          test_id: testId,
+        });
+        if (result.ok) return merged;
+        // Supabase falhou → writeBuffer absorve o registro completo mesclado
+        const bufferedLead = await this.writeBuffer.update<T>(table, matcher, patch);
+        if (bufferedLead !== null) return bufferedLead;
+        await this.writeBuffer.insert<T>(table, merged);
+        return merged;
       }
       // Fallback: se não encontrou → writeBuffer
+    } else if (this.writeEnabled && table === 'crm_lead_state') {
+      // BLK-T9.13-STATE-MAPPING — escrita real bloqueada; sempre writeBuffer.
+      const existing = await this.findOne<T>(table, matcher);
+      const stateForId = (existing ?? patch) as unknown as Partial<CrmLeadState>;
+      const testId = typeof stateForId.lead_id === 'string' ? stateForId.lead_id : '(non-test)';
+      this.writeLog.push({
+        table,
+        target_table: 'enova_state',
+        write_enabled: true,
+        attempted_real_write: false,
+        used_fallback: true,
+        ok: false,
+        http_status: null,
+        rows: 0,
+        error: 'BLK-T9.13-STATE-MAPPING: enova_state schema incompatível com CrmLeadState canônico',
+        test_id: testId,
+      });
     }
     return this.writeBuffer.update<T>(table, matcher, patch);
   }

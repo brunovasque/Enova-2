@@ -3,7 +3,36 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-03  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX/T9.13D-DIAG/T9.13E-FIX/T9.13F-FIX CONCLUÍDAS; próxima: **Vasques re-executa prova real — P0 produz [SCHEMA DIAG] com colunas reais; upsert deve PASS sem novos PGRST204**
+**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX/T9.13D-DIAG/T9.13E-FIX/T9.13F-FIX/T9.13G-DIAG/FIX CONCLUÍDAS; próxima: **Vasques reexecuta prova real com fail-fast P0 e BLK-T9.13-STATE-MAPPING ativo**
+
+## T9.13G-DIAG/FIX — Fail-fast P0 + BLK-T9.13-STATE-MAPPING (2026-05-03)
+
+PR: `fix/t9.13g-failfast-state-mapping` (nova)
+
+**Causa raiz (T9.13F real-run):** P0 detectou `missing_from_real=[phone_ref, status, manual_mode]` em `crm_lead_meta` e `[stage_current, state_version]` em `enova_state` mas **não fez fail-fast** — prova continuou e produziu PGRST204 reais.
+
+**Correção em três frentes:**
+
+### 1. Fail-fast no P0
+Em `runRealProofs`, após `[SCHEMA DIAG]`, se `missing_from_real.length > 0` em qualquer payload → encerra com `[FAIL-FAST DIAG <tabela>]` (real_columns/payload_keys/missing_from_real/kept/próxima ação) e P5–P8 são puladas.
+
+### 2. crm_lead_meta payload reduzido
+- `mapLeadToMeta`: agora envia apenas `wa_id + updated_at`
+- `CrmLeadMetaRow`: removidas `phone_ref`, `status`, `manual_mode`
+- Prova P5/P7: verifica apenas `wa_id` (PK) no Supabase
+
+### 3. BLK-T9.13-STATE-MAPPING — crm_lead_state em writeBuffer
+- `enova_state` real tem candidatos legado para stage_current (`fase_conversa`, `last_processed_stage`, `last_user_stage`, `intro_etapa`) sem prova canônica de qual usar
+- `SupabaseCrmBackend.insert/update` para `crm_lead_state` registra writeLog com `attempted_real_write=false`, `used_fallback=true`, `error='BLK-T9.13-STATE-MAPPING'`
+- Prova P6/P8: verifica writeBuffer via `backend.findOne`; novos checks P6.BLK.1/2/3 + P6.BUF.1/2/3 + P8.BLK.1/2
+
+**Matriz payload × schema:** `schema/diagnostics/T9_13G_PAYLOAD_SCHEMA_MATRIX.md`
+
+**Smokes:** `prove:t9.13` 19/19 | `smoke:supabase:write-real` 39/39 | `smoke:supabase` 70/70 | `smoke:runtime:env` 53/53 | `smoke:runtime:fallback-guard` 41/41 | `prove:g8-readiness` 7/7 PASS
+
+**Próxima ação:** Vasques reexecuta prova real. P0.3/P0.4 esperado PASS; se ainda houver miss, fail-fast diz qual coluna remover sem rodar P5–P8.
+
+---
 
 ## T9.13F-FIX — Correção em lote + schema discovery P0 (2026-05-03)
 
