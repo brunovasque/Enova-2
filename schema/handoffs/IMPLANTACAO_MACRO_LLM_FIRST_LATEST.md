@@ -1,10 +1,42 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## PR-T9.13B-FIX — Correção P8.4 stage_current em SupabaseCrmBackend.update() (2026-05-03)
+
+**Tipo**: fix cirúrgico | **Status**: CONCLUÍDA — fix aplicado, smokes PASS  
+**Branch**: `fix/t9.13b-update-return-fix`  
+**Próxima PR autorizada**: **T9.13B (re-execução) — Vasques re-executa prova real; esperado 35/35 PASS**
+
+### Veredito executivo
+
+Prova real T9.13 rodou com 34 PASS | 1 FAIL (P8.4 `stage_current atualizado`). P8.6/P8.7 confirmaram que Supabase recebeu os valores corretos, mas o objeto retornado por `update()` não refletia o `stage_current` do patch. Fix: substituição de `{ ...existing, ...patch } as T` por `Object.assign({}, existing, patch)` garante que o patch é aplicado ao objeto de retorno sem depender do PostgREST. Log diagnóstico `[DIAG P8]` adicionado à prova para facilitar futuras verificações.
+
+### Arquivos alterados
+
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/crm-store.ts` | `update()` usa `Object.assign({}, existing, patch)` (T9.13B-FIX) |
+| `src/supabase/write-real-test-proof.ts` | Log `[DIAG P8] lead_id/stage_current/state_version` antes dos checks P8 |
+| `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` | Gate G9 atualizado com fix |
+| `schema/handoffs/T9_LLM_FUNIL_SUPABASE_HANDOFF.md` | Seção T9.13B-FIX adicionada |
+
+### Resultados pós-fix
+
+| Suite | Resultado |
+|---|---|
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `prove:t9.13` modo local | 19/19 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+---
+
 ## PR-T9.13-PROVA — Prova Supabase write real (state/leads) em TEST (2026-05-03)
 
-**Tipo**: PR-PROVA | **Status**: PARCIAL — modo local PASS, modo TEST real SKIP aguarda Vasques  
+**Tipo**: PR-PROVA | **Status**: PARCIAL — modo local PASS, modo TEST real 34/35 (P8.4 fix aplicado)  
 **Branch**: `prove/t9.13-supabase-write-real-test`  
-**Próxima PR autorizada**: **T9.13B — Execução real por Vasques** (ou T9.14 se prova real confirmar PASS)
+**Próxima PR autorizada**: **T9.13B (re-execução) — Vasques re-executa prova real após fix**
 
 ### Veredito executivo
 

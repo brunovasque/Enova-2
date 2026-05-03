@@ -350,7 +350,9 @@ export class SupabaseCrmBackend implements CrmBackend {
     if (this.writeEnabled && (table === 'crm_leads' || table === 'crm_lead_state')) {
       const existing = await this.findOne<T>(table, matcher);
       if (existing) {
-        const merged = { ...existing, ...patch } as T;
+        // Object.assign garante que o patch é aplicado ao objeto retornado,
+        // sem depender do retorno do PostgREST. T9.13B-FIX.
+        const merged: T = Object.assign({}, existing, patch);
         let ok = false;
         if (table === 'crm_leads') {
           ok = await this.supabaseWriteLead(merged as unknown as CrmLead);
