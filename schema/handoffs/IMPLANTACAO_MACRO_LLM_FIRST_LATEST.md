@@ -1,5 +1,74 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13G-DIAG/FIX — Fail-fast P0 + BLK-T9.13-STATE-MAPPING (2026-05-03)
+
+**Tipo**: PR-FIX (T9.13G) — fail-fast preventivo + bloqueio formal de mapeamento sem prova canônica  
+**Branch**: `fix/t9.13g-failfast-state-mapping`  
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
+**Próximo passo autorizado**: T9.13G — Vasques reexecuta prova real com fail-fast P0 e mapeamento Supabase real
+
+### Causa confirmada (log T9.13F real-run)
+A prova T9.13F real (Vasques) retornou **41 PASS | 17 FAIL**. P0 detectou desalinhamento mas não fez fail-fast:
+
+```
+[SCHEMA DIAG crm_lead_meta]
+  missing_from_real=[phone_ref, status, manual_mode]
+  kept=[wa_id, updated_at]
+[SCHEMA DIAG enova_state]
+  missing_from_real=[stage_current, state_version]
+  kept=[lead_id, updated_at]
+```
+
+Prova continuou para P5–P8 e produziu PGRST204 reais (`manual_mode`, `stage_current`).
+
+### Correção em três frentes
+
+**Frente 1 — Fail-fast no P0**
+Em `runRealProofs`, após emitir `[SCHEMA DIAG]`, verifica `missing_from_real`. Se houver coluna ausente em qualquer payload, prova encerra com bloco `[FAIL-FAST DIAG <tabela>]` (real_columns / payload_keys / missing_from_real / kept / próxima ação) e P5–P8 são puladas (`skipCheck`).
+
+**Frente 2 — `crm_lead_meta` payload reduzido**
+| Item | Antes (T9.13F) | Depois (T9.13G) |
+|---|---|---|
+| `mapLeadToMeta` payload | `[wa_id, phone_ref, status, manual_mode, updated_at]` | `[wa_id, updated_at]` |
+| `CrmLeadMetaRow` interface | `wa_id, phone_ref, status, manual_mode, created_at, updated_at` | `wa_id, created_at, updated_at` |
+| Prova P5/P7 | Verifica `phone_ref/manual_mode` no Supabase | Verifica apenas `wa_id` (PK) |
+
+**Frente 3 — BLK-T9.13-STATE-MAPPING**
+- `enova_state` real tem múltiplos candidatos legado para `stage_current` (`fase_conversa`, `last_processed_stage`, `last_user_stage`, `intro_etapa`) — sem prova canônica de qual usar.
+- Decisão: `crm_lead_state` permanece em writeBuffer até confirmação explícita de Vasques.
+- `SupabaseCrmBackend.insert/update` para `crm_lead_state` registra writeLog com `attempted_real_write=false`, `used_fallback=true`, `error='BLK-T9.13-STATE-MAPPING'`.
+- Prova P6/P8 verifica writeBuffer via `backend.findOne` em vez do Supabase. Adicionados checks `P6.BLK.1/2/3` e `P8.BLK.1/2`.
+
+### Matriz payload × schema real
+
+Documento completo: `schema/diagnostics/T9_13G_PAYLOAD_SCHEMA_MATRIX.md`
+
+### Campos preservados (NÃO removidos do CRM canônico)
+- `CrmLead`: `external_ref`, `customer_name`, `phone_ref`, `status`, `manual_mode`
+- `CrmLeadState`: `stage_current`, `next_objective`, `block_advance`, `state_version`, `policy_flags`, `risk_flags`
+
+### Smokes
+| Suite | Resultado |
+|---|---|
+| `prove:t9.13` modo local | 19/19 PASS |
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Próxima ação
+Vasques re-executa `npm run prove:t9.13-supabase-write-real-test` com credenciais reais. Esperado:
+- P0.3 PASS (crm_lead_meta payload limpo: wa_id + updated_at)
+- P0.4 PASS (enova_state payload reduzido: lead_id + updated_at)
+- P5/P7 PASS (upsert real `crm_lead_meta` sem PGRST204)
+- P6.BLK.1/2/3 + P8.BLK.1/2 PASS (writeLog confirma BLK-T9.13-STATE-MAPPING)
+- P6.BUF.1/2/3 PASS (writeBuffer absorve crm_lead_state corretamente)
+
+Se P0.3 ou P0.4 ainda falhar, fail-fast emitirá bloco `[FAIL-FAST DIAG]` indicando próxima coluna a remover, sem precisar rodar P5–P8.
+
+---
+
 ## T9.13F-FIX — Correção em lote + schema discovery P0 (2026-05-03)
 
 **Tipo**: fix de schema em lote + diagnóstico preventivo | **Status**: CONCLUÍDA — smokes PASS  

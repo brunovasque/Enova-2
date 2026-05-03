@@ -269,15 +269,16 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
 
   // ── P0: Schema discovery — colunas reais via SELECT * limit=1 ─────────────
   // Objetivo: descobrir todas as colunas existentes nas duas tabelas de escrita
-  // antes de qualquer upsert, evitando iteração PGRST204 coluna-a-coluna.
+  // ANTES de qualquer upsert. Se houver desalinhamento, fail-fast: pula P5–P8.
   // Produz [SCHEMA DIAG] para cross-reference entre payload e schema real.
 
   console.log('\n── P0: Schema discovery (SELECT * limit=1 — sem valores em stdout) ──');
 
-  // Chaves que mapLeadToMeta envia ao Supabase (pós T9.13F — external_ref e customer_name removidas).
-  const payloadKeysLead = ['wa_id', 'phone_ref', 'status', 'manual_mode', 'updated_at'];
-  // Chaves que mapLeadStateToEnovaState envia ao Supabase (pós T9.13F — next_objective e block_advance removidas).
-  const payloadKeysState = ['lead_id', 'stage_current', 'state_version', 'updated_at'];
+  // Chaves que mapLeadToMeta envia ao Supabase (pós T9.13G — apenas wa_id + updated_at).
+  const payloadKeysLead = ['wa_id', 'updated_at'];
+  // Chaves que mapLeadStateToEnovaState envia ao Supabase (pós T9.13G — apenas lead_id + updated_at;
+  // escrita real BLOQUEADA pelo backend — BLK-T9.13-STATE-MAPPING).
+  const payloadKeysState = ['lead_id', 'updated_at'];
 
   const schemaLeadResult = await supabaseSelect<Record<string, unknown>>(cfg, 'crm_lead_meta', { limit: 1 });
   const realColsLead: string[] = schemaLeadResult.ok && schemaLeadResult.rows.length > 0
@@ -312,7 +313,47 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   check('P0.4: payload enova_state sem colunas ausentes', missingFromRealState.length === 0,
     missingFromRealState.length > 0 ? `PGRST204 esperado: [${missingFromRealState.join(', ')}]` : 'ok');
 
-  // ── P5: Insert crm_leads → crm_lead_meta ──────────────────────────────────
+  // BLK-T9.13-STATE-MAPPING — informação explícita ao operador.
+  console.log('\n[STATE_MAPPING_STATUS] BLK-T9.13-STATE-MAPPING ATIVO');
+  console.log('  enova_state real não tem schema compatível com CrmLeadState canônico.');
+  console.log('  Colunas confirmadas ausentes (PGRST204):');
+  console.log('    stage_current, next_objective, block_advance, state_version');
+  console.log('  Candidatos legado (sem prova canônica de qual usar como destino):');
+  console.log('    fase_conversa, last_processed_stage, last_user_stage, intro_etapa');
+  console.log('  Decisão T9.13G: crm_lead_state permanece em writeBuffer; SupabaseCrmBackend');
+  console.log('  registra writeLog com error=BLK-T9.13-STATE-MAPPING e attempted_real_write=false.');
+  console.log('  Aguardando confirmação explícita de Vasques para destino canônico.');
+
+  // ── Fail-fast: se P0 detectou coluna ausente, NÃO executa P5–P8 ──────────
+  if (missingFromRealLead.length > 0 || missingFromRealState.length > 0) {
+    console.log('\n══════════════════════════════════════════════════════════');
+    console.log('FAIL-FAST P0 — payload contém coluna(s) ausente(s) no schema real.');
+    console.log('P5–P8 PULADOS. Execute correção antes de tentar upsert real.');
+    console.log('══════════════════════════════════════════════════════════');
+    if (missingFromRealLead.length > 0) {
+      console.log('[FAIL-FAST DIAG crm_lead_meta]');
+      console.log(`  table:               crm_lead_meta`);
+      console.log(`  real_columns:        [${realColsLead.join(', ')}]`);
+      console.log(`  payload_keys:        [${payloadKeysLead.join(', ')}]`);
+      console.log(`  missing_from_real:   [${missingFromRealLead.join(', ')}]`);
+      console.log(`  kept:                [${keptLead.join(', ')}]`);
+      console.log(`  próxima ação:        remover [${missingFromRealLead.join(', ')}] de mapLeadToMeta`);
+    }
+    if (missingFromRealState.length > 0) {
+      console.log('[FAIL-FAST DIAG enova_state]');
+      console.log(`  table:               enova_state`);
+      console.log(`  real_columns:        [${realColsState.join(', ')}]`);
+      console.log(`  payload_keys:        [${payloadKeysState.join(', ')}]`);
+      console.log(`  missing_from_real:   [${missingFromRealState.join(', ')}]`);
+      console.log(`  kept:                [${keptState.join(', ')}]`);
+      console.log(`  próxima ação:        remover [${missingFromRealState.join(', ')}] de mapLeadStateToEnovaState`);
+      console.log(`                       OU manter BLK-T9.13-STATE-MAPPING (writeBuffer-only)`);
+    }
+    skipCheck('P5–P8 (upserts reais)', 'fail-fast P0 — payload contém coluna ausente');
+    return;
+  }
+
+  // ── P5: Insert crm_leads → crm_lead_meta (apenas wa_id + updated_at — T9.13G) ──
 
   console.log('\n── P5: insert crm_leads → crm_lead_meta (Supabase real) ──');
 
@@ -326,9 +367,9 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   const p5WriteDiag = backend.writeLog.at(-1);
   if (p5WriteDiag) logWriteDiag('P5', p5WriteDiag);
   check('P5.1: insert crm_leads não lança', !p5Threw);
-  check('P5.2: retorna lead com lead_id correto', p5Lead?.lead_id === testLeadId);
-  check('P5.3: phone_ref preservado', p5Lead?.phone_ref === lead.phone_ref);
-  check('P5.4: external_ref preservado', p5Lead?.external_ref === lead.external_ref);
+  check('P5.2: retorna lead com lead_id correto (CRM canônico)', p5Lead?.lead_id === testLeadId);
+  check('P5.3: phone_ref preservado no CRM canônico (não Supabase)', p5Lead?.phone_ref === lead.phone_ref);
+  check('P5.4: external_ref preservado no CRM canônico (não Supabase)', p5Lead?.external_ref === lead.external_ref);
 
   // Leitura de verificação — busca por wa_id (PK real de crm_lead_meta, T9.13C)
   const readLeadResult = await supabaseSelect<Record<string, unknown>>(cfg, 'crm_lead_meta', {
@@ -340,13 +381,13 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   const foundLead = readLeadResult.rows[0];
   check('P5.6: lead encontrado em crm_lead_meta', foundLead !== undefined);
   check('P5.7: wa_id correto no Supabase', foundLead?.wa_id === testWaId);
-  // P5.8 REMOVIDA — external_ref não existe em crm_lead_meta no Supabase real (PGRST204 T9.13F).
-  check('P5.9: phone_ref correto no Supabase', foundLead?.phone_ref === lead.phone_ref);
-  // P5.10 REMOVIDA — customer_name não existe em crm_lead_meta no Supabase real (PGRST204 T9.13E).
+  // P5.8/P5.9/P5.10 REMOVIDAS (T9.13E/T9.13F/T9.13G) —
+  // external_ref, phone_ref, status, manual_mode, customer_name não existem em crm_lead_meta no Supabase real.
+  // Estes campos são preservados apenas no CRM canônico (CrmLead) e writeBuffer.
 
-  // ── P6: Insert crm_lead_state → enova_state ───────────────────────────────
+  // ── P6: Insert crm_lead_state → BLK-T9.13-STATE-MAPPING → writeBuffer ────
 
-  console.log('\n── P6: insert crm_lead_state → enova_state (Supabase real) ──');
+  console.log('\n── P6: insert crm_lead_state → writeBuffer (BLK-T9.13-STATE-MAPPING) ──');
 
   let p6Threw = false;
   let p6State: CrmLeadState | null = null;
@@ -358,29 +399,26 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   const p6WriteDiag = backend.writeLog.at(-1);
   if (p6WriteDiag) logWriteDiag('P6', p6WriteDiag);
   check('P6.1: insert crm_lead_state não lança', !p6Threw);
-  check('P6.2: retorna state com lead_id correto', p6State?.lead_id === stateLeadId);
-  check('P6.3: stage_current preservado', p6State?.stage_current === state.stage_current);
-  check('P6.4: state_version preservado', p6State?.state_version === state.state_version);
+  check('P6.2: retorna state com lead_id correto (writeBuffer)', p6State?.lead_id === stateLeadId);
+  check('P6.3: stage_current preservado no CRM canônico', p6State?.stage_current === state.stage_current);
+  check('P6.4: state_version preservado no CRM canônico', p6State?.state_version === state.state_version);
+  check('P6.BLK.1: writeLog registra BLK-T9.13-STATE-MAPPING',
+    p6WriteDiag?.error?.startsWith('BLK-T9.13-STATE-MAPPING') === true);
+  check('P6.BLK.2: attempted_real_write=false (escrita real bloqueada)',
+    p6WriteDiag?.attempted_real_write === false);
+  check('P6.BLK.3: used_fallback=true (writeBuffer absorveu)',
+    p6WriteDiag?.used_fallback === true);
 
-  // Leitura de verificação — SELECT por UUID (enova_state.lead_id é UUID, T9.13C)
-  const readStateResult = await supabaseSelect<Record<string, unknown>>(cfg, 'enova_state', {
-    filters: { lead_id: `eq.${stateLeadId}` },
-    limit: 1,
-  });
-  logSelectResult('P6', 'enova_state', stateLeadId, readStateResult);
-  check('P6.5: leitura Supabase enova_state retorna OK', readStateResult.ok);
-  const foundState = readStateResult.rows[0];
-  check('P6.6: state encontrado em enova_state', foundState !== undefined);
-  check('P6.7: lead_id (UUID) correto no Supabase', foundState?.lead_id === stateLeadId);
-  check('P6.8: stage_current correto', foundState?.stage_current === state.stage_current);
-  // P6.9 REMOVIDA — next_objective não existe em enova_state no Supabase real (PGRST204 T9.13F).
-  check('P6.10: state_version correto', foundState?.state_version === state.state_version);
+  // Verificação: state está no writeBuffer (acessível via backend.findOne)
+  const bufferedState = await backend.findOne<CrmLeadState>('crm_lead_state', (r) => r.lead_id === stateLeadId);
+  check('P6.BUF.1: state encontrado no writeBuffer via backend.findOne', bufferedState !== null);
+  check('P6.BUF.2: stage_current correto no writeBuffer', bufferedState?.stage_current === state.stage_current);
+  check('P6.BUF.3: state_version correto no writeBuffer', bufferedState?.state_version === state.state_version);
 
-  // ── P7: Update crm_leads → preserva lead_id, atualiza campo ──────────────
+  // ── P7: Update crm_leads → preserva wa_id, payload reduzido (T9.13G) ────
 
-  console.log('\n── P7: update crm_leads → atualiza crm_lead_meta (Supabase real) ──');
+  console.log('\n── P7: update crm_leads → atualiza crm_lead_meta (Supabase real, payload reduzido) ──');
 
-  const updatedPhoneRef = `t9_13_phone_updated_${ts}`;
   let p7Threw = false;
   let p7Updated: CrmLead | null = null;
   try {
@@ -388,33 +426,32 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
       'crm_leads',
       // Após leitura do Supabase, mapLeadFromMeta define lead_id = wa_id (T9.13C)
       (r) => r.lead_id === testWaId,
-      { phone_ref: updatedPhoneRef, manual_mode: true, updated_at: new Date().toISOString() },
+      { updated_at: new Date().toISOString() },
     );
   } catch {
     p7Threw = true;
   }
   const p7WriteDiag = backend.writeLog.at(-1);
   if (p7WriteDiag) logWriteDiag('P7', p7WriteDiag);
-  console.log(`  [DIAG P7] wa_id=${testWaId} phone_ref=${p7Updated?.phone_ref ?? 'null'} manual_mode=${p7Updated?.manual_mode ?? 'null'}`);
+  console.log(`  [DIAG P7] wa_id=${testWaId} updated_at=${p7Updated?.updated_at ?? 'null'}`);
   check('P7.1: update crm_leads não lança', !p7Threw);
   check('P7.2: retorna lead atualizado', p7Updated !== null);
   check('P7.3: lead_id (wa_id) preservado após update', p7Updated?.lead_id === testWaId);
-  check('P7.4: phone_ref atualizado', p7Updated?.phone_ref === updatedPhoneRef);
-  check('P7.5: manual_mode atualizado', p7Updated?.manual_mode === true);
+  check('P7.4: writeLog upsert ok=true (sem PGRST204)', p7WriteDiag?.ok === true);
 
-  // Verificar leitura do campo atualizado — filtro por wa_id (PK real)
+  // Verificar leitura — apenas wa_id (PK) é o que comprova upsert real.
   const readUpdatedLead = await supabaseSelect<Record<string, unknown>>(cfg, 'crm_lead_meta', {
     filters: { wa_id: `eq.${testWaId}` },
     limit: 1,
   });
   logSelectResult('P7', 'crm_lead_meta', testWaId, readUpdatedLead);
   const updatedRow = readUpdatedLead.rows[0];
-  check('P7.6: Supabase reflete phone_ref atualizado', updatedRow?.phone_ref === updatedPhoneRef);
-  check('P7.7: Supabase reflete manual_mode=true', updatedRow?.manual_mode === true);
+  check('P7.5: Supabase reflete wa_id após update', updatedRow?.wa_id === testWaId);
+  // phone_ref/manual_mode não são mais escritos — não há checks no Supabase para eles.
 
-  // ── P8: Update crm_lead_state → preserva lead_id, incrementa state_version ─
+  // ── P8: Update crm_lead_state → BLK-T9.13-STATE-MAPPING → writeBuffer ────
 
-  console.log('\n── P8: update crm_lead_state → atualiza enova_state (Supabase real) ──');
+  console.log('\n── P8: update crm_lead_state → writeBuffer (BLK-T9.13-STATE-MAPPING) ──');
 
   let p8Threw = false;
   let p8Updated: CrmLeadState | null = null;
@@ -431,20 +468,14 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   if (p8WriteDiag) logWriteDiag('P8', p8WriteDiag);
   console.log(`  [DIAG P8] uuid=${stateLeadId} stage_current=${p8Updated?.stage_current ?? 'null'} state_version=${p8Updated?.state_version ?? 'null'}`);
   check('P8.1: update crm_lead_state não lança', !p8Threw);
-  check('P8.2: retorna state atualizado', p8Updated !== null);
+  check('P8.2: retorna state atualizado (writeBuffer)', p8Updated !== null);
   check('P8.3: lead_id (UUID) preservado após update', p8Updated?.lead_id === stateLeadId);
-  check('P8.4: stage_current atualizado', p8Updated?.stage_current === 'qualification_civil');
-  check('P8.5: state_version incrementado', p8Updated?.state_version === 2);
-
-  // Verificar leitura do state atualizado — filtro por UUID
-  const readUpdatedState = await supabaseSelect<Record<string, unknown>>(cfg, 'enova_state', {
-    filters: { lead_id: `eq.${stateLeadId}` },
-    limit: 1,
-  });
-  logSelectResult('P8', 'enova_state', stateLeadId, readUpdatedState);
-  const updatedStateRow = readUpdatedState.rows[0];
-  check('P8.6: Supabase reflete stage_current=qualification_civil', updatedStateRow?.stage_current === 'qualification_civil');
-  check('P8.7: Supabase reflete state_version=2', updatedStateRow?.state_version === 2);
+  check('P8.4: stage_current atualizado no writeBuffer', p8Updated?.stage_current === 'qualification_civil');
+  check('P8.5: state_version incrementado no writeBuffer', p8Updated?.state_version === 2);
+  check('P8.BLK.1: writeLog registra BLK-T9.13-STATE-MAPPING',
+    p8WriteDiag?.error?.startsWith('BLK-T9.13-STATE-MAPPING') === true);
+  check('P8.BLK.2: attempted_real_write=false (escrita real bloqueada)',
+    p8WriteDiag?.attempted_real_write === false);
 
   // ── P9: crm_turns e crm_facts não vão para Supabase ──────────────────────
 

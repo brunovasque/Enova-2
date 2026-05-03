@@ -144,37 +144,67 @@ export interface SupabaseQueryResult<T> {
 }
 
 /**
- * Linha bruta de `crm_lead_meta` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F.
+ * Linha bruta de `crm_lead_meta` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F/T9.13G.
  * PK real: wa_id (TEXT UNIQUE) = WhatsApp ID do cliente = CrmLead.external_ref.
- * NÃO existe coluna lead_id nesta tabela (PGRST 42703 — T9.13C).
- * NÃO existe coluna customer_name nesta tabela (PGRST204 — T9.13E).
- * NÃO existe coluna external_ref nesta tabela (PGRST204 — T9.13F).
- * customer_name e external_ref existem no CRM canônico (CrmLead) mas não no Supabase real.
+ *
+ * Histórico de PGRST204 confirmados (não existem no schema real — não criar):
+ *   T9.13C: lead_id (PGRST 42703)
+ *   T9.13E: customer_name (PGRST204)
+ *   T9.13F: external_ref (PGRST204)
+ *   T9.13G: phone_ref, status, manual_mode (PGRST204)
+ *
+ * Schema real (subset relevante, T9.13G P0): wa_id, created_at, updated_at, nome,
+ * telefone, status_operacional, ultima_acao, ultimo_contato_at, lead_pool, lead_temp,
+ * lead_source, tags, obs_curta, import_ref, auto_outreach_enabled, is_paused,
+ * + dezenas de analysis_x/approved_x/rejection_x/visit_x/reserve_x/financial_x (legado E1).
+ *
+ * Equivalentes legado (não confirmados como destino canônico de escrita):
+ *   customer_name → nome (legado E1)
+ *   phone_ref → telefone (legado E1)
+ *   status → status_operacional (semântica diferente)
+ *   manual_mode → (sem equivalente direto)
+ *
+ * Campos preservados no CRM canônico (CrmLead) e writeBuffer mas NÃO escritos no Supabase real:
+ *   external_ref, customer_name, phone_ref, status, manual_mode.
  */
 export interface CrmLeadMetaRow {
   wa_id?: string;            // PK real — WhatsApp ID (ex: '5511999990001')
-  // external_ref OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13F).
-  phone_ref?: string | null;
-  status?: string | null;
-  manual_mode?: boolean | null;
   created_at?: string | null;
   updated_at?: string | null;
+  // external_ref/customer_name/phone_ref/status/manual_mode OMITIDAS — colunas não existem
+  // no Supabase real (PGRST204 T9.13E/T9.13F/T9.13G).
   [k: string]: unknown;
 }
 
 /**
- * Linha bruta de `enova_state` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F.
+ * Linha bruta de `enova_state` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F/T9.13G.
  * lead_id é UUID (PGRST 22P02 confirmado em T9.13C — usar randomUUID na prova).
- * NÃO existe coluna block_advance nesta tabela (PGRST204 — T9.13E).
- * NÃO existe coluna next_objective nesta tabela (PGRST204 — T9.13F).
- * block_advance e next_objective existem no CRM canônico (CrmLeadState) mas não no Supabase real.
+ *
+ * Histórico de PGRST204 confirmados (não existem no schema real — não criar):
+ *   T9.13E: block_advance (PGRST204)
+ *   T9.13F: next_objective (PGRST204)
+ *   T9.13G: stage_current, state_version (PGRST204)
+ *
+ * Schema real (T9.13G P0): id, lead_id, wa_id, last_incoming_id, last_reply_id,
+ * last_intent, last_context, last_ts, controle, atendimento_manual, updated_at,
+ * fase_conversa, intro_etapa, funil_status, funil_opcao_docs, atualizado_em, nome,
+ * last_processed_stage, last_user_stage + dezenas de campos legado E1 (estado_civil,
+ * regime, renda_*, docs_*, dossie_*, pacote_*, visita_*, etc).
+ *
+ * Candidatos legado para stage_current (NÃO confirmados — múltiplos coexistem):
+ *   fase_conversa, last_processed_stage, last_user_stage, intro_etapa.
+ *   Sem prova documental do canônico → mapping BLOQUEADO (BLK-T9.13-STATE-MAPPING).
+ *   crm_lead_state permanece em writeBuffer até confirmação explícita de Vasques.
+ *
+ * Campos preservados no CRM canônico (CrmLeadState) e writeBuffer mas NÃO escritos
+ * no Supabase real: stage_current, next_objective, block_advance, state_version,
+ * policy_flags, risk_flags.
  */
 export interface EnovaStateRow {
   lead_id?: string;
-  stage_current?: string | null;
-  // next_objective OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13F).
-  state_version?: number | null;
   updated_at?: string | null;
+  // stage_current/next_objective/block_advance/state_version OMITIDAS — colunas não existem
+  // no Supabase real (PGRST204 T9.13E/T9.13F/T9.13G). Mapeamento bloqueado: BLK-T9.13-STATE-MAPPING.
   [k: string]: unknown;
 }
 
