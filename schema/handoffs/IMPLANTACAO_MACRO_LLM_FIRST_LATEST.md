@@ -1,5 +1,21 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13B-DIAG — Logs diagnósticos supabaseSelect P5/P6/P7/P8 (2026-05-03)
+
+**Tipo**: diagnóstico | **Status**: CONCLUÍDA — logs adicionados, smokes PASS  
+**Branch**: `fix/t9.13b-update-return-fix` (PR #198 atualizada)  
+**Próxima PR autorizada**: **Vasques re-executa prova real com logs diagnósticos**
+
+### Contexto
+
+Prova real rodou com **41 PASS | 16 FAIL** após merge do fix P8.4. P8 passou inteiro. P5.5/P6.5/P7.6/P7.7 falharam — `supabaseSelect` retornou `ok=false` mas o log anterior não registrava `http_status` nem `error`.
+
+### Alteração
+
+Helper `logSelectResult` adicionado em `src/supabase/write-real-test-proof.ts`. Chamado após cada `supabaseSelect` em P5, P6, P7, P8. Imprime: `table`, `lead_id`, `ok`, `http_status`, `rows`, `error` — sem secrets, sem headers, sem payload.
+
+---
+
 ## PR-T9.13B-FIX — Correção P8.4 stage_current em SupabaseCrmBackend.update() (2026-05-03)
 
 **Tipo**: fix cirúrgico | **Status**: CONCLUÍDA — fix aplicado, smokes PASS  

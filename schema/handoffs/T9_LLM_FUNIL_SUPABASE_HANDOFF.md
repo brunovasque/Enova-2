@@ -5,6 +5,21 @@
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
 **Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11/T9.12-DIAG/T9.12-IMPL/T9.13-PROVA-PARCIAL CONCLUÍDAS; próxima: **T9.13B — Execução real da prova Supabase write em TEST por Vasques**
 
+## T9.13B-DIAG — Logs diagnósticos nos selects P5/P6/P7/P8 — CONCLUÍDA (2026-05-03)
+
+PR: atualização de `fix/t9.13b-update-return-fix` (PR #198)
+
+**Prova real rodou com 41 PASS | 16 FAIL. P8 passou inteiro. P5.5/P6.5/P7.6/P7.7 falharam por motivo desconhecido (supabaseSelect retornou não-OK). Logs diagnósticos adicionados para identificar causa.**
+
+**Arquivo alterado:** `src/supabase/write-real-test-proof.ts`
+- Helper `logSelectResult(label, table, leadId, result)` adicionado
+- Chamado após cada `supabaseSelect` em P5, P6, P7, P8
+- Imprime: `ok`, `http_status`, `rows`, `error` — sem secrets, sem headers, sem payload completo
+
+**Próxima:** Vasques re-executa prova real; logs diagnósticos revelarão `http_status` e `error` das falhas P5/P6/P7.
+
+---
+
 ## T9.13B-FIX — Correção cirúrgica P8.4 stage_current — CONCLUÍDA (2026-05-03)
 
 PR: `fix/t9.13b-update-return-fix` (nova)

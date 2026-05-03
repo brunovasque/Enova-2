@@ -73,6 +73,19 @@ function maskKey(raw: string): string {
   return `${raw.slice(0, 6)}…(${raw.length} chars)`;
 }
 
+function logSelectResult(
+  label: string,
+  table: string,
+  leadId: string,
+  result: { ok: boolean; rows: unknown[]; error: string | null; http_status: number | null },
+): void {
+  console.log(
+    `  [DIAG ${label}] table=${table} lead_id=${leadId} ok=${result.ok}` +
+    ` http_status=${result.http_status ?? 'null'} rows=${result.rows.length}` +
+    ` error=${result.error ?? 'null'}`,
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Dados de prova — claramente marcados como teste
 // ---------------------------------------------------------------------------
@@ -256,6 +269,7 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
     filters: { lead_id: `eq.${testLeadId}` },
     limit: 1,
   });
+  logSelectResult('P5', 'crm_lead_meta', testLeadId, readLeadResult);
   check('P5.5: leitura Supabase crm_lead_meta retorna OK', readLeadResult.ok);
   const foundLead = readLeadResult.rows[0];
   check('P5.6: lead encontrado em crm_lead_meta', foundLead !== undefined);
@@ -285,6 +299,7 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
     filters: { lead_id: `eq.${testLeadId}` },
     limit: 1,
   });
+  logSelectResult('P6', 'enova_state', testLeadId, readStateResult);
   check('P6.5: leitura Supabase enova_state retorna OK', readStateResult.ok);
   const foundState = readStateResult.rows[0];
   check('P6.6: state encontrado em enova_state', foundState !== undefined);
@@ -320,6 +335,7 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
     filters: { lead_id: `eq.${testLeadId}` },
     limit: 1,
   });
+  logSelectResult('P7', 'crm_lead_meta', testLeadId, readUpdatedLead);
   const updatedRow = readUpdatedLead.rows[0];
   check('P7.6: Supabase reflete phone_ref atualizado', updatedRow?.phone_ref === updatedPhoneRef);
   check('P7.7: Supabase reflete manual_mode=true', updatedRow?.manual_mode === true);
@@ -351,6 +367,7 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
     filters: { lead_id: `eq.${testLeadId}` },
     limit: 1,
   });
+  logSelectResult('P8', 'enova_state', testLeadId, readUpdatedState);
   const updatedStateRow = readUpdatedState.rows[0];
   check('P8.6: Supabase reflete stage_current=qualification_civil', updatedStateRow?.stage_current === 'qualification_civil');
   check('P8.7: Supabase reflete state_version=2', updatedStateRow?.state_version === 2);
