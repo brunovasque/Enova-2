@@ -1,5 +1,81 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13L-DIAG — Crosscheck Enova 1 CRM Legado × stage_current (2026-05-03)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t9.13l-enova1-crm-crosscheck`
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
+**Próximo passo autorizado**: PR-FIX (T9.13K-FIX ou T9.14-IMPL) implementa mapper conservador conforme `schema/diagnostics/T9_13L_ENOVA1_CRM_CROSSCHECK.md` §6.2 — **após confirmação explícita de Vasques**; PR-FIX NÃO autorizada se tentar mapear stages pré-docs para CRM operacional
+
+### Contexto herdado — T9.13K (PR #209 + PR #210)
+
+A T9.13K estabeleceu gap §16.5: CRM/panel antigo não acessível. Vasques executou SQL e confirmou `fase_conversa` como candidata principal, mas código legado permanecia inacessível.
+
+### O que esta PR diagnosticou
+
+`schema/diagnostics/T9_13L_ENOVA1_CRM_CROSSCHECK.md` criado com crosscheck direto do repositório `brunovasque/Enova`:
+
+**Evidência 1 — `schema/crm_leads_v1.sql`:**
+- View `crm_leads_v1` faz `e.fase_conversa AS fase_funil`
+- CRM operacional só filtra `fase_conversa` em: `envio_docs`, `aguardando_retorno_correspondente`, `agendamento_visita`, `visita_confirmada`, `finalizacao_processo`
+- Aprovado/reprovado/visita_confirmada entram via **flags booleanas**, não `fase_conversa`
+
+**Evidência 2 — `panel/app/crm/CrmUI.tsx`:**
+- PASTA = `envio_docs`
+- ANALISE = `aguardando_retorno_correspondente`
+- VISITA = `agendamento_visita`, `visita_confirmada`, `finalizacao_processo`
+
+**Conclusão**: CRM legado é pós-docs. Stages pré-docs (`discovery`, `qualification_civil`, `qualification_renda`, `qualification_eligibility`) **não devem** ser mapeados para o CRM operacional.
+
+### Retificação da T9.13K §16.4
+
+| Stage T9 | §16.4 original | Retificação |
+|---|---|---|
+| `qualification_renda` | `clt_renda_perfil_informativo` (candidato MÉDIA) | **Descartado** — pré-CRM, causaria invisibilidade no painel |
+| `qualification_eligibility` | `quem_pode_somar` (candidato MÉDIA) | **Descartado** — idem |
+| `qualification_civil` | Bloqueado | Confirmado: não mapear para CRM |
+| `visit` sub-stages | Bloqueado | Mapeado: `visit_scheduling/confirmed/finalization` → valores legados operacionais |
+
+### Mapper conservador documentado
+
+```
+discovery/qualification_*  → null / 'inicio' (default — não entra no CRM)
+docs_prep                  → 'envio_docs'
+analysis_waiting           → 'aguardando_retorno_correspondente'
+visit_scheduling           → 'agendamento_visita'
+visit_confirmed            → 'visita_confirmada'
+finalization               → 'finalizacao_processo'
+aprovado/reprovado         → flags booleanas (não fase_conversa)
+```
+
+### Arquivos alterados
+
+| Arquivo | Tipo | O que mudou |
+|---|---|---|
+| `schema/diagnostics/T9_13L_ENOVA1_CRM_CROSSCHECK.md` | **Novo** | Diagnóstico completo crosscheck Enova 1 |
+| `schema/diagnostics/T9_13K_STATE_MAPPING_DIAG.md` | **Atualizado** | §17 retificação pós-crosscheck adicionada |
+| `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` | **Atualizado** | T9.13L-DIAG registrada no Gate atual |
+| `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` | **Atualizado** | Esta entrada |
+
+### Bloqueios formais
+
+| ID | Status | Causa |
+|---|---|---|
+| `BLK-T9.13-STATE-MAPPING` | **PERMANECE ATIVO** | Mapper conservador definido mas não implementado em `src/` |
+
+### O que esta PR NÃO fez
+
+- Não alterou nenhum arquivo em `src/`
+- Não habilitou escrita real de `crm_lead_state`
+- Não removeu `BLK-T9.13-STATE-MAPPING`
+- Não fechou G9
+- Não autorizou T9.13K-FIX se mapear stages pré-docs para CRM
+
+### Baseline de smokes
+
+Zero `src/` alterado. Baseline herdada de T9.13J-FIX: **68 PASS | 0 FAIL | 0 SKIP**.
+
+---
+
 ## T9.13K-DIAG — Diagnóstico STATE MAPPING `crm_lead_state` → `enova_state` (2026-05-03)
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t9.13k-state-mapping`
