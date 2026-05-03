@@ -44,6 +44,39 @@ const DEFAULT_LIMIT = 100;
 const MAX_LIMIT = 500;
 
 /**
+ * Extrai metadados de um erro PostgreSQL retornado pelo PostgREST.
+ *
+ * T9.13H-DIAG: superficializa pg_code e pg_message (nome da coluna) em erros 23502.
+ * `details` é INTENCIONALMENTE OMITIDO — contém valores reais da linha (dados do cliente).
+ * Apenas code/message/hint são expostos — são metadados de schema, não dados de usuário.
+ */
+interface PgErrorMeta {
+  code: string;
+  message: string;
+  hint: string | null;
+  // details: OMITIDO — contém valores reais da linha
+}
+
+function parsePgError(bodyText: string): PgErrorMeta | null {
+  try {
+    const parsed = JSON.parse(bodyText);
+    if (typeof parsed === 'object' && parsed !== null && 'code' in parsed) {
+      return {
+        code: String((parsed as Record<string, unknown>).code ?? ''),
+        message: String((parsed as Record<string, unknown>).message ?? ''),
+        hint: (parsed as Record<string, unknown>).hint != null
+          ? String((parsed as Record<string, unknown>).hint)
+          : null,
+        // details: OMITIDO — contém valores reais da linha inserida
+      };
+    }
+  } catch {
+    // bodyText não é JSON válido — retorna null
+  }
+  return null;
+}
+
+/**
  * Sanitiza mensagem de erro para nunca incluir o service role.
  * Remove qualquer ocorrência (defensivo) e tronca tokens longos.
  */
@@ -285,11 +318,21 @@ export async function supabaseUpsert<T>(
   }
 
   if (!response.ok) {
+    // T9.13H-DIAG: parse pg error para superficializar code/message (nome de coluna em 23502).
+    // details é OMITIDO — contém valores reais da linha.
+    const pgErr = parsePgError(bodyText);
+    let errMsg: string;
+    if (pgErr) {
+      errMsg = `http_${response.status}: pg_code=${pgErr.code} pg_message=${pgErr.message}`;
+      if (pgErr.hint) errMsg += ` pg_hint=${pgErr.hint}`;
+    } else {
+      errMsg = `http_${response.status}: ${bodyText}`;
+    }
     return {
       ok: false,
       rows: [],
       total: 0,
-      error: safeErrorMessage(`http_${response.status}: ${bodyText}`, cfg.serviceRoleKey),
+      error: safeErrorMessage(errMsg, cfg.serviceRoleKey),
       http_status: response.status,
     };
   }
