@@ -42,6 +42,7 @@
     "prove:memory-telemetry": "tsx src/memory/proof.ts",
     "prove:crm-e2e": "tsx src/panel/e2e-smoke.ts",
     "prove:supabase-real": "tsx src/supabase/proof.ts",
+    "prove:t9.13-supabase-write-real-test": "tsx src/supabase/write-real-test-proof.ts",
     "prove:meta-controlada": "tsx src/meta/proof-controlled.ts",
     "prove:meta:pipeline-real": "tsx src/meta/pipeline-real-proof.ts",
     "prove:meta:canary-real": "tsx src/meta/canary-real-proof.ts",
