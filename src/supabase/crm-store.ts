@@ -48,6 +48,7 @@ import type {
   EnovaDocsRow,
   EnovaStateRow,
   SupabaseConfig,
+  SupabaseQueryResult,
 } from './types.ts';
 
 // ---------------------------------------------------------------------------
@@ -181,6 +182,28 @@ function mapLeadStateToEnovaState(state: CrmLeadState): EnovaStateRow {
 }
 
 // ---------------------------------------------------------------------------
+// WriteDiagEntry — diagnóstico de escrita real (T9.13D-DIAG)
+// ---------------------------------------------------------------------------
+
+/**
+ * Registro de diagnóstico gerado a cada tentativa de escrita real.
+ * Acumulado em `SupabaseCrmBackend.writeLog` sem imprimir diretamente —
+ * o consumidor (prova) decide quando e como exibir.
+ */
+export interface WriteDiagEntry {
+  table: string;
+  target_table: string;
+  write_enabled: boolean;
+  attempted_real_write: boolean;
+  used_fallback: boolean;
+  ok: boolean;
+  http_status: number | null;
+  rows: number;
+  error: string | null;
+  test_id: string;
+}
+
+// ---------------------------------------------------------------------------
 // SupabaseCrmBackend — implementa CrmBackend
 // ---------------------------------------------------------------------------
 
@@ -199,6 +222,13 @@ export class SupabaseCrmBackend implements CrmBackend {
    *   - writeEnabled=true mas escrita Supabase falhou
    */
   private readonly writeBuffer: CrmInMemoryBackend = new CrmInMemoryBackend();
+
+  /**
+   * Log de diagnóstico acumulado por cada tentativa de escrita real — T9.13D-DIAG.
+   * Nunca impresso diretamente aqui; o consumidor (prova) lê e exibe.
+   * Não contém secrets — apenas metadados de resultado e test_id seguro.
+   */
+  public readonly writeLog: WriteDiagEntry[] = [];
 
   constructor(cfg: SupabaseConfig, writeEnabled = false) {
     this.cfg = cfg;
@@ -291,22 +321,22 @@ export class SupabaseCrmBackend implements CrmBackend {
 
   /**
    * Tenta upsert real em crm_lead_meta para um lead.
-   * Retorna true em sucesso, false em falha (sem lançar).
+   * Retorna o resultado completo do PostgREST — sem lançar em erro de rede.
+   * Caller é responsável por checar .ok e registrar no writeLog (T9.13D-DIAG).
    */
-  private async supabaseWriteLead(lead: CrmLead): Promise<boolean> {
+  private async supabaseWriteLead(lead: CrmLead): Promise<SupabaseQueryResult<CrmLeadMetaRow>> {
     const mapped = mapLeadToMeta(lead);
-    const result = await supabaseUpsert<CrmLeadMetaRow>(this.cfg, 'crm_lead_meta', mapped);
-    return result.ok;
+    return supabaseUpsert<CrmLeadMetaRow>(this.cfg, 'crm_lead_meta', mapped);
   }
 
   /**
    * Tenta upsert real em enova_state para um estado de lead.
-   * Retorna true em sucesso, false em falha (sem lançar).
+   * Retorna o resultado completo do PostgREST — sem lançar em erro de rede.
+   * Caller é responsável por checar .ok e registrar no writeLog (T9.13D-DIAG).
    */
-  private async supabaseWriteLeadState(state: CrmLeadState): Promise<boolean> {
+  private async supabaseWriteLeadState(state: CrmLeadState): Promise<SupabaseQueryResult<EnovaStateRow>> {
     const mapped = mapLeadStateToEnovaState(state);
-    const result = await supabaseUpsert<EnovaStateRow>(this.cfg, 'enova_state', mapped);
-    return result.ok;
+    return supabaseUpsert<EnovaStateRow>(this.cfg, 'enova_state', mapped);
   }
 
   /**
@@ -319,15 +349,48 @@ export class SupabaseCrmBackend implements CrmBackend {
    * - Demais tabelas (crm_turns, crm_facts, etc.) → sempre writeBuffer
    *   (schema/destino Supabase não confirmados — T9.12-DIAG BLK-WRITE-02).
    * - writeEnabled=false → writeBuffer em todos os casos (comportamento T8.8).
+   * - T9.13D-DIAG: resultado do upsert acumulado em writeLog para inspeção.
    */
   async insert<T>(table: CrmTable, row: T): Promise<T> {
     if (this.writeEnabled) {
       if (table === 'crm_leads') {
-        const ok = await this.supabaseWriteLead(row as unknown as CrmLead);
-        if (ok) return row;
+        const lead = row as unknown as CrmLead;
+        const result = await this.supabaseWriteLead(lead);
+        // test_id: wa_id prefixado com t9_13_ é marcador de prova; outros ficam como '(non-test)'
+        const testId =
+          typeof lead.external_ref === 'string' && lead.external_ref.startsWith('t9_13_')
+            ? lead.external_ref
+            : '(non-test)';
+        this.writeLog.push({
+          table,
+          target_table: 'crm_lead_meta',
+          write_enabled: true,
+          attempted_real_write: true,
+          used_fallback: !result.ok,
+          ok: result.ok,
+          http_status: result.http_status,
+          rows: result.rows.length,
+          error: result.error,
+          test_id: testId,
+        });
+        if (result.ok) return row;
       } else if (table === 'crm_lead_state') {
-        const ok = await this.supabaseWriteLeadState(row as unknown as CrmLeadState);
-        if (ok) return row;
+        const state = row as unknown as CrmLeadState;
+        const result = await this.supabaseWriteLeadState(state);
+        const testId = typeof state.lead_id === 'string' ? state.lead_id : '(non-test)';
+        this.writeLog.push({
+          table,
+          target_table: 'enova_state',
+          write_enabled: true,
+          attempted_real_write: true,
+          used_fallback: !result.ok,
+          ok: result.ok,
+          http_status: result.http_status,
+          rows: result.rows.length,
+          error: result.error,
+          test_id: testId,
+        });
+        if (result.ok) return row;
       }
       // crm_turns, crm_facts e demais: fallthrough para writeBuffer
     }
@@ -344,6 +407,7 @@ export class SupabaseCrmBackend implements CrmBackend {
    *   4. Em falha Supabase → fallback writeBuffer.
    *
    * Para demais tabelas ou writeEnabled=false → writeBuffer.
+   * T9.13D-DIAG: resultado do upsert acumulado em writeLog para inspeção.
    */
   async update<T>(
     table: CrmTable,
@@ -356,19 +420,54 @@ export class SupabaseCrmBackend implements CrmBackend {
         // Object.assign garante que o patch é aplicado ao objeto retornado,
         // sem depender do retorno do PostgREST. T9.13B-FIX.
         const merged: T = Object.assign({}, existing, patch);
-        let ok = false;
         if (table === 'crm_leads') {
-          ok = await this.supabaseWriteLead(merged as unknown as CrmLead);
+          const lead = merged as unknown as CrmLead;
+          const result = await this.supabaseWriteLead(lead);
+          const testId =
+            typeof lead.external_ref === 'string' && lead.external_ref.startsWith('t9_13_')
+              ? lead.external_ref
+              : '(non-test)';
+          this.writeLog.push({
+            table,
+            target_table: 'crm_lead_meta',
+            write_enabled: true,
+            attempted_real_write: true,
+            used_fallback: !result.ok,
+            ok: result.ok,
+            http_status: result.http_status,
+            rows: result.rows.length,
+            error: result.error,
+            test_id: testId,
+          });
+          if (result.ok) return merged;
+          // Supabase falhou → writeBuffer absorve o registro completo mesclado
+          const bufferedLead = await this.writeBuffer.update<T>(table, matcher, patch);
+          if (bufferedLead !== null) return bufferedLead;
+          await this.writeBuffer.insert<T>(table, merged);
+          return merged;
         } else {
-          ok = await this.supabaseWriteLeadState(merged as unknown as CrmLeadState);
+          const state = merged as unknown as CrmLeadState;
+          const result = await this.supabaseWriteLeadState(state);
+          const testId = typeof state.lead_id === 'string' ? state.lead_id : '(non-test)';
+          this.writeLog.push({
+            table,
+            target_table: 'enova_state',
+            write_enabled: true,
+            attempted_real_write: true,
+            used_fallback: !result.ok,
+            ok: result.ok,
+            http_status: result.http_status,
+            rows: result.rows.length,
+            error: result.error,
+            test_id: testId,
+          });
+          if (result.ok) return merged;
+          // Supabase falhou → writeBuffer absorve o registro completo mesclado
+          const bufferedState = await this.writeBuffer.update<T>(table, matcher, patch);
+          if (bufferedState !== null) return bufferedState;
+          await this.writeBuffer.insert<T>(table, merged);
+          return merged;
         }
-        if (ok) return merged;
-        // Supabase falhou → writeBuffer absorve o registro completo mesclado
-        const buffered = await this.writeBuffer.update<T>(table, matcher, patch);
-        if (buffered !== null) return buffered;
-        // Registro não existe no writeBuffer (veio só do Supabase real) → insere mesclado
-        await this.writeBuffer.insert<T>(table, merged);
-        return merged;
       }
       // Fallback: se não encontrou → writeBuffer
     }
