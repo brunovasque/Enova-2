@@ -101,15 +101,16 @@ export const crmBackend: CrmBackend = new CrmInMemoryBackend();
 // ---------------------------------------------------------------------------
 
 let supabaseBackendSingleton: CrmBackend | null = null;
+let supabaseBackendWriteEnabled = false;
 
 /**
  * Resolve o backend CRM ativo para o request corrente.
  * - Se `SUPABASE_REAL_ENABLED === "true"` e envs estiverem presentes →
- *   `SupabaseCrmBackend` (leitura real, escrita em buffer interno).
+ *   `SupabaseCrmBackend` (leitura real; escrita real se `SUPABASE_WRITE_ENABLED === "true"`
+ *   apenas para crm_leads → crm_lead_meta e crm_lead_state → enova_state).
  * - Caso contrário → `crmBackend` (in-memory, comportamento PR-T8.6).
  *
- * Lazy-load do SupabaseCrmBackend é feito via require dinâmico para evitar
- * carregar o módulo Supabase quando a flag está desligada.
+ * Singleton é invalidado se `SUPABASE_WRITE_ENABLED` mudar entre requests.
  */
 export async function getCrmBackend(env: Record<string, unknown>): Promise<CrmBackend> {
   const flag = env?.SUPABASE_REAL_ENABLED === 'true';
@@ -139,9 +140,12 @@ export async function getCrmBackend(env: Record<string, unknown>): Promise<CrmBa
     return crmBackend;
   }
 
-  if (!supabaseBackendSingleton) {
+  const writeEnabled = env?.SUPABASE_WRITE_ENABLED === 'true';
+
+  if (!supabaseBackendSingleton || supabaseBackendWriteEnabled !== writeEnabled) {
     const mod = await import('../supabase/crm-store.ts');
-    supabaseBackendSingleton = new mod.SupabaseCrmBackend({ url, serviceRoleKey: key });
+    supabaseBackendSingleton = new mod.SupabaseCrmBackend({ url, serviceRoleKey: key }, writeEnabled);
+    supabaseBackendWriteEnabled = writeEnabled;
   }
   return supabaseBackendSingleton;
 }

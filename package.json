@@ -33,6 +33,7 @@
     "smoke:audio": "tsx src/audio/smoke.ts",
     "smoke:panel": "tsx src/panel/smoke.ts",
     "smoke:supabase": "tsx src/supabase/smoke.ts",
+    "smoke:supabase:write-real": "tsx src/supabase/write-real-smoke.ts",
     "smoke:memory": "tsx src/memory/smoke.ts",
     "smoke:golive": "tsx src/golive/smoke.ts",
     "smoke:runtime:env": "tsx src/runtime/env-smoke.ts",

@@ -3,7 +3,41 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11/T9.12-DIAG CONCLUÍDAS; próxima: T9.12 — IMPL Supabase write real (CRM/memória/stage)
+**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11/T9.12-DIAG/T9.12-IMPL CONCLUÍDAS; próxima: T9.13 — PROVA Supabase write real state/leads em TEST
+
+## T9.12-IMPL — Supabase write real condicional (crm_leads/crm_lead_state) — CONCLUÍDA (2026-05-03)
+
+PR: `feat/t9.12-supabase-write-real-state-leads` (#196)
+
+**Escrita real habilitada somente para crm_leads→crm_lead_meta e crm_lead_state→enova_state. 39/39 PASS.**
+
+**Arquivos alterados:**
+- `src/supabase/client.ts` — `supabaseUpsert<T>()` adicionado; POST com `Prefer: resolution=merge-duplicates`; sem lançar em erro de rede; secrets nunca expostos
+- `src/supabase/crm-store.ts` — `writeEnabled: boolean` (default `false`); `mapLeadToMeta`, `mapLeadStateToEnovaState`; `supabaseWriteLead/supabaseWriteLeadState`; `insert/update` condicional com fallback writeBuffer corrigido
+- `src/crm/store.ts` — `getCrmBackend(env)` lê `SUPABASE_WRITE_ENABLED`; singleton invalidado se flag mudar
+- `src/supabase/write-real-smoke.ts` — 11 seções (S1–S11), 39 checks
+
+**Fallback do update() corrigido (T9.12-IMPL revisão):**
+- Quando Supabase write falha e registro não existe no writeBuffer (veio só do Supabase real): `writeBuffer.insert(merged)` garante absorção do registro mesclado
+- Lógica: tenta `writeBuffer.update` → se retornar null → `writeBuffer.insert(merged)` → retorna `merged`
+- Seção S11 no smoke cobre o caminho de fallback completo (7 checks)
+
+**Restrições preservadas:**
+- Zero escrita para crm_turns, crm_facts (BLK-WRITE-02/04 — schema/destino não confirmados)
+- Zero delete/reset
+- Fallback garantido: writeBuffer absorve se Supabase falhar
+- Secrets nunca em log/error/response
+
+**Smokes:**
+- smoke:supabase:write-real: 39/39 PASS
+- smoke:supabase: 70/70 PASS
+- smoke:runtime:env: 53/53 PASS
+- smoke:runtime:fallback-guard: 41/41 PASS
+- prove:g8-readiness: 7/7 PASS
+
+**Próxima:** T9.13 — PROVA Supabase write real state/leads em TEST (Worker TEST com `SUPABASE_WRITE_ENABLED=true` + evidência de row em `crm_lead_meta` e `enova_state` no Supabase real)
+
+---
 
 ## T9.12-DIAG — Diagnóstico Supabase write real — CONCLUÍDA (2026-05-02)
 
