@@ -267,6 +267,51 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
 
   const backend = new SupabaseCrmBackend(cfg, true);
 
+  // ── P0: Schema discovery — colunas reais via SELECT * limit=1 ─────────────
+  // Objetivo: descobrir todas as colunas existentes nas duas tabelas de escrita
+  // antes de qualquer upsert, evitando iteração PGRST204 coluna-a-coluna.
+  // Produz [SCHEMA DIAG] para cross-reference entre payload e schema real.
+
+  console.log('\n── P0: Schema discovery (SELECT * limit=1 — sem valores em stdout) ──');
+
+  // Chaves que mapLeadToMeta envia ao Supabase (pós T9.13F — external_ref e customer_name removidas).
+  const payloadKeysLead = ['wa_id', 'phone_ref', 'status', 'manual_mode', 'updated_at'];
+  // Chaves que mapLeadStateToEnovaState envia ao Supabase (pós T9.13F — next_objective e block_advance removidas).
+  const payloadKeysState = ['lead_id', 'stage_current', 'state_version', 'updated_at'];
+
+  const schemaLeadResult = await supabaseSelect<Record<string, unknown>>(cfg, 'crm_lead_meta', { limit: 1 });
+  const realColsLead: string[] = schemaLeadResult.ok && schemaLeadResult.rows.length > 0
+    ? Object.keys(schemaLeadResult.rows[0])
+    : [];
+  const missingFromRealLead = payloadKeysLead.filter((k) => !realColsLead.includes(k));
+  const keptLead = payloadKeysLead.filter((k) => realColsLead.includes(k));
+  console.log('[SCHEMA DIAG crm_lead_meta]');
+  console.log(`  real_columns=[${realColsLead.join(', ')}]`);
+  console.log(`  payload_keys=[${payloadKeysLead.join(', ')}]`);
+  console.log(`  missing_from_real=[${missingFromRealLead.join(', ')}]`);
+  console.log(`  kept=[${keptLead.join(', ')}]`);
+
+  const schemaStateResult = await supabaseSelect<Record<string, unknown>>(cfg, 'enova_state', { limit: 1 });
+  const realColsState: string[] = schemaStateResult.ok && schemaStateResult.rows.length > 0
+    ? Object.keys(schemaStateResult.rows[0])
+    : [];
+  const missingFromRealState = payloadKeysState.filter((k) => !realColsState.includes(k));
+  const keptState = payloadKeysState.filter((k) => realColsState.includes(k));
+  console.log('[SCHEMA DIAG enova_state]');
+  console.log(`  real_columns=[${realColsState.join(', ')}]`);
+  console.log(`  payload_keys=[${payloadKeysState.join(', ')}]`);
+  console.log(`  missing_from_real=[${missingFromRealState.join(', ')}]`);
+  console.log(`  kept=[${keptState.join(', ')}]`);
+
+  check('P0.1: schema discovery crm_lead_meta retorna OK', schemaLeadResult.ok,
+    schemaLeadResult.error ?? '');
+  check('P0.2: schema discovery enova_state retorna OK', schemaStateResult.ok,
+    schemaStateResult.error ?? '');
+  check('P0.3: payload crm_lead_meta sem colunas ausentes', missingFromRealLead.length === 0,
+    missingFromRealLead.length > 0 ? `PGRST204 esperado: [${missingFromRealLead.join(', ')}]` : 'ok');
+  check('P0.4: payload enova_state sem colunas ausentes', missingFromRealState.length === 0,
+    missingFromRealState.length > 0 ? `PGRST204 esperado: [${missingFromRealState.join(', ')}]` : 'ok');
+
   // ── P5: Insert crm_leads → crm_lead_meta ──────────────────────────────────
 
   console.log('\n── P5: insert crm_leads → crm_lead_meta (Supabase real) ──');
@@ -295,7 +340,7 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   const foundLead = readLeadResult.rows[0];
   check('P5.6: lead encontrado em crm_lead_meta', foundLead !== undefined);
   check('P5.7: wa_id correto no Supabase', foundLead?.wa_id === testWaId);
-  check('P5.8: external_ref correto no Supabase', foundLead?.external_ref === lead.external_ref);
+  // P5.8 REMOVIDA — external_ref não existe em crm_lead_meta no Supabase real (PGRST204 T9.13F).
   check('P5.9: phone_ref correto no Supabase', foundLead?.phone_ref === lead.phone_ref);
   // P5.10 REMOVIDA — customer_name não existe em crm_lead_meta no Supabase real (PGRST204 T9.13E).
 
@@ -328,7 +373,7 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   check('P6.6: state encontrado em enova_state', foundState !== undefined);
   check('P6.7: lead_id (UUID) correto no Supabase', foundState?.lead_id === stateLeadId);
   check('P6.8: stage_current correto', foundState?.stage_current === state.stage_current);
-  check('P6.9: next_objective correto', foundState?.next_objective === state.next_objective);
+  // P6.9 REMOVIDA — next_objective não existe em enova_state no Supabase real (PGRST204 T9.13F).
   check('P6.10: state_version correto', foundState?.state_version === state.state_version);
 
   // ── P7: Update crm_leads → preserva lead_id, atualiza campo ──────────────

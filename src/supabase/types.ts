@@ -144,15 +144,16 @@ export interface SupabaseQueryResult<T> {
 }
 
 /**
- * Linha bruta de `crm_lead_meta` — schema real confirmado por execuções T9.13C/T9.13E.
+ * Linha bruta de `crm_lead_meta` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F.
  * PK real: wa_id (TEXT UNIQUE) = WhatsApp ID do cliente = CrmLead.external_ref.
  * NÃO existe coluna lead_id nesta tabela (PGRST 42703 — T9.13C).
  * NÃO existe coluna customer_name nesta tabela (PGRST204 — T9.13E).
- * customer_name existe no CRM canônico (CrmLead) e no writeBuffer, mas não no Supabase real.
+ * NÃO existe coluna external_ref nesta tabela (PGRST204 — T9.13F).
+ * customer_name e external_ref existem no CRM canônico (CrmLead) mas não no Supabase real.
  */
 export interface CrmLeadMetaRow {
   wa_id?: string;            // PK real — WhatsApp ID (ex: '5511999990001')
-  external_ref?: string | null;
+  // external_ref OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13F).
   phone_ref?: string | null;
   status?: string | null;
   manual_mode?: boolean | null;
@@ -162,15 +163,16 @@ export interface CrmLeadMetaRow {
 }
 
 /**
- * Linha bruta de `enova_state` — schema real confirmado por execuções T9.13C/T9.13E.
+ * Linha bruta de `enova_state` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F.
  * lead_id é UUID (PGRST 22P02 confirmado em T9.13C — usar randomUUID na prova).
  * NÃO existe coluna block_advance nesta tabela (PGRST204 — T9.13E).
- * block_advance existe no CRM canônico (CrmLeadState) e no writeBuffer, mas não no Supabase real.
+ * NÃO existe coluna next_objective nesta tabela (PGRST204 — T9.13F).
+ * block_advance e next_objective existem no CRM canônico (CrmLeadState) mas não no Supabase real.
  */
 export interface EnovaStateRow {
   lead_id?: string;
   stage_current?: string | null;
-  next_objective?: string | null;
+  // next_objective OMITIDA — coluna não existe no Supabase real (PGRST204 T9.13F).
   state_version?: number | null;
   updated_at?: string | null;
   [k: string]: unknown;
