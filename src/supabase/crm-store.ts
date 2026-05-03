@@ -89,10 +89,12 @@ function mapDocumentStatus(raw: unknown): CrmDocumentStatus {
 }
 
 function mapLeadFromMeta(row: CrmLeadMetaRow, fallbackId: number): CrmLead {
-  const lead_id = asString(row.lead_id) || `crm_lead_meta:${fallbackId}`;
+  // wa_id é a PK real de crm_lead_meta (T9.13C). Usamos como lead_id interno.
+  const wa_id = asString(row.wa_id);
+  const lead_id = wa_id || `crm_lead_meta:${fallbackId}`;
   return {
     lead_id,
-    external_ref: asNullableString(row.external_ref),
+    external_ref: asNullableString(row.external_ref) ?? (wa_id || null),
     customer_name: asNullableString(row.customer_name),
     phone_ref: asNullableString(row.phone_ref),
     status: mapLeadStatus(row.status),
@@ -156,7 +158,8 @@ function mapOverrideFromCrmOverrideLog(row: CrmOverrideLogRow, fallbackId: numbe
 
 function mapLeadToMeta(lead: CrmLead): CrmLeadMetaRow {
   return {
-    lead_id: lead.lead_id,
+    // wa_id é a PK real de crm_lead_meta; external_ref é o wa_id no CRM (T9.13C).
+    wa_id: lead.external_ref ?? lead.lead_id,
     external_ref: lead.external_ref,
     customer_name: lead.customer_name,
     phone_ref: lead.phone_ref,
