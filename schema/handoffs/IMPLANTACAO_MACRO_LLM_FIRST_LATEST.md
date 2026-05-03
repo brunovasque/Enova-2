@@ -1,5 +1,62 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13I-DIAG — NOT NULL FULL DIAG `crm_lead_meta` (probe incremental automático) (2026-05-03)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t9.13i-not-null-full-diag`
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
+**Próximo passo autorizado**: Vasques reexecuta prova real para capturar `[NOT_NULL FULL DIAG]`
+
+### Contexto (pós-PR #205 T9.13H-FIX)
+
+Nova 23502 após `lead_pool`: `violated_column=lead_temp`. Problema: descoberta uma por uma = um request/PR por NOT NULL. T9.13I resolve com probe incremental completo.
+
+### Diagnóstico implementado
+
+**Módulo novo**: `src/supabase/not-null-probe.ts`
+- `runNotNullFullDiag(cfg, probeWaId)` — cascata: information_schema → pg_catalog → incremental_probe
+- `printNotNullFullDiag(result)` — emite `[NOT_NULL FULL DIAG crm_lead_meta]`
+
+**Incremental probe**:
+```
+payload = {wa_id: 't9_13_probe_*', lead_pool: 't9_13_test', updated_at: now}
+loop(MAX=20):
+  upsert → if ok: PASS; if 23502: extrai violated_column, adiciona 't9_13_test', continua
+  if outro erro: para
+```
+
+**wa_id do probe = `t9_13_probe_*`** — completamente isolado de P5/P7. Nunca loga details/payload/secrets.
+
+**P0.5 atualizado** em `write-real-test-proof.ts`: chama `runNotNullFullDiag` + `printNotNullFullDiag`. Checks P0.5/P0.5a/P0.5b/P0.5c adicionados.
+
+**P0.6 + `[NOT_NULL INFERENCE]`** mantidos.
+
+### Colunas NOT NULL já confirmadas
+
+| coluna | confirmação | bloqueio |
+|---|---|---|
+| `lead_pool` | T9.13H | BLK-T9.13H-LEAD-POOL-VALUE |
+| `lead_temp` | T9.13I (evidência pós-PR #205) | BLK-T9.13I-NOT-NULL-FULL |
+
+### Smokes
+
+| Suite | Resultado |
+|---|---|
+| `prove:t9.13` modo local | 19/19 PASS / 0 FAIL / 1 SKIP |
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Próxima ação
+
+Vasques reexecuta `npm run prove:t9.13-supabase-write-real-test` com credenciais reais.
+
+`[NOT_NULL FULL DIAG crm_lead_meta]` revela lista completa de `required_columns` e `values_suggested`.
+Vasques confirma valores canônicos de produção → PR-T9.13I-FIX aplica todas de uma vez.
+
+---
+
 ## T9.13H-FIX — `lead_pool` NOT NULL em `crm_lead_meta` (2026-05-03)
 
 **Tipo**: PR-FIX | **Branch**: `fix/t9.13h-lead-pool-not-null`
