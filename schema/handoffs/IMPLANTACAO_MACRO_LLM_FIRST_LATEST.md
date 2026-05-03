@@ -1,5 +1,68 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13H-FIX — `lead_pool` NOT NULL em `crm_lead_meta` (2026-05-03)
+
+**Tipo**: PR-FIX | **Branch**: `fix/t9.13h-lead-pool-not-null`
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
+**Próximo passo autorizado**: Vasques reexecuta prova real após inclusão de `lead_pool`
+
+### Evidência confirmada (prova real pós-PR #204)
+
+Prova real pós-T9.13H-DIAG: **52 PASS | 6 FAIL | 0 SKIP**
+`[NOT_NULL INFERENCE crm_lead_meta]` identificou: `violated_column=lead_pool`
+
+```
+pg_code=23502
+pg_message=null value in column "lead_pool" of relation "crm_lead_meta" violates not-null constraint
+```
+
+### Uso de `lead_pool` no repo
+
+Busca em todo o repo (`lead_pool`, `pool`, `base fria/morna/quente`, `source_type`, `lead_temp`, `lead_source`).
+**Resultado**: zero uso em código TypeScript. Somente nos comentários JSDoc e nos diagnósticos T9.13G/H.
+
+Sem valor canônico definido no repo → valor de prova `'t9_13_test'` com **BLK-T9.13H-LEAD-POOL-VALUE**.
+
+### Correção aplicada
+
+| Arquivo | Mudança |
+|---|---|
+| `src/supabase/types.ts` | `CrmLeadMetaRow.lead_pool?: string \| null` adicionado com nota NOT NULL |
+| `src/supabase/crm-store.ts` | `mapLeadToMeta` envia `lead_pool: 't9_13_test'` com comentário BLK |
+| `src/supabase/write-real-test-proof.ts` | `payloadKeysLead = ['wa_id', 'lead_pool', 'updated_at']`; P5.8 e P7.6 verificam `lead_pool` |
+| `schema/diagnostics/T9_13G_PAYLOAD_SCHEMA_MATRIX.md` | linha `lead_pool` adicionada à tabela; payload final T9.13H-FIX documentado |
+| `schema/diagnostics/T9_13H_LEAD_POOL_FIX.md` | novo documento diagnóstico criado |
+
+### Bloqueios
+
+| ID | Status |
+|---|---|
+| BLK-T9.13-STATE-MAPPING | ATIVO — `enova_state` em writeBuffer |
+| BLK-T9.13H-LEAD-POOL-VALUE | **ATIVO** — `lead_pool='t9_13_test'` somente para prova; valor canônico de produção pendente Vasques |
+
+### Smokes
+
+| Suite | Resultado |
+|---|---|
+| `prove:t9.13` modo local | 19/19 PASS / 0 FAIL / 1 SKIP |
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Próxima ação
+
+Vasques reexecuta `npm run prove:t9.13-supabase-write-real-test` com credenciais reais.
+
+Esperado:
+- P0.3 PASS (payload `[wa_id, lead_pool, updated_at]` alinhado)
+- P5.7/P5.8 PASS (wa_id + lead_pool gravados)
+- P7.5/P7.6 PASS (update preserva ambos)
+- Se nova 23502 aparecer → `[NOT_NULL INFERENCE]` revelará próxima coluna → PR-T9.13I-FIX
+
+---
+
 ## T9.13H-DIAG — NOT NULL constraints em `crm_lead_meta` (2026-05-03)
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t9.13h-not-null-constraints`

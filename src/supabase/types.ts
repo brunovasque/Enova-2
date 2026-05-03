@@ -144,7 +144,7 @@ export interface SupabaseQueryResult<T> {
 }
 
 /**
- * Linha bruta de `crm_lead_meta` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F/T9.13G.
+ * Linha bruta de `crm_lead_meta` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F/T9.13G/T9.13H.
  * PK real: wa_id (TEXT UNIQUE) = WhatsApp ID do cliente = CrmLead.external_ref.
  *
  * Histórico de PGRST204 confirmados (não existem no schema real — não criar):
@@ -152,6 +152,10 @@ export interface SupabaseQueryResult<T> {
  *   T9.13E: customer_name (PGRST204)
  *   T9.13F: external_ref (PGRST204)
  *   T9.13G: phone_ref, status, manual_mode (PGRST204)
+ *
+ * NOT NULL confirmados por 23502 (T9.13H):
+ *   lead_pool — NOT NULL sem DEFAULT; valor canônico de produção pendente confirmação de Vasques.
+ *   BLK-T9.13H-LEAD-POOL-VALUE: prova usa 't9_13_test'; produção bloqueada até definição.
  *
  * Schema real (subset relevante, T9.13G P0): wa_id, created_at, updated_at, nome,
  * telefone, status_operacional, ultima_acao, ultimo_contato_at, lead_pool, lead_temp,
@@ -169,6 +173,7 @@ export interface SupabaseQueryResult<T> {
  */
 export interface CrmLeadMetaRow {
   wa_id?: string;            // PK real — WhatsApp ID (ex: '5511999990001')
+  lead_pool?: string | null; // NOT NULL no Supabase real (23502 T9.13H). BLK-T9.13H-LEAD-POOL-VALUE.
   created_at?: string | null;
   updated_at?: string | null;
   // external_ref/customer_name/phone_ref/status/manual_mode OMITIDAS — colunas não existem
