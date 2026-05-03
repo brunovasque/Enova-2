@@ -144,11 +144,12 @@ export interface SupabaseQueryResult<T> {
 }
 
 /**
- * Linha bruta de `crm_lead_meta` — schema mínimo confirmado por Vasques.
- * Não declarar campos não confirmados — usar `Record<string, unknown>` para o resto.
+ * Linha bruta de `crm_lead_meta` — schema real confirmado por logs T9.13C.
+ * PK real: wa_id (TEXT UNIQUE) = WhatsApp ID do cliente = CrmLead.external_ref.
+ * NÃO existe coluna lead_id nesta tabela (erro 42703 confirmado em prova real).
  */
 export interface CrmLeadMetaRow {
-  lead_id?: string;
+  wa_id?: string;            // PK real — WhatsApp ID (ex: '5511999990001')
   external_ref?: string | null;
   customer_name?: string | null;
   phone_ref?: string | null;

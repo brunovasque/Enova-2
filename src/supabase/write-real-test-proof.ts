@@ -28,6 +28,7 @@
  *   - Dados de teste claramente marcados: lead_id = t9_13_test_<timestamp>
  */
 
+import { randomUUID } from 'crypto';
 import { SupabaseCrmBackend } from './crm-store.ts';
 import { supabaseSelect } from './client.ts';
 import type { CrmLead, CrmLeadState } from '../crm/types.ts';
@@ -90,10 +91,12 @@ function logSelectResult(
 // Dados de prova — claramente marcados como teste
 // ---------------------------------------------------------------------------
 
-function makeTestData(ts: number) {
+// stateLeadId: deve ser UUID válido para modo real (enova_state.lead_id é UUID).
+// Para modo local, pode ser qualquer string (writeBuffer não valida tipo).
+function makeTestData(ts: number, stateLeadId: string) {
   const lead: CrmLead = {
     lead_id: `t9_13_test_${ts}`,
-    external_ref: `t9_13_wa_test_${ts}`,
+    external_ref: `t9_13_wa_test_${ts}`,  // mapeia para crm_lead_meta.wa_id (PK real)
     customer_name: 'T9.13 Prova Controlada',
     phone_ref: 't9_13_phone_test',
     status: 'active',
@@ -104,9 +107,9 @@ function makeTestData(ts: number) {
 
   const state: CrmLeadState = {
     state_id: `enova_state:t9_13_test_${ts}`,
-    lead_id: `t9_13_test_${ts}`,
+    lead_id: stateLeadId,                  // UUID válido para enova_state.lead_id
     stage_current: 'discovery',
-    next_objective: 't9_13_prova_escrita',
+    next_objective: `t9_13_prova_${ts}`,   // marcador de teste com timestamp
     block_advance: false,
     policy_flags: {},
     risk_flags: null,
@@ -126,7 +129,7 @@ async function runLocalProofs(): Promise<void> {
 
   const backendOff = new SupabaseCrmBackend({ url: FAKE_URL, serviceRoleKey: FAKE_SECRET }, false);
   const ts = Date.now();
-  const { lead, state } = makeTestData(ts);
+  const { lead, state } = makeTestData(ts, `t9_13_state_${ts}`);
 
   const p1Lead = await backendOff.insert<CrmLead>('crm_leads', lead);
   check('P1.1: insert crm_leads flag OFF retorna lead', p1Lead.lead_id === lead.lead_id);
@@ -141,7 +144,7 @@ async function runLocalProofs(): Promise<void> {
   console.log('\n── P2: Flag ON + URL falsa → fallback writeBuffer (sem exceção) ──');
 
   const backendOn = new SupabaseCrmBackend({ url: FAKE_URL, serviceRoleKey: FAKE_SECRET }, true);
-  const { lead: lead2, state: state2 } = makeTestData(ts + 1);
+  const { lead: lead2, state: state2 } = makeTestData(ts + 1, `t9_13_state_${ts + 1}`);
 
   let p2Threw = false;
   let p2Lead: CrmLead | null = null;
@@ -239,10 +242,14 @@ async function runLocalProofs(): Promise<void> {
 
 async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   const ts = Date.now();
-  const { lead, state } = makeTestData(ts);
-  const testLeadId = lead.lead_id;
+  const stateLeadId = randomUUID();        // UUID válido para enova_state.lead_id
+  const { lead, state } = makeTestData(ts, stateLeadId);
+  const testLeadId = lead.lead_id;         // id interno CRM (para checar retorno de insert)
+  const testWaId = lead.external_ref!;     // wa_id real → chave de crm_lead_meta
 
-  console.log(`\n  [INFO] lead_id de prova: ${testLeadId}`);
+  console.log(`\n  [INFO] lead_id interno (CRM): ${testLeadId}`);
+  console.log(`  [INFO] wa_id de prova (crm_lead_meta.wa_id): ${testWaId}`);
+  console.log(`  [INFO] uuid de prova (enova_state.lead_id): ${stateLeadId}`);
   console.log(`  [INFO] Dados de prova marcados — não são dados de cliente real`);
   console.log(`  [INFO] Estes dados permanecem no Supabase (sem cleanup — delete proibido)`);
 
@@ -264,16 +271,16 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   check('P5.3: phone_ref preservado', p5Lead?.phone_ref === lead.phone_ref);
   check('P5.4: external_ref preservado', p5Lead?.external_ref === lead.external_ref);
 
-  // Leitura de verificação — busca via Supabase SELECT direto
+  // Leitura de verificação — busca por wa_id (PK real de crm_lead_meta, T9.13C)
   const readLeadResult = await supabaseSelect<Record<string, unknown>>(cfg, 'crm_lead_meta', {
-    filters: { lead_id: `eq.${testLeadId}` },
+    filters: { wa_id: `eq.${testWaId}` },
     limit: 1,
   });
-  logSelectResult('P5', 'crm_lead_meta', testLeadId, readLeadResult);
+  logSelectResult('P5', 'crm_lead_meta', testWaId, readLeadResult);
   check('P5.5: leitura Supabase crm_lead_meta retorna OK', readLeadResult.ok);
   const foundLead = readLeadResult.rows[0];
   check('P5.6: lead encontrado em crm_lead_meta', foundLead !== undefined);
-  check('P5.7: lead_id correto no Supabase', foundLead?.lead_id === testLeadId);
+  check('P5.7: wa_id correto no Supabase', foundLead?.wa_id === testWaId);
   check('P5.8: external_ref correto no Supabase', foundLead?.external_ref === lead.external_ref);
   check('P5.9: phone_ref correto no Supabase', foundLead?.phone_ref === lead.phone_ref);
   check('P5.10: customer_name correto', foundLead?.customer_name === lead.customer_name);
@@ -290,20 +297,20 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
     p6Threw = true;
   }
   check('P6.1: insert crm_lead_state não lança', !p6Threw);
-  check('P6.2: retorna state com lead_id correto', p6State?.lead_id === testLeadId);
+  check('P6.2: retorna state com lead_id correto', p6State?.lead_id === stateLeadId);
   check('P6.3: stage_current preservado', p6State?.stage_current === state.stage_current);
   check('P6.4: state_version preservado', p6State?.state_version === state.state_version);
 
-  // Leitura de verificação — SELECT direto em enova_state
+  // Leitura de verificação — SELECT por UUID (enova_state.lead_id é UUID, T9.13C)
   const readStateResult = await supabaseSelect<Record<string, unknown>>(cfg, 'enova_state', {
-    filters: { lead_id: `eq.${testLeadId}` },
+    filters: { lead_id: `eq.${stateLeadId}` },
     limit: 1,
   });
-  logSelectResult('P6', 'enova_state', testLeadId, readStateResult);
+  logSelectResult('P6', 'enova_state', stateLeadId, readStateResult);
   check('P6.5: leitura Supabase enova_state retorna OK', readStateResult.ok);
   const foundState = readStateResult.rows[0];
   check('P6.6: state encontrado em enova_state', foundState !== undefined);
-  check('P6.7: lead_id correto no Supabase', foundState?.lead_id === testLeadId);
+  check('P6.7: lead_id (UUID) correto no Supabase', foundState?.lead_id === stateLeadId);
   check('P6.8: stage_current correto', foundState?.stage_current === state.stage_current);
   check('P6.9: next_objective correto', foundState?.next_objective === state.next_objective);
   check('P6.10: state_version correto', foundState?.state_version === state.state_version);
@@ -318,24 +325,26 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   try {
     p7Updated = await backend.update<CrmLead>(
       'crm_leads',
-      (r) => r.lead_id === testLeadId,
+      // Após leitura do Supabase, mapLeadFromMeta define lead_id = wa_id (T9.13C)
+      (r) => r.lead_id === testWaId,
       { phone_ref: updatedPhoneRef, manual_mode: true, updated_at: new Date().toISOString() },
     );
   } catch {
     p7Threw = true;
   }
+  console.log(`  [DIAG P7] wa_id=${testWaId} phone_ref=${p7Updated?.phone_ref ?? 'null'} manual_mode=${p7Updated?.manual_mode ?? 'null'}`);
   check('P7.1: update crm_leads não lança', !p7Threw);
   check('P7.2: retorna lead atualizado', p7Updated !== null);
-  check('P7.3: lead_id preservado após update', p7Updated?.lead_id === testLeadId);
+  check('P7.3: lead_id (wa_id) preservado após update', p7Updated?.lead_id === testWaId);
   check('P7.4: phone_ref atualizado', p7Updated?.phone_ref === updatedPhoneRef);
   check('P7.5: manual_mode atualizado', p7Updated?.manual_mode === true);
 
-  // Verificar leitura do campo atualizado
+  // Verificar leitura do campo atualizado — filtro por wa_id (PK real)
   const readUpdatedLead = await supabaseSelect<Record<string, unknown>>(cfg, 'crm_lead_meta', {
-    filters: { lead_id: `eq.${testLeadId}` },
+    filters: { wa_id: `eq.${testWaId}` },
     limit: 1,
   });
-  logSelectResult('P7', 'crm_lead_meta', testLeadId, readUpdatedLead);
+  logSelectResult('P7', 'crm_lead_meta', testWaId, readUpdatedLead);
   const updatedRow = readUpdatedLead.rows[0];
   check('P7.6: Supabase reflete phone_ref atualizado', updatedRow?.phone_ref === updatedPhoneRef);
   check('P7.7: Supabase reflete manual_mode=true', updatedRow?.manual_mode === true);
@@ -349,25 +358,25 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   try {
     p8Updated = await backend.update<CrmLeadState>(
       'crm_lead_state',
-      (r) => r.lead_id === testLeadId,
+      (r) => r.lead_id === stateLeadId,
       { stage_current: 'qualification_civil', state_version: 2, updated_at: new Date().toISOString() },
     );
   } catch {
     p8Threw = true;
   }
-  console.log(`  [DIAG P8] lead_id=${p8Updated?.lead_id ?? 'null'} stage_current=${p8Updated?.stage_current ?? 'null'} state_version=${p8Updated?.state_version ?? 'null'}`);
+  console.log(`  [DIAG P8] uuid=${stateLeadId} stage_current=${p8Updated?.stage_current ?? 'null'} state_version=${p8Updated?.state_version ?? 'null'}`);
   check('P8.1: update crm_lead_state não lança', !p8Threw);
   check('P8.2: retorna state atualizado', p8Updated !== null);
-  check('P8.3: lead_id preservado após update', p8Updated?.lead_id === testLeadId);
+  check('P8.3: lead_id (UUID) preservado após update', p8Updated?.lead_id === stateLeadId);
   check('P8.4: stage_current atualizado', p8Updated?.stage_current === 'qualification_civil');
   check('P8.5: state_version incrementado', p8Updated?.state_version === 2);
 
-  // Verificar leitura do state atualizado
+  // Verificar leitura do state atualizado — filtro por UUID
   const readUpdatedState = await supabaseSelect<Record<string, unknown>>(cfg, 'enova_state', {
-    filters: { lead_id: `eq.${testLeadId}` },
+    filters: { lead_id: `eq.${stateLeadId}` },
     limit: 1,
   });
-  logSelectResult('P8', 'enova_state', testLeadId, readUpdatedState);
+  logSelectResult('P8', 'enova_state', stateLeadId, readUpdatedState);
   const updatedStateRow = readUpdatedState.rows[0];
   check('P8.6: Supabase reflete stage_current=qualification_civil', updatedStateRow?.stage_current === 'qualification_civil');
   check('P8.7: Supabase reflete state_version=2', updatedStateRow?.state_version === 2);
@@ -419,9 +428,10 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   check('P9.3: cfg serializado não contém serviceRoleKey', !cfgStr.includes(cfg.serviceRoleKey));
   check('P9.4: lead_id de prova claramente marcado como teste', testLeadId.startsWith('t9_13_test_'));
 
-  console.log(`\n  [INFO] Prova real concluída. lead_id: ${testLeadId}`);
-  console.log(`  [INFO] Dados de prova gravados permanentemente em crm_lead_meta e enova_state.`);
-  console.log(`  [INFO] Cleanup não executado (delete proibido por contrato T9).`);
+  console.log(`\n  [INFO] Prova real concluída.`);
+  console.log(`  [INFO] crm_lead_meta: wa_id=${testWaId}`);
+  console.log(`  [INFO] enova_state: lead_id=${stateLeadId}`);
+  console.log(`  [INFO] Dados de prova gravados permanentemente (delete proibido por contrato T9).`);
 }
 
 // ---------------------------------------------------------------------------

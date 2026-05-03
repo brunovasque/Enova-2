@@ -3,7 +3,39 @@
 **Tipo:** Handoff de sessão  
 **Data:** 2026-05-03  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1/T9.2/T9.3/T9.4/T9.5/T9.6-DIAG/T9.6-IMPL/T9.7/T9.8-DIAG/T9.8-IMPL/T9.9-DIAG/T9.9-IMPL/T9.10-DIAG/T9.10-IMPL/T9.11/T9.12-DIAG/T9.12-IMPL/T9.13-PROVA-PARCIAL CONCLUÍDAS; próxima: **T9.13B — Execução real da prova Supabase write em TEST por Vasques**
+**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX CONCLUÍDAS; próxima: **T9.13C — Vasques re-executa prova real com schema corrigido**
+
+## T9.13C-FIX — Correção schema crm_lead_meta (wa_id) + enova_state (UUID) — CONCLUÍDA (2026-05-03)
+
+PR: `fix/t9.13c-schema-real-fix` (nova)
+
+**Causa raiz confirmada pelos logs diagnósticos T9.13B-DIAG:**
+
+| Tabela | Erro real | Causa |
+|---|---|---|
+| `crm_lead_meta` | `42703: column lead_id does not exist` | PK real é `wa_id`, não `lead_id` |
+| `enova_state` | `22P02: invalid input syntax for type uuid` | `lead_id` é UUID; prova usava string de texto |
+
+**Correções aplicadas:**
+
+1. **`src/supabase/types.ts`** — `CrmLeadMetaRow.lead_id` substituído por `CrmLeadMetaRow.wa_id`
+2. **`src/supabase/crm-store.ts`**:
+   - `mapLeadFromMeta`: usa `row.wa_id` como `lead_id` interno (PK real)
+   - `mapLeadToMeta`: escreve `wa_id: lead.external_ref ?? lead.lead_id` (external_ref é o wa_id no pipeline)
+3. **`src/supabase/write-real-test-proof.ts`**:
+   - `randomUUID()` gerado para `enova_state.lead_id` (UUID válido)
+   - Marcador de teste em `next_objective: t9_13_prova_<ts>`
+   - Filtros P5/P7: `wa_id=eq.${testWaId}` (não mais `lead_id`)
+   - Filtros P6/P8: `lead_id=eq.${stateLeadId}` (UUID)
+   - Matchers P7: `r.lead_id === testWaId` (após leitura Supabase, lead_id = wa_id)
+   - Matchers P8: `r.lead_id === stateLeadId` (UUID direto)
+   - Log `[DIAG P7]` adicionado; `[DIAG P8]` atualizado
+
+**Smokes pós-fix:** `smoke:supabase:write-real` 39/39 | `prove:t9.13` local 19/19 | `smoke:supabase` 70/70 | `smoke:runtime:env` 53/53 | `smoke:runtime:fallback-guard` 41/41 | `prove:g8-readiness` 7/7 PASS
+
+**Próxima:** T9.13C — Vasques re-executa prova real com credenciais. `stateLeadId` novo UUID a cada run; resultado esperado: 35/35 PASS (se sem FK constraint em enova_state) ou novo diagnóstico de FK.
+
+---
 
 ## T9.13B-DIAG — Logs diagnósticos nos selects P5/P6/P7/P8 — CONCLUÍDA (2026-05-03)
 

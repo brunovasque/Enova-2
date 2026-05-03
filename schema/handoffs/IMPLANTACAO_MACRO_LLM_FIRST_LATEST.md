@@ -1,5 +1,34 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13C-FIX — Correção schema crm_lead_meta (wa_id) + enova_state (UUID) (2026-05-03)
+
+**Tipo**: fix de schema | **Status**: CONCLUÍDA — smokes PASS  
+**Branch**: `fix/t9.13c-schema-real-fix`  
+**Próxima**: Vasques re-executa prova real; esperado 35/35 PASS
+
+### Causa raiz (logs T9.13B-DIAG)
+- `crm_lead_meta`: PK real é `wa_id` (TEXT UNIQUE), NÃO `lead_id` (erro 42703)
+- `enova_state.lead_id`: tipo UUID — prova usava string de texto (erro 22P02)
+
+### Correções
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/types.ts` | `CrmLeadMetaRow.lead_id` → `wa_id` |
+| `src/supabase/crm-store.ts` | `mapLeadFromMeta` usa `row.wa_id`; `mapLeadToMeta` escreve `wa_id: lead.external_ref` |
+| `src/supabase/write-real-test-proof.ts` | `randomUUID()` para enova_state; filtros P5/P7 por `wa_id`; matchers corrigidos |
+
+### Resultados
+| Suite | Resultado |
+|---|---|
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `prove:t9.13` modo local | 19/19 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+---
+
 ## T9.13B-DIAG — Logs diagnósticos supabaseSelect P5/P6/P7/P8 (2026-05-03)
 
 **Tipo**: diagnóstico | **Status**: CONCLUÍDA — logs adicionados, smokes PASS  
