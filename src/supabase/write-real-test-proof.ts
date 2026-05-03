@@ -32,7 +32,10 @@ import { randomUUID } from 'crypto';
 import { SupabaseCrmBackend } from './crm-store.ts';
 import type { WriteDiagEntry } from './crm-store.ts';
 import { supabaseSelect } from './client.ts';
-import { runNotNullFullDiag, printNotNullFullDiag } from './not-null-probe.ts';
+import {
+  runNotNullFullDiag, printNotNullFullDiag,
+  runCheckConstraintProbe, printCheckConstraintDiag,
+} from './not-null-probe.ts';
 import type { CrmLead, CrmLeadState } from '../crm/types.ts';
 import type { SupabaseConfig } from './types.ts';
 
@@ -400,6 +403,34 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   console.log('  Coluna violada do fluxo principal P5 visível em [DIAG WRITE P5] abaixo.');
   console.log('  Inferência: match /null value in column \\"([^"]+)\\"/ em pg_message.');
   check('P0.6: inferência 23502 documentada', true, 'pg_message visível em P5 write diag');
+
+  // ── P0.7: CHECK constraint probe — descobre valores permitidos para lead_pool ──
+  // T9.13J-DIAG: após probe NOT NULL revelar 23514 (CHECK violation em lead_pool),
+  // testa conjunto fixo de candidatos para descobrir valor aceito pelo CHECK constraint.
+  //
+  // Estratégia em cascata (sem alterar schema):
+  //   1. information_schema.check_constraints (esperado: blocked — PostgREST não expõe)
+  //   2. pg_catalog.pg_constraint (esperado: blocked — PostgREST não expõe)
+  //   3. candidate_probe: testa candidatos [fria, morna, quente, ...]; para no primeiro aceito.
+  //
+  // wa_id isolado: t9_13_probe_pool_*; inclui lead_temp NOT NULL confirmado (T9.13I).
+  // Nunca loga details, payload completo ou secrets.
+  // Esta PR é DIAG — NÃO aplica o valor aceito em mapLeadToMeta.
+
+  console.log('\n── P0.7: CHECK constraint probe crm_lead_meta.lead_pool (T9.13J) ──');
+
+  const checkProbeWaId = `t9_13_probe_pool_${ts}`;
+  console.log(`  [INFO] probe wa_id (isolado): ${checkProbeWaId}`);
+  console.log(`  [INFO] Tentando information_schema → pg_catalog → candidate_probe`);
+
+  const checkDiag = await runCheckConstraintProbe(cfg, checkProbeWaId);
+  printCheckConstraintDiag(checkDiag);
+
+  check('P0.7: CHECK constraint probe executado', true, `source=${checkDiag.source}`);
+  check('P0.7a: candidatos testados ≥1', checkDiag.iterations >= 1,
+    `iterations=${checkDiag.iterations}`);
+  check('P0.7b: probe sem loop infinito', checkDiag.iterations < 20,
+    `iterations=${checkDiag.iterations}`);
 
   // ── P5: Insert crm_leads → crm_lead_meta (apenas wa_id + updated_at — T9.13G) ──
 

@@ -1,5 +1,74 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13J-DIAG — CHECK constraint probe `crm_lead_meta.lead_pool` (2026-05-03)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t9.13j-check-constraint-lead-pool`
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
+**Próximo passo autorizado**: Vasques reexecuta prova real para capturar `[CHECK DIAG crm_lead_meta.lead_pool]`
+
+### Contexto (pós-PR #206 T9.13I-DIAG)
+
+Probe NOT NULL revelou `required_columns=[lead_pool, lead_temp]` mas parou em `probe_succeeded=false` com:
+```
+remaining_error=http_400: pg_code=23514
+pg_message=new row for relation "crm_lead_meta" violates check constraint "crm_lead_meta_lead_pool_check"
+```
+`lead_pool='t9_13_test'` satisfaz NOT NULL mas viola o CHECK constraint de domínio.
+
+### Diagnóstico implementado
+
+**Módulo estendido**: `src/supabase/not-null-probe.ts` (T9.13J additions)
+- `runCheckConstraintProbe(cfg, probeWaId)` — cascata: information_schema → pg_catalog → candidate_probe
+- `printCheckConstraintDiag(result)` — emite `[CHECK DIAG crm_lead_meta.lead_pool]`
+
+**Candidate probe**:
+```
+candidatos = ['fria','morna','quente','nova','ativo','inativo','cold','warm','hot',
+              'novo','prospect','importado','manual','api','default','geral','teste']
+for candidate:
+  payload = {wa_id: 't9_13_probe_pool_*', lead_pool: candidate, lead_temp: 't9_13_test', updated_at: now}
+  if ok: accepted_value=candidate; stop
+  if 23514: rejected_values.append(candidate); continue
+  else: other_error_value=candidate; stop
+```
+
+**wa_id do probe = `t9_13_probe_pool_*`** — isolado de P5/P7. Nunca loga details/payload/secrets.
+
+**P0.7 adicionado** em `write-real-test-proof.ts`: chama `runCheckConstraintProbe` + `printCheckConstraintDiag`. Checks P0.7/P0.7a/P0.7b adicionados.
+
+**Import atualizado**: `runCheckConstraintProbe, printCheckConstraintDiag` importados de `./not-null-probe.ts`.
+
+### Bloqueios ativos
+
+| ID | Status | Descrição |
+|---|---|---|
+| BLK-T9.13-STATE-MAPPING | ATIVO | `enova_state` em writeBuffer |
+| BLK-T9.13H-LEAD-POOL-VALUE | ATIVO | Valor canônico `lead_pool` pendente Vasques |
+| BLK-T9.13I-NOT-NULL-FULL | ATIVO | `lead_temp` não aplicada em `mapLeadToMeta` ainda |
+| BLK-T9.13J-CHECK-CONSTRAINT | **ATIVO** | CHECK constraint — `accepted_value` pendente prova real |
+
+### Smokes
+
+| Suite | Resultado |
+|---|---|
+| `prove:t9.13` modo local | 19/19 PASS / 0 FAIL / 1 SKIP |
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+### Próxima ação
+
+Vasques reexecuta `npm run prove:t9.13-supabase-write-real-test` com credenciais reais.
+
+`[CHECK DIAG crm_lead_meta.lead_pool]` revela `accepted_value` (primeiro candidato aceito pelo CHECK).
+Vasques confirma o valor como canônico para produção → PR-T9.13J-FIX aplica:
+- `lead_pool = <accepted_value>` em `mapLeadToMeta`
+- `lead_temp = 't9_13_test'` (ou valor canônico confirmado) em `mapLeadToMeta`
+
+---
+
 ## T9.13I-DIAG — NOT NULL FULL DIAG `crm_lead_meta` (probe incremental automático) (2026-05-03)
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t9.13i-not-null-full-diag`
