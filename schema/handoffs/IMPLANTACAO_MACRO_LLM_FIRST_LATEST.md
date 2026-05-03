@@ -1,10 +1,82 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
-## T9.13J-FIX — `lead_pool='COLD_POOL'` e `lead_temp='COLD'` canônicos em `crm_lead_meta` (2026-05-03)
+## T9.13K-DIAG — Diagnóstico STATE MAPPING `crm_lead_state` → `enova_state` (2026-05-03)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t9.13k-state-mapping`
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
+**Próximo passo autorizado**: Vasques executa SQL de consulta no Supabase SQL Editor e confirma qual coluna real recebe `stage_current`; após confirmação, PR-FIX posterior aplica mapeamento e remove `BLK-T9.13-STATE-MAPPING`
+
+### Contexto herdado — T9.13J-FIX VALIDADA (PR #208)
+
+A PR #208 (`fix/t9.13j-lead-pool-lead-temp-canonical`) foi **validada por prova real** por Vasques em 2026-05-03:
+
+```
+npm run prove:t9.13-supabase-write-real-test
+Resultado: 68 PASS | 0 FAIL | 0 SKIP
+```
+
+Evidências confirmadas:
+- `lead_pool='COLD_POOL'` gravado em `crm_lead_meta` e preservado após update (P5.8/P7.6 PASS)
+- `lead_temp='COLD'` gravado em `crm_lead_meta` e preservado após update (P5.9/P7.7 PASS)
+- `payloadKeysLead=['wa_id','lead_pool','lead_temp','updated_at']` — 4 colunas válidas
+- BLK-T9.13H-LEAD-POOL-VALUE RESOLVIDO
+- BLK-T9.13I-NOT-NULL-FULL RESOLVIDO
+- BLK-T9.13J-CHECK-CONSTRAINT RESOLVIDO
+- Bloqueio remanescente único: **BLK-T9.13-STATE-MAPPING** (permanece ativo)
+
+### O que esta PR diagnosticou
+
+`schema/diagnostics/T9_13K_STATE_MAPPING_DIAG.md` criado com diagnóstico completo do `BLK-T9.13-STATE-MAPPING`:
+
+**Candidatos para `stage_current` no schema real de `enova_state`:**
+
+| Candidato | Confiança | Semântica |
+|---|---|---|
+| `fase_conversa` | **ALTA** — candidato principal | Nome mais próximo de "fase ativa da conversa" |
+| `last_processed_stage` | MÉDIA — semântica diferente | "Último stage processado" — pode ser defasado |
+| `last_user_stage` | BAIXA — semântica incompatível | Perspectiva do usuário, não do funil |
+| `intro_etapa` | DESCARTADO para stage_current | Candidato para `next_objective` |
+
+**Campos sem candidato (omitir do upsert):**
+- `block_advance`, `state_version`, `policy_flags`, `risk_flags`
+
+**Método de prova seguro proposto (sem deploy, sem código):**
+```sql
+-- Vasques executa no Supabase SQL Editor:
+SELECT fase_conversa, COUNT(*) FROM enova_state GROUP BY fase_conversa ORDER BY 2 DESC LIMIT 10;
+SELECT column_name, data_type FROM information_schema.columns
+WHERE table_name='enova_state' AND column_name IN ('fase_conversa','last_processed_stage','last_user_stage','intro_etapa');
+```
+
+### Bloqueios formais
+
+| ID | Status | Causa |
+|---|---|---|
+| `BLK-T9.13-STATE-MAPPING` | **PERMANECE ATIVO** | Mapeamento não resolvido — aguardando confirmação Vasques |
+
+### O que esta PR não fez
+
+- Não alterou nenhum arquivo de código (`src/`)
+- Não habilitou escrita real de `crm_lead_state` em Supabase
+- Não removeu `BLK-T9.13-STATE-MAPPING`
+- Não alterou schema Supabase, RLS, buckets ou migrations
+
+### Próxima ação
+
+**Vasques** executa SQL de consulta e declara:
+1. `stage_current` → coluna real: `____` (esperado: `fase_conversa`)
+2. Valores aceitos pela coluna (compatíveis com `'discovery'`, `'qualification_civil'`, etc.)
+3. `next_objective` → omitir ou mapear para `____`
+
+Após confirmação → **PR-FIX** (T9.13K-FIX ou T9.14) aplica mapper atualizado e remove o BLK.
+
+---
+
+## T9.13J-FIX — `lead_pool='COLD_POOL'` e `lead_temp='COLD'` canônicos em `crm_lead_meta` (2026-05-03) — VALIDADA
 
 **Tipo**: PR-FIX | **Branch**: `fix/t9.13j-lead-pool-lead-temp-canonical`
 **Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`
-**Próximo passo autorizado**: Vasques reexecuta prova real com payload NOT NULL/CHECK confirmado
+**Status**: **VALIDADA POR PROVA REAL** — Vasques executou `prove:t9.13-supabase-write-real-test` — 68 PASS | 0 FAIL | 0 SKIP (2026-05-03)
 
 ### Contexto
 
