@@ -1,5 +1,44 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.13D-DIAG — Telemetria writeLog upsert real P5/P6/P7/P8 (2026-05-02)
+
+**Tipo**: PR-DIAG | **Status**: CONCLUÍDA — smokes PASS  
+**Branch**: `diag/t9.13d-upsert-write-diag`  
+**Objetivo**: Expor erro real do upsert mascarado pelo fallback para writeBuffer  
+**Próxima**: Vasques re-executa prova real e envia `[DIAG WRITE P5/P6/P7/P8]`
+
+### Problema diagnosticado
+Após T9.13C-FIX: `[DIAG P5] ok=true rows=0` — SELECT funciona mas não encontra o dado.  
+Causa: upsert falha e cai em writeBuffer silenciosamente.  
+`supabaseWriteLead`/`supabaseWriteLeadState` só retornavam `boolean` — erro do PostgREST era descartado.
+
+### Instrumentação adicionada
+
+| Arquivo | Alteração |
+|---|---|
+| `src/supabase/crm-store.ts` | `WriteDiagEntry` + `writeLog[]`; write methods retornam `SupabaseQueryResult` completo; `insert`/`update` registram no writeLog |
+| `src/supabase/write-real-test-proof.ts` | Import `WriteDiagEntry`; helper `logWriteDiag`; `[DIAG WRITE P5/P6/P7/P8]` após cada operação |
+
+### Log esperado após re-execução
+```
+[DIAG WRITE P5] table=crm_leads target_table=crm_lead_meta write_enabled=true attempted_real_write=true used_fallback=? ok=? http_status=? rows=? error=? test_id=t9_13_wa_test_...
+[DIAG WRITE P6] table=crm_lead_state target_table=enova_state write_enabled=true attempted_real_write=true used_fallback=? ok=? http_status=? rows=? error=? test_id=<uuid>
+[DIAG WRITE P7] table=crm_leads target_table=crm_lead_meta ...
+[DIAG WRITE P8] table=crm_lead_state target_table=enova_state ...
+```
+
+### Smokes
+| Suite | Resultado |
+|---|---|
+| `smoke:supabase:write-real` | 39/39 PASS |
+| `prove:t9.13` modo local | 19/19 PASS |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:runtime:env` | 53/53 PASS |
+| `smoke:runtime:fallback-guard` | 41/41 PASS |
+| `prove:g8-readiness` | 7/7 PASS |
+
+---
+
 ## T9.13C-FIX — Correção schema crm_lead_meta (wa_id) + enova_state (UUID) (2026-05-03)
 
 **Tipo**: fix de schema | **Status**: CONCLUÍDA — smokes PASS  

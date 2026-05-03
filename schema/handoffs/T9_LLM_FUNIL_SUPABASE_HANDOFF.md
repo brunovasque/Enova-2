@@ -1,9 +1,47 @@
 # Handoff T9 — LLM ↔ Funil ↔ Supabase ↔ Telemetria
 
 **Tipo:** Handoff de sessão  
-**Data:** 2026-05-03  
+**Data:** 2026-05-02  
 **Contrato:** `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`  
-**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX CONCLUÍDAS; próxima: **T9.13C — Vasques re-executa prova real com schema corrigido**
+**Status contrato:** ABERTO — T9.1–T9.12-IMPL/T9.13-PROVA-PARCIAL/T9.13B-FIX/T9.13B-DIAG/T9.13C-FIX/T9.13D-DIAG CONCLUÍDAS; próxima: **T9.13D — Vasques re-executa prova real e envia `[DIAG WRITE P5/P6/P7/P8]`**
+
+## T9.13D-DIAG — Telemetria writeLog no upsert (P5/P6/P7/P8) — CONCLUÍDA (2026-05-02)
+
+PR: `diag/t9.13d-upsert-write-diag` (nova)
+
+**Problema:** Após T9.13C-FIX, prova real retorna 39 PASS | 18 FAIL. SELECT retorna `ok=true rows=0` — upsert falha silenciosamente e cai em writeBuffer. O erro real do upsert estava mascarado porque `supabaseWriteLead`/`supabaseWriteLeadState` só retornavam `boolean`.
+
+**Instrumentação adicionada:**
+
+1. **`src/supabase/crm-store.ts`**:
+   - `WriteDiagEntry` interface exportada com: `table`, `target_table`, `write_enabled`, `attempted_real_write`, `used_fallback`, `ok`, `http_status`, `rows`, `error`, `test_id`
+   - `writeLog: WriteDiagEntry[]` campo público em `SupabaseCrmBackend`
+   - `supabaseWriteLead` → retorna `SupabaseQueryResult<CrmLeadMetaRow>` (antes: `boolean`)
+   - `supabaseWriteLeadState` → retorna `SupabaseQueryResult<EnovaStateRow>` (antes: `boolean`)
+   - `insert()`: captura resultado completo, push para `writeLog`, decide fallback por `result.ok`
+   - `update()`: idem, separado por tabela (crm_leads / crm_lead_state)
+   - `test_id`: `external_ref` quando começa com `t9_13_`; `lead_id` UUID direto para enova_state; `(non-test)` para registros de produção
+
+2. **`src/supabase/write-real-test-proof.ts`**:
+   - Import `WriteDiagEntry` de `./crm-store.ts`
+   - Helper `logWriteDiag(label, d)` adicionado
+   - `[DIAG WRITE P5]` após P5 insert (crm_leads → crm_lead_meta)
+   - `[DIAG WRITE P6]` após P6 insert (crm_lead_state → enova_state)
+   - `[DIAG WRITE P7]` antes de `[DIAG P7]` após P7 update (crm_leads)
+   - `[DIAG WRITE P8]` antes de `[DIAG P8]` após P8 update (crm_lead_state)
+
+**Formato do log:**
+```
+[DIAG WRITE P5] table=crm_leads target_table=crm_lead_meta write_enabled=true attempted_real_write=true used_fallback=? ok=? http_status=? rows=? error=? test_id=t9_13_wa_test_...
+```
+
+**Restrições mantidas:** Sem secrets, sem headers, sem payload completo, sem dados de cliente, sem facts, sem reply_text.
+
+**Smokes:** `smoke:supabase:write-real` 39/39 | `prove:t9.13` local 19/19 | `smoke:supabase` 70/70 | `smoke:runtime:env` 53/53 | `smoke:runtime:fallback-guard` 41/41 | `prove:g8-readiness` 7/7 PASS
+
+**Próxima ação:** Vasques re-executa prova real e envia saída completa incluindo `[DIAG WRITE P5/P6/P7/P8]`. O erro real do upsert (http_status, error) será visível para diagnóstico.
+
+---
 
 ## T9.13C-FIX — Correção schema crm_lead_meta (wa_id) + enova_state (UUID) — CONCLUÍDA (2026-05-03)
 

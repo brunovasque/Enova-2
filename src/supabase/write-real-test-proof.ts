@@ -30,6 +30,7 @@
 
 import { randomUUID } from 'crypto';
 import { SupabaseCrmBackend } from './crm-store.ts';
+import type { WriteDiagEntry } from './crm-store.ts';
 import { supabaseSelect } from './client.ts';
 import type { CrmLead, CrmLeadState } from '../crm/types.ts';
 import type { SupabaseConfig } from './types.ts';
@@ -84,6 +85,17 @@ function logSelectResult(
     `  [DIAG ${label}] table=${table} lead_id=${leadId} ok=${result.ok}` +
     ` http_status=${result.http_status ?? 'null'} rows=${result.rows.length}` +
     ` error=${result.error ?? 'null'}`,
+  );
+}
+
+/** Imprime o resultado completo de uma tentativa de escrita real — T9.13D-DIAG. */
+function logWriteDiag(label: string, d: WriteDiagEntry): void {
+  console.log(
+    `  [DIAG WRITE ${label}] table=${d.table} target_table=${d.target_table}` +
+    ` write_enabled=${d.write_enabled} attempted_real_write=${d.attempted_real_write}` +
+    ` used_fallback=${d.used_fallback} ok=${d.ok}` +
+    ` http_status=${d.http_status ?? 'null'} rows=${d.rows}` +
+    ` error=${d.error ?? 'null'} test_id=${d.test_id}`,
   );
 }
 
@@ -266,6 +278,8 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   } catch {
     p5Threw = true;
   }
+  const p5WriteDiag = backend.writeLog.at(-1);
+  if (p5WriteDiag) logWriteDiag('P5', p5WriteDiag);
   check('P5.1: insert crm_leads não lança', !p5Threw);
   check('P5.2: retorna lead com lead_id correto', p5Lead?.lead_id === testLeadId);
   check('P5.3: phone_ref preservado', p5Lead?.phone_ref === lead.phone_ref);
@@ -296,6 +310,8 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   } catch {
     p6Threw = true;
   }
+  const p6WriteDiag = backend.writeLog.at(-1);
+  if (p6WriteDiag) logWriteDiag('P6', p6WriteDiag);
   check('P6.1: insert crm_lead_state não lança', !p6Threw);
   check('P6.2: retorna state com lead_id correto', p6State?.lead_id === stateLeadId);
   check('P6.3: stage_current preservado', p6State?.stage_current === state.stage_current);
@@ -332,6 +348,8 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   } catch {
     p7Threw = true;
   }
+  const p7WriteDiag = backend.writeLog.at(-1);
+  if (p7WriteDiag) logWriteDiag('P7', p7WriteDiag);
   console.log(`  [DIAG P7] wa_id=${testWaId} phone_ref=${p7Updated?.phone_ref ?? 'null'} manual_mode=${p7Updated?.manual_mode ?? 'null'}`);
   check('P7.1: update crm_leads não lança', !p7Threw);
   check('P7.2: retorna lead atualizado', p7Updated !== null);
@@ -364,6 +382,8 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   } catch {
     p8Threw = true;
   }
+  const p8WriteDiag = backend.writeLog.at(-1);
+  if (p8WriteDiag) logWriteDiag('P8', p8WriteDiag);
   console.log(`  [DIAG P8] uuid=${stateLeadId} stage_current=${p8Updated?.stage_current ?? 'null'} state_version=${p8Updated?.state_version ?? 'null'}`);
   check('P8.1: update crm_lead_state não lança', !p8Threw);
   check('P8.2: retorna state atualizado', p8Updated !== null);
