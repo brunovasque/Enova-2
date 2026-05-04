@@ -1,5 +1,90 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.5B-DIAG — Diagnóstico alinhamento health panel→Worker (2026-05-03)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t10.5b-panel-worker-health`
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Próximo passo autorizado T10**: T10.5C-FIX — PR-FIX — ajustar endpoint `/__admin__/health` → `/__admin__/go-live/health` em `panel-nextjs/app/api/health/route.ts`
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `diagnostico` — READ-ONLY; nenhuma alteração de código
+
+### O que esta PR fez
+
+1. Leu e analisou `panel-nextjs/app/api/health/route.ts` — confirmou endpoint chamado: `/__admin__/health`
+2. Leu e analisou `src/worker.ts` (363 linhas) — mapeou todas as 7 rotas do Worker; zero ocorrência de `/__admin__/health`
+3. Leu `src/golive/health.ts` — confirmou `GOLIVE_HEALTH_ROUTE = '/__admin__/go-live/health'` (rota existente)
+4. Leu `src/crm/routes.ts` — confirmou `/crm/health` existente com auth `X-CRM-Admin-Key`
+5. Leu `wrangler.toml` — confirmou `CRM_ADMIN_KEY` como secret esperado
+6. Identificou divergência exata: panel chama `/__admin__/health` ≠ Worker tem `/__admin__/go-live/health`
+7. Confirmou header correto em ambos os lados: `X-CRM-Admin-Key` (case-insensitive HTTP)
+8. Produziu recomendação técnica final: **Opção A — ajustar panel** (sem tocar src/)
+9. Criou `schema/diagnostics/T10_5B_PANEL_WORKER_HEALTH_DIAG.md`
+10. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+11. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- Não alterou nenhum código funcional do panel
+- Não alterou `src/` do Worker (zero diff em src/)
+- Não alterou Supabase, RLS, migrations
+- Não fechou G10.5 — permanece ABERTO até T10.5C-FIX
+- Não fechou G9/T9 — frentes completamente separadas
+- Não implementou nenhuma correção
+
+### Achados principais
+
+| Achado | Detalhe |
+|--------|---------|
+| Endpoint chamado pelo panel | `/__admin__/health` |
+| Endpoint existente no Worker | `/__admin__/go-live/health` |
+| Rota `/crm/health` | Existe com auth X-CRM-Admin-Key |
+| Rota `GET /` | Existe sem auth (health básico) |
+| Header panel → Worker | `X-CRM-Admin-Key` ✅ correto |
+| Chave admin no panel | `CRM_ADMIN_KEY` / `ENOVA_ADMIN_KEY` ✅ compatível |
+| WORKER_BASE_URL | `nv-enova-2.brunovasque.workers.dev` ✅ correto |
+| Causa do 404 | Único: path divergente `/__admin__/health` vs `/__admin__/go-live/health` |
+
+### Recomendação técnica
+
+**Opção A (recomendada)**: Alterar `panel-nextjs/app/api/health/route.ts`:
+- Trocar `"/__admin__/health"` → `"/__admin__/go-live/health"` em 2 ocorrências (tipo literal + chamada fetch)
+- Zero alteração em src/ do Worker
+- Zero alteração em auth, envs, Supabase
+
+### Riscos herdados
+
+| ID | Risco | Status |
+|----|-------|--------|
+| LAC-T10.5-01 | Preview Vercel — painel carrega no browser | ABERTA — ação Vasques (G10.4) |
+| LAC-T10.5-02 | /api/health ok:true com Worker real | ABERTA — aguarda T10.5C-FIX (G10.5) |
+| BLK-T10-05 | 26 arquivos app/lib/ ENOVA IA | PERMANECE — não bloqueante para CRM |
+
+### Estado do gate
+
+- **G10.1 (contrato)**: APROVADO — T10.2 ✅
+- **G10.2 (import)**: APROVADO — T10.3 ✅
+- **G10.3 (build local)**: APROVADO — T10.5 ✅
+- **G10.4 (preview Vercel)**: ABERTO — requer Vasques
+- **G10.5 (/api/health real)**: ABERTO — aguarda T10.5C-FIX
+- **G10.6 (CRM real)**: ABERTO — T10.6-CRM-LINK
+- **G10.7 (readiness)**: ABERTO — T10.7-READINESS
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/diagnostics/T10_5B_PANEL_WORKER_HEALTH_DIAG.md
+Estado da evidência:                   completa — diagnóstico READ-ONLY sem lacuna remanescente
+Há lacuna remanescente?:               não — causa raiz identificada, divergência exata mapeada
+Há item parcial/inconclusivo bloqueante?: não — PR-DIAG documental, não fecha gate técnico
+Fechamento permitido nesta PR?:        sim — PR-DIAG encerrada; G10.5 permanece ABERTO (gate técnico)
+Estado permitido após esta PR:         T10.5B-DIAG concluída; G10.5 permanece aberto até T10.5C-FIX
+Próxima PR autorizada:                 T10.5C-FIX (PR-FIX) — ajustar endpoint panel-nextjs
+```
+
+---
+
 ## T10.5-RUN — Build local e health do panel-nextjs/ (2026-05-03)
 
 **Tipo**: PR-PROVA | **Branch**: `prove/t10.5-panel-run-build-health`
