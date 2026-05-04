@@ -1,11 +1,11 @@
 /**
  * T9.15-PROVA — Write / Read / Restart lógico + Supabase real (dual-mode)
  *
- * Prova que o ciclo completo write→read→restart está correto após T9.14-IMPL:
+ * Prova que o ciclo completo write→read→restart está correto após T9.15G-FIX:
  *   - Write path (mapStageCurrentToFaseConversa) grava fase_conversa correta
  *   - Read path (mapFaseConversaToStageCurrent) reconstrói stage_current correto
- *   - Round-trip bidirecional para todos os 5 estágios pós-docs
- *   - Pré-docs continuam conservadores (não gravam fase operacional)
+ *   - Round-trip bidirecional para pré-docs (qualification_civil etc.) e pós-docs
+ *   - Fallback legado 'inicio' → 'discovery' preservado
  *   - Restart lógico: stage sobrevive write→serialização→read
  *
  * Modos:
@@ -91,11 +91,11 @@ function runBlocoA(): void {
   check('visit_confirmed → visita_confirmada',   eq(mapStageCurrentToFaseConversa('visit_confirmed'), 'visita_confirmada'));
   check('finalization → finalizacao_processo',   eq(mapStageCurrentToFaseConversa('finalization'), 'finalizacao_processo'));
 
-  // pré-docs: retornam null (não gravam CRM operacional)
-  check('discovery → null (pré-docs conservador)',                 eq(mapStageCurrentToFaseConversa('discovery'), null));
-  check('qualification_civil → null (pré-docs conservador)',       eq(mapStageCurrentToFaseConversa('qualification_civil'), null));
-  check('qualification_renda → null (pré-docs conservador)',       eq(mapStageCurrentToFaseConversa('qualification_renda'), null));
-  check('qualification_eligibility → null (pré-docs conservador)', eq(mapStageCurrentToFaseConversa('qualification_eligibility'), null));
+  // pré-docs: gravam canonical stage em fase_conversa (T9.15G-FIX)
+  check('discovery → discovery',                 eq(mapStageCurrentToFaseConversa('discovery'), 'discovery'));
+  check('qualification_civil → qualification_civil',       eq(mapStageCurrentToFaseConversa('qualification_civil'), 'qualification_civil'));
+  check('qualification_renda → qualification_renda',       eq(mapStageCurrentToFaseConversa('qualification_renda'), 'qualification_renda'));
+  check('qualification_eligibility → qualification_eligibility', eq(mapStageCurrentToFaseConversa('qualification_eligibility'), 'qualification_eligibility'));
   check('null → null (sem stage)',                                  eq(mapStageCurrentToFaseConversa(null), null));
   check('"" → null (string vazia)',                                 eq(mapStageCurrentToFaseConversa(''), null));
   check('undefined → null',                                        eq(mapStageCurrentToFaseConversa(undefined), null));
@@ -115,7 +115,12 @@ function runBlocoB(): void {
   check('visita_confirmada → visit_confirmed',   eq(mapFaseConversaToStageCurrent('visita_confirmada'), 'visit_confirmed'));
   check('finalizacao_processo → finalization',   eq(mapFaseConversaToStageCurrent('finalizacao_processo'), 'finalization'));
 
-  // pré-docs: conservador → discovery
+  // pré-docs canônicos (T9.15G-FIX — round-trip completo)
+  check('discovery → discovery',                     eq(mapFaseConversaToStageCurrent('discovery'), 'discovery'));
+  check('qualification_civil → qualification_civil', eq(mapFaseConversaToStageCurrent('qualification_civil'), 'qualification_civil'));
+  check('qualification_renda → qualification_renda', eq(mapFaseConversaToStageCurrent('qualification_renda'), 'qualification_renda'));
+  check('qualification_eligibility → qualification_eligibility', eq(mapFaseConversaToStageCurrent('qualification_eligibility'), 'qualification_eligibility'));
+  // fallback legado preservado
   check('null → discovery',           eq(mapFaseConversaToStageCurrent(null), 'discovery'));
   check('undefined → discovery',      eq(mapFaseConversaToStageCurrent(undefined), 'discovery'));
   check('"" → discovery',             eq(mapFaseConversaToStageCurrent(''), 'discovery'));
@@ -149,17 +154,21 @@ function runBlocoC(): void {
     );
   }
 
-  // pré-docs: write grava null → banco mantém 'inicio' → read retorna 'discovery'
+  // pré-docs (T9.15G-FIX): round-trip real — write grava canonical value → read retorna o mesmo stage
   for (const preDocStage of ['discovery', 'qualification_civil', 'qualification_renda', 'qualification_eligibility']) {
     const written = mapStageCurrentToFaseConversa(preDocStage);
-    // null simula "banco mantém default 'inicio'" — read de 'inicio' → discovery
-    const readBackNull   = mapFaseConversaToStageCurrent(null);
-    const readBackInicio = mapFaseConversaToStageCurrent('inicio');
+    const readBack = mapFaseConversaToStageCurrent(written);
     check(
-      `pré-docs ${preDocStage}: write=null, read(null)=discovery, read('inicio')=discovery`,
-      eq(written, null) && eq(readBackNull, 'discovery') && eq(readBackInicio, 'discovery'),
+      `round-trip pré-doc ${preDocStage} → ${String(written)} → ${preDocStage}`,
+      eq(written, preDocStage) && eq(readBack, preDocStage),
+      `write=${String(written)} read=${readBack}`,
     );
   }
+  // fallback legado: leads com fase_conversa='inicio' continuam retornando discovery
+  check(
+    'fallback legado: inicio → discovery (compatibilidade)',
+    eq(mapFaseConversaToStageCurrent('inicio'), 'discovery'),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -174,12 +183,19 @@ function runBlocoD(): void {
   // read path usa apenas row.fase_conversa
 
   const rows: Array<{ fase_conversa?: string; stage_current?: never; desc: string; expectedStage: string }> = [
+    // pré-docs (T9.15G-FIX — survivem restart com stage correto)
+    { fase_conversa: 'discovery',              desc: 'discovery pós-restart (canônico)',              expectedStage: 'discovery' },
+    { fase_conversa: 'qualification_civil',    desc: 'qualification_civil pós-restart',               expectedStage: 'qualification_civil' },
+    { fase_conversa: 'qualification_renda',    desc: 'qualification_renda pós-restart',               expectedStage: 'qualification_renda' },
+    { fase_conversa: 'qualification_eligibility', desc: 'qualification_eligibility pós-restart',      expectedStage: 'qualification_eligibility' },
+    // pós-docs (mapeamento legado preservado)
     { fase_conversa: 'envio_docs',                        desc: 'docs_prep pós-restart',          expectedStage: 'docs_prep' },
     { fase_conversa: 'aguardando_retorno_correspondente', desc: 'analysis_waiting pós-restart',    expectedStage: 'analysis_waiting' },
     { fase_conversa: 'agendamento_visita',                desc: 'visit_scheduling pós-restart',    expectedStage: 'visit_scheduling' },
     { fase_conversa: 'visita_confirmada',                 desc: 'visit_confirmed pós-restart',     expectedStage: 'visit_confirmed' },
     { fase_conversa: 'finalizacao_processo',              desc: 'finalization pós-restart',        expectedStage: 'finalization' },
-    { fase_conversa: 'inicio',                            desc: 'discovery pós-restart (inicio)',  expectedStage: 'discovery' },
+    // fallback legado (compatibilidade preservada)
+    { fase_conversa: 'inicio',                            desc: 'discovery pós-restart (inicio legado)',  expectedStage: 'discovery' },
     { fase_conversa: undefined,                           desc: 'discovery pós-restart (null)',    expectedStage: 'discovery' },
     { fase_conversa: 'clt_renda_perfil_informativo',      desc: 'legado E1 desconhecido → discovery', expectedStage: 'discovery' },
   ];
