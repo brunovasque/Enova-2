@@ -378,12 +378,10 @@ function runTopoDecision(state: LeadState): CoreDecision {
   const topoCriteria = evaluateTopoCriteria(topoSignals);
 
   // Derivar CoreDecision a partir de TopoCriteriaResult (L06)
+  // next_objective vem diretamente do gates (L06) — TOPO_NEXT_OBJECTIVES define cada etapa canônica
   const blockAdvance = !topoCriteria.can_advance;
   const stageAfter = topoCriteria.authorized_next_step as LeadState['current_stage'];
-
-  const nextObjective = blockAdvance
-    ? `coletar_${topoCriteria.missing_required_facts[0] ?? 'customer_goal'}`
-    : `avancar_para_${stageAfter}`;
+  const nextObjective = topoCriteria.next_objective;
 
   // speech_intent: sinal estrutural para o Speech Engine — não é fala
   const speechIntent: CoreDecision['speech_intent'] = blockAdvance ? 'bloqueio' : 'transicao_stage';

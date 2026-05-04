@@ -22,6 +22,9 @@
 import type { CustomerGoal, CurrentIntent, OfftrackType } from './topo-rules.ts';
 import { TOPO_REQUIRED_FACTS, TOPO_OPTIONAL_FACTS, TOPO_OFFTRACK_FACT_KEY } from './topo-rules.ts';
 
+// Tipo local de nacionalidade para o topo (sem depender de meio-b-rules)
+type NacionalidadeValue = 'brasileiro' | 'estrangeiro' | 'naturalizado';
+
 // ---------------------------------------------------------------------------
 // Tipos de entrada e saída do extrator do topo
 // ---------------------------------------------------------------------------
@@ -50,7 +53,7 @@ export interface TopoTurnExtract {
  * Todos os campos são estruturais — nenhum é fala ao cliente.
  *
  * Fonte: F0 (customer_goal, channel_origin), F7 (current_intent), F9 (offtrack_type)
- * — PDF 6, pp. 3–4.
+ * — PDF 6, pp. 3–4. Rota canônica topo ENOVA 2: customer_goal → nome_completo → nacionalidade → (rnm).
  */
 export interface TopoSignals {
   /** F0: customer_goal está presente e é válido? */
@@ -67,6 +70,21 @@ export interface TopoSignals {
   offtrack_detected: boolean;
   /** F9: tipo de desvio, ou null se on-track. */
   offtrack_type_value: OfftrackType | null;
+
+  /** nome_completo foi coletado? */
+  nome_completo_detected: boolean;
+  /** valor de nome_completo, ou null se ausente. */
+  nome_completo_value: string | null;
+
+  /** nacionalidade foi declarada? */
+  nacionalidade_detected: boolean;
+  /** valor de nacionalidade, ou null se ausente. */
+  nacionalidade_value: NacionalidadeValue | null;
+
+  /** RNM foi mencionado/verificado (relevante apenas para estrangeiros)? */
+  rnm_detectado: boolean;
+  /** RNM está válido? true=sim, false=inválido/ausente, null=não informado. */
+  rnm_valido: boolean | null;
 
   /**
    * Status da extração do topo.
@@ -109,6 +127,12 @@ const VALID_OFFTRACK_TYPES = new Set<string>([
   'pergunta_lateral',
 ]);
 
+const VALID_NACIONALIDADES = new Set<NacionalidadeValue>([
+  'brasileiro',
+  'estrangeiro',
+  'naturalizado',
+]);
+
 // ---------------------------------------------------------------------------
 // Extrator principal do topo (L05)
 // ---------------------------------------------------------------------------
@@ -117,11 +141,12 @@ const VALID_OFFTRACK_TYPES = new Set<string>([
  * Extrai e valida os sinais estruturais do topo a partir dos facts do lead.
  *
  * Esta função representa a Interface Core ↔ Extractor para o stage de discovery.
- * Ela NÃO interpreta texto livre — recebe facts já extraídos pelo LLM e os normaliza.
+ * Ela NÃO interpreta texto livre — recebe facts já extraídos pelo text-extractor e os normaliza.
  *
  * Fonte: F0 (customer_goal, channel_origin) — PDF 6, p. 3.
  *        F7 (current_intent) — PDF 6, p. 4.
  *        F9 (offtrack_type) — PDF 6, p. 4.
+ *        Rota canônica topo ENOVA 2: customer_goal → nome_completo → nacionalidade → (rnm).
  * E6.1: "Captação do primeiro sinal útil" — PDF 4, p. 8.
  */
 export function extractTopoSignals(input: TopoTurnExtract): TopoSignals {
@@ -135,6 +160,10 @@ export function extractTopoSignals(input: TopoTurnExtract): TopoSignals {
     ...TOPO_REQUIRED_FACTS,
     ...TOPO_OPTIONAL_FACTS,
     TOPO_OFFTRACK_FACT_KEY,
+    'nome_completo',
+    'nacionalidade',
+    'rnm_valido',
+    'rnm_status',
   ];
 
   // --- F0: customer_goal ---
@@ -152,6 +181,24 @@ export function extractTopoSignals(input: TopoTurnExtract): TopoSignals {
   const offtrackTypeValue = normalizeOfftrackType(rawOfftrackType);
   const offtrackDetected = offtrackTypeValue !== null;
 
+  // --- nome_completo ---
+  const rawNome = merged['nome_completo'];
+  const nomeCompletoValue = (rawNome != null && typeof rawNome === 'string' && rawNome.trim().length > 0)
+    ? rawNome.trim()
+    : null;
+  const nomeCompletoDetected = nomeCompletoValue !== null;
+
+  // --- nacionalidade ---
+  const rawNacionalidade = merged['nacionalidade'];
+  const nacionalidadeValue = normalizeNacionalidade(rawNacionalidade);
+  const nacionalidadeDetected = nacionalidadeValue !== null;
+
+  // --- RNM (para estrangeiros) ---
+  const rawRnmValido = merged['rnm_valido'];
+  const rawRnmStatus = merged['rnm_status'];
+  const rnmValidoResolved = resolveRnmValido(rawRnmValido, rawRnmStatus);
+  const rnmDetectado = rawRnmValido !== undefined || rawRnmStatus !== undefined;
+
   // --- parse_status ---
   const parseStatus = computeParseStatus(customerGoalDetected, currentIntentDetected);
 
@@ -162,6 +209,12 @@ export function extractTopoSignals(input: TopoTurnExtract): TopoSignals {
     current_intent_value: currentIntentValue,
     offtrack_detected: offtrackDetected,
     offtrack_type_value: offtrackTypeValue,
+    nome_completo_detected: nomeCompletoDetected,
+    nome_completo_value: nomeCompletoValue,
+    nacionalidade_detected: nacionalidadeDetected,
+    nacionalidade_value: nacionalidadeValue,
+    rnm_detectado: rnmDetectado,
+    rnm_valido: rnmValidoResolved,
     parse_status: parseStatus,
     keys_checked: keysChecked,
   };
@@ -220,4 +273,27 @@ function computeParseStatus(
   if (customerGoalDetected) return 'ready';
   if (currentIntentDetected) return 'partial';
   return 'empty';
+}
+
+/**
+ * Normaliza o valor bruto de nacionalidade para o tipo canônico do topo.
+ * Retorna null se ausente ou inválido.
+ */
+function normalizeNacionalidade(raw: unknown): NacionalidadeValue | null {
+  if (raw === null || raw === undefined) return null;
+  const value = String(raw).trim().toLowerCase() as NacionalidadeValue;
+  if (VALID_NACIONALIDADES.has(value)) return value;
+  return null;
+}
+
+/**
+ * Resolve rnm_valido a partir de rnm_valido (boolean) ou rnm_status (string).
+ * Retorna null se não informado.
+ */
+function resolveRnmValido(rawRnmValido: unknown, rawRnmStatus: unknown): boolean | null {
+  if (rawRnmValido === true) return true;
+  if (rawRnmValido === false) return false;
+  if (rawRnmStatus === 'valido') return true;
+  if (rawRnmStatus === 'invalido' || rawRnmStatus === 'expirado' || rawRnmStatus === 'ausente') return false;
+  return null;
 }

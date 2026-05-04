@@ -23,10 +23,14 @@
 
 /**
  * Facts obrigatórios que o stage de discovery/topo precisa coletar.
- * Fonte: F0 (customer_goal) — PDF 6, p. 3.
- * "customer_goal: Comprar imóvel, entender programa, enviar docs, visitar etc."
+ * Rota canônica MCMV:
+ *   1. customer_goal — interesse detectado
+ *   2. nome_completo — nome do lead coletado (após explicar programa)
+ *   3. nacionalidade — brasileiro/estrangeiro/naturalizado
+ *   (se estrangeiro: rnm_valido verificado antes de avançar — ver topo-gates.ts)
+ * Fonte: F0 (customer_goal) — PDF 6, p. 3; rota canônica topo ENOVA 2.
  */
-export const TOPO_REQUIRED_FACTS = ['customer_goal'] as const;
+export const TOPO_REQUIRED_FACTS = ['customer_goal', 'nome_completo', 'nacionalidade'] as const;
 
 /**
  * Facts complementares do topo — úteis mas não obrigatórios para avançar.
@@ -82,16 +86,18 @@ export type OfftrackType =
 
 /**
  * Condições que impedem avanço no topo do funil.
- * Fonte: E6.1 — PDF 4, p. 8 ("Não iniciar se: não houver política clara de retorno ao
- * objetivo."); F0 (customer_goal obrigatório).
+ * Avaliadas em sequência canônica: customer_goal → nome_completo → nacionalidade → rnm.
+ * Fonte: E6.1 — PDF 4, p. 8; F0 (customer_goal obrigatório); rota canônica topo ENOVA 2.
  */
 export const TOPO_BLOCKING_CONDITIONS = {
-  /**
-   * customer_goal ausente — fact obrigatório do topo não coletado.
-   * O lead não pode avançar sem que o objetivo principal seja identificado.
-   * Fonte: F0 (customer_goal) — PDF 6, p. 3.
-   */
+  /** customer_goal ausente — interesse não detectado ainda. */
   CUSTOMER_GOAL_AUSENTE: 'topo.customer_goal_ausente',
+  /** nome_completo ausente — programa explicado, aguardando nome do lead. */
+  NOME_COMPLETO_AUSENTE: 'topo.nome_completo_ausente',
+  /** nacionalidade ausente — nome coletado, aguardando brasileiro/estrangeiro. */
+  NACIONALIDADE_AUSENTE: 'topo.nacionalidade_ausente',
+  /** estrangeiro declarado, RNM válido ainda não confirmado. */
+  ESTRANGEIRO_SEM_RNM_VALIDO: 'topo.estrangeiro_sem_rnm_valido',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -100,16 +106,36 @@ export const TOPO_BLOCKING_CONDITIONS = {
 
 /**
  * Critérios mínimos para que o stage de discovery possa avançar para qualification_civil.
- * Fonte: E6.1 — PDF 4, p. 8 ("Topo natural sem perder captação do primeiro sinal útil."
- * "Critério de aceite: Topo natural sem perder captação do primeiro sinal útil.")
+ * Todos os três critérios abaixo devem ser satisfeitos (+ RNM se estrangeiro).
+ * Fonte: E6.1 — PDF 4, p. 8; rota canônica topo ENOVA 2.
  */
 export const TOPO_ADVANCE_CRITERIA = {
-  /**
-   * customer_goal coletado — o lead declarou ou sinalizou seu objetivo no programa.
-   * Este é o único critério obrigatório para sair do topo (L04).
-   * Fonte: F0 (customer_goal) — PDF 6, p. 3.
-   */
   CUSTOMER_GOAL_PRESENTE: 'topo.customer_goal_presente',
+  NOME_COMPLETO_PRESENTE: 'topo.nome_completo_presente',
+  NACIONALIDADE_PRESENTE: 'topo.nacionalidade_presente',
+  /** Todos os facts mínimos do topo coletados — autoriza avanço para qualification_civil. */
+  TOPO_MINIMO_COMPLETO: 'topo.topo_minimo_completo',
+} as const;
+
+// ---------------------------------------------------------------------------
+// Objetivos estruturais do topo — next_objective canônico por step (L04)
+// ---------------------------------------------------------------------------
+
+/**
+ * Objetivos estruturais que o Core emite para cada etapa da rota canônica do topo.
+ * O LLM usa esses objetivos como instrução de condução — não como fala ao cliente.
+ */
+export const TOPO_NEXT_OBJECTIVES = {
+  /** customer_goal ausente — detectar interesse do lead. */
+  COLETAR_CUSTOMER_GOAL: 'coletar_customer_goal',
+  /** customer_goal presente, nome ausente — explicar programa brevemente e pedir nome. */
+  EXPLICAR_MCMV_E_COLETAR_NOME: 'explicar_mcmv_e_coletar_nome_completo',
+  /** nome coletado, nacionalidade ausente — perguntar se brasileiro ou estrangeiro. */
+  PERGUNTAR_NACIONALIDADE: 'perguntar_nacionalidade',
+  /** estrangeiro detectado, RNM não confirmado — perguntar RNM e validade. */
+  PERGUNTAR_RNM: 'perguntar_rnm_e_validade',
+  /** topo completo — avançar para estado civil. */
+  AVANCAR_PARA_CIVIL: 'avancar_para_qualification_civil',
 } as const;
 
 // ---------------------------------------------------------------------------

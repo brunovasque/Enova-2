@@ -71,25 +71,25 @@ export function smokeScenario1_BlockQuandoFactAusente(): SmokeResult {
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 2: Stage com todos os facts obrigatórios → deve avançar
+// Cenário 2: Stage discovery com apenas customer_goal → deve BLOQUEAR (T9.15E)
 //
-// Prova: quando todos required_facts estão presentes, o Core autoriza transição.
-// discovery com customer_goal → avança para qualification_civil.
+// Rota canônica obrigatória: customer_goal presente mas nome_completo ausente.
+// Stage permanece em discovery; next_objective instrui explicar MCMV e pedir nome.
 // ---------------------------------------------------------------------------
 export function smokeScenario2_AvancaQuandoFactsPresentes(): SmokeResult {
   const state = makeState('discovery', { customer_goal: 'comprar_imovel' });
   const decision = runCoreEngine(state);
 
   return {
-    scenario: 'Cenário 2 — Stage com todos os facts: deve avançar',
+    scenario: 'Cenário 2 — Discovery com apenas customer_goal: bloqueia (nome_completo ausente)',
     passed: true,
     decision,
     assertions: [
       assert('stage_current = discovery', 'discovery', decision.stage_current),
-      assert('block_advance = false', false, decision.block_advance),
-      assert('stage_after = qualification_civil', 'qualification_civil', decision.stage_after),
-      assert('speech_intent = transicao_stage (sinal estrutural)', 'transicao_stage', decision.speech_intent),
-      assert('Core não produz texto — speech_intent é string estrutural', true, typeof decision.speech_intent === 'string'),
+      assert('block_advance = true (nome_completo ausente)', true, decision.block_advance),
+      assert('stage_after permanece em discovery', 'discovery', decision.stage_after),
+      assert('next_objective = explicar_mcmv_e_coletar_nome_completo', 'explicar_mcmv_e_coletar_nome_completo', decision.next_objective),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
 }
@@ -521,6 +521,8 @@ export function smokeScenario18_Final_HandoffConcluido(): SmokeResult {
 export function smokeScenario19_TrilhoCompletoTopoAoFinal(): SmokeResult {
   const topo = runCoreEngine(makeState('discovery', {
     customer_goal: 'comprar_imovel',
+    nome_completo: 'João Silva',
+    nacionalidade: 'brasileiro',
   }));
   const civil = runCoreEngine(makeState('qualification_civil', {
     estado_civil: 'solteiro',
@@ -593,6 +595,106 @@ export function smokeScenario20_Final_RecusaExplicitaVisitaBloqueia(): SmokeResu
 }
 
 
+// ---------------------------------------------------------------------------
+// Cenário 21 (T9.15E): Discovery com customer_goal + nome_completo → bloqueia (nacionalidade)
+// ---------------------------------------------------------------------------
+export function smokeScenario21_Topo_NomePresente_NacionalidadeAusente(): SmokeResult {
+  const state = makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+    nome_completo: 'Bruno Vasques',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 21 (T9.15E) — Discovery customer_goal+nome: bloqueia em nacionalidade',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = true (nacionalidade ausente)', true, decision.block_advance),
+      assert('stage_after permanece em discovery', 'discovery', decision.stage_after),
+      assert('next_objective = perguntar_nacionalidade', 'perguntar_nacionalidade', decision.next_objective),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 22 (T9.15E): Discovery completo com brasileiro → avança para qualification_civil
+// ---------------------------------------------------------------------------
+export function smokeScenario22_Topo_BrasileiroCompleto_Avanca(): SmokeResult {
+  const state = makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+    nome_completo: 'Bruno Vasques',
+    nacionalidade: 'brasileiro',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 22 (T9.15E) — Discovery completo (brasileiro): avança para qualification_civil',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after = qualification_civil', 'qualification_civil', decision.stage_after),
+      assert('next_objective = avancar_para_qualification_civil', 'avancar_para_qualification_civil', decision.next_objective),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 23 (T9.15E): Discovery com estrangeiro sem RNM → bloqueia em RNM
+// ---------------------------------------------------------------------------
+export function smokeScenario23_Topo_EstrangeiroSemRNM_Bloqueia(): SmokeResult {
+  const state = makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+    nome_completo: 'Carlos Mendez',
+    nacionalidade: 'estrangeiro',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 23 (T9.15E) — Estrangeiro sem RNM: bloqueia em perguntar_rnm',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = true (estrangeiro sem RNM)', true, decision.block_advance),
+      assert('stage_after permanece em discovery', 'discovery', decision.stage_after),
+      assert('next_objective = perguntar_rnm_e_validade', 'perguntar_rnm_e_validade', decision.next_objective),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 24 (T9.15E): Discovery com estrangeiro + RNM válido → avança para qualification_civil
+// ---------------------------------------------------------------------------
+export function smokeScenario24_Topo_EstrangeiroComRNM_Avanca(): SmokeResult {
+  const state = makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+    nome_completo: 'Carlos Mendez',
+    nacionalidade: 'estrangeiro',
+    rnm_valido: true,
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 24 (T9.15E) — Estrangeiro com RNM válido: avança para qualification_civil',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = false', false, decision.block_advance),
+      assert('stage_after = qualification_civil', 'qualification_civil', decision.stage_after),
+      assert('next_objective = avancar_para_qualification_civil', 'avancar_para_qualification_civil', decision.next_objective),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
 export interface SmokeSuiteResult {
   total: number;
   passed: number;
@@ -637,6 +739,10 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario18_Final_HandoffConcluido,
     smokeScenario19_TrilhoCompletoTopoAoFinal,
     smokeScenario20_Final_RecusaExplicitaVisitaBloqueia,
+    smokeScenario21_Topo_NomePresente_NacionalidadeAusente,
+    smokeScenario22_Topo_BrasileiroCompleto_Avanca,
+    smokeScenario23_Topo_EstrangeiroSemRNM_Bloqueia,
+    smokeScenario24_Topo_EstrangeiroComRNM_Avanca,
   ];
 
   const results = scenarios.map((fn) => {
@@ -666,7 +772,7 @@ if (typeof process !== 'undefined' && process.argv[1]?.endsWith('smoke.ts')) {
   console.log('\n===========================================');
   console.log('ENOVA 2 — Core Mecânico 2 — Smoke (L03 + L04/L05/L06 + L07/L17)');
   console.log('===========================================');
-  console.log(`Âncora: L03 + L04/L05/L06 + L07/L17 | Gate 2 (A01)`);
+  console.log(`Âncora: L03 + L04/L05/L06 + L07/L17 | Gate 2 (A01) | T9.15E rota canônica topo`);
   console.log(`Executado em: ${suite.executed_at}`);
   console.log(`Total: ${suite.total} | Passou: ${suite.passed} | Falhou: ${suite.failed}`);
   console.log(`Resultado: ${suite.all_passed ? '✅ PASSOU' : '❌ FALHOU'}\n`);
