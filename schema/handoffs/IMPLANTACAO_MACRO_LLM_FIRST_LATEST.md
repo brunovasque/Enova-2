@@ -1,5 +1,85 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.14-IMPL — BLK-T9.14-READ-PATH Resolvido em Código (2026-05-04)
+
+**Tipo**: PR-IMPL / contratual | **Branch**: `fix/t9.14-reverse-mapper-read-path`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto)
+**PR anterior**: T9.14-DIAG (PR #227) — mergeada em main; diagnóstico formal BLK-T9.14-READ-PATH
+**Próximo passo autorizado T9**: T9.15-PROVA (ou equivalente) — provar write/read/restart + conversa real multi-turno ≥3 turnos com Supabase PROD
+**Classificação**: `contratual` — PR-IMPL dentro do contrato T9
+
+### O que esta PR fez
+
+1. Criou `mapFaseConversaToStageCurrent()` exportada em `src/supabase/crm-store.ts` — reverse mapper puro `fase_conversa → stage_current`
+2. Corrigiu `mapLeadStateFromEnovaState` — removida dependência de `row.stage_current` (coluna inexistente — PGRST204 T9.13G); agora usa `row.fase_conversa` via reverse mapper
+3. Criou `src/supabase/reverse-mapper-proof.ts` — prova com **15/15 PASS** (Bloco A: pré-docs, Bloco B: pós-docs, Bloco C: read path sem stage_current)
+4. Adicionou `prove:t9.14-reverse-mapper` ao `package.json`
+5. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+6. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `panel-nextjs/**` — zero diff
+- **Não alterou** `src/core/`, `src/llm/` — zero diff
+- **Não alterou** `src/meta/outbound` gates — zero diff
+- **Não alterou** `wrangler.toml` — zero diff
+- **Não alterou** migrations/schema/RLS Supabase
+- **Não ativou** `CLIENT_REAL_ENABLED` — zero diff em flags
+- **Não fechou** G9 — frente permanece aberta
+- **Não provou** conversa real WhatsApp — escopo de T9.15-PROVA
+- **Não fechou** G9-02/G9-04 em prova real — fix em código, prova real pendente
+
+### Bloqueios resolvidos
+
+| ID | Status anterior | Status atual |
+|----|----------------|--------------|
+| `BLK-T9.14-READ-PATH` | **ATIVO** | **RESOLVIDO EM CÓDIGO** — reverse mapper implementado; read path não depende mais de coluna inexistente |
+
+### Critérios G9 impactados
+
+| Critério | Status anterior | Status após T9.14-IMPL |
+|----------|----------------|------------------------|
+| G9-02 — `stage_current` gravado/lido corretamente em Supabase real | ❌ BLOQUEADO | ⚠️ DESBLOQUEADO EM CÓDIGO — prova real pós-restart pendente |
+| G9-04 — restart preserva stage | ❌ BLOQUEADO | ⚠️ DESBLOQUEADO EM CÓDIGO — prova real pós-restart pendente |
+| G9-03 — conversa real ≥3 turnos avança funil | ❌ NÃO PROVADO | ❌ NÃO PROVADO — T9.15-PROVA |
+| G9-07 — facts extraídos e persistidos em produção real | ❌ NÃO PROVADO | ❌ NÃO PROVADO — T9.15-PROVA |
+| G9-09 — wrangler tail com cadeia correlacionada | ❌ NÃO PROVADO | ❌ NÃO PROVADO — T9.15-PROVA |
+| G9-10 — Vasques confirma ≥5 conversas reais | ❌ NÃO PROVADO | ❌ NÃO PROVADO — T9.15-PROVA |
+
+### Provas entregues
+
+| Prova | Resultado |
+|-------|-----------|
+| `prove:t9.14-reverse-mapper` | **15/15 PASS** |
+| `smoke:supabase` | 70/70 PASS |
+| `smoke:meta:canary` | 41/41 PASS |
+| `prove:g8-readiness` | G8 APROVADO |
+
+### Riscos e lacunas
+
+| ID | Descrição | Bloqueante? |
+|----|-----------|-------------|
+| LAC-T9.14-01 | Prova real pós-restart em Supabase PROD não executada — G9-02/G9-04 desbloqueados em código, não em prova real | Não — pendente T9.15-PROVA |
+| LAC-T9.14-02 | Conversa real multi-turno ≥3 turnos não provada — G9-03, G9-07, G9-09, G9-10 | Não — pendente T9.15-PROVA |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           src/supabase/reverse-mapper-proof.ts (15/15 PASS)
+Estado da evidência:                   completa — para o escopo desta IMPL (reverse mapper local)
+Há lacuna remanescente?:               sim — prova real pós-restart em Supabase PROD não executada;
+                                            G9-02/G9-04 desbloqueados em código, não em prova real;
+                                            G9-03/G9-07/G9-09/G9-10 não provados (T9.15-PROVA)
+Há item parcial/inconclusivo bloqueante?: não — para o escopo desta IMPL (fix de código)
+Fechamento permitido nesta PR?:        sim — para BLK-T9.14-READ-PATH (fix em código entregue e provado)
+                                       NÃO — para G9-02/G9-04 em prova real; G9 permanece aberto
+Estado permitido após esta PR:         T9 em execução; G9 aberto; BLK-T9.14-READ-PATH resolvido em código
+Próxima PR autorizada:                 T9.15-PROVA — provar write/read/restart + conversa real multi-turno
+```
+
+---
+
 ## T9.14-DIAG — Read Path stage_current Diagnosticado (2026-05-04)
 
 **Tipo**: PR-DIAG / READINESS | **Branch**: `diag/t9.14-read-path-stage-mapping`

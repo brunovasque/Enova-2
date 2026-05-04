@@ -29,7 +29,7 @@ Contrato macro ativo: **T9 — aberto formalmente em 2026-05-01 via PR-T9.0** (G
 
 | Fase | Status | Próximo passo autorizado |
 |------|--------|--------------------------|
-| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — PR-T9.0 executada em 2026-05-01; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **T9.14-IMPL** (próxima PR autorizada da frente runtime) |
+| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — T9.14-IMPL executada em 2026-05-04; BLK-T9.14-READ-PATH resolvido em código; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **T9.15-PROVA** (próxima PR autorizada — provar write/read/restart + conversa real multi-turno) |
 
 ## Contratos de frentes paralelas ativas
 
@@ -146,6 +146,7 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
+- 2026-05-04 — T9.14-IMPL concluída: BLK-T9.14-READ-PATH resolvido em código; `mapFaseConversaToStageCurrent()` criada em `src/supabase/crm-store.ts`; `mapLeadStateFromEnovaState` corrigida — removida dependência de `row.stage_current` (inexistente), usa `row.fase_conversa`; prova 15/15 PASS; regressões 70/70 + 41/41 PASS; G9-02/G9-04 desbloqueados em código — prova real pendente T9.15-PROVA; G9 permanece aberto; próxima PR: T9.15-PROVA.
 - 2026-05-04 — T10.7-READINESS concluída: frente T10 Panel/CRM ENCERRADA POR PROVA; G10 APROVADO (G10.1–G10.7 todos fechados por evidência real); 13 PRs (#213–#225 + T10.7) executadas; 10/10 critérios de aceite cumpridos; canary end-to-end validado por Vasques (WhatsApp → Worker → LLM → enova_log → Painel); contrato T10 movido para encerrados; próxima frente recomendada: T9-READINESS/T9.14-IMPL; T9/G9 permanece aberto e independente; readiness: `schema/readiness/T10_7_PANEL_CRM_READINESS_CLOSEOUT.md`.
 - 2026-05-03 — T10.5C-FIX implementada: `panel-nextjs/app/api/health/route.ts` corrigido — `/__admin__/health` → `/__admin__/go-live/health` (6 ocorrências); build PASS; G10.3 APROVADO; G10.5 ABERTO aguardando Vasques testar /api/health real pós-deploy Vercel; T9 permanece aberto e independente; próxima PR autorizada T9: T9.14-IMPL.
 - 2026-05-03 — T10 aberto formalmente como frente Panel/CRM: contrato `CONTRATO_T10_PANEL_CRM_MIGRATION.md` criado via PR-T10.2-CONTRACT; G10.1 APROVADO; T10.3-IMPORT → T10.4-ADAPT → T10.5-RUN → T10.5B-DIAG executadas.
