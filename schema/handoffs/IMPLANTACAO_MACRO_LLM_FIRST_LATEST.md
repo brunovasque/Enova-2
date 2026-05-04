@@ -1,5 +1,71 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.6E-IMPL — Worker persiste mensagens em enova_log (2026-05-04)
+
+**Tipo**: PR-IMPL | **Branch**: `fix/t10.6e-worker-enova-log-persistence`
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Próximo passo autorizado T10**: T10.7-READINESS (readiness/closeout formal da frente Panel/CRM)
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `contratual` — PR-IMPL; escopo Worker `src/`; zero mudanças em panel-nextjs
+
+### O que esta PR fez
+
+1. Adicionou interface `EnovaLogEntry` em `src/supabase/types.ts` (payload de insert em `enova_log`)
+2. Adicionou função `writeEnovaLog()` em `src/supabase/crm-store.ts` — writer seguro, nunca lança exceção
+3. Adicionou import `writeEnovaLog` + `SupabaseConfig` em `src/meta/canary-pipeline.ts`
+4. Construiu `supabaseCfg` a partir de `env.SUPABASE_URL` / `env.SUPABASE_SERVICE_ROLE_KEY`
+5. Gravou **3 eventos** em `enova_log` por fluxo de mensagem:
+   - `meta_minimal` — inbound (após runInboundPipeline): wa_id, meta_type, meta_text, meta_message_id
+   - `DECISION_OUTPUT` — antes do envio outbound: wa_id, meta_text=replyText, stage, direction=out
+   - `SEND_OK` — após outbound bem-sucedido: wa_id, meta_status=sent, provider_message_id
+6. Confirmou compatibilidade 1:1 com painel (panel lê os 3 tags via `enova_log` — zero mudança no painel)
+7. Rodou `npm run smoke:meta:canary` — **41/41 PASS**
+8. Rodou `npx wrangler deploy --dry-run` — **PASS** (294.20 KiB)
+9. Criou `schema/proofs/T10_6E_WORKER_ENOVA_LOG_PERSISTENCE_PROOF.md` (10 seções)
+10. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+11. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `panel-nextjs/**` — zero diff confirmado por `git diff --stat`
+- **Não criou** migrations, DDL, RLS ou qualquer mudança de schema Supabase
+- **Não alterou** `src/core/**`, `src/llm/**`, `src/memory/**` — fora de escopo
+- **Não alterou** `wrangler.toml`
+- **Não fechou** G10.7 — frente T10 continua com T10.7-READINESS
+
+### Garantias de segurança do writer
+
+- `writeEnovaLog(null, ...)` → `{ok:false, skip:true}` — silencioso se Supabase não configurado
+- Cada chamada no pipeline envolve bloco `try/catch` — falha de log nunca bloqueia atendimento
+- Service role key nunca logada (herdada de `supabaseInsert` + `safeErrorMessage`)
+
+### Lacunas declaradas
+
+| ID | Lacuna | Status |
+|----|--------|--------|
+| LAC-T10.6E-01 | Validação real pós-deploy (envio WhatsApp real → verifica painel) | ABERTA — não bloqueante |
+| LAC-T10.6E-02 | Sem unique constraint em `meta_message_id` — retry pode gerar duplicata | ABERTA — não bloqueante |
+| LAC-T10.6D-01 | RLS/INSERT service role em `enova_log` não verificada pré-deploy | ABERTA — Vasques verifica |
+| LAC-T10.6D-02 | Schema `enova_log` validado por preflight Vasques (sem SQL direto) | ACEITA — suficiente |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/proofs/T10_6E_WORKER_ENOVA_LOG_PERSISTENCE_PROOF.md
+Estado da evidência:                   completa — writer implementado; 3 chamadas pipeline;
+                                        smoke 41/41 PASS; build dry-run PASS; zero panel-nextjs
+Há lacuna remanescente?:               sim — LAC-T10.6E-01: validação real pós-deploy (não bloqueante)
+                                        LAC-T10.6E-02: sem unique constraint meta_message_id
+Há item parcial/inconclusivo bloqueante?: não — implementação completa; smoke pass; zero panel
+Fechamento permitido nesta PR?:        sim — PR-IMPL encerrada; lacunas documentadas e aceitas
+Estado permitido após esta PR:         T10.6E-IMPL concluída; Writer ativo; painel compatível
+Próxima PR autorizada:                 T10.7-READINESS (readiness/closeout formal T10)
+```
+
+---
+
 ## T10.6D-DIAG — Mapa de persistência de mensagens Enova 1 (2026-05-04)
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t10.6d-enova1-message-persistence-map`

@@ -38,6 +38,8 @@ import { getLeadState, getLeadFacts, upsertLeadState, writeLeadFact, getLeadTime
 import { extractFactsFromText } from '../core/text-extractor.ts';
 import { emitTelemetry } from '../telemetry/emit.ts';
 import { diagLog, maskId } from './prod-diag.ts';
+import { writeEnovaLog } from '../supabase/crm-store.ts';
+import type { SupabaseConfig } from '../supabase/types.ts';
 
 export type CanaryBlockReason =
   | 'rollback_active'
@@ -136,6 +138,12 @@ export async function runCanaryPipeline(
 
   emitCanary(ctx, 'started', 'observed', { kind: event.kind, wa_id: event.wa_id ?? null });
 
+  // Config Supabase para writeEnovaLog (T10.6E) — null = skip silencioso
+  const _sbUrl = typeof env.SUPABASE_URL === 'string' ? env.SUPABASE_URL : '';
+  const _sbKey = typeof env.SUPABASE_SERVICE_ROLE_KEY === 'string' ? env.SUPABASE_SERVICE_ROLE_KEY : '';
+  const supabaseCfg: SupabaseConfig | null =
+    _sbUrl && _sbKey ? { url: _sbUrl, serviceRoleKey: _sbKey } : null;
+
   // Passo 1 — CRM + memória (pipeline existente)
   const crmResult = await runInboundPipeline(event, env, ctx);
   if (!crmResult.ok) {
@@ -156,6 +164,25 @@ export async function runCanaryPipeline(
     memory_event_id_present: !!crmResult.memory_event_id,
     errors_count: (crmResult.errors ?? []).length,
   });
+
+  // Persiste inbound em enova_log — tag meta_minimal (T10.6E)
+  // Grava independentemente do resultado do CRM; falha nunca bloqueia pipeline.
+  if (event.kind === 'message' && event.wa_id) {
+    try {
+      await writeEnovaLog(supabaseCfg, {
+        tag: 'meta_minimal',
+        wa_id: event.wa_id,
+        meta_type: event.message_type ?? null,
+        meta_text: event.text_body ?? null,
+        meta_message_id: event.wa_message_id ?? null,
+        details: {
+          source: 'enova2',
+          direction: 'in',
+          phone_number_id: event.phone_number_id ?? null,
+        },
+      });
+    } catch { /* falha de log nunca bloqueia pipeline */ }
+  }
 
   // Passo 1.5 — Core mecânico (BLK-01 + BLK-02 fix — T9.4)
   // Resolvido DEPOIS do CRM e ANTES do LLM.
@@ -454,6 +481,24 @@ export async function runCanaryPipeline(
       wa_id: inboundWaId || null,
     });
   } else if (canaryAllowed) {
+    // Persiste DECISION_OUTPUT antes do envio — tag DECISION_OUTPUT (T10.6E)
+    if (inboundWaId) {
+      try {
+        await writeEnovaLog(supabaseCfg, {
+          tag: 'DECISION_OUTPUT',
+          wa_id: inboundWaId,
+          meta_type: 'text',
+          meta_text: replyText!,
+          stage: coreDecision?.stage_current ?? null,
+          details: {
+            source: 'enova2',
+            direction: 'out',
+            stage: coreDecision?.stage_current ?? null,
+            next_stage: coreDecision?.stage_after ?? null,
+          },
+        });
+      } catch { /* falha de log nunca bloqueia pipeline */ }
+    }
     outboundAttempted = true;
     try {
       const intent = {
@@ -484,6 +529,23 @@ export async function runCanaryPipeline(
           external_dispatch: externalDispatch,
           outbound_message_id: outboundMessageId ?? null,
         });
+        // Persiste SEND_OK após confirmação da Meta API — tag SEND_OK (T10.6E)
+        if (inboundWaId) {
+          try {
+            await writeEnovaLog(supabaseCfg, {
+              tag: 'SEND_OK',
+              wa_id: inboundWaId,
+              meta_status: 'sent',
+              stage: coreDecision?.stage_current ?? null,
+              details: {
+                source: 'enova2',
+                payload_enviado: { text: { body: replyText! } },
+                provider_message_id: outboundResult.outbound_message_id ?? null,
+                status: outboundResult.http_status ?? null,
+              },
+            });
+          } catch { /* falha de log nunca bloqueia pipeline */ }
+        }
       }
     } catch (e) {
       // Log 10 — outbound.result (exception)
