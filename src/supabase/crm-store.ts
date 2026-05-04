@@ -111,7 +111,11 @@ function mapLeadStateFromEnovaState(row: EnovaStateRow, fallbackId: number): Crm
   return {
     state_id: `enova_state:${asString(row.lead_id) || fallbackId}`,
     lead_id: asString(row.lead_id) || `enova_state:${fallbackId}`,
-    stage_current: asString(row.stage_current) || 'discovery',
+    // BLK-T9.14-READ-PATH RESOLVIDO: fase_conversa → stage_current via reverse mapper.
+    // row.stage_current não existe no schema real (PGRST204 T9.13G) — sempre retornava 'discovery'.
+    stage_current: mapFaseConversaToStageCurrent(
+      typeof row.fase_conversa === 'string' ? row.fase_conversa : null
+    ),
     next_objective: asString(row.next_objective) || '',
     block_advance: asBool(row.block_advance),
     policy_flags: {},
@@ -204,6 +208,31 @@ export function mapStageCurrentToFaseConversa(stage: string | null | undefined):
     case 'qualification_eligibility':
     default:
       return null;
+  }
+}
+
+/**
+ * Reverse mapper: fase_conversa (legado E1) → stage_current (canônico T9).
+ *
+ * Implementa o lado oposto de mapStageCurrentToFaseConversa (T9.13M-FIX).
+ * Corrige BLK-T9.14-READ-PATH: mapLeadStateFromEnovaState lia row.stage_current
+ * que não existe no schema real de enova_state (PGRST204 confirmado em T9.13G).
+ *
+ * Princípios:
+ *   - Conservador: valor desconhecido → 'discovery' (nunca inventa stage)
+ *   - Não cria colunas: usa fase_conversa (existente e confirmada por T9.13K/T9.13L)
+ *   - Pré-docs (null / '' / 'inicio') → 'discovery' (correto)
+ *   - Pós-docs mapeados para stages T9 corretos
+ */
+export function mapFaseConversaToStageCurrent(faseConversa: string | null | undefined): string {
+  if (!faseConversa || faseConversa === 'inicio') return 'discovery';
+  switch (faseConversa) {
+    case 'envio_docs':                        return 'docs_prep';
+    case 'aguardando_retorno_correspondente': return 'analysis_waiting';
+    case 'agendamento_visita':                return 'visit_scheduling';
+    case 'visita_confirmada':                 return 'visit_confirmed';
+    case 'finalizacao_processo':              return 'finalization';
+    default:                                  return 'discovery';
   }
 }
 
