@@ -1,0 +1,313 @@
+import { NextResponse } from "next/server";
+import { mergeCaseFileRows, resolveCaseFileById, resolveRowsFromCanonicalState, type EnovaDocRow } from "../_shared";
+
+const REQUIRED_ENVS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE"] as const;
+const CANONICAL_ALLOWED_ORIGINS = new Set([
+  "https://lookaside.fbsbx.com",
+  "https://graph.facebook.com",
+]);
+const CANONICAL_ALLOWED_HOSTS = new Set(["lookaside.fbsbx.com", "graph.facebook.com"]);
+
+function isAllowedFileOrigin(target: URL, supabaseUrl: string): boolean {
+  let supabase: URL;
+  try {
+    supabase = new URL(supabaseUrl);
+  } catch {
+    return false;
+  }
+
+  if (target.protocol !== "https:") {
+    return false;
+  }
+
+  const host = String(target.hostname || "").toLowerCase();
+  if (!host) {
+    return false;
+  }
+
+  const origin = String(target.origin || "").toLowerCase();
+  if (!origin) {
+    return false;
+  }
+
+  const supabaseHost = String(supabase.hostname || "").toLowerCase();
+  const supabaseOrigin = `${String(supabase.protocol || "https:").toLowerCase()}//${String(
+    supabase.host || "",
+  ).toLowerCase()}`;
+
+  const originAllowed =
+    CANONICAL_ALLOWED_ORIGINS.has(origin) || (supabaseOrigin ? origin === supabaseOrigin : false);
+  const hostAllowed =
+    CANONICAL_ALLOWED_HOSTS.has(host) || (supabaseHost ? host === supabaseHost : false);
+
+  return originAllowed || hostAllowed;
+}
+
+function buildContentDisposition(fileName: string | null, previewable: boolean): string {
+  const fallbackName =
+    (fileName || "arquivo")
+      .replace(/[\\/\r\n"<>:*?|]/g, "_")
+      .trim() || "arquivo";
+  const encoded = encodeURIComponent(fallbackName);
+  const mode = previewable ? "inline" : "attachment";
+  return `${mode}; filename="${fallbackName}"; filename*=UTF-8''${encoded}`;
+}
+
+function mimeToExt(mime: string): string | null {
+  const m = mime.split(";")[0].trim().toLowerCase();
+  const map: Record<string, string> = {
+    "application/pdf": "pdf",
+    "image/jpeg": "jpg",
+    "image/jpg": "jpg",
+    "image/png": "png",
+    "image/gif": "gif",
+    "image/webp": "webp",
+    "image/heic": "heic",
+    "image/heif": "heif",
+    "application/msword": "doc",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+    "application/vnd.ms-excel": "xls",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
+  };
+  return map[m] ?? null;
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const waId = (searchParams.get("wa_id") || "").trim();
+  const fileId = (searchParams.get("file_id") || "").trim();
+  const forceDownload = (searchParams.get("download") || "").trim() === "1";
+
+  if (!waId || !fileId) {
+    return NextResponse.json(
+      { ok: false, error: "wa_id e file_id são obrigatórios" },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  const missingEnvs = REQUIRED_ENVS.filter((envName) => !process.env[envName]);
+  if (missingEnvs.length > 0) {
+    return NextResponse.json(
+      { ok: false, error: `missing env: ${missingEnvs.join(", ")}` },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  try {
+    const supabaseUrl = process.env.SUPABASE_URL as string;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE as string;
+
+    const endpoint = new URL("/rest/v1/enova_docs", supabaseUrl);
+    endpoint.searchParams.set("select", "wa_id,tipo,participante,created_at,url");
+    endpoint.searchParams.set("wa_id", `eq.${waId}`);
+    endpoint.searchParams.set("order", "created_at.asc");
+    endpoint.searchParams.set("limit", "200");
+
+    const response = await fetch(endpoint, {
+      method: "GET",
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { ok: false, error: `failed to load files (${response.status})` },
+        { status: 500, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const rows = (await response.json()) as EnovaDocRow[];
+    const primaryRows = Array.isArray(rows) ? rows : [];
+    let canonicalRows: EnovaDocRow[] = [];
+
+    const fallbackEndpoint = new URL("/rest/v1/enova_state", supabaseUrl);
+    fallbackEndpoint.searchParams.set("select", "pacote_documentos_anexados_json,envio_docs_historico_json");
+    fallbackEndpoint.searchParams.set("wa_id", `eq.${waId}`);
+    fallbackEndpoint.searchParams.set("order", "updated_at.desc");
+    fallbackEndpoint.searchParams.set("limit", "1");
+
+    const fallbackResponse = await fetch(fallbackEndpoint, {
+      method: "GET",
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      cache: "no-store",
+    });
+
+    if (fallbackResponse.ok) {
+      const fallbackRows = (await fallbackResponse.json()) as Array<{
+        pacote_documentos_anexados_json?: unknown;
+        envio_docs_historico_json?: unknown;
+      }>;
+      canonicalRows = resolveRowsFromCanonicalState(waId, fallbackRows?.[0] || null);
+    }
+
+    const sourceRows = mergeCaseFileRows(primaryRows, canonicalRows);
+    const resolved = resolveCaseFileById(waId, fileId, sourceRows);
+
+    if (!resolved) {
+      return NextResponse.json(
+        { ok: false, error: "arquivo não encontrado" },
+        { status: 404, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    let parsedSourceUrl: URL;
+    try {
+      parsedSourceUrl = new URL(resolved.sourceUrl);
+    } catch {
+      return NextResponse.json(
+        { ok: false, error: "sourceUrl inválido" },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    if (!isAllowedFileOrigin(parsedSourceUrl, supabaseUrl)) {
+      return NextResponse.json(
+        { ok: false, error: "origem de arquivo não permitida" },
+        { status: 403, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const whatsToken = (process.env.WHATS_TOKEN || "").trim();
+    const upstreamHost = parsedSourceUrl.hostname.toLowerCase();
+
+    // ── Resolve actual download URL ──
+    // enova_docs may store Graph API metadata URLs (graph.facebook.com/v20.0/{media_id})
+    // which return JSON {url: "https://lookaside.fbsbx.com/..."}, not the binary file.
+    // We must resolve these to the actual CDN download URL first.
+    let downloadUrl = parsedSourceUrl;
+    if (whatsToken && upstreamHost === "graph.facebook.com") {
+      try {
+        const graphResp = await fetch(parsedSourceUrl.toString(), {
+          method: "GET",
+          headers: { Authorization: `Bearer ${whatsToken}` },
+          cache: "no-store",
+        });
+        if (graphResp.ok) {
+          const graphData = (await graphResp.json()) as { url?: string };
+          if (typeof graphData?.url === "string" && graphData.url) {
+            const resolvedDownloadUrl = new URL(graphData.url);
+            if (isAllowedFileOrigin(resolvedDownloadUrl, supabaseUrl)) {
+              downloadUrl = resolvedDownloadUrl;
+            }
+          }
+        }
+      } catch {
+        // fall through — will attempt direct fetch below
+      }
+    }
+
+    const downloadHost = downloadUrl.hostname.toLowerCase();
+    const upstreamHeaders: Record<string, string> = {};
+    if (whatsToken && CANONICAL_ALLOWED_HOSTS.has(downloadHost)) {
+      upstreamHeaders["Authorization"] = `Bearer ${whatsToken}`;
+    } else {
+      let supabaseHostname = "";
+      try { supabaseHostname = new URL(supabaseUrl).hostname.toLowerCase(); } catch {}
+      if (supabaseHostname && downloadHost === supabaseHostname) {
+        upstreamHeaders["apikey"] = serviceRoleKey;
+        upstreamHeaders["Authorization"] = `Bearer ${serviceRoleKey}`;
+      }
+    }
+
+    let upstream = await fetch(downloadUrl.toString(), {
+      method: "GET",
+      headers: upstreamHeaders,
+      cache: "no-store",
+    });
+
+    // ── Expired lookaside URL refresh ──
+    if (!upstream.ok && whatsToken && downloadHost === "lookaside.fbsbx.com") {
+      const mediaId = downloadUrl.searchParams.get("mid");
+      if (mediaId) {
+        try {
+          const graphResp = await fetch(
+            `https://graph.facebook.com/v20.0/${encodeURIComponent(mediaId)}`,
+            { headers: { Authorization: `Bearer ${whatsToken}` }, cache: "no-store" },
+          );
+          if (graphResp.ok) {
+            const graphData = (await graphResp.json()) as { url?: string };
+            if (typeof graphData?.url === "string" && graphData.url) {
+              const refreshedParsedUrl = new URL(graphData.url);
+              if (isAllowedFileOrigin(refreshedParsedUrl, supabaseUrl)) {
+                const refreshed = await fetch(refreshedParsedUrl.toString(), {
+                  method: "GET",
+                  headers: { Authorization: `Bearer ${whatsToken}` },
+                  cache: "no-store",
+                });
+                if (refreshed.ok && refreshed.body) {
+                  upstream = refreshed;
+                }
+              }
+            }
+          }
+        } catch {
+          // fall through to the error response below
+        }
+      }
+    }
+
+    if (!upstream.ok || !upstream.body) {
+      const detail = !whatsToken && (CANONICAL_ALLOWED_HOSTS.has(upstreamHost) || CANONICAL_ALLOWED_HOSTS.has(downloadHost))
+        ? "WHATS_TOKEN não configurado"
+        : `upstream ${upstream.status}`;
+      return NextResponse.json(
+        { ok: false, error: `arquivo indisponível para abertura (${detail})` },
+        { status: 502, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const contentType =
+      resolved.item.mime_type ||
+      upstream.headers.get("content-type") ||
+      "application/octet-stream";
+    const contentLength =
+      resolved.item.size_bytes !== null
+        ? String(resolved.item.size_bytes)
+        : upstream.headers.get("content-length");
+
+    // Use the actual upstream content-type to decide inline vs attachment.
+    // URL-based MIME inference (used to compute resolved.item.previewable) fails
+    // for Meta CDN URLs which carry no file extension, so we re-evaluate here.
+    const effectiveMime = contentType.split(";")[0].trim().toLowerCase();
+    const effectivePreviewable =
+      effectiveMime === "application/pdf" || effectiveMime.startsWith("image/");
+
+    // Build a meaningful filename: prefer explicit file_name, else derive from
+    // tipo + participante + inferred extension so the browser can open the file.
+    const inferredExt = mimeToExt(effectiveMime);
+    // participante can be null — filter removes null/undefined/empty-string parts
+    const baseNameParts = [resolved.item.tipo, resolved.item.participante].filter(
+      (v): v is string => typeof v === "string" && v.length > 0,
+    );
+    const baseName = baseNameParts.length > 0 ? baseNameParts.join("_") : "arquivo";
+    const effectiveFileName =
+      resolved.item.file_name || (inferredExt ? `${baseName}.${inferredExt}` : baseName);
+
+    const headers = new Headers();
+    headers.set("Cache-Control", "no-store");
+    headers.set("Content-Type", contentType);
+    headers.set(
+      "Content-Disposition",
+      buildContentDisposition(effectiveFileName, effectivePreviewable && !forceDownload),
+    );
+    if (contentLength) headers.set("Content-Length", contentLength);
+    headers.set("X-Content-Type-Options", "nosniff");
+
+    return new NextResponse(upstream.body, {
+      status: 200,
+      headers,
+    });
+  } catch (error) {
+    console.error("case-files/open internal error", error);
+    return NextResponse.json(
+      { ok: false, error: "internal error" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+}

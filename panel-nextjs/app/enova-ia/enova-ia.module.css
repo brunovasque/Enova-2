@@ -1,0 +1,2544 @@
+/* ===========================================
+   ENOVA IA PAGE — Central Cognitiva
+   Identidade visual do Enova Panel (dark)
+   =========================================== */
+
+.pageMain {
+  height: 100vh;
+  min-height: 100vh;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.shell {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #09090b;
+  overflow: hidden;
+}
+
+/* ===========================================
+   HEADER
+   =========================================== */
+
+.header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, #0f0f11 0%, #0a0a0c 100%);
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.headerBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #5eaead;
+  background: rgba(94, 174, 173, 0.1);
+  border: 1px solid rgba(94, 174, 173, 0.2);
+  width: fit-content;
+  margin-bottom: 6px;
+}
+
+.headerTitle {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+}
+
+.headerSubtitle {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #7a7a84;
+  font-weight: 400;
+  max-width: 520px;
+}
+
+.headerStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.5);
+  flex-shrink: 0;
+}
+
+.statusLabel {
+  font-size: 0.75rem;
+  color: #7a7a84;
+  font-weight: 500;
+}
+
+/* ===========================================
+   SCROLLABLE CONTENT
+   =========================================== */
+
+.shell > .section,
+.shell > .bottomGrid {
+  overflow-y: auto;
+}
+
+.shell {
+  overflow-y: auto;
+}
+
+/* ===========================================
+   SECTIONS
+   =========================================== */
+
+.section {
+  padding: 24px 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  margin: 0 0 4px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #e4e4e7;
+  letter-spacing: -0.01em;
+}
+
+.sectionHint {
+  margin: 0 0 16px;
+  font-size: 0.8125rem;
+  color: #52525b;
+}
+
+/* ===========================================
+   STATS GRID — Visão Geral
+   =========================================== */
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.statLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #52525b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #71717a;
+  letter-spacing: -0.02em;
+}
+
+.statHint {
+  font-size: 0.6875rem;
+  color: #3f3f46;
+}
+
+/* ===========================================
+   FILA INTELIGENTE
+   =========================================== */
+
+.filaTable {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.filaHeader {
+  display: grid;
+  grid-template-columns: 1.4fr 2.6fr 1.1fr 0.7fr;
+  gap: 16px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #52525b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filaRow {
+  display: grid;
+  grid-template-columns: 1.4fr 2.6fr 1.1fr 0.7fr;
+  gap: 16px;
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  align-items: center;
+}
+
+.filaName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #d4d4d8;
+}
+
+.filaDetalhe {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filaContexto {
+  font-size: 0.8125rem;
+  color: #71717a;
+}
+
+.filaJustificativa {
+  font-size: 0.75rem;
+  color: #52525b;
+  font-style: italic;
+}
+
+.filaLink {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #5eaead;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.filaLink:hover {
+  color: #7ecfce;
+  text-decoration: underline;
+}
+
+.filaVazia {
+  padding: 20px 16px;
+  font-size: 0.8125rem;
+  color: #52525b;
+}
+
+/* ── Badges de prioridade ── */
+
+.filaBadgePending {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  background: rgba(251, 191, 36, 0.08);
+  color: #78716c;
+  border: 1px solid rgba(251, 191, 36, 0.12);
+  width: fit-content;
+}
+
+.filaBadgeAgirAgora {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  width: fit-content;
+}
+
+.filaBadgePedirHumano {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  background: rgba(168, 85, 247, 0.1);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  width: fit-content;
+}
+
+.filaBadgeAgirHoje {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  width: fit-content;
+}
+
+.filaBadgeObservar {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  background: rgba(94, 174, 173, 0.08);
+  color: #5eaead;
+  border: 1px solid rgba(94, 174, 173, 0.15);
+  width: fit-content;
+}
+
+.filaBadgeAguardar {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.15);
+  width: fit-content;
+}
+
+/* ===========================================
+   BOTTOM GRID — 3 colunas
+   =========================================== */
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 24px 32px;
+  flex-shrink: 0;
+}
+
+/* ===========================================
+   CARDS
+   =========================================== */
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.012);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+.cardTitle {
+  margin: 0 0 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #d4d4d8;
+  letter-spacing: -0.01em;
+}
+
+.cardHint {
+  margin: 0 0 16px;
+  font-size: 0.75rem;
+  color: #52525b;
+}
+
+/* Programas */
+.programaList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.programaVazio {
+  padding: 12px 0;
+  font-size: 0.8125rem;
+  color: #52525b;
+}
+
+/* Programa card — exibição completa */
+.programaCard {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 11px 12px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.programaCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.programaCardTitulo {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #d4d4d8;
+}
+
+.programaCardResumo {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.4;
+}
+
+.programaCardMotivo {
+  font-size: 0.6875rem;
+  color: #52525b;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.programaCardFooter {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+.programaCardOportunidade {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #71717a;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.programaCardAcao {
+  font-size: 0.6875rem;
+  color: #5eaead;
+  text-align: right;
+  line-height: 1.35;
+  flex: 1;
+}
+
+/* Prioridade badges — programas */
+.programaBadgeAlta {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.programaBadgeMedia {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.programaBadgeBaixa {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(113, 113, 122, 0.08);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.15);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Legacy programa classes kept for compatibility */
+.programaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.programaTitulo {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #a1a1aa;
+}
+
+.programaDesc {
+  font-size: 0.75rem;
+  color: #52525b;
+}
+
+/* Gargalos */
+.gargaloList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gargaloItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.gargaloTipo {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #a1a1aa;
+}
+
+.gargaloDesc {
+  font-size: 0.75rem;
+  color: #52525b;
+}
+
+/* Chat */
+.cardChat {
+  border-color: rgba(94, 174, 173, 0.08);
+  background: rgba(94, 174, 173, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Histórico ── */
+.chatHistorico {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 160px;
+  max-height: 340px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+/* ── Estado vazio ── */
+.chatVazio {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.chatVazioTitulo {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #a1a1aa;
+}
+
+.chatVazioHint {
+  font-size: 0.75rem;
+  color: #52525b;
+}
+
+.chatExemplos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.chatExemplo {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #71717a;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1.4;
+}
+
+.chatExemplo:hover {
+  background: rgba(94, 174, 173, 0.1);
+  border-color: rgba(94, 174, 173, 0.3);
+  color: #5eaead;
+}
+
+/* ── Mensagens ── */
+.chatMsgUsuario {
+  align-self: flex-end;
+  background: rgba(94, 174, 173, 0.12);
+  border: 1px solid rgba(94, 174, 173, 0.2);
+  border-radius: 8px 8px 2px 8px;
+  padding: 7px 12px;
+  max-width: 85%;
+}
+
+.chatMsgEnova {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 2px 8px 8px 8px;
+  padding: 10px 12px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chatMsgTexto {
+  font-size: 0.8125rem;
+  color: #d4d4d8;
+  line-height: 1.45;
+}
+
+/* ── Resposta estruturada ── */
+.chatRespTitulo {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e4e4e7;
+  line-height: 1.3;
+}
+
+.chatRespResumo {
+  font-size: 0.8rem;
+  color: #a1a1aa;
+  line-height: 1.4;
+}
+
+.chatRespLinhas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.chatRespLinha {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 5px;
+  border-left: 2px solid rgba(94, 174, 173, 0.3);
+}
+
+.chatRespNome {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #5eaead;
+  text-decoration: none;
+}
+
+.chatRespNome:hover {
+  text-decoration: underline;
+}
+
+.chatRespDetalhe {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.35;
+}
+
+.chatRespSugestao {
+  font-size: 0.75rem;
+  color: #71717a;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* ── Input row ── */
+.chatInputRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.chatInput {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  color: #e4e4e7;
+  font-size: 0.8125rem;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.chatInput::placeholder {
+  color: #3f3f46;
+}
+
+.chatInput:focus {
+  border-color: rgba(94, 174, 173, 0.4);
+}
+
+.chatBotaoEnviar {
+  background: rgba(94, 174, 173, 0.15);
+  border: 1px solid rgba(94, 174, 173, 0.25);
+  border-radius: 7px;
+  color: #5eaead;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.chatBotaoEnviar:hover:not(:disabled) {
+  background: rgba(94, 174, 173, 0.25);
+  border-color: rgba(94, 174, 173, 0.4);
+}
+
+.chatBotaoEnviar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Resposta de conhecimento ── */
+.chatRespKbBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #5eaead;
+  background: rgba(94, 174, 173, 0.08);
+  border: 1px solid rgba(94, 174, 173, 0.15);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-right: 6px;
+  vertical-align: middle;
+  line-height: 1.6;
+}
+
+.chatRespBullets {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chatRespBullet {
+  font-size: 0.7875rem;
+  color: #a1a1aa;
+  line-height: 1.45;
+  padding-left: 14px;
+  position: relative;
+}
+
+.chatRespBullet::before {
+  content: "·";
+  position: absolute;
+  left: 4px;
+  color: #5eaead;
+  font-weight: 700;
+}
+
+/* Legacy placeholder classes kept for compatibility */
+.chatShell,
+.chatEmpty,
+.chatEmptyIcon,
+.chatEmptyText {
+  display: none;
+}
+
+/* ===========================================
+   CHAT THINKING INDICATOR (OpenAI loading)
+   =========================================== */
+
+.chatThinking {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 14px;
+  background: rgba(94, 174, 173, 0.06);
+  border: 1px solid rgba(94, 174, 173, 0.12);
+  border-radius: 8px;
+  width: fit-content;
+  margin: 2px 0;
+}
+
+.chatThinkingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5eaead;
+  animation: chatThinkingPulse 1.2s ease-in-out infinite;
+}
+
+.chatThinkingDot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chatThinkingDot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes chatThinkingPulse {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.85); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* ===========================================
+   CHAT AI RESPONSE — OpenAI Structured Output
+   =========================================== */
+
+.chatAIHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.chatAIModeBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 2px 7px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  line-height: 1.6;
+}
+
+.chatAITitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e4e4e7;
+  line-height: 1.35;
+}
+
+.chatAISummary {
+  font-size: 0.8125rem;
+  color: #a1a1aa;
+  line-height: 1.55;
+  margin: 0 0 10px;
+}
+
+.chatAISection {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.chatAISectionLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #52525b;
+}
+
+.chatAIList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chatAIListItem {
+  font-size: 0.7875rem;
+  color: #a1a1aa;
+  line-height: 1.45;
+  padding-left: 14px;
+  position: relative;
+}
+
+.chatAIListItem::before {
+  content: "·";
+  position: absolute;
+  left: 4px;
+  color: #5eaead;
+  font-weight: 700;
+}
+
+.chatAIListItemAction::before {
+  content: "→";
+  color: #3b82f6;
+}
+
+.chatAIListItemRisk::before {
+  content: "⚠";
+  color: #ef4444;
+  font-size: 0.6rem;
+}
+
+/* Leads grid */
+.chatAILeadsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chatAILeadItem {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+.chatAILeadName {
+  font-size: 0.7875rem;
+  font-weight: 600;
+  color: #d4d4d8;
+}
+
+.chatAILeadReason {
+  font-size: 0.75rem;
+  color: #71717a;
+}
+
+/* Tags */
+.chatAITagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.chatAITag {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+/* System improvement highlight */
+.chatAISystemImprove {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px 10px;
+  background: rgba(16, 185, 129, 0.07);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 7px;
+  margin-bottom: 8px;
+}
+
+.chatAISystemImproveIcon {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.chatAISystemImproveContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chatAISystemImproveLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #10b981;
+}
+
+.chatAISystemImproveText {
+  font-size: 0.7875rem;
+  color: #a1a1aa;
+  line-height: 1.45;
+}
+
+/* Escalation notice */
+.chatAIEscalate {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.7875rem;
+  color: #f97316;
+  padding: 6px 10px;
+  background: rgba(249, 115, 22, 0.07);
+  border: 1px solid rgba(249, 115, 22, 0.18);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+/* Footer */
+.chatAIFooter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.chatAIConfidence {
+  font-size: 0.6875rem;
+  color: #52525b;
+  font-weight: 500;
+}
+
+.chatAINotes {
+  font-size: 0.7rem;
+  color: #52525b;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* ===========================================
+   RESPONSIVE
+   =========================================== */
+
+@media (max-width: 1100px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bottomGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cardChat {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 720px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filaHeader,
+  .filaRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filaDetalhe,
+  .filaLink {
+    display: none;
+  }
+
+  .bottomGrid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .cardChat {
+    grid-column: span 1;
+  }
+}
+
+/* ── G2.1 — Draft de ação assistida (indicador mínimo) ──────────────────── */
+
+.chatActionDraftIndicator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px dashed rgba(59, 130, 246, 0.25);
+  font-size: 0.82rem;
+}
+
+.chatActionDraftBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.chatActionDraftLabel {
+  color: #d1d5db;
+  font-size: 0.82rem;
+}
+
+.chatActionDraftStatus {
+  color: #f59e0b;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+/* ── G2.2 — Executor Assistido: estado vazio ─────────────────────────────── */
+
+.executorVazio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px dashed rgba(255, 255, 255, 0.07);
+}
+
+.executorVazioIcone {
+  font-size: 1rem;
+  opacity: 0.3;
+  flex-shrink: 0;
+}
+
+.executorVazioTexto {
+  font-size: 0.76rem;
+  color: #52525b;
+  line-height: 1.45;
+}
+
+/* ── G2.2 — Executor Assistido (bloco visual canônico) ───────────────────── */
+
+.executorSeparator {
+  margin: 20px 0 0 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.executorBloco {
+  margin-top: 16px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  overflow: hidden;
+}
+
+.executorBlocoDiscarded {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+  pointer-events: none;
+}
+
+.executorBlocoApproved {
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.executorHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(99, 102, 241, 0.08);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.executorHeaderLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #818cf8;
+}
+
+.executorTitle {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.executorBadgeType {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.executorBadgeRiskLow {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.executorBadgeRiskMedium {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.executorBadgeRiskHigh {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.executorBody {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.executorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorSectionLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.executorSectionValue {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.executorLeadsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.executorLeadItem {
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  font-size: 0.78rem;
+}
+
+.executorLeadsMore {
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #6b7280;
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+.executorStepsList {
+  margin: 0;
+  padding: 0 0 0 4px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.executorStepItem {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 0.83rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.executorStepNum {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.18);
+  color: #818cf8;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+.executorStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 7px;
+  background: rgba(245, 158, 11, 0.07);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.executorStatusRowApproved {
+  background: rgba(34, 197, 94, 0.06);
+  border-color: rgba(34, 197, 94, 0.22);
+}
+
+.executorStatusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+  flex-shrink: 0;
+  animation: executorPulse 2s ease-in-out infinite;
+}
+
+.executorStatusApprovedDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+}
+
+@keyframes executorPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.executorStatusText {
+  font-size: 0.8rem;
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+.executorStatusApprovedText {
+  font-size: 0.8rem;
+  color: #4ade80;
+  font-weight: 500;
+}
+
+.executorButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.executorBtnRevisar {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.1);
+  color: #a5b4fc;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.executorBtnRevisar:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.6);
+}
+.executorBtnRevisarActive {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(99, 102, 241, 0.7);
+  background: rgba(99, 102, 241, 0.22);
+  color: #c7d2fe;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: default;
+}
+
+.executorBtnDescartar {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: transparent;
+  color: #f87171;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.executorBtnDescartar:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.executorBtnAprovar {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.08);
+  color: #4ade80;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.executorBtnAprovar:hover {
+  background: rgba(34, 197, 94, 0.16);
+  border-color: rgba(34, 197, 94, 0.55);
+}
+.executorBtnAprovarActive {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(34, 197, 94, 0.6);
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: default;
+}
+
+/* ── G2.3 — Preparation states: review_ready ────────────────────────────── */
+
+.executorBlocoReviewReady {
+  border-color: rgba(99, 102, 241, 0.55);
+}
+
+.executorStatusRowReviewReady {
+  background: rgba(99, 102, 241, 0.07);
+  border-color: rgba(99, 102, 241, 0.28);
+}
+
+.executorStatusReviewReadyDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #818cf8;
+  flex-shrink: 0;
+}
+
+.executorStatusReviewReadyText {
+  font-size: 0.8rem;
+  color: #a5b4fc;
+  font-weight: 500;
+}
+
+/* ── G2.3 — Preparation status badge (header) ───────────────────────────── */
+
+.executorBadgeStatusDraft {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.executorBadgeStatusReviewReady {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.executorBadgeStatusApproved {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #86efac;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.executorBadgeStatusDiscarded {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(100, 100, 100, 0.1);
+  color: #6b7280;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── G2.4 — Leads por prioridade (detalhe operacional) ──────────────────── */
+
+.executorLeadsDetailList {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.executorLeadsDetailItem {
+  display: grid;
+  grid-template-columns: 20px auto 1fr;
+  gap: 4px 8px;
+  align-items: baseline;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.executorLeadsDetailOrder {
+  font-size: 0.72rem;
+  color: #6b7280;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: right;
+}
+
+.executorLeadsDetailName {
+  font-size: 0.82rem;
+  color: #e5e7eb;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.executorLeadsDetailReason {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  grid-column: 2 / -1;
+  line-height: 1.4;
+}
+
+/* ── G2.4 — Abordagem sugerida ──────────────────────────────────────────── */
+
+.executorApproachValue {
+  display: block;
+  font-size: 0.8rem;
+  color: #d1d5db;
+  line-height: 1.5;
+  margin-top: 2px;
+  padding: 6px 10px;
+  background: rgba(99, 102, 241, 0.07);
+  border-left: 2px solid rgba(99, 102, 241, 0.4);
+  border-radius: 0 4px 4px 0;
+}
+
+/* ── G2.4 — Texto sugerido (mensagem de contato) ────────────────────────── */
+
+.executorMessageBox {
+  margin-top: 4px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  position: relative;
+}
+
+.executorMessageBox::before {
+  content: "💬";
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+.executorMessageText {
+  font-size: 0.8rem;
+  color: #d1d5db;
+  line-height: 1.6;
+  font-style: italic;
+  display: block;
+  padding-right: 20px;
+}
+
+/* ── G2.5 — Pré-execução Assistida ──────────────────────────────────────── */
+
+.executorBlocoPreExecutionReady {
+  border-color: rgba(168, 85, 247, 0.45);
+}
+
+.executorBadgeStatusPreExecutionReady {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: rgba(168, 85, 247, 0.12);
+  color: #d8b4fe;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.executorStatusRowPreExecution {
+  background: rgba(168, 85, 247, 0.07);
+  border-color: rgba(168, 85, 247, 0.28);
+}
+
+.executorStatusPreExecutionDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c084fc;
+  flex-shrink: 0;
+  animation: executorPulse 2s ease-in-out infinite;
+}
+
+.executorStatusPreExecutionText {
+  font-size: 0.8rem;
+  color: #d8b4fe;
+  font-weight: 500;
+}
+
+.executorBtnMarcarPreExecucao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #d8b4fe;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.executorBtnMarcarPreExecucao:hover {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.6);
+}
+
+.executorBtnPreExecucaoActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  color: #d8b4fe;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: default;
+}
+
+/* ── G2.5 — Pacote de pré-execução ──────────────────────────────────────── */
+
+.executorPreExecPackage {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(168, 85, 247, 0.06);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.executorPreExecPackageLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #c084fc;
+}
+
+.executorPreExecChecklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorPreExecCheckItem {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+.executorPreExecCheckIcon {
+  font-size: 0.72rem;
+  color: #a78bfa;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.executorPreExecNotice {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  border-left: 2px solid rgba(168, 85, 247, 0.35);
+}
+
+
+/* ── G2.6 — Gesto Final Humano + Autorização de Execução Controlada ──────── */
+
+.executorBlocoAuthorized {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.04);
+}
+
+.executorBadgeStatusAuthorized {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.executorStatusRowAuthorized {
+  border-top: 1px solid rgba(34, 197, 94, 0.2);
+  background: rgba(34, 197, 94, 0.04);
+}
+
+.executorStatusAuthorizedDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+}
+
+.executorStatusAuthorizedText {
+  font-size: 0.75rem;
+  color: #4ade80;
+  font-weight: 500;
+}
+
+.executorBtnAutorizarExecucao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.executorBtnAutorizarExecucao:hover {
+  background: rgba(34, 197, 94, 0.18);
+  border-color: rgba(34, 197, 94, 0.7);
+}
+
+.executorBtnAuthorizedActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.08);
+  color: #4ade80;
+  cursor: default;
+}
+
+.executorAuthPackage {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(34, 197, 94, 0.05);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.executorAuthPackageLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4ade80;
+}
+
+.executorAuthPackageRows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorAuthPackageRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.77rem;
+}
+
+.executorAuthPackageKey {
+  color: #9ca3af;
+  flex-shrink: 0;
+  min-width: 140px;
+  font-weight: 500;
+}
+
+.executorAuthPackageValue {
+  color: #d1d5db;
+  font-weight: 400;
+}
+
+.executorAuthNotice {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  border-left: 2px solid rgba(34, 197, 94, 0.4);
+}
+
+/* ── G3.1 — Executor Real Controlado: Contrato Local de Execução Futura ── */
+
+.executorBlocoContractReady {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.executorBadgeStatusContractReady {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.executorStatusRowContractReady {
+  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.executorStatusContractReadyDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a5b4fc;
+  flex-shrink: 0;
+  animation: executorPulse 2s ease-in-out infinite;
+}
+
+.executorStatusContractReadyText {
+  font-size: 0.75rem;
+  color: #a5b4fc;
+  font-weight: 500;
+}
+
+.executorBtnPrepararContrato {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(99, 102, 241, 0.5);
+  background: rgba(99, 102, 241, 0.1);
+  color: #a5b4fc;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.executorBtnPrepararContrato:hover {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: rgba(99, 102, 241, 0.7);
+}
+
+.executorBtnContractReadyActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: rgba(99, 102, 241, 0.08);
+  color: #a5b4fc;
+  cursor: default;
+}
+
+.executorContractPackage {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.executorContractPackageLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a5b4fc;
+}
+
+.executorContractRows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorContractRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.77rem;
+}
+
+.executorContractKey {
+  color: #9ca3af;
+  flex-shrink: 0;
+  min-width: 160px;
+  font-weight: 500;
+}
+
+.executorContractValue {
+  color: #d1d5db;
+  font-weight: 400;
+}
+
+.executorContractGuardrails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.executorContractGuardrailsLabel {
+  font-size: 0.71rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #f59e0b;
+}
+
+.executorContractGuardrailsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorContractGuardrailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+.executorContractGuardrailIcon {
+  color: #f59e0b;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  margin-top: 1px;
+}
+
+.executorContractNotice {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  border-left: 2px solid rgba(99, 102, 241, 0.4);
+}
+
+.executorContractFutureScope {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1.5;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-style: italic;
+}
+
+/* ── G3.2 — Executor Real Controlado: Integração Inicial Controlada ── */
+
+.executorBlocoBridgeReady {
+  border-color: rgba(6, 182, 212, 0.4);
+  background: rgba(6, 182, 212, 0.04);
+}
+
+.executorBadgeStatusBridgeReady {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(6, 182, 212, 0.15);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+}
+
+.executorStatusRowBridgeReady {
+  border-color: rgba(6, 182, 212, 0.3);
+  background: rgba(6, 182, 212, 0.04);
+}
+
+.executorStatusBridgeReadyDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22d3ee;
+  flex-shrink: 0;
+  animation: executorPulse 2s ease-in-out infinite;
+}
+
+.executorStatusBridgeReadyText {
+  font-size: 0.75rem;
+  color: #22d3ee;
+  font-weight: 500;
+}
+
+.executorBtnPrepararBridge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(6, 182, 212, 0.5);
+  background: rgba(6, 182, 212, 0.1);
+  color: #22d3ee;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.executorBtnPrepararBridge:hover {
+  background: rgba(6, 182, 212, 0.18);
+  border-color: rgba(6, 182, 212, 0.7);
+}
+
+.executorBtnBridgeReadyActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  background: rgba(6, 182, 212, 0.08);
+  color: #22d3ee;
+  cursor: default;
+}
+
+.executorBridgePackage {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.executorBridgePackageLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #22d3ee;
+}
+
+.executorBridgeRows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorBridgeRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.77rem;
+}
+
+.executorBridgeKey {
+  color: #9ca3af;
+  flex-shrink: 0;
+  min-width: 160px;
+  font-weight: 500;
+}
+
+.executorBridgeValue {
+  color: #d1d5db;
+  font-weight: 400;
+}
+
+.executorBridgeScopeSection {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.executorBridgeSupportedBlock,
+.executorBridgeUnsupportedBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorBridgeSupportedLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #22d3ee;
+}
+
+.executorBridgeUnsupportedLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+}
+
+.executorBridgeScopeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.executorBridgeScopeItemSupported {
+  font-size: 0.75rem;
+  color: #22d3ee;
+  padding-left: 8px;
+}
+
+.executorBridgeScopeItemUnsupported {
+  font-size: 0.75rem;
+  color: #6b7280;
+  padding-left: 8px;
+}
+
+.executorBridgeGuardrails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.executorBridgeGuardrailsLabel {
+  font-size: 0.71rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0891b2;
+}
+
+.executorBridgeGuardrailsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorBridgeGuardrailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+.executorBridgeGuardrailIcon {
+  color: #0891b2;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  margin-top: 1px;
+}
+
+.executorBridgeNotice {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  border-left: 2px solid rgba(6, 182, 212, 0.4);
+}
+
+.executorBridgeOutOfScope {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1.5;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-style: italic;
+}
+
+/* ── G3.3 — Handshake Controlado ───────────────────────────────────────── */
+
+.executorBlocoHandshakeReady {
+  border-color: rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.04);
+}
+
+.executorBadgeStatusHandshakeReady {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
+.executorStatusRowHandshakeReady {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.04);
+}
+
+.executorStatusHandshakeReadyDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a78bfa;
+  flex-shrink: 0;
+  animation: executorPulse 2s ease-in-out infinite;
+}
+
+.executorStatusHandshakeReadyText {
+  font-size: 0.75rem;
+  color: #a78bfa;
+  font-weight: 500;
+}
+
+.executorBtnPrepararHandshake {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  background: rgba(139, 92, 246, 0.1);
+  color: #a78bfa;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.executorBtnPrepararHandshake:hover {
+  background: rgba(139, 92, 246, 0.18);
+  border-color: rgba(139, 92, 246, 0.7);
+}
+
+.executorBtnHandshakeReadyActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.08);
+  color: #a78bfa;
+  cursor: default;
+}
+
+.executorHandshakePackage {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.executorHandshakePackageLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a78bfa;
+}
+
+.executorHandshakeRows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorHandshakeRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.77rem;
+}
+
+.executorHandshakeKey {
+  color: #9ca3af;
+  flex-shrink: 0;
+  min-width: 170px;
+  font-weight: 500;
+}
+
+.executorHandshakeValue {
+  color: #d1d5db;
+  font-weight: 400;
+}
+
+.executorHandshakeAckSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.executorHandshakeAckLabel {
+  font-size: 0.71rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7c3aed;
+}
+
+.executorHandshakeAckList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.executorHandshakeAckItem {
+  font-size: 0.75rem;
+  color: #a78bfa;
+  padding-left: 8px;
+}
+
+.executorHandshakeAckNotice {
+  margin: 0;
+  font-size: 0.74rem;
+  color: #9ca3af;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.executorHandshakeGuardrails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.executorHandshakeGuardrailsLabel {
+  font-size: 0.71rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6d28d9;
+}
+
+.executorHandshakeGuardrailsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.executorHandshakeGuardrailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+.executorHandshakeGuardrailIcon {
+  color: #6d28d9;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  margin-top: 1px;
+}
+
+.executorHandshakeNotice {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  border-left: 2px solid rgba(139, 92, 246, 0.4);
+}
+
+.executorHandshakeOutOfScope {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1.5;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-style: italic;
+}
