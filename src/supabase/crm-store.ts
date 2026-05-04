@@ -577,6 +577,73 @@ export class SupabaseCrmBackend implements CrmBackend {
 }
 
 // ---------------------------------------------------------------------------
+// T9.15H — Facts acumulados: leitura/escrita via enova_state.last_context
+// ---------------------------------------------------------------------------
+
+/**
+ * Lê facts acumulados de turnos anteriores de enova_state.last_context.
+ *
+ * Por que last_context: campo existente no schema real (T9.13G P0).
+ * crm_facts é writeBuffer-only — não sobrevive restart de isolate Cloudflare Worker.
+ * last_context armazena o mapa de facts como JSON entre turnos/restarts.
+ *
+ * Lida com TEXT (JSON string) e JSONB (objeto já parseado) de forma conservadora.
+ * Nunca lança exceção. Retorna {} em qualquer erro.
+ */
+export async function readLeadAccumulatedFacts(
+  cfg: SupabaseConfig,
+  lead_id: string,
+): Promise<Record<string, unknown>> {
+  try {
+    const result = await supabaseSelect<EnovaStateRow>(cfg, 'enova_state', {
+      filters: { lead_id: `eq.${lead_id}` },
+      limit: 1,
+    });
+    if (!result.ok || result.rows.length === 0) return {};
+    const rawCtx = result.rows[0].last_context;
+    // Lida com TEXT (string JSON) ou JSONB (objeto já parseado).
+    let parsed: unknown;
+    if (typeof rawCtx === 'string') {
+      try { parsed = JSON.parse(rawCtx); } catch { return {}; }
+    } else if (typeof rawCtx === 'object' && rawCtx !== null) {
+      parsed = rawCtx;
+    } else {
+      return {};
+    }
+    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+      return parsed as Record<string, unknown>;
+    }
+  } catch { /* rede ou parse — fallback conservador */ }
+  return {};
+}
+
+/**
+ * Persiste facts acumulados em enova_state.last_context como JSON serializado.
+ * Upsert cirúrgico: lead_id + last_context + updated_at.
+ * Nunca lança exceção. Falha silenciosa — pipeline nunca bloqueia.
+ *
+ * Por que last_context: campo existente no schema real (T9.13G P0).
+ * Sem migration, sem nova coluna, sem schema change.
+ */
+export async function writeLeadAccumulatedFacts(
+  cfg: SupabaseConfig,
+  lead_id: string,
+  facts: Record<string, unknown>,
+): Promise<{ ok: boolean; error: string | null }> {
+  try {
+    const row: EnovaStateRow = {
+      lead_id,
+      last_context: JSON.stringify(facts),
+      updated_at: new Date().toISOString(),
+    };
+    const result = await supabaseUpsert<EnovaStateRow>(cfg, 'enova_state', row);
+    return { ok: result.ok, error: result.error };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // writeEnovaLog — writer seguro para public.enova_log (T10.6E)
 // ---------------------------------------------------------------------------
 
