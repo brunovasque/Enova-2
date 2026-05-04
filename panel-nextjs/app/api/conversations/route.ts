@@ -1,5 +1,16 @@
 import { NextResponse } from "next/server";
 
+// E2-known fase_conversa values — only these are written by src/supabase/crm-store.ts
+// mapStageCurrentToFaseConversa(). All other values are legacy Enova-1 stages and must
+// be suppressed to avoid displaying stale data in the Conversas list.
+const KNOWN_E2_FASE_CONVERSA = new Set([
+  "envio_docs",
+  "aguardando_retorno_correspondente",
+  "agendamento_visita",
+  "visita_confirmada",
+  "finalizacao_processo",
+]);
+
 type ConversationsResponse = {
   ok: boolean;
   conversations: Conversation[];
@@ -28,6 +39,14 @@ type EnovaLogRow = {
   created_at: string | null;
 };
 
+type CrmLeadMetaEnrich = {
+  wa_id: string;
+  nome: string | null;
+  lead_pool: string | null;
+  lead_temp: string | null;
+  status_operacional: string | null;
+};
+
 type Conversation = {
   id: string;
   wa_id: string;
@@ -39,6 +58,9 @@ type Conversation = {
   fase_conversa: string | null;
   funil_status: string | null;
   atendimento_manual: boolean;
+  lead_pool: string | null;
+  lead_temp: string | null;
+  status_operacional: string | null;
 };
 
 const REQUIRED_ENVS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE"] as const;
@@ -88,6 +110,13 @@ function compareDatesDesc(left: string | null, right: string | null): number {
   return rightTs - leftTs;
 }
 
+// Returns the fase_conversa only when it is an E2-known value.
+// Legacy Enova-1 stages (inicio, clt_renda_perfil_informativo, etc.) are suppressed.
+function normalizeFaseConversa(value: string | null): string | null {
+  if (!value) return null;
+  return KNOWN_E2_FASE_CONVERSA.has(value) ? value : null;
+}
+
 export async function GET() {
   const missingEnvs = REQUIRED_ENVS.filter((envName) => !process.env[envName]);
 
@@ -106,6 +135,7 @@ export async function GET() {
     const supabaseUrl = process.env.SUPABASE_URL as string;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE as string;
 
+    // Primary source: enova_state owns atendimento_manual and the canonical wa_id list.
     const response = await fetch(
       new URL(
         "/rest/v1/enova_state?select=*&order=updated_at.desc&limit=200",
@@ -140,25 +170,45 @@ export async function GET() {
       : [];
 
     const latestByWaId = new Map<string, { text: string | null; createdAt: string | null }>();
+    const crmByWaId = new Map<string, CrmLeadMetaEnrich>();
 
     if (waIds.length > 0) {
-      const logsEndpoint = new URL("/rest/v1/enova_log", supabaseUrl);
       const escapedWaIds = waIds.map((waId) => `"${waId.replace(/\"/g, '\\\"')}"`).join(",");
 
+      // Enrichment 1: enova_log — legacy fallback for last_message_text (Enova-1 data only;
+      // Enova-2 Worker does not write meta_minimal/DECISION_OUTPUT/SEND_OK tags).
+      const logsEndpoint = new URL("/rest/v1/enova_log", supabaseUrl);
       logsEndpoint.searchParams.set("select", "wa_id,tag,meta_text,details,created_at");
       logsEndpoint.searchParams.set("wa_id", `in.(${escapedWaIds})`);
       logsEndpoint.searchParams.set("tag", "in.(meta_minimal,DECISION_OUTPUT,SEND_OK)");
       logsEndpoint.searchParams.set("order", "created_at.desc");
       logsEndpoint.searchParams.set("limit", "3000");
 
-      const logsResponse = await fetch(logsEndpoint, {
-        method: "GET",
-        headers: {
-          apikey: serviceRoleKey,
-          Authorization: `Bearer ${serviceRoleKey}`,
-        },
-        cache: "no-store",
-      });
+      // Enrichment 2: crm_lead_meta — current CRM data managed by the panel itself.
+      // Provides nome, lead_pool, lead_temp, status_operacional (always up-to-date).
+      const crmEndpoint = new URL("/rest/v1/crm_lead_meta", supabaseUrl);
+      crmEndpoint.searchParams.set("select", "wa_id,nome,lead_pool,lead_temp,status_operacional");
+      crmEndpoint.searchParams.set("wa_id", `in.(${escapedWaIds})`);
+      crmEndpoint.searchParams.set("limit", "200");
+
+      const [logsResponse, crmResponse] = await Promise.all([
+        fetch(logsEndpoint, {
+          method: "GET",
+          headers: {
+            apikey: serviceRoleKey,
+            Authorization: `Bearer ${serviceRoleKey}`,
+          },
+          cache: "no-store",
+        }),
+        fetch(crmEndpoint, {
+          method: "GET",
+          headers: {
+            apikey: serviceRoleKey,
+            Authorization: `Bearer ${serviceRoleKey}`,
+          },
+          cache: "no-store",
+        }),
+      ]);
 
       if (logsResponse.ok) {
         const logRows = (await logsResponse.json()) as EnovaLogRow[];
@@ -188,6 +238,17 @@ export async function GET() {
           }
         }
       }
+
+      if (crmResponse.ok) {
+        const crmRows = (await crmResponse.json()) as CrmLeadMetaEnrich[];
+        if (Array.isArray(crmRows)) {
+          for (const crmRow of crmRows) {
+            if (crmRow.wa_id) {
+              crmByWaId.set(crmRow.wa_id, crmRow);
+            }
+          }
+        }
+      }
     }
 
     const conversations = Array.isArray(rows)
@@ -196,13 +257,17 @@ export async function GET() {
           .map((row) => {
             const waId = row.wa_id as string;
             const latestLog = latestByWaId.get(waId);
+            const crm = crmByWaId.get(waId) ?? null;
             const activityAt =
               latestLog?.createdAt ?? row.last_incoming_at ?? row.updated_at ?? row.created_at ?? null;
+
+            // Prefer crm_lead_meta.nome (panel-managed) over enova_state.nome (stale E1).
+            const nome = normalizeText(crm?.nome) ?? normalizeText(row.nome);
 
             return {
               id: waId,
               wa_id: waId,
-              nome: row.nome ?? null,
+              nome,
               last_message_text:
                 latestLog?.text ??
                 normalizeText(row.last_incoming_text) ??
@@ -212,9 +277,14 @@ export async function GET() {
               last_message_at: activityAt,
               updated_at: row.updated_at ?? null,
               created_at: row.created_at ?? null,
-              fase_conversa: row.fase_conversa ?? null,
-              funil_status: row.funil_status ?? null,
+              // Suppress legacy E1 fase_conversa values; only show E2-known stages.
+              fase_conversa: normalizeFaseConversa(row.fase_conversa),
+              // funil_status from enova_state is entirely legacy E1 — always null here.
+              funil_status: null,
               atendimento_manual: Boolean(row.atendimento_manual),
+              lead_pool: typeof crm?.lead_pool === "string" ? crm.lead_pool : null,
+              lead_temp: typeof crm?.lead_temp === "string" ? crm.lead_temp : null,
+              status_operacional: typeof crm?.status_operacional === "string" ? crm.status_operacional : null,
             };
           })
           .sort((left, right) => compareDatesDesc(left.last_message_at, right.last_message_at))

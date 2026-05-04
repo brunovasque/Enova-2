@@ -22,6 +22,9 @@ type Conversation = {
   fase_conversa: string | null;
   funil_status: string | null;
   atendimento_manual: boolean;
+  lead_pool: string | null;
+  lead_temp: string | null;
+  status_operacional: string | null;
 };
 
 type ConversationsPayload = {
@@ -976,14 +979,24 @@ export function ConversationUI() {
                           {sanitizePreview(conversation.last_message_text)}
                         </div>
                         <div className={styles.badgesRow}>
+                          {conversation.lead_pool ? (
+                            <span className={`${styles.badge} ${styles.badgeNeutral}`}>
+                              {conversation.lead_pool}
+                            </span>
+                          ) : null}
+                          {conversation.lead_temp ? (
+                            <span className={`${styles.badge} ${styles.badgeNeutral}`}>
+                              {conversation.lead_temp}
+                            </span>
+                          ) : null}
+                          {conversation.status_operacional ? (
+                            <span className={`${styles.badge} ${styles.badgeNeutral}`}>
+                              {conversation.status_operacional}
+                            </span>
+                          ) : null}
                           {conversation.fase_conversa ? (
                             <span className={`${styles.badge} ${styles.badgePhase}`}>
                               {conversation.fase_conversa}
-                            </span>
-                          ) : null}
-                          {conversation.funil_status ? (
-                            <span className={`${styles.badge} ${styles.badgeNeutral}`}>
-                              {conversation.funil_status}
                             </span>
                           ) : null}
                           {conversation.atendimento_manual ? (
@@ -1013,14 +1026,24 @@ export function ConversationUI() {
                   <span>{activeConversation.wa_id}</span>
                 </div>
                 <div className={styles.badgesRow}>
+                  {activeConversation.lead_pool ? (
+                    <span className={`${styles.badge} ${styles.badgeNeutral}`}>
+                      {activeConversation.lead_pool}
+                    </span>
+                  ) : null}
+                  {activeConversation.lead_temp ? (
+                    <span className={`${styles.badge} ${styles.badgeNeutral}`}>
+                      {activeConversation.lead_temp}
+                    </span>
+                  ) : null}
+                  {activeConversation.status_operacional ? (
+                    <span className={`${styles.badge} ${styles.badgeNeutral}`}>
+                      {activeConversation.status_operacional}
+                    </span>
+                  ) : null}
                   {activeConversation.fase_conversa ? (
                     <span className={`${styles.badge} ${styles.badgePhase}`}>
                       {activeConversation.fase_conversa}
-                    </span>
-                  ) : null}
-                  {activeConversation.funil_status ? (
-                    <span className={`${styles.badge} ${styles.badgeNeutral}`}>
-                      {activeConversation.funil_status}
                     </span>
                   ) : null}
                   {activeConversation.atendimento_manual ? (
