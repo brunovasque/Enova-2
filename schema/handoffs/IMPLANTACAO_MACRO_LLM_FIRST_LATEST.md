@@ -1,5 +1,86 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.7-READINESS — T10 Panel/CRM Encerrada por Prova (2026-05-04)
+
+**Tipo**: PR-PROVA/CLOSEOUT | **Branch**: `closeout/t10.7-panel-crm-readiness`
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md` — **ENCERRADO**
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Próximo passo autorizado T10**: N/A — T10 ENCERRADA
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `contratual` — PR-PROVA/CLOSEOUT; DOCS-ONLY; zero src/; zero panel-nextjs; zero Supabase
+
+### O que esta PR fez
+
+1. Criou `schema/readiness/T10_7_PANEL_CRM_READINESS_CLOSEOUT.md` — documento formal de readiness e closeout da frente T10
+2. Declarou G10 APROVADO com todos os 7 gates fechados por evidência real
+3. Registrou validações reais de Vasques (canary end-to-end, /api/health, /bases, /crm, /conversations)
+4. Listou todas as 13 PRs (#213–#225 + T10.7) com o que cada uma fechou
+5. Declarou 10/10 critérios de aceite cumpridos
+6. Registrou lacunas não bloqueantes remanescentes e riscos residuais
+7. Documentou estado atual de todas as abas (Painel, CRM, Bases, Conversas, Worker/enova_log)
+8. Confirmou flags de segurança inalteradas (CLIENT_REAL_ENABLED=false, CANARY restrito a Vasques)
+9. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+10. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+11. Atualizou `schema/contracts/_INDEX.md` — T10 movida para contratos encerrados
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `src/` do Worker — zero diff em src/
+- **Não alterou** `panel-nextjs/**` — zero diff em panel-nextjs/
+- **Não alterou** Supabase schema, RLS, migrations, views
+- **Não fechou** T9/G9 — frentes completamente separadas
+- **Não criou** aba Funil/Qualificação
+- **Não alterou** flags de ambiente
+
+### Evidências reais confirmadas por Vasques
+
+| Evidência | Status |
+|-----------|--------|
+| Painel publicado em `https://enova-2.vercel.app/` | CONFIRMADO |
+| `/api/health` → `ok=true, db_ok=true, worker_ok=true` | CONFIRMADO |
+| `/bases` carregando dados reais Supabase | CONFIRMADO |
+| `/crm` carregando dados reais Supabase | CONFIRMADO |
+| CRM modais corrigidos (PR #223) | CONFIRMADO |
+| WhatsApp real chegou no Worker (canary) | CONFIRMADO |
+| LLM respondeu somente para OUTBOUND_CANARY_WA_ID | CONFIRMADO |
+| enova_log recebeu meta_minimal "Oi Enova" | CONFIRMADO |
+| enova_log recebeu DECISION_OUTPUT "Oi! Como posso ajudar você hoje?" | CONFIRMADO |
+| enova_log recebeu SEND_OK | CONFIRMADO |
+| Painel /conversations exibiu thread nova real | CONFIRMADO |
+
+### Gates T10 — Estado final
+
+| Gate | Status |
+|------|--------|
+| G10.1 (contrato) | APROVADO — PR #214 |
+| G10.2 (import) | APROVADO — PR #215 |
+| G10.3 (build local) | APROVADO — PR #217 |
+| G10.4 (preview Vercel) | APROVADO — Vasques confirmou enova-2.vercel.app |
+| G10.5 (/api/health real) | APROVADO — Vasques confirmou ok=true |
+| G10.6 (CRM real) | APROVADO — Vasques confirmou 1 lead real + modais corrigidos |
+| G10.7 (readiness) | APROVADO — esta PR |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/readiness/T10_7_PANEL_CRM_READINESS_CLOSEOUT.md
+Estado da evidência:                   completa — 7/7 gates aprovados por evidência real;
+                                        canary end-to-end validado por Vasques;
+                                        10/10 critérios de aceite cumpridos
+Há lacuna remanescente?:               sim — LAC-T10.6E-02 (sem unique constraint meta_message_id),
+                                             LAC-T10.6B-01 (thread E2 pura = estado esperado),
+                                             LAC-T10.5-03 (Next.js 14 vulns — não bloqueantes),
+                                             LAC-T10.6-01 (validação visual modais — não bloqueante)
+                                        Todas não bloqueantes — documentadas e aceitas
+Há item parcial/inconclusivo bloqueante?: não — todos os gates com evidência real; canary validado
+Fechamento permitido nesta PR?:        sim — T10 Panel/CRM ENCERRADA POR PROVA; G10 APROVADO
+Estado permitido após esta PR:         T10 ENCERRADA; contrato arquivado; T9/G9 permanece aberto
+Próxima PR autorizada:                 T9.14-IMPL (frente T9 — runtime LLM + funil + Supabase)
+```
+
+---
+
 ## T10.6E-IMPL — Worker persiste mensagens em enova_log (2026-05-04)
 
 **Tipo**: PR-IMPL | **Branch**: `fix/t10.6e-worker-enova-log-persistence`
