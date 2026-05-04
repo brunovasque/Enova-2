@@ -24,7 +24,6 @@ const REQUIRED_ENVS = [
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE",
   "WORKER_BASE_URL",
-  "ENOVA_ADMIN_KEY",
 ] as const;
 
 async function checkSupabase(
@@ -140,6 +139,24 @@ export async function GET() {
           error: null,
         },
         error: `missing env: ${missingEnvs.join(", ")}`,
+      },
+      500,
+    );
+  }
+
+  if (!getAdminKey()) {
+    return healthJson(
+      {
+        ok: false,
+        db_ok: false,
+        worker_ok: false,
+        env: envInfo,
+        worker: {
+          endpointTested: "/__admin__/health",
+          status: null,
+          error: null,
+        },
+        error: "missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY",
       },
       500,
     );

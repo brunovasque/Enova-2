@@ -14,7 +14,6 @@ const REQUIRED_ENVS = [
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE",
   "WORKER_BASE_URL",
-  "ENOVA_ADMIN_KEY",
 ] as const;
 
 export async function POST(request: Request) {
@@ -23,6 +22,13 @@ export async function POST(request: Request) {
   if (missingEnvs.length > 0) {
     return NextResponse.json(
       { ok: false, error: `missing env: ${missingEnvs.join(", ")}` },
+      { status: 500 },
+    );
+  }
+
+  if (!getAdminKey()) {
+    return NextResponse.json(
+      { ok: false, error: "missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY" },
       { status: 500 },
     );
   }

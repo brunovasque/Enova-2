@@ -72,7 +72,7 @@ export function getAdminKey(env: Record<string, string | undefined> = process.en
 }
 ```
 
-### Política T10.4
+### Política T10.4 (pós 2ª passagem — fix crítico)
 
 | Aspecto | Decisão |
 |---------|---------|
@@ -80,8 +80,11 @@ export function getAdminKey(env: Record<string, string | undefined> = process.en
 | Chave fallback | `ENOVA_ADMIN_KEY` — compatibilidade legado |
 | Auth guard (incoming) | Lê chave via `getAdminKey()` — aceita `CRM_ADMIN_KEY` ou `ENOVA_ADMIN_KEY` |
 | Headers outgoing ao Worker | `X-CRM-Admin-Key` (corrigido) com valor de `getAdminKey()` |
-| REQUIRED_ENVS / AUTH_ENVS | Mantêm `"ENOVA_ADMIN_KEY"` para backward compat |
-| Remoção de `ENOVA_ADMIN_KEY` | Não removida em T10.4 — deferred para T10.5/T10.6 |
+| REQUIRED_ENVS / AUTH_ENVS / CALL_NOW_ENVS | **Removido `"ENOVA_ADMIN_KEY"`** — não é mais var obrigatória |
+| Admin key ausente (ambas ausentes) | `!getAdminKey()` → 500 `"missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY"` |
+| `CRM_ADMIN_KEY` sozinha | ✅ válido — `getAdminKey()` retorna `CRM_ADMIN_KEY` |
+| `ENOVA_ADMIN_KEY` sozinha | ✅ válido — `getAdminKey()` retorna `ENOVA_ADMIN_KEY` (fallback) |
+| Nenhuma das duas | ❌ → 500 explícito |
 
 ### Arquivos alterados (incoming — key comparison)
 
@@ -179,7 +182,7 @@ Zero arquivos em `src/` alterados nesta PR. ✅
 | `next build` não executado — pode ter erros de TypeScript | T10.5-RUN |
 | Preview Vercel não configurado | T10.5-RUN |
 | `/api/health` não testado com Worker real | T10.5-RUN |
-| `CALL_NOW_ENVS` e `AUTH_ENVS` ainda listam `ENOVA_ADMIN_KEY` (compatibilidade) | T10.5/T10.6 |
+| `x-enova-admin-key` header (incoming) mantido para compat legado (não removível sem coordenação) | T10.5/T10.6 |
 | `x-enova-admin-key` header (incoming) mantido para compat legado | T10.5/T10.6 |
 | 26 arquivos `app/lib/` ENOVA IA — lógica Enova 1 não adaptada | T10.4/T10.5 |
 | CRM real com Supabase não testado | T10.6-CRM-LINK |

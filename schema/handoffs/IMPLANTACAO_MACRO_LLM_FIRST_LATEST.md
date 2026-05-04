@@ -22,13 +22,19 @@
 9. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
 10. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
 
+### Fix 2ª passagem (mesmo PR #216)
+
+11. Removeu `"ENOVA_ADMIN_KEY"` de todos os arrays de envs obrigatórias: `AUTH_ENVS` (`crm/route.ts`, `prefill/route.ts`, `client-profile/route.ts`), `REQUIRED_ENVS` (`send/route.ts`, `health/route.ts`, `case-files/diagnostic/route.ts`), `CALL_NOW_ENVS` (`bases/_shared.ts`)
+12. Adicionou verificação `!getAdminKey()` → 500 `"missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY"` em todos os 7 pontos (após check de envs de infra, antes do request de auth key)
+13. Corrigiu header hardcoded em `bases/_shared.ts` (bulk call now): `"x-enova-admin-key": envMap.ENOVA_ADMIN_KEY` → `"X-CRM-Admin-Key": getAdminKey(envMap...)`
+14. Atualizou prova `schema/proofs/T10_4_PANEL_ADAPT_ENV_AUTH_PROOF.md` para refletir política final: `CRM_ADMIN_KEY` sozinha → ✅, `ENOVA_ADMIN_KEY` sozinha → ✅, ambas ausentes → 500 explícito
+
 ### O que esta PR NÃO fez
 
 - Não executou `npm install` ou `next build`
 - Não configurou preview Vercel
 - Não testou `/api/health` com Worker real
-- Não removeu `ENOVA_ADMIN_KEY` de `REQUIRED_ENVS`/`AUTH_ENVS`/`CALL_NOW_ENVS` (compatibilidade legado)
-- Não alterou `x-enova-admin-key` header incoming (browser→panel) — mantido para compat
+- Não alterou `x-enova-admin-key` header incoming (browser→panel) — mantido para compat legado
 - Não adaptou 26 arquivos `app/lib/` ENOVA IA
 - Não alterou `src/` do Worker (zero diff em src/)
 - Não alterou `D:\Enova` (READ-ONLY preservado)
