@@ -176,27 +176,57 @@ function mapLeadToMeta(lead: CrmLead): CrmLeadMetaRow {
 }
 
 /**
- * BLOQUEADO — BLK-T9.13-STATE-MAPPING (T9.13G).
+ * Mapper conservador: stage_current (canônico T9) → fase_conversa (legado E1).
  *
- * Esta função NÃO deve ser chamada pelo runtime. enova_state real não tem schema
- * compatível com CrmLeadState canônico:
- *   - PGRST204 T9.13E: block_advance não existe
- *   - PGRST204 T9.13F: next_objective não existe
- *   - PGRST204 T9.13G: stage_current, state_version não existem
+ * Confirmado por crosscheck Enova 1 (T9.13L-DIAG):
+ *   - CRM operacional começa em 'envio_docs' — stages pré-docs não entram.
+ *   - Aprovado/reprovado vêm por flags booleanas, não por fase_conversa.
+ *   - Para stage desconhecido: retorna null (conservador — não inventa valor).
  *
- * Candidatos legado (sem prova canônica): fase_conversa, last_processed_stage,
- * last_user_stage, intro_etapa. Múltiplos coexistem; sem confirmação de Vasques
- * sobre qual é o destino correto, escrita real fica bloqueada.
+ * Autorizado por Vasques (T9.13L §6.2, 2026-05-03):
+ *   "Confirmo o mapper conservador T9.13L §6.2. Pode implementar PR-FIX sem
+ *    mapear stages pré-docs para CRM operacional."
+ */
+export function mapStageCurrentToFaseConversa(stage: string | null | undefined): string | null {
+  if (!stage) return null;
+  switch (stage) {
+    case 'docs_prep':       return 'envio_docs';
+    case 'analysis_waiting': return 'aguardando_retorno_correspondente';
+    case 'visit_scheduling': return 'agendamento_visita';
+    case 'visit_confirmed':  return 'visita_confirmada';
+    case 'finalization':     return 'finalizacao_processo';
+    // Pré-docs: não gravar fase operacional (CRM legado é pós-docs — T9.13L §5).
+    case 'discovery':
+    case 'qualification_civil':
+    case 'qualification_renda':
+    case 'qualification_eligibility':
+    default:
+      return null;
+  }
+}
+
+/**
+ * Mapper reverso: CrmLeadState → EnovaStateRow para upsert em enova_state.
  *
- * Mantida no código apenas para retrocompatibilidade do tipo. Toda escrita de
- * crm_lead_state vai para writeBuffer (ver SupabaseCrmBackend.insert/update).
+ * Payload seguro — apenas colunas confirmadas no schema real (T9.13G/T9.13K/T9.13L):
+ *   - lead_id + updated_at: sempre incluídos.
+ *   - fase_conversa: incluída SOMENTE quando mapStageCurrentToFaseConversa retorna
+ *     valor não-null (stages pós-docs confirmados). Stages pré-docs omitem o campo;
+ *     o banco usa o default 'inicio' ou preserva o valor anterior.
+ *
+ * Campos NUNCA enviados (PGRST204 confirmados — não existem no schema real):
+ *   stage_current, next_objective, block_advance, state_version, policy_flags, risk_flags.
  */
 function mapLeadStateToEnovaState(state: CrmLeadState): EnovaStateRow {
-  return {
+  const faseConversa = mapStageCurrentToFaseConversa(state.stage_current);
+  const row: EnovaStateRow = {
     lead_id: state.lead_id,
     updated_at: state.updated_at,
-    // BLK-T9.13-STATE-MAPPING — demais campos omitidos por ausência no schema real.
   };
+  if (faseConversa !== null) {
+    row.fase_conversa = faseConversa;
+  }
+  return row;
 }
 
 // ---------------------------------------------------------------------------
@@ -363,13 +393,11 @@ export class SupabaseCrmBackend implements CrmBackend {
    * - crm_leads + writeEnabled=true  → upsert Supabase crm_lead_meta;
    *   payload reduzido a colunas reais confirmadas: wa_id, updated_at (T9.13G);
    *   fallback writeBuffer se falhar.
-   * - crm_lead_state → SEMPRE writeBuffer (BLK-T9.13-STATE-MAPPING).
-   *   enova_state real não tem schema compatível com CrmLeadState canônico
-   *   (PGRST204: stage_current/state_version/next_objective/block_advance ausentes).
-   *   Múltiplos candidatos legado coexistem (fase_conversa, last_processed_stage,
-   *   last_user_stage, intro_etapa) sem prova canônica de qual é o destino correto.
-   *   writeLog registra o bloqueio explicitamente (used_fallback=true,
-   *   attempted_real_write=false, error='BLK-T9.13-STATE-MAPPING').
+   * - crm_lead_state + writeEnabled=true → upsert real em enova_state (T9.13M-FIX).
+   *   BLK-T9.13-STATE-MAPPING RESOLVIDO: mapper conservador implementado.
+   *   Payload seguro: lead_id + updated_at + fase_conversa (somente quando stage
+   *   pós-docs mapeado — pré-docs omitem fase_conversa, preservando default 'inicio').
+   *   Fallback writeBuffer se Supabase falhar.
    * - Demais tabelas (crm_turns, crm_facts, etc.) → sempre writeBuffer
    *   (schema/destino Supabase não confirmados — T9.12-DIAG BLK-WRITE-02).
    * - writeEnabled=false → writeBuffer em todos os casos (comportamento T8.8).
@@ -399,21 +427,25 @@ export class SupabaseCrmBackend implements CrmBackend {
         });
         if (result.ok) return row;
       } else if (table === 'crm_lead_state') {
-        // BLK-T9.13-STATE-MAPPING — escrita real bloqueada; vai direto para writeBuffer.
+        // BLK-T9.13-STATE-MAPPING RESOLVIDO (T9.13M-FIX).
+        // Mapper conservador implementado: fase_conversa gravada apenas para stages pós-docs.
+        // Stages pré-docs omitem fase_conversa do payload — banco preserva default 'inicio'.
         const state = row as unknown as CrmLeadState;
+        const result = await this.supabaseWriteLeadState(state);
         const testId = typeof state.lead_id === 'string' ? state.lead_id : '(non-test)';
         this.writeLog.push({
           table,
           target_table: 'enova_state',
           write_enabled: true,
-          attempted_real_write: false,
-          used_fallback: true,
-          ok: false,
-          http_status: null,
-          rows: 0,
-          error: 'BLK-T9.13-STATE-MAPPING: enova_state schema incompatível com CrmLeadState canônico',
+          attempted_real_write: true,
+          used_fallback: !result.ok,
+          ok: result.ok,
+          http_status: result.http_status,
+          rows: result.rows.length,
+          error: result.error,
           test_id: testId,
         });
+        if (result.ok) return row;
       }
       // crm_turns, crm_facts e demais: fallthrough para writeBuffer
     }
@@ -421,17 +453,20 @@ export class SupabaseCrmBackend implements CrmBackend {
   }
 
   /**
-   * Update com escrita real condicional (T9.12 + T9.13G).
+   * Update com escrita real condicional (T9.12 + T9.13G + T9.13M-FIX).
    *
    * Para crm_leads com writeEnabled=true:
    *   1. Busca o registro completo atual (Supabase + writeBuffer via findOne).
    *   2. Mescla o patch.
-   *   3. Faz upsert real no Supabase (apenas wa_id + updated_at — T9.13G).
+   *   3. Faz upsert real no Supabase (wa_id + lead_pool + lead_temp + updated_at).
    *   4. Em falha Supabase → fallback writeBuffer.
    *
-   * Para crm_lead_state → SEMPRE writeBuffer (BLK-T9.13-STATE-MAPPING).
-   *   Mesma razão do insert: enova_state schema incompatível com CrmLeadState canônico.
-   *   writeLog registra o bloqueio explicitamente.
+   * Para crm_lead_state com writeEnabled=true (BLK-T9.13-STATE-MAPPING RESOLVIDO):
+   *   1. Busca o registro via findOne.
+   *   2. Mescla o patch.
+   *   3. Faz upsert real em enova_state com payload seguro (lead_id + updated_at
+   *      + fase_conversa quando stage mapeado — ver mapStageCurrentToFaseConversa).
+   *   4. Em falha Supabase → fallback writeBuffer.
    *
    * Para demais tabelas ou writeEnabled=false → writeBuffer.
    * T9.13D-DIAG: resultado do upsert acumulado em writeLog para inspeção.
@@ -474,22 +509,33 @@ export class SupabaseCrmBackend implements CrmBackend {
       }
       // Fallback: se não encontrou → writeBuffer
     } else if (this.writeEnabled && table === 'crm_lead_state') {
-      // BLK-T9.13-STATE-MAPPING — escrita real bloqueada; sempre writeBuffer.
+      // BLK-T9.13-STATE-MAPPING RESOLVIDO (T9.13M-FIX).
+      // Mapper conservador: fase_conversa gravada apenas para stages pós-docs.
       const existing = await this.findOne<T>(table, matcher);
-      const stateForId = (existing ?? patch) as unknown as Partial<CrmLeadState>;
-      const testId = typeof stateForId.lead_id === 'string' ? stateForId.lead_id : '(non-test)';
-      this.writeLog.push({
-        table,
-        target_table: 'enova_state',
-        write_enabled: true,
-        attempted_real_write: false,
-        used_fallback: true,
-        ok: false,
-        http_status: null,
-        rows: 0,
-        error: 'BLK-T9.13-STATE-MAPPING: enova_state schema incompatível com CrmLeadState canônico',
-        test_id: testId,
-      });
+      if (existing) {
+        const merged: T = Object.assign({}, existing, patch);
+        const state = merged as unknown as CrmLeadState;
+        const result = await this.supabaseWriteLeadState(state);
+        const testId = typeof state.lead_id === 'string' ? state.lead_id : '(non-test)';
+        this.writeLog.push({
+          table,
+          target_table: 'enova_state',
+          write_enabled: true,
+          attempted_real_write: true,
+          used_fallback: !result.ok,
+          ok: result.ok,
+          http_status: result.http_status,
+          rows: result.rows.length,
+          error: result.error,
+          test_id: testId,
+        });
+        if (result.ok) return merged;
+        // Supabase falhou → fallback writeBuffer
+        const bufferedState = await this.writeBuffer.update<T>(table, matcher, patch);
+        if (bufferedState !== null) return bufferedState;
+        await this.writeBuffer.insert<T>(table, merged);
+        return merged;
+      }
     }
     return this.writeBuffer.update<T>(table, matcher, patch);
   }

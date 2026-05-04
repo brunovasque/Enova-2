@@ -196,7 +196,7 @@ export interface CrmLeadMetaRow {
 }
 
 /**
- * Linha bruta de `enova_state` — schema real confirmado por execuções T9.13C/T9.13E/T9.13F/T9.13G.
+ * Linha bruta de `enova_state` — schema real confirmado por T9.13C/T9.13E/T9.13F/T9.13G/T9.13K/T9.13L.
  * lead_id é UUID (PGRST 22P02 confirmado em T9.13C — usar randomUUID na prova).
  *
  * Histórico de PGRST204 confirmados (não existem no schema real — não criar):
@@ -204,26 +204,33 @@ export interface CrmLeadMetaRow {
  *   T9.13F: next_objective (PGRST204)
  *   T9.13G: stage_current, state_version (PGRST204)
  *
+ * Coluna mapeada confirmada por Vasques SQL (T9.13K §16) + crosscheck Enova 1 (T9.13L):
+ *   fase_conversa — text nullable, default 'inicio'.
+ *   CRM operacional filtra: envio_docs, aguardando_retorno_correspondente,
+ *   agendamento_visita, visita_confirmada, finalizacao_processo.
+ *   Aprovado/reprovado por flags booleanas — não por fase_conversa.
+ *
+ * BLK-T9.13-STATE-MAPPING RESOLVIDO (T9.13M-FIX, 2026-05-03):
+ *   Mapper conservador implementado em mapStageCurrentToFaseConversa() (crm-store.ts).
+ *   Stages pré-docs omitem fase_conversa do payload (preservam default 'inicio').
+ *   Stages pós-docs gravam valores CRM operacionais legados corretos.
+ *
  * Schema real (T9.13G P0): id, lead_id, wa_id, last_incoming_id, last_reply_id,
  * last_intent, last_context, last_ts, controle, atendimento_manual, updated_at,
  * fase_conversa, intro_etapa, funil_status, funil_opcao_docs, atualizado_em, nome,
- * last_processed_stage, last_user_stage + dezenas de campos legado E1 (estado_civil,
- * regime, renda_*, docs_*, dossie_*, pacote_*, visita_*, etc).
+ * last_processed_stage, last_user_stage + dezenas de campos legado E1.
  *
- * Candidatos legado para stage_current (NÃO confirmados — múltiplos coexistem):
- *   fase_conversa, last_processed_stage, last_user_stage, intro_etapa.
- *   Sem prova documental do canônico → mapping BLOQUEADO (BLK-T9.13-STATE-MAPPING).
- *   crm_lead_state permanece em writeBuffer até confirmação explícita de Vasques.
- *
- * Campos preservados no CRM canônico (CrmLeadState) e writeBuffer mas NÃO escritos
- * no Supabase real: stage_current, next_objective, block_advance, state_version,
- * policy_flags, risk_flags.
+ * Campos preservados no CRM canônico (CrmLeadState) mas NÃO escritos no Supabase real:
+ *   stage_current, next_objective, block_advance, state_version, policy_flags, risk_flags.
  */
 export interface EnovaStateRow {
   lead_id?: string;
   updated_at?: string | null;
+  /** Fase de conversa legado E1 — candidato principal para stage_current (T9.13K/T9.13L).
+   *  Gravada SOMENTE quando stage_current mapeia para valor pós-docs (T9.13M-FIX). */
+  fase_conversa?: string | null;
   // stage_current/next_objective/block_advance/state_version OMITIDAS — colunas não existem
-  // no Supabase real (PGRST204 T9.13E/T9.13F/T9.13G). Mapeamento bloqueado: BLK-T9.13-STATE-MAPPING.
+  // no Supabase real (PGRST204 T9.13E/T9.13F/T9.13G).
   [k: string]: unknown;
 }
 

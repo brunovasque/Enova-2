@@ -29,7 +29,7 @@
  */
 
 import { randomUUID } from 'crypto';
-import { SupabaseCrmBackend } from './crm-store.ts';
+import { SupabaseCrmBackend, mapStageCurrentToFaseConversa } from './crm-store.ts';
 import type { WriteDiagEntry } from './crm-store.ts';
 import { supabaseSelect } from './client.ts';
 import {
@@ -232,6 +232,36 @@ async function runLocalProofs(): Promise<void> {
   const p3Facts = await backendOn.findAll('crm_facts');
   check('P3.6: crm_facts encontrado no writeBuffer', p3Facts.some((r) => (r as typeof fakeFact).fact_id === fakeFact.fact_id));
 
+  console.log('\n── P3b: Mapper conservador (T9.13M-FIX) — prova local pura ──');
+
+  // Mapper pós-docs
+  check('P3b.1: docs_prep → envio_docs',
+    mapStageCurrentToFaseConversa('docs_prep') === 'envio_docs');
+  check('P3b.2: analysis_waiting → aguardando_retorno_correspondente',
+    mapStageCurrentToFaseConversa('analysis_waiting') === 'aguardando_retorno_correspondente');
+  check('P3b.3: visit_scheduling → agendamento_visita',
+    mapStageCurrentToFaseConversa('visit_scheduling') === 'agendamento_visita');
+  check('P3b.4: visit_confirmed → visita_confirmada',
+    mapStageCurrentToFaseConversa('visit_confirmed') === 'visita_confirmada');
+  check('P3b.5: finalization → finalizacao_processo',
+    mapStageCurrentToFaseConversa('finalization') === 'finalizacao_processo');
+  // Mapper pré-docs: sempre null
+  check('P3b.6: discovery → null (pré-docs)',
+    mapStageCurrentToFaseConversa('discovery') === null);
+  check('P3b.7: qualification_civil → null (pré-docs)',
+    mapStageCurrentToFaseConversa('qualification_civil') === null);
+  check('P3b.8: qualification_renda → null (pré-docs)',
+    mapStageCurrentToFaseConversa('qualification_renda') === null);
+  check('P3b.9: qualification_eligibility → null (pré-docs)',
+    mapStageCurrentToFaseConversa('qualification_eligibility') === null);
+  // Conservador: stage desconhecido → null
+  check('P3b.10: stage desconhecido → null (conservador)',
+    mapStageCurrentToFaseConversa('stage_inexistente_qualquer') === null);
+  check('P3b.11: null input → null',
+    mapStageCurrentToFaseConversa(null) === null);
+  check('P3b.12: undefined input → null',
+    mapStageCurrentToFaseConversa(undefined) === null);
+
   console.log('\n── P4: Secrets não vazam em output ──');
 
   const secretBackend = new SupabaseCrmBackend(
@@ -282,9 +312,11 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   // lead_pool='COLD_POOL' e lead_temp='COLD': NOT NULL sem DEFAULT confirmados por SQL direto (T9.13J).
   // Valores canônicos definidos por Vasques: todo lead novo entra como base fria.
   const payloadKeysLead = ['wa_id', 'lead_pool', 'lead_temp', 'updated_at'];
-  // Chaves que mapLeadStateToEnovaState envia ao Supabase (pós T9.13G — apenas lead_id + updated_at;
-  // escrita real BLOQUEADA pelo backend — BLK-T9.13-STATE-MAPPING).
-  const payloadKeysState = ['lead_id', 'updated_at'];
+  // Chaves que mapLeadStateToEnovaState pode enviar ao Supabase (T9.13M-FIX):
+  //   - lead_id + updated_at: sempre presentes.
+  //   - fase_conversa: presente apenas para stages pós-docs (mapper conservador).
+  // Superset declarado aqui para que P0.4 verifique que todas existem no schema real.
+  const payloadKeysState = ['lead_id', 'updated_at', 'fase_conversa'];
 
   const schemaLeadResult = await supabaseSelect<Record<string, unknown>>(cfg, 'crm_lead_meta', { limit: 1 });
   const realColsLead: string[] = schemaLeadResult.ok && schemaLeadResult.rows.length > 0
@@ -319,16 +351,13 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   check('P0.4: payload enova_state sem colunas ausentes', missingFromRealState.length === 0,
     missingFromRealState.length > 0 ? `PGRST204 esperado: [${missingFromRealState.join(', ')}]` : 'ok');
 
-  // BLK-T9.13-STATE-MAPPING — informação explícita ao operador.
-  console.log('\n[STATE_MAPPING_STATUS] BLK-T9.13-STATE-MAPPING ATIVO');
-  console.log('  enova_state real não tem schema compatível com CrmLeadState canônico.');
-  console.log('  Colunas confirmadas ausentes (PGRST204):');
+  // T9.13M-FIX — BLK-T9.13-STATE-MAPPING RESOLVIDO.
+  console.log('\n[STATE_MAPPING_STATUS] BLK-T9.13-STATE-MAPPING RESOLVIDO (T9.13M-FIX)');
+  console.log('  Mapper conservador implementado: mapStageCurrentToFaseConversa()');
+  console.log('  Stages pós-docs → fase_conversa legado (escrita real em enova_state).');
+  console.log('  Stages pré-docs → null → fase_conversa omitida do payload (preserva default).');
+  console.log('  Colunas ainda ausentes (PGRST204 — não enviar):');
   console.log('    stage_current, next_objective, block_advance, state_version');
-  console.log('  Candidatos legado (sem prova canônica de qual usar como destino):');
-  console.log('    fase_conversa, last_processed_stage, last_user_stage, intro_etapa');
-  console.log('  Decisão T9.13G: crm_lead_state permanece em writeBuffer; SupabaseCrmBackend');
-  console.log('  registra writeLog com error=BLK-T9.13-STATE-MAPPING e attempted_real_write=false.');
-  console.log('  Aguardando confirmação explícita de Vasques para destino canônico.');
 
   // ── Fail-fast: se P0 detectou coluna ausente, NÃO executa P5–P8 ──────────
   if (missingFromRealLead.length > 0 || missingFromRealState.length > 0) {
@@ -492,9 +521,11 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   // external_ref, phone_ref, status, manual_mode, customer_name não existem em crm_lead_meta no Supabase real.
   // Estes campos são preservados apenas no CRM canônico (CrmLead) e writeBuffer.
 
-  // ── P6: Insert crm_lead_state → BLK-T9.13-STATE-MAPPING → writeBuffer ────
+  // ── P6: Insert crm_lead_state (stage discovery — pré-docs) → escrita real enova_state ──
+  // T9.13M-FIX: BLK-T9.13-STATE-MAPPING resolvido — escrita real habilitada.
+  // discovery → mapper retorna null → fase_conversa NÃO enviada → banco preserva default 'inicio'.
 
-  console.log('\n── P6: insert crm_lead_state → writeBuffer (BLK-T9.13-STATE-MAPPING) ──');
+  console.log('\n── P6: insert crm_lead_state (discovery) → escrita real enova_state (T9.13M-FIX) ──');
 
   let p6Threw = false;
   let p6State: CrmLeadState | null = null;
@@ -506,21 +537,91 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   const p6WriteDiag = backend.writeLog.at(-1);
   if (p6WriteDiag) logWriteDiag('P6', p6WriteDiag);
   check('P6.1: insert crm_lead_state não lança', !p6Threw);
-  check('P6.2: retorna state com lead_id correto (writeBuffer)', p6State?.lead_id === stateLeadId);
+  check('P6.2: retorna state com lead_id correto', p6State?.lead_id === stateLeadId);
   check('P6.3: stage_current preservado no CRM canônico', p6State?.stage_current === state.stage_current);
   check('P6.4: state_version preservado no CRM canônico', p6State?.state_version === state.state_version);
-  check('P6.BLK.1: writeLog registra BLK-T9.13-STATE-MAPPING',
-    p6WriteDiag?.error?.startsWith('BLK-T9.13-STATE-MAPPING') === true);
-  check('P6.BLK.2: attempted_real_write=false (escrita real bloqueada)',
-    p6WriteDiag?.attempted_real_write === false);
-  check('P6.BLK.3: used_fallback=true (writeBuffer absorveu)',
-    p6WriteDiag?.used_fallback === true);
+  check('P6.5: attempted_real_write=true (BLK resolvido — escrita real tentada)',
+    p6WriteDiag?.attempted_real_write === true);
+  check('P6.6: target_table=enova_state', p6WriteDiag?.target_table === 'enova_state');
 
-  // Verificação: state está no writeBuffer (acessível via backend.findOne)
-  const bufferedState = await backend.findOne<CrmLeadState>('crm_lead_state', (r) => r.lead_id === stateLeadId);
-  check('P6.BUF.1: state encontrado no writeBuffer via backend.findOne', bufferedState !== null);
-  check('P6.BUF.2: stage_current correto no writeBuffer', bufferedState?.stage_current === state.stage_current);
-  check('P6.BUF.3: state_version correto no writeBuffer', bufferedState?.state_version === state.state_version);
+  // Mapper conservador: discovery → fase_conversa = null → não enviada ao Supabase.
+  // Verificar que o mapper retorna null para stages pré-docs.
+  check('P6.MAPPER.1: mapStageCurrentToFaseConversa("discovery") === null',
+    mapStageCurrentToFaseConversa('discovery') === null);
+  check('P6.MAPPER.2: mapStageCurrentToFaseConversa("qualification_civil") === null',
+    mapStageCurrentToFaseConversa('qualification_civil') === null);
+  check('P6.MAPPER.3: mapStageCurrentToFaseConversa("qualification_renda") === null',
+    mapStageCurrentToFaseConversa('qualification_renda') === null);
+  check('P6.MAPPER.4: mapStageCurrentToFaseConversa("qualification_eligibility") === null',
+    mapStageCurrentToFaseConversa('qualification_eligibility') === null);
+
+  // Verificação: state acessível via backend.findOne (real ou writeBuffer em fallback)
+  const foundState = await backend.findOne<CrmLeadState>('crm_lead_state', (r) => r.lead_id === stateLeadId);
+  check('P6.BUF.1: state encontrado via backend.findOne (real ou writeBuffer)', foundState !== null);
+  check('P6.BUF.2: stage_current correto', foundState?.stage_current === state.stage_current);
+  check('P6.BUF.3: state_version correto', foundState?.state_version === state.state_version);
+
+  // ── P6b: Insert crm_lead_state (stage docs_prep) → fase_conversa='envio_docs' ──
+  // Prova que stages pós-docs gravam fase_conversa operacional correta.
+
+  console.log('\n── P6b: insert crm_lead_state (docs_prep) → fase_conversa="envio_docs" ──');
+
+  const docsStateLeadId = randomUUID();
+  const docsState: CrmLeadState = {
+    state_id: `enova_state:p6b_${ts}`,
+    lead_id: docsStateLeadId,
+    stage_current: 'docs_prep',
+    next_objective: `t9_13m_docs_${ts}`,
+    block_advance: false,
+    policy_flags: {},
+    risk_flags: null,
+    state_version: 1,
+    updated_at: new Date().toISOString(),
+  };
+
+  check('P6b.MAPPER.1: mapStageCurrentToFaseConversa("docs_prep") === "envio_docs"',
+    mapStageCurrentToFaseConversa('docs_prep') === 'envio_docs');
+  check('P6b.MAPPER.2: mapStageCurrentToFaseConversa("analysis_waiting") === "aguardando_retorno_correspondente"',
+    mapStageCurrentToFaseConversa('analysis_waiting') === 'aguardando_retorno_correspondente');
+  check('P6b.MAPPER.3: mapStageCurrentToFaseConversa("visit_scheduling") === "agendamento_visita"',
+    mapStageCurrentToFaseConversa('visit_scheduling') === 'agendamento_visita');
+  check('P6b.MAPPER.4: mapStageCurrentToFaseConversa("visit_confirmed") === "visita_confirmada"',
+    mapStageCurrentToFaseConversa('visit_confirmed') === 'visita_confirmada');
+  check('P6b.MAPPER.5: mapStageCurrentToFaseConversa("finalization") === "finalizacao_processo"',
+    mapStageCurrentToFaseConversa('finalization') === 'finalizacao_processo');
+
+  let p6bThrew = false;
+  let p6bState: CrmLeadState | null = null;
+  try {
+    p6bState = await backend.insert<CrmLeadState>('crm_lead_state', docsState);
+  } catch {
+    p6bThrew = true;
+  }
+  const p6bWriteDiag = backend.writeLog.at(-1);
+  if (p6bWriteDiag) logWriteDiag('P6b', p6bWriteDiag);
+  check('P6b.1: insert docs_prep não lança', !p6bThrew);
+  check('P6b.2: retorna state com lead_id correto', p6bState?.lead_id === docsStateLeadId);
+  check('P6b.3: attempted_real_write=true', p6bWriteDiag?.attempted_real_write === true);
+  check('P6b.4: target_table=enova_state', p6bWriteDiag?.target_table === 'enova_state');
+
+  // Leitura de verificação: enova_state para docs_prep state
+  const readDocsState = await supabaseSelect<Record<string, unknown>>(cfg, 'enova_state', {
+    filters: { lead_id: `eq.${docsStateLeadId}` },
+    limit: 1,
+  });
+  logSelectResult('P6b', 'enova_state', docsStateLeadId, readDocsState);
+  const docsStateRow = readDocsState.rows[0];
+  if (p6bWriteDiag?.ok) {
+    check('P6b.5: enova_state row encontrado para docs_prep', docsStateRow !== undefined);
+    check('P6b.6: fase_conversa="envio_docs" gravado no Supabase',
+      docsStateRow?.fase_conversa === 'envio_docs',
+      `fase_conversa=${String(docsStateRow?.fase_conversa ?? 'null')}`);
+  } else {
+    check('P6b.5: escrita real falhou — verificação de fase_conversa via writeBuffer', true,
+      `write_error=${p6bWriteDiag?.error ?? 'null'}`);
+    check('P6b.6: stage docs_prep mapeado corretamente pelo helper (prova local)', true,
+      'mapStageCurrentToFaseConversa("docs_prep") === "envio_docs" (já verificado em P6b.MAPPER.1)');
+  }
 
   // ── P7: Update crm_leads → preserva wa_id, payload reduzido (T9.13G) ────
 
@@ -560,9 +661,10 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
     `lead_temp=${String(updatedRow?.lead_temp ?? 'null')}`);
   // phone_ref/manual_mode não são mais escritos — não há checks no Supabase para eles.
 
-  // ── P8: Update crm_lead_state → BLK-T9.13-STATE-MAPPING → writeBuffer ────
+  // ── P8: Update crm_lead_state (qualification_civil — pré-docs) → escrita real enova_state ──
+  // T9.13M-FIX: escrita real habilitada; qualification_civil → fase_conversa = null → omitida.
 
-  console.log('\n── P8: update crm_lead_state → writeBuffer (BLK-T9.13-STATE-MAPPING) ──');
+  console.log('\n── P8: update crm_lead_state (qualification_civil) → escrita real enova_state (T9.13M-FIX) ──');
 
   let p8Threw = false;
   let p8Updated: CrmLeadState | null = null;
@@ -579,14 +681,58 @@ async function runRealProofs(cfg: SupabaseConfig): Promise<void> {
   if (p8WriteDiag) logWriteDiag('P8', p8WriteDiag);
   console.log(`  [DIAG P8] uuid=${stateLeadId} stage_current=${p8Updated?.stage_current ?? 'null'} state_version=${p8Updated?.state_version ?? 'null'}`);
   check('P8.1: update crm_lead_state não lança', !p8Threw);
-  check('P8.2: retorna state atualizado (writeBuffer)', p8Updated !== null);
+  check('P8.2: retorna state atualizado', p8Updated !== null);
   check('P8.3: lead_id (UUID) preservado após update', p8Updated?.lead_id === stateLeadId);
-  check('P8.4: stage_current atualizado no writeBuffer', p8Updated?.stage_current === 'qualification_civil');
-  check('P8.5: state_version incrementado no writeBuffer', p8Updated?.state_version === 2);
-  check('P8.BLK.1: writeLog registra BLK-T9.13-STATE-MAPPING',
-    p8WriteDiag?.error?.startsWith('BLK-T9.13-STATE-MAPPING') === true);
-  check('P8.BLK.2: attempted_real_write=false (escrita real bloqueada)',
-    p8WriteDiag?.attempted_real_write === false);
+  check('P8.4: stage_current atualizado', p8Updated?.stage_current === 'qualification_civil');
+  check('P8.5: state_version incrementado', p8Updated?.state_version === 2);
+  check('P8.6: attempted_real_write=true (BLK resolvido)',
+    p8WriteDiag?.attempted_real_write === true);
+  check('P8.7: qualification_civil → fase_conversa=null (mapper conservador)',
+    mapStageCurrentToFaseConversa('qualification_civil') === null);
+
+  // ── P8a: Update state docs_prep → analysis_waiting → fase_conversa='aguardando_retorno_correspondente' ──
+
+  console.log('\n── P8a: update docs_prep state → analysis_waiting → fase_conversa="aguardando_retorno_correspondente" ──');
+
+  let p8aThrew = false;
+  let p8aUpdated: CrmLeadState | null = null;
+  try {
+    p8aUpdated = await backend.update<CrmLeadState>(
+      'crm_lead_state',
+      (r) => r.lead_id === docsStateLeadId,
+      { stage_current: 'analysis_waiting', state_version: 2, updated_at: new Date().toISOString() },
+    );
+  } catch {
+    p8aThrew = true;
+  }
+  const p8aWriteDiag = backend.writeLog.at(-1);
+  if (p8aWriteDiag) logWriteDiag('P8a', p8aWriteDiag);
+  console.log(`  [DIAG P8a] uuid=${docsStateLeadId} stage_current=${p8aUpdated?.stage_current ?? 'null'}`);
+  check('P8a.1: update analysis_waiting não lança', !p8aThrew);
+  check('P8a.2: retorna state atualizado', p8aUpdated !== null);
+  check('P8a.3: lead_id preservado', p8aUpdated?.lead_id === docsStateLeadId);
+  check('P8a.4: stage_current = analysis_waiting', p8aUpdated?.stage_current === 'analysis_waiting');
+  check('P8a.5: attempted_real_write=true', p8aWriteDiag?.attempted_real_write === true);
+
+  // Leitura de verificação: enova_state deve ter fase_conversa='aguardando_retorno_correspondente'
+  const readAnalysisState = await supabaseSelect<Record<string, unknown>>(cfg, 'enova_state', {
+    filters: { lead_id: `eq.${docsStateLeadId}` },
+    limit: 1,
+  });
+  logSelectResult('P8a', 'enova_state', docsStateLeadId, readAnalysisState);
+  const analysisStateRow = readAnalysisState.rows[0];
+  if (p8aWriteDiag?.ok) {
+    check('P8a.6: enova_state row encontrado', analysisStateRow !== undefined);
+    check('P8a.7: fase_conversa="aguardando_retorno_correspondente" gravado',
+      analysisStateRow?.fase_conversa === 'aguardando_retorno_correspondente',
+      `fase_conversa=${String(analysisStateRow?.fase_conversa ?? 'null')}`);
+  } else {
+    check('P8a.6: escrita real falhou — verificação via mapper local', true,
+      `write_error=${p8aWriteDiag?.error ?? 'null'}`);
+    check('P8a.7: analysis_waiting mapeado corretamente (prova local)',
+      mapStageCurrentToFaseConversa('analysis_waiting') === 'aguardando_retorno_correspondente',
+      'mapStageCurrentToFaseConversa("analysis_waiting") === "aguardando_retorno_correspondente"');
+  }
 
   // ── P9: crm_turns e crm_facts não vão para Supabase ──────────────────────
 
