@@ -33,14 +33,13 @@ Contrato macro ativo: **T9 — aberto formalmente em 2026-05-01 via PR-T9.0** (G
 
 ## Contratos de frentes paralelas ativas
 
-| Frente | Contrato | Status | Próximo passo autorizado |
-|--------|----------|--------|--------------------------|
-| T10 — Migração Panel/CRM Enova 1 → Enova-2 | `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md` | **aberto** — T10.5C-FIX implementada em 2026-05-03; G10.1/G10.2/G10.3 APROVADOS; G10.4/G10.5 ABERTOS | **validação real Vasques**: testar `https://enova-2.vercel.app/api/health` após merge+deploy Vercel; se ok:true → G10.5 APROVADO → **T10.6-CRM-LINK** autorizada |
+*(nenhuma frente paralela ativa — T10 encerrada em 2026-05-04)*
 
 ## Contratos encerrados
 
 | Fase | Contrato arquivado | Status | Gate | Data de encerramento | PR que encerrou |
 |------|-------------------|--------|------|----------------------|-----------------|
+| T10 — Migração Panel/CRM Enova 1 → Enova-2 | `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md` | encerrado — G10 APROVADO; 10/10 critérios; canary validado por Vasques | G10 — APROVADO (G10.1–G10.7 todos aprovados por prova real) (2026-05-04) | 2026-05-04 | T10.7-READINESS |
 | T8 — Diagnóstico técnico de aderência + implementação operacional real | `schema/contracts/active/CONTRATO_IMPLANTACAO_MACRO_T8.md` | encerrado — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND | G8 — APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (2026-05-01) | 2026-05-01 | PR-T8.R (PR #176) |
 | T7 — Shadow, canary, cutover e rollback | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T7_2026-04-29.md` | encerrado — G7 APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS | G7 — APROVADO DOCUMENTALMENTE (restrições RA-G7-01..08 herdadas para T8) | 2026-04-29 | PR-T7.R |
 | T6 — Docs, multimodalidade e superfícies de canal | `schema/contracts/archive/CONTRATO_IMPLANTACAO_MACRO_T6_2026-04-28.md` | encerrado | G6 — APROVADO em 2026-04-28 | 2026-04-28 | PR-T6.R |
@@ -147,6 +146,7 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
+- 2026-05-04 — T10.7-READINESS concluída: frente T10 Panel/CRM ENCERRADA POR PROVA; G10 APROVADO (G10.1–G10.7 todos fechados por evidência real); 13 PRs (#213–#225 + T10.7) executadas; 10/10 critérios de aceite cumpridos; canary end-to-end validado por Vasques (WhatsApp → Worker → LLM → enova_log → Painel); contrato T10 movido para encerrados; próxima frente recomendada: T9-READINESS/T9.14-IMPL; T9/G9 permanece aberto e independente; readiness: `schema/readiness/T10_7_PANEL_CRM_READINESS_CLOSEOUT.md`.
 - 2026-05-03 — T10.5C-FIX implementada: `panel-nextjs/app/api/health/route.ts` corrigido — `/__admin__/health` → `/__admin__/go-live/health` (6 ocorrências); build PASS; G10.3 APROVADO; G10.5 ABERTO aguardando Vasques testar /api/health real pós-deploy Vercel; T9 permanece aberto e independente; próxima PR autorizada T9: T9.14-IMPL.
 - 2026-05-03 — T10 aberto formalmente como frente Panel/CRM: contrato `CONTRATO_T10_PANEL_CRM_MIGRATION.md` criado via PR-T10.2-CONTRACT; G10.1 APROVADO; T10.3-IMPORT → T10.4-ADAPT → T10.5-RUN → T10.5B-DIAG executadas.
 - 2026-05-01 — Sincronização de governança T9: contrato macro ativo atualizado de T8 → T9; T8 movido para contratos encerrados (G8 APROVADO frente WhatsApp PROD + LLM + outbound); CLAUDE.md atualizado para ler contrato ativo via _INDEX.md em vez de path fixo T8; próxima PR autorizada: T9.1 — Supabase runtime/env readiness.
