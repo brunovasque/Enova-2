@@ -182,51 +182,55 @@ function mapLeadToMeta(lead: CrmLead): CrmLeadMetaRow {
 }
 
 /**
- * Mapper conservador: stage_current (canônico T9) → fase_conversa (legado E1).
+ * Mapper: stage_current (canônico T9) → fase_conversa (campo real enova_state).
  *
- * Confirmado por crosscheck Enova 1 (T9.13L-DIAG):
- *   - CRM operacional começa em 'envio_docs' — stages pré-docs não entram.
- *   - Aprovado/reprovado vêm por flags booleanas, não por fase_conversa.
- *   - Para stage desconhecido: retorna null (conservador — não inventa valor).
+ * T9.15G-FIX-STAGE-AFTER-PERSISTENCE: stages pré-docs agora gravados em fase_conversa
+ * para que o stage sobreviva restart de Worker (resolução da causa raiz do loop discovery).
  *
- * Autorizado por Vasques (T9.13L §6.2, 2026-05-03):
- *   "Confirmo o mapper conservador T9.13L §6.2. Pode implementar PR-FIX sem
- *    mapear stages pré-docs para CRM operacional."
+ * Pré-docs: gravados com o próprio nome canônico (discovery, qualification_civil, etc.)
+ * Pós-docs: compatibilidade legada E1 preservada (T9.13M-FIX — não reverter).
+ * Stage desconhecido: retorna null (conservador — não inventa valor).
  */
 export function mapStageCurrentToFaseConversa(stage: string | null | undefined): string | null {
   if (!stage) return null;
   switch (stage) {
-    case 'docs_prep':       return 'envio_docs';
-    case 'analysis_waiting': return 'aguardando_retorno_correspondente';
-    case 'visit_scheduling': return 'agendamento_visita';
-    case 'visit_confirmed':  return 'visita_confirmada';
-    case 'finalization':     return 'finalizacao_processo';
-    // Pré-docs: não gravar fase operacional (CRM legado é pós-docs — T9.13L §5).
-    case 'discovery':
-    case 'qualification_civil':
-    case 'qualification_renda':
-    case 'qualification_eligibility':
+    // Pré-docs: gravar canonical stage para persistência entre restarts (T9.15G-FIX).
+    case 'discovery':              return 'discovery';
+    case 'qualification_civil':    return 'qualification_civil';
+    case 'qualification_renda':    return 'qualification_renda';
+    case 'qualification_eligibility': return 'qualification_eligibility';
+    // Pós-docs: mapeamento legado E1 preservado (T9.13M-FIX).
+    case 'docs_prep':              return 'envio_docs';
+    case 'analysis_waiting':       return 'aguardando_retorno_correspondente';
+    case 'visit_scheduling':       return 'agendamento_visita';
+    case 'visit_confirmed':        return 'visita_confirmada';
+    case 'finalization':           return 'finalizacao_processo';
     default:
       return null;
   }
 }
 
 /**
- * Reverse mapper: fase_conversa (legado E1) → stage_current (canônico T9).
+ * Reverse mapper: fase_conversa (campo real enova_state) → stage_current (canônico T9).
  *
- * Implementa o lado oposto de mapStageCurrentToFaseConversa (T9.13M-FIX).
- * Corrige BLK-T9.14-READ-PATH: mapLeadStateFromEnovaState lia row.stage_current
- * que não existe no schema real de enova_state (PGRST204 confirmado em T9.13G).
+ * T9.15G-FIX-STAGE-AFTER-PERSISTENCE: agora reconhece os stages pré-docs gravados
+ * pelo mapper write expandido — round-trip completo para qualification_civil etc.
  *
  * Princípios:
  *   - Conservador: valor desconhecido → 'discovery' (nunca inventa stage)
- *   - Não cria colunas: usa fase_conversa (existente e confirmada por T9.13K/T9.13L)
- *   - Pré-docs (null / '' / 'inicio') → 'discovery' (correto)
- *   - Pós-docs mapeados para stages T9 corretos
+ *   - Fallback legado: null / '' / 'inicio' → 'discovery' (compatibilidade preservada)
+ *   - Pré-docs canônicos: lidos de volta para o stage correto (T9.15G-FIX)
+ *   - Pós-docs: mapeamento legado E1 preservado (T9.13M-FIX)
  */
 export function mapFaseConversaToStageCurrent(faseConversa: string | null | undefined): string {
   if (!faseConversa || faseConversa === 'inicio') return 'discovery';
   switch (faseConversa) {
+    // Pré-docs canônicos (T9.15G-FIX — round-trip com mapStageCurrentToFaseConversa).
+    case 'discovery':              return 'discovery';
+    case 'qualification_civil':    return 'qualification_civil';
+    case 'qualification_renda':    return 'qualification_renda';
+    case 'qualification_eligibility': return 'qualification_eligibility';
+    // Pós-docs: mapeamento legado E1 preservado (T9.13M-FIX).
     case 'envio_docs':                        return 'docs_prep';
     case 'aguardando_retorno_correspondente': return 'analysis_waiting';
     case 'agendamento_visita':                return 'visit_scheduling';
@@ -241,9 +245,9 @@ export function mapFaseConversaToStageCurrent(faseConversa: string | null | unde
  *
  * Payload seguro — apenas colunas confirmadas no schema real (T9.13G/T9.13K/T9.13L):
  *   - lead_id + updated_at: sempre incluídos.
- *   - fase_conversa: incluída SOMENTE quando mapStageCurrentToFaseConversa retorna
- *     valor não-null (stages pós-docs confirmados). Stages pré-docs omitem o campo;
- *     o banco usa o default 'inicio' ou preserva o valor anterior.
+ *   - fase_conversa: incluída quando mapStageCurrentToFaseConversa retorna valor não-null.
+ *     Após T9.15G-FIX: inclui pré-docs (qualification_civil, etc.) e pós-docs.
+ *     Stage desconhecido → null → omitido do payload (banco preserva valor anterior).
  *
  * Campos NUNCA enviados (PGRST204 confirmados — não existem no schema real):
  *   stage_current, next_objective, block_advance, state_version, policy_flags, risk_flags.
@@ -458,9 +462,9 @@ export class SupabaseCrmBackend implements CrmBackend {
         });
         if (result.ok) return row;
       } else if (table === 'crm_lead_state') {
-        // BLK-T9.13-STATE-MAPPING RESOLVIDO (T9.13M-FIX).
-        // Mapper conservador implementado: fase_conversa gravada apenas para stages pós-docs.
-        // Stages pré-docs omitem fase_conversa do payload — banco preserva default 'inicio'.
+        // BLK-T9.13-STATE-MAPPING RESOLVIDO (T9.13M-FIX) + T9.15G-FIX-STAGE-AFTER-PERSISTENCE.
+        // fase_conversa gravada para pré-docs (qualification_civil etc.) e pós-docs.
+        // Stage desconhecido → null → omitido do payload (banco preserva valor anterior).
         const state = row as unknown as CrmLeadState;
         const result = await this.supabaseWriteLeadState(state);
         const testId = typeof state.lead_id === 'string' ? state.lead_id : '(non-test)';
@@ -540,8 +544,8 @@ export class SupabaseCrmBackend implements CrmBackend {
       }
       // Fallback: se não encontrou → writeBuffer
     } else if (this.writeEnabled && table === 'crm_lead_state') {
-      // BLK-T9.13-STATE-MAPPING RESOLVIDO (T9.13M-FIX).
-      // Mapper conservador: fase_conversa gravada apenas para stages pós-docs.
+      // BLK-T9.13-STATE-MAPPING RESOLVIDO (T9.13M-FIX) + T9.15G-FIX.
+      // fase_conversa gravada para pré-docs e pós-docs (ver mapStageCurrentToFaseConversa).
       const existing = await this.findOne<T>(table, matcher);
       if (existing) {
         const merged: T = Object.assign({}, existing, patch);

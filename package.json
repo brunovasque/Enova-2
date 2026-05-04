@@ -49,6 +49,7 @@
     "prove:meta:canary-real": "tsx src/meta/canary-real-proof.ts",
     "prove:t9.14-reverse-mapper": "tsx src/supabase/reverse-mapper-proof.ts",
     "prove:t9.15-write-read-restart": "tsx src/supabase/write-read-restart-proof.ts",
+    "prove:t9.15g-write-read-restart": "tsx src/supabase/write-read-restart-proof.ts",
     "smoke:all": "npm run smoke && npm run smoke:worker && npm run smoke:telemetry && npm run smoke:rollout && npm run smoke:e1 && npm run smoke:meta && npm run smoke:meta:webhook && npm run smoke:meta:pipeline && npm run smoke:meta:canary && npm run smoke:speech && npm run smoke:context && npm run smoke:adapter && npm run smoke:adapter:policy && npm run smoke:adapter:runtime && npm run smoke:audio && npm run smoke:panel && npm run smoke:supabase && npm run smoke:memory && npm run prove:crm-e2e",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

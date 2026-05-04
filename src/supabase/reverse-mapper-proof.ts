@@ -25,8 +25,15 @@ function check(label: string, actual: unknown, expected: unknown): void {
 
 console.log('\n=== T9.14-IMPL: Reverse Mapper fase_conversa → stage_current ===\n');
 
-// --- Bloco A: pré-docs (null / '' / 'inicio' / valor desconhecido → 'discovery') ---
-console.log('Bloco A — Pré-docs e valores desconhecidos:');
+// --- Bloco A: pré-docs canônicos (T9.15G-FIX — round-trip real) ---
+console.log('Bloco A — Pré-docs canônicos (T9.15G-FIX):');
+check('discovery → discovery',                     mapFaseConversaToStageCurrent('discovery'),              'discovery');
+check('qualification_civil → qualification_civil', mapFaseConversaToStageCurrent('qualification_civil'),    'qualification_civil');
+check('qualification_renda → qualification_renda', mapFaseConversaToStageCurrent('qualification_renda'),    'qualification_renda');
+check('qualification_eligibility → qualification_eligibility', mapFaseConversaToStageCurrent('qualification_eligibility'), 'qualification_eligibility');
+
+// --- Bloco A2: fallback legado e valores desconhecidos → 'discovery' ---
+console.log('\nBloco A2 — Fallback legado e valores desconhecidos:');
 check('null → discovery',            mapFaseConversaToStageCurrent(null),            'discovery');
 check('undefined → discovery',       mapFaseConversaToStageCurrent(undefined),       'discovery');
 check('"" → discovery',              mapFaseConversaToStageCurrent(''),               'discovery');

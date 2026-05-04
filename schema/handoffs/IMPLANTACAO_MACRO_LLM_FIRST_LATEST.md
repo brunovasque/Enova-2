@@ -1,5 +1,90 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.15G-FIX-STAGE-AFTER-PERSISTENCE — Persistência stage_after pré-docs em fase_conversa (2026-05-04)
+
+**Tipo**: PR-FIX / contratual / frente T9
+**Branch**: fix/t9.15g-stage-after-persistence
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.15F-FIX-NEXT-OBJECTIVES-SEMANTICOS (PR #234) — mapper semântico next_objective; smokes 19/19+24/24+81/81+41/41+15/15+44/44 PASS
+**Próximo passo autorizado T9**: Repetir T9.15B-PROVA-REAL-CANARY com stage_after persistente
+**Classificação**: PR-FIX — correção cirúrgica do mapper write/read em src/supabase/crm-store.ts
+
+### ESTADO HERDADO
+
+- Branch base: main (após merge PR #234)
+- Contrato ativo: T9 aberto; G9 em aberto
+- PR anterior concluída: T9.15F (PR #234) — mapper semântico next_objective implementado; prova real canary confirmou: customer_goal captura; nome_completo captura; nacionalidade captura; next_objective semântico funciona; Core calcula stage_after=qualification_civil corretamente; MAS próximo turno voltava para discovery
+- Bloqueio identificado: `mapStageCurrentToFaseConversa('qualification_civil')` retorna `null` → fase_conversa não gravada → Supabase mantém 'inicio' → read path converte inicio→discovery → restart reinicia funil
+- Smokes herdados: `smoke` 24/24 PASS, `smoke:core:text-extractor` 81/81 PASS, `smoke:meta:canary` 41/41 PASS, `prove:t9.15-write-read-restart` 44/44 PASS, `prove:t9.14-reverse-mapper` 15/15 PASS
+
+### DIAGNÓSTICO CONFIRMADO
+
+`src/supabase/crm-store.ts` — `mapStageCurrentToFaseConversa`:
+- Stages pré-docs (`discovery`, `qualification_civil`, `qualification_renda`, `qualification_eligibility`) caíam no `default: return null`
+- `mapLeadStateToEnovaState` omitia `fase_conversa` quando null → payload sem esse campo → banco preservava default `'inicio'`
+- `mapFaseConversaToStageCurrent('inicio')` → `'discovery'` → funil reiniciava
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.15g-stage-after-persistence
+- Arquivos modificados (4): `src/supabase/crm-store.ts`, `src/supabase/write-read-restart-proof.ts`, `src/supabase/reverse-mapper-proof.ts`, `package.json`
+- Zero diff fora do escopo: zero `src/core/`, zero `src/llm/`, zero `src/meta/outbound.ts`, zero `panel-nextjs/`, zero wrangler.toml, zero flags, zero Supabase schema/RLS/migrations
+
+### O que esta PR fez
+
+**src/supabase/crm-store.ts (modificado)**
+- `mapStageCurrentToFaseConversa`: pré-docs agora gravados com nome canônico (`qualification_civil → 'qualification_civil'` etc.); pós-docs inalterados
+- `mapFaseConversaToStageCurrent`: round-trip pré-docs implementado; fallback legado `inicio → discovery` preservado
+- Docstrings atualizados para refletir novo comportamento
+
+**src/supabase/write-read-restart-proof.ts (modificado)**
+- Bloco A: 4 checks pré-docs atualizados (null → canonical value)
+- Bloco B: +4 checks pré-docs canônicos adicionados (15 total)
+- Bloco C: round-trip real pré-docs + fallback legado (10 total)
+- Bloco D: +3 rows pré-docs no restart lógico (12 total)
+
+**src/supabase/reverse-mapper-proof.ts (modificado)**
+- Bloco A dividido em A (4 pré-docs canônicos) + A2 (7 fallback legado)
+
+**package.json (modificado)**
+- `"prove:t9.15g-write-read-restart"` alias adicionado
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run prove:t9.15g-write-read-restart` | 53/53 PASS \| 1 SKIP |
+| `npm run prove:t9.14-reverse-mapper` | 19/19 PASS |
+| `npm run smoke` (core) | 24/24 PASS |
+| `npm run smoke:meta:canary` | 41/41 PASS |
+| `npm run smoke:core:semantic-objectives` | 19/19 PASS |
+
+### Comportamento após deploy
+
+- Turno 1: Enova pergunta intenção → Core decide `stage_after=discovery` → `fase_conversa='discovery'` gravado no Supabase
+- Turno 2: Enova pergunta nome → Core decide `stage_after=discovery` (bloqueado, nome ainda ausente) → fase_conversa atualizada
+- Após nome + nacionalidade → Core decide `stage_after=qualification_civil` → `fase_conversa='qualification_civil'` gravado
+- Após restart Worker: leitura de `fase_conversa='qualification_civil'` → `stage_current='qualification_civil'` → funil continua corretamente
+
+### Plano de rollback
+
+`git revert <commit>` reverte os 4 arquivos. Supabase não sofre migração — apenas valores string em `fase_conversa` (campo já existente). Leads com `fase_conversa='qualification_civil'` seriam lidos como `discovery` novamente após rollback (comportamento anterior). Rollback instantâneo sem impacto em schema.
+
+### Contrato encerrado nesta PR?
+
+Não. T9/G9 permanece aberto. Esta PR é uma PR-FIX contratual da frente T9.
+
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           src/supabase/write-read-restart-proof.ts (53/53 PASS)
+Estado da evidência:                   completa (provas lógicas) | parcial (Bloco F Supabase real — exige Vasques)
+Há lacuna remanescente?:               sim — Bloco F (prova Supabase real) exige SUPABASE_T915_REAL_ENABLED=true + Vasques executar
+Há item parcial/inconclusivo bloqueante?: não — lacuna é de confirmação real, não de correção do bug
+Fechamento permitido nesta PR?:        sim — fix implementado e provado logicamente; prova real é etapa seguinte (T9.15B canary)
+Estado permitido após esta PR:         em execução (G9 continua aberto)
+Próxima PR autorizada:                 Repetir T9.15B-PROVA-REAL-CANARY com stage_after persistente
+
+---
+
 ## T9.15F-FIX-NEXT-OBJECTIVES-SEMANTICOS — Mapper semântico de next_objective (2026-05-04)
 
 **Tipo**: PR-FIX / contratual / frente T9
