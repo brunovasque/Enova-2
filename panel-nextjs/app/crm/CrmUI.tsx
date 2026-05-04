@@ -1213,13 +1213,19 @@ function ModalAtualizarAnalise({ lead, onClose, callAction, runAndRefresh }: Mod
     setBusy(true);
     await runAndRefresh(
       () => callAction({
-        action: "atualizar_analise",
+        action: "update_analysis",
         wa_id: lead.wa_id,
-        ...form,
-        valor_financiamento_aprovado: form.valor_financiamento_aprovado ? Number(form.valor_financiamento_aprovado) : null,
-        valor_subsidio_aprovado: form.valor_subsidio_aprovado ? Number(form.valor_subsidio_aprovado) : null,
-        valor_entrada_informada: form.valor_entrada_informada ? Number(form.valor_entrada_informada) : null,
-        valor_parcela_informada: form.valor_parcela_informada ? Number(form.valor_parcela_informada) : null,
+        analysis_status: form.status_analise || undefined,
+        analysis_reason_code: form.codigo_motivo_analise || undefined,
+        analysis_reason_text: form.motivo_analise || undefined,
+        analysis_adjustment_note: form.nota_ajuste_analise || undefined,
+        analysis_partner_name: form.parceiro_analise || undefined,
+        analysis_return_summary: form.resumo_retorno_analise || undefined,
+        analysis_return_reason: form.motivo_retorno_analise || undefined,
+        analysis_financing_amount: form.valor_financiamento_aprovado ? Number(form.valor_financiamento_aprovado) : undefined,
+        analysis_subsidy_amount: form.valor_subsidio_aprovado ? Number(form.valor_subsidio_aprovado) : undefined,
+        analysis_entry_amount: form.valor_entrada_informada ? Number(form.valor_entrada_informada) : undefined,
+        analysis_monthly_payment: form.valor_parcela_informada ? Number(form.valor_parcela_informada) : undefined,
       }),
       `Análise de ${leadLabel(lead)} atualizada.`
     );
@@ -1320,11 +1326,14 @@ function ModalMarcarAprovado({ lead, onClose, callAction, runAndRefresh }: Modal
     setBusy(true);
     await runAndRefresh(
       () => callAction({
-        action: "marcar_aprovado",
+        action: "update_approved",
         wa_id: lead.wa_id,
-        ...form,
-        valor_financiamento_aprovado: form.valor_financiamento_aprovado ? Number(form.valor_financiamento_aprovado) : null,
-        valor_subsidio_aprovado: form.valor_subsidio_aprovado ? Number(form.valor_subsidio_aprovado) : null,
+        approved_purchase_band: form.faixa_aprovacao || undefined,
+        approved_target_match: form.aderencia_aprovacao || undefined,
+        approved_next_step: form.proximo_passo_aprovado || undefined,
+        analysis_return_summary: form.resumo_retorno_analise || undefined,
+        analysis_financing_amount: form.valor_financiamento_aprovado ? Number(form.valor_financiamento_aprovado) : undefined,
+        analysis_subsidy_amount: form.valor_subsidio_aprovado ? Number(form.valor_subsidio_aprovado) : undefined,
       }),
       `Lead ${leadLabel(lead)} marcado como aprovado.`
     );
@@ -1401,9 +1410,14 @@ function ModalMarcarReprovado({ lead, onClose, callAction, runAndRefresh }: Moda
     setBusy(true);
     await runAndRefresh(
       () => callAction({
-        action: "marcar_reprovado",
+        action: "update_rejection",
         wa_id: lead.wa_id,
-        ...form,
+        rejection_reason_code: form.codigo_motivo_reprovacao || undefined,
+        rejection_reason_label: form.motivo_reprovacao || undefined,
+        recovery_status: form.status_recuperacao || undefined,
+        recovery_strategy_code: form.estrategia_recuperacao || undefined,
+        recovery_note_short: form.nota_recuperacao || undefined,
+        next_retry_at: form.proxima_tentativa || undefined,
       }),
       `Lead ${leadLabel(lead)} marcado como reprovado.`
     );
@@ -1478,9 +1492,15 @@ function ModalAtualizarVisita({ lead, onClose, callAction, runAndRefresh }: Moda
     setBusy(true);
     await runAndRefresh(
       () => callAction({
-        action: "atualizar_visita",
+        action: "update_visit",
         wa_id: lead.wa_id,
-        ...form,
+        visit_status: form.status_visita || undefined,
+        visit_context: form.contexto_visita || undefined,
+        visit_date: form.data_visita || undefined,
+        visit_result: form.resultado_visita || undefined,
+        visit_next_step: form.proximo_passo_visita || undefined,
+        visit_owner: form.responsavel_visita || undefined,
+        visit_notes_short: form.observacao_visita || undefined,
       }),
       `Visita de ${leadLabel(lead)} atualizada.`
     );
@@ -1559,10 +1579,12 @@ function ModalAtualizarScore({ lead, onClose, callAction, runAndRefresh }: Modal
     setBusy(true);
     await runAndRefresh(
       () => callAction({
-        action: "atualizar_score",
+        action: "update_analysis",
         wa_id: lead.wa_id,
-        ...form,
-        score_perfil_analise: form.score_perfil_analise ? Number(form.score_perfil_analise) : null,
+        analysis_profile_score: form.score_perfil_analise ? Number(form.score_perfil_analise) : undefined,
+        analysis_profile_band: form.faixa_perfil_analise || undefined,
+        analysis_work_score_label: form.label_score_trabalho || undefined,
+        analysis_work_score_reason: form.motivo_score_trabalho || undefined,
       }),
       `Score de ${leadLabel(lead)} atualizado.`
     );

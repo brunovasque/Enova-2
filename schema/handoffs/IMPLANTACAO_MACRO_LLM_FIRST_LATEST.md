@@ -1,5 +1,88 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.6-CRM-LINK — CRM linkado ao Supabase real + fix de modais (2026-05-04)
+
+**Tipo**: PR-DIAGFIX | **Branch**: `diagfix/t10.6-crm-link-supabase-real`  
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`  
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)  
+**Próximo passo autorizado T10**: T10.7-READINESS (readiness/closeout formal da frente Panel/CRM)  
+**Próximo passo autorizado T9**: T9.14-IMPL  
+**Classificação**: `contratual` — PR-DIAGFIX com fix condicional aplicado dentro de panel-nextjs
+
+### O que esta PR fez
+
+1. Mapeou o fluxo completo `/crm` UI → Server Action → `listCrmLeads`/`runCrmAction` → `crm_leads_v1`/`crm_lead_meta`
+2. Confirmou que a view `crm_leads_v1` existe e retorna dados reais (Vasques confirmou "Pasta incompleta: 1")
+3. Confirmou que o CRM NÃO usa `enova_attendance_v1` para listagem — usa `crm_leads_v1` (dados E2 canônicos)
+4. Confirmou que auth está alinhado via `get-admin-key.ts` (`CRM_ADMIN_KEY ?? ENOVA_ADMIN_KEY`)
+5. **Identificou e corrigiu bug crítico**: os 5 modais de ação enviavam `action` names em português (`"atualizar_analise"`, `"marcar_aprovado"`, `"marcar_reprovado"`, `"atualizar_visita"`, `"atualizar_score"`) que o backend não reconhecia → `UNKNOWN_ACTION`
+6. Corrigiu também os field names divergentes (pt → en) no payload de cada modal
+7. Rodou `npm run build` — PASS 25/25, zero erros de tipo
+8. Criou `schema/diagnostics/T10_6_CRM_LINK_SUPABASE_REAL_DIAG.md`
+9. Criou `schema/proofs/T10_6_CRM_LINK_SUPABASE_REAL_FIX_PROOF.md`
+10. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+11. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `src/` do Worker — zero diff em src/
+- **Não alterou** Supabase schema, RLS, migrations, views
+- **Não fechou** G10.6 formalmente — requer validação visual Vasques das ações dos modais
+- **Não fechou** G9/T9 — frentes completamente separadas
+
+### Bug corrigido: modais CRM com action names divergentes
+
+| Modal | action antes (BUG) | action depois (FIX) |
+|-------|-------------------|-------------------|
+| ModalAtualizarAnalise | `"atualizar_analise"` | `"update_analysis"` |
+| ModalMarcarAprovado | `"marcar_aprovado"` | `"update_approved"` |
+| ModalMarcarReprovado | `"marcar_reprovado"` | `"update_rejection"` |
+| ModalAtualizarVisita | `"atualizar_visita"` | `"update_visit"` |
+| ModalAtualizarScore | `"atualizar_score"` | `"update_analysis"` |
+
+Além dos action names, os field names no payload também foram remapeados (pt → en) em todos os modais.
+
+### Estado dos gates T10
+
+| Gate | Status |
+|------|--------|
+| G10.1 (contrato) | APROVADO — T10.2 ✅ |
+| G10.2 (import) | APROVADO — T10.3 ✅ |
+| G10.3 (build local) | APROVADO — T10.5 ✅ |
+| G10.4 (preview Vercel) | ABERTO — requer Vasques |
+| G10.5 (/api/health real) | APROVADO — Vasques confirmou `ok=true` |
+| G10.6 (CRM real) | APROVÁVEL — listagem confirmada Vasques; modais corrigidos + build PASS; requer validação Vasques |
+| G10.7 (readiness) | ABERTO — T10.7-READINESS |
+
+### Riscos herdados
+
+| ID | Risco | Status |
+|----|-------|--------|
+| LAC-T10.6-01 | Validação visual Vasques das ações dos modais pós-deploy Vercel | ABERTA — não bloqueante tecnicamente |
+| LAC-T10.6B-01 | Thread de mensagens usa `enova_log` E1 — vazia para leads E2 puros | ABERTA — não bloqueante; frente futura |
+| LAC-T10.5-01 | Preview Vercel — painel carrega no browser | ABERTA — ação Vasques (G10.4) |
+| BLK-T10-05 | 26 arquivos app/lib/ ENOVA IA | PERMANECE — não bloqueante para CRM |
+
+### Diagnóstico e prova
+
+- `schema/diagnostics/T10_6_CRM_LINK_SUPABASE_REAL_DIAG.md` — mapeamento completo + bug identificado
+- `schema/proofs/T10_6_CRM_LINK_SUPABASE_REAL_FIX_PROOF.md` — fix detalhado + build PASS
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/proofs/T10_6_CRM_LINK_SUPABASE_REAL_FIX_PROOF.md
+Estado da evidência:                   completa — diagnóstico + fix + build PASS documentados
+Há lacuna remanescente?:               sim — LAC-T10.6-01: validação visual Vasques dos modais
+Há item parcial/inconclusivo bloqueante?: não — lacuna é validação de UI por operador, não técnica
+Fechamento permitido nesta PR?:        sim — T10.6-CRM-LINK encerrada; G10.6 aprovável pós Vasques
+Estado permitido após esta PR:         T10.6-CRM-LINK concluída; G10.6 em validação Vasques
+Próxima PR autorizada:                 T10.7-READINESS
+```
+
+---
+
 ## T10.6C-DIAG — Thread de mensagens WhatsApp: diagnóstico profundo (2026-05-04)
 
 **Tipo**: PR-DIAG | **Branch**: `diagfix/t10.6c-current-whatsapp-messages`  
