@@ -1,5 +1,57 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.1-DIAG — Crosscheck Panel CRM Enova 1 para migração ao Enova-2 (2026-05-03)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t10.1-panel-crm-enova1-crosscheck`
+**Contrato ativo**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto; T10 frente nova aguarda contrato)
+**Próximo passo autorizado T9**: T9.14-IMPL (ou T9.13N-PROVA com UUID real)
+**Próximo passo autorizado T10**: PR-T10.2-CONTRACT — criar contrato formal T10 (requer autorização Vasques)
+**Classificação**: `diagnostico` (fora do contrato T9 — abertura diagnóstica de frente nova)
+
+### O que esta PR fez
+
+1. Leitura READ-ONLY completa de `D:\Enova\panel` (repositório Enova 1 — local, SOMENTE LEITURA)
+2. Inventário técnico: Next.js 14.2.5, React 18, TypeScript, 7 abas, 13 rotas API, 26 arquivos de lógica IA
+3. Mapeamento de tabelas/views Supabase usadas pelo painel
+4. Identificação de envs necessárias e gaps de auth
+5. Análise de riscos de importação e conflitos com Enova-2
+6. Proposta de plano de migração em 6 PRs (T10.1 → T10.6)
+7. Criação de `schema/diagnostics/T10_1_PANEL_CRM_ENOVA1_CROSSCHECK.md`
+8. Atualização de `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. Atualização de `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md`
+
+### O que esta PR NÃO fez
+
+- Não copiou o painel do Enova 1
+- Não alterou `src/` do Enova-2 (zero src/ modificado)
+- Não alterou Worker, LLM, WhatsApp, webhook, outbound
+- Não alterou Supabase, schema, RLS, migrations
+- Não fechou G9 ou qualquer gate T9
+- Não criou contrato T10 (próximo passo)
+- Não modificou nenhum arquivo em `D:\Enova`
+
+### Achados críticos
+
+| Achado | Impacto |
+|--------|---------|
+| Painel é Next.js — não roda no Cloudflare Worker | Precisa ser projeto separado (Vercel) |
+| Auth header diverge: `x-enova-admin-key` vs `X-CRM-Admin-Key` | Adaptação necessária em T10.4 |
+| Views Supabase não confirmadas: `crm_leads_v1`, `enova_attendance_v1`, `bases_leads_v1` | Risco médio em T10.6 |
+| `WORKER_BASE_URL` não declarada no Enova-2 | Env necessária para painel apontar para Worker |
+| 26 arquivos lógica IA em `app/lib/` | Dependência de schema/prompts Enova 1 — migração cuidadosa |
+
+### Próximos passos
+
+1. **T9.14-IMPL** (contrato T9 — próxima PR autorizada na frente runtime)
+2. **T10.2-CONTRACT** (frente Panel/CRM — requer autorização Vasques antes de abrir)
+
+### T9 estado após esta PR
+
+T9 continua aberto. BLK-T9.13-STATE-MAPPING resolvido (PR #212). G9 ainda não fechado.
+Próxima PR autorizada T9: T9.14-IMPL ou T9.13N-PROVA.
+
+---
+
 ## T9.13M-FIX — Mapper conservador `crm_lead_state` → `enova_state` (2026-05-03)
 
 **Tipo**: PR-FIX | **Branch**: `fix/t9.13m-state-mapping-conservative`
