@@ -1,5 +1,88 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.6B-FIX — Conversas alinhadas com fontes atuais do Enova-2 (2026-05-04)
+
+**Tipo**: PR-IMPL | **Branch**: `fix/t10.6b-conversations-current-sources`  
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`  
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)  
+**Próximo passo autorizado T10**: T10.6-CRM-LINK (ligar CRM real com Supabase; validar views) → depois T10.7-READINESS  
+**Próximo passo autorizado T9**: T9.14-IMPL  
+**Classificação**: `contratual` — PR-IMPL dentro do escopo T10.6B-FIX autorizado pelo T10.6A-DIAG
+
+### O que esta PR fez
+
+1. Atualizou `panel-nextjs/app/api/conversations/route.ts`:
+   - Adicionou enrichment paralelo de `crm_lead_meta` por `wa_id` (campos: `nome`, `lead_pool`, `lead_temp`, `status_operacional`)
+   - Implementou `normalizeFaseConversa()` — whitelist E2: apenas `envio_docs`, `aguardando_retorno_correspondente`, `agendamento_visita`, `visita_confirmada`, `finalizacao_processo`
+   - Todos os stages E1 (`inicio`, `clt_renda_perfil_informativo`, `quem_pode_somar`, etc.) são silenciosamente suprimidos
+   - `funil_status` de `enova_state` sempre retorna `null` — valores eram exclusivamente E1
+   - `nome` agora prefere `crm_lead_meta.nome` (panel-managed) sobre `enova_state.nome` (stale E1)
+   - Novos campos expostos: `lead_pool`, `lead_temp`, `status_operacional`
+   - Queries `enova_log` (fallback) e `crm_lead_meta` (enrichment) rodadas em paralelo (`Promise.all`)
+2. Atualizou `panel-nextjs/app/conversations/ConversationUI.tsx`:
+   - Tipo `Conversation` recebeu `lead_pool`, `lead_temp`, `status_operacional`
+   - Badges sidebar e thread header: `funil_status` removido do JSX; `lead_pool`, `lead_temp`, `status_operacional` adicionados como badges primários
+3. Criou `schema/proofs/T10_6B_CONVERSATIONS_CURRENT_SOURCES_PROOF.md`
+4. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `panel-nextjs/app/api/messages/route.ts` — thread continua usando `enova_log` (fallback temporário; vazio para leads E2 puros — comportamento esperado e documentado como LAC-T10.6B-01)
+- **Não alterou** `src/` do Worker — zero diff em src/
+- **Não alterou** Supabase schema, RLS, migrations, views
+- **Não fechou** G10.6 — permanece ABERTO (requer T10.6-CRM-LINK)
+- **Não fechou** G9/T9 — frentes completamente separadas
+
+### Resultado visual esperado após esta PR
+
+- `/conversations` continua carregando e listando conversas
+- Lista permanece clicável
+- Conversas antigas continuam visíveis (enova_state preservado)
+- Badges E1 obsoletos (`clt_renda_perfil_informativo`, `quem_pode_somar`, `inicio`, etc.) **não aparecem mais**
+- Para leads com dados em `crm_lead_meta`: badges `lead_pool`/`lead_temp`/`status_operacional` aparecem
+- Para leads sem `crm_lead_meta`: badges ficam vazios (nenhum badge de fase, apenas `manual` se ativo)
+- Thread pode continuar exibindo mensagens antigas temporariamente (fallback E1)
+
+### Estado dos gates T10
+
+| Gate | Status |
+|------|--------|
+| G10.1 (contrato) | APROVADO — T10.2 ✅ |
+| G10.2 (import) | APROVADO — T10.3 ✅ |
+| G10.3 (build local) | APROVADO — T10.5 ✅ |
+| G10.4 (preview Vercel) | ABERTO — requer Vasques |
+| G10.5 (/api/health real) | **APROVADO** — Vasques confirmou `ok=true` |
+| G10.6 (CRM real) | ABERTO — T10.6-CRM-LINK |
+| G10.7 (readiness) | ABERTO — T10.7-READINESS |
+
+### Riscos herdados
+
+| ID | Risco | Status |
+|----|-------|--------|
+| LAC-T10.6B-01 | Thread de mensagens usa `enova_log` E1 — vazia para leads E2 puros | ABERTA — não bloqueante; frente futura de eventos/logs Worker |
+| LAC-T10.5-01 | Preview Vercel — painel carrega no browser | ABERTA — ação Vasques (G10.4) |
+| BLK-T10-05 | 26 arquivos app/lib/ ENOVA IA | PERMANECE — não bloqueante para CRM |
+
+### Prova
+
+`schema/proofs/T10_6B_CONVERSATIONS_CURRENT_SOURCES_PROOF.md` — build PASS, diff limpo, 2 arquivos alterados, zero src/, zero schema
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/proofs/T10_6B_CONVERSATIONS_CURRENT_SOURCES_PROOF.md
+Estado da evidência:                   completa — build PASS, diff limpo, alterações verificáveis
+Há lacuna remanescente?:               sim — LAC-T10.6B-01: thread de mensagens vazia para leads E2 puros
+Há item parcial/inconclusivo bloqueante?: não — badges E1 suprimidos; fontes E2 integradas; build PASS
+Fechamento permitido nesta PR?:        sim — T10.6B-FIX encerrada; G10.6 permanece ABERTO
+Estado permitido após esta PR:         T10.6B-FIX concluída; G10.6 ABERTO aguarda T10.6-CRM-LINK
+Próxima PR autorizada:                 T10.6-CRM-LINK (ligar CRM real com Supabase; validar views)
+```
+
+---
+
 ## T10.6A-DIAG — Diagnóstico conversas desatualizadas (2026-05-03)
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t10.6a-conversations-stale-data`  
