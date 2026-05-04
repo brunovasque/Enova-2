@@ -8,6 +8,14 @@ Todas as operações git e filesystem estão pré-aprovadas neste repo:
 
 Não peça confirmação para operações git. Execute diretamente.
 
+Permissões
+Todas as operações são pré-aprovadas neste repo:
+
+Leitura e escrita de arquivos
+Execução de comandos bash/shell
+Operações git (commit, branch, push)
+Sem necessidade de confirmação para operações locais
+
 ## Leitura obrigatória no início de cada sessão
 Antes de qualquer ação, leia nesta ordem:
 1. schema/contracts/_INDEX.md — identifica o contrato macro ativo atual
