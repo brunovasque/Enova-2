@@ -1,5 +1,92 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.6C-DIAG — Thread de mensagens WhatsApp: diagnóstico profundo (2026-05-04)
+
+**Tipo**: PR-DIAG | **Branch**: `diagfix/t10.6c-current-whatsapp-messages`  
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`  
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)  
+**Próximo passo autorizado T10**: T10.6-CRM-LINK (ligar CRM real com Supabase; validar views) → depois T10.7-READINESS  
+**Próximo passo autorizado T9**: T9.14-IMPL  
+**Classificação**: `diagnostico` — PR-DIAG READ-ONLY; nenhuma alteração de código; fix condicional avaliado e NÃO implementado
+
+### O que esta PR fez
+
+1. Mapeou o fluxo inbound completo do Worker E2: `src/meta/webhook.ts` → `parseMetaWebhookPayload` → `runCanaryPipeline` → `runInboundPipeline` → `createConversationTurn` → **writeBuffer** (não Supabase real)
+2. Mapeou o fluxo outbound: LLM reply via `callLlm` → `applyOutputGuard` → `sendMetaOutbound` — **jamais persiste em nenhuma tabela Supabase**
+3. Confirmou inventário completo de escritas Supabase reais pelo Worker: apenas `crm_lead_meta` (wa_id, lead_pool, lead_temp, updated_at) e `enova_state` (lead_id, updated_at, fase_conversa) — zero texto de mensagem
+4. Mapeou `/api/messages` (`panel-nextjs/app/api/messages/route.ts`): lê `enova_log` com tags `meta_minimal`/`DECISION_OUTPUT`/`SEND_OK` — tags escritos **exclusivamente pelo Enova-1**, nunca pelo Worker E2
+5. Confirmou por grep extensivo em `src/`: zero ocorrências de `enova_log`, zero tags `meta_minimal`/`DECISION_OUTPUT`/`SEND_OK` escritos
+6. Leu `src/supabase/crm-store.ts:401` — comentário explícito: "crm_turns, crm_facts e demais: fallthrough para writeBuffer"
+7. Leu `src/crm/service.ts` — `createConversationTurn` usa `backend.insert('crm_turns', ...)` que vai para writeBuffer; `raw_input_summary = text_body.slice(0, 200)` — texto truncado, nunca chega ao Supabase real
+8. Avaliou as 5 condições do fix condicional — **TODAS são FALSE** → Fix NÃO implementado
+9. Criou `schema/diagnostics/T10_6C_CURRENT_WHATSAPP_MESSAGES_DIAG.md` (15 seções com Bloco E)
+10. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+11. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- **Não alterou** nenhum arquivo em `panel-nextjs/`
+- **Não alterou** `src/` do Worker — zero diff em src/
+- **Não alterou** Supabase schema, RLS, migrations, views
+- **Não fechou** G10.6 — permanece ABERTO (requer T10.6-CRM-LINK)
+- **Não fechou** G9/T9 — frentes completamente separadas
+- **Não implementou** fix condicional — condições não satisfeitas
+
+### Causa raiz definitiva
+
+| ID | Causa | Evidência |
+|----|-------|-----------|
+| ROOT-C-01 | Worker E2 NUNCA escreve `enova_log` com nenhuma tag | Grep `src/`: zero ocorrências; `src/supabase/types.ts:51` = read-only reference |
+| ROOT-C-02 | `crm_turns` (única tabela com `raw_input_summary`) SEMPRE vai para writeBuffer in-memory | `src/supabase/crm-store.ts:401`: comentário explícito "fallthrough para writeBuffer" |
+| ROOT-C-03 | `/api/messages` depende de tags E1 (`meta_minimal`/`DECISION_OUTPUT`/`SEND_OK`) que o E2 nunca produz | `panel-nextjs/app/api/messages/route.ts` — query hardcoded para esses tags |
+| ROOT-C-04 | Texto de reply do LLM nunca é persistido — vai direto de `callLlm` para `sendMetaOutbound` | `src/meta/canary-pipeline.ts` — zero insert/upsert entre LLM e outbound |
+
+### Avaliação do fix condicional — todas FALSE
+
+| Condição | Resultado | Detalhe |
+|----------|-----------|---------|
+| Existe tabela Supabase real com wa_id + text + direction + created_at? | **FALSE** | Nenhuma tabela com esses campos — crm_turns é in-memory |
+| Worker E2 já escreve nessa tabela? | **FALSE** | crm_turns → writeBuffer; enova_log → nunca |
+| Não requer migração de schema Supabase? | **FALSE** | crm_turns não existe no Supabase real — precisaria ser criada |
+| Não requer alteração em src/ do Worker? | **FALSE** | Seria necessário desviar crm_turns do writeBuffer para o Supabase real |
+| Dados suficientes e fidedignos na fonte? | **FALSE** | Mesmo crm_turns trunca a 200 chars — reply do LLM nunca é salvo |
+
+### Lacuna registrada
+
+**LAC-T10.6C-01**: Não existe fonte Supabase real com texto de mensagem atual + wa_id + direction + created_at. Para ter uma thread de mensagens real no painel seria necessária uma PR de Worker separada (fora do escopo T10) que: (1) persista `crm_turns` no Supabase real, (2) adicione campo para reply do LLM, (3) adicione `CrmTurnsRow` ao `src/supabase/types.ts`. Esta PR está fora do escopo contratual do T10 (§4: "Não mexer em src/ do Worker durante nenhuma PR da frente T10").
+
+### Estado dos gates T10
+
+| Gate | Status |
+|------|--------|
+| G10.1 (contrato) | APROVADO — T10.2 ✅ |
+| G10.2 (import) | APROVADO — T10.3 ✅ |
+| G10.3 (build local) | APROVADO — T10.5 ✅ |
+| G10.4 (preview Vercel) | ABERTO — requer Vasques |
+| G10.5 (/api/health real) | APROVADO — Vasques confirmou `ok=true` |
+| G10.6 (CRM real) | ABERTO — T10.6-CRM-LINK |
+| G10.7 (readiness) | ABERTO — T10.7-READINESS |
+
+### Diagnóstico
+
+`schema/diagnostics/T10_6C_CURRENT_WHATSAPP_MESSAGES_DIAG.md` — 15 seções, Bloco E incluído, fix NOT autorizado documentado
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/diagnostics/T10_6C_CURRENT_WHATSAPP_MESSAGES_DIAG.md
+Estado da evidência:                   completa — diagnóstico READ-ONLY; fix avaliado e NÃO implementado
+Há lacuna remanescente?:               sim — LAC-T10.6C-01: nenhuma fonte Supabase com texto de mensagem atual
+Há item parcial/inconclusivo bloqueante?: não — causa raiz identificada; fix condicional avaliado; caminho claro documentado
+Fechamento permitido nesta PR?:        sim — T10.6C-DIAG encerrada; G10.6 permanece ABERTO
+Estado permitido após esta PR:         T10.6C-DIAG concluída; thread de mensagens permanece com fallback E1 (vazia para E2 puros);
+                                        G10.6 ABERTO aguarda T10.6-CRM-LINK
+Próxima PR autorizada:                 T10.6-CRM-LINK (ligar CRM real com Supabase; validar views)
+```
+
+---
+
 ## T10.6B-FIX — Conversas alinhadas com fontes atuais do Enova-2 (2026-05-04)
 
 **Tipo**: PR-IMPL | **Branch**: `fix/t10.6b-conversations-current-sources`  
