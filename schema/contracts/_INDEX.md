@@ -29,7 +29,7 @@ Contrato macro ativo: **T9 — aberto formalmente em 2026-05-01 via PR-T9.0** (G
 
 | Fase | Status | Próximo passo autorizado |
 |------|--------|--------------------------|
-| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — T9.15B-PROVA-REAL-CANARY executada em 2026-05-04; roteiro canary real criado em `schema/proofs/T9_15B_REAL_CANARY_FUNNEL_PROOF.md`; prova real pendente execução por Vasques; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **T9.R-CLOSEOUT-G9** (somente após Vasques executar roteiro e confirmar todos os critérios G9) — se algum item falhar: PR-FIX cirúrgica |
+| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — T9.15C-FIX-PARSER-TOPO-FUNIL implementada em 2026-05-04; `extractDiscovery` corrigido: `compro sozinho` e variantes naturais detectam `customer_goal=comprar_imovel`; smoke 69/69 PASS; causa raiz da falha T9.15B resolvida; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **Repetir T9.15B-PROVA-REAL-CANARY** (executar roteiro canary com parser corrigido; se passar: T9.R-CLOSEOUT-G9) |
 
 ## Contratos de frentes paralelas ativas
 
@@ -146,6 +146,7 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
+- 2026-05-04 — T9.15C-FIX-PARSER-TOPO-FUNIL implementada: `extractDiscovery` em `src/core/text-extractor.ts` corrigido — `compro sozinho` e variantes naturais agora detectam `customer_goal=comprar_imovel`; guarda de negação adicionada; smoke 69/69 PASS; G9 permanece aberto; próxima PR: Repetir T9.15B-PROVA-REAL-CANARY.
 - 2026-05-04 — T9.15B-PROVA-REAL-CANARY criada: roteiro canary real completo em `schema/proofs/T9_15B_REAL_CANARY_FUNNEL_PROOF.md`; pré-condições, roteiro 3 turnos, comandos SQL/tail, checklists, plano rollback, critérios G9, análise risco documentados; G9-03/G9-07/G9-09/G9-10 pendentes execução Vasques; G9 permanece aberto; próxima PR: T9.R-CLOSEOUT-G9 (somente após prova real confirmada) ou PR-FIX cirúrgica se falhar.
 - 2026-05-04 — T9.15-PROVA criada: write/read/restart lógico 44/44 PASS; `src/supabase/write-read-restart-proof.ts`; `prove:t9.15-write-read-restart` adicionado; G9-02/G9-04 provados logicamente; G9-03/G9-07/G9-09/G9-10 pendentes conversa real; Bloco F real pendente Vasques.
 - 2026-05-04 — T9.14-IMPL concluída: BLK-T9.14-READ-PATH resolvido em código; `mapFaseConversaToStageCurrent()` criada em `src/supabase/crm-store.ts`; `mapLeadStateFromEnovaState` corrigida — removida dependência de `row.stage_current` (inexistente), usa `row.fase_conversa`; prova 15/15 PASS; regressões 70/70 + 41/41 PASS; G9-02/G9-04 desbloqueados em código — prova real pendente T9.15-PROVA; G9 permanece aberto; próxima PR: T9.15-PROVA.

@@ -1,5 +1,93 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.15C-FIX-PARSER-TOPO-FUNIL — Parser extractDiscovery corrigido (2026-05-04)
+
+**Tipo**: PR-IMPL / contratual — cirúrgica | **Branch**: `fix/t9.15c-parser-topo-funil`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto)
+**PR anterior**: T9.15B-PROVA-REAL-CANARY (PR #230) — roteiro canary real criado; prova real mostrou que "compro sozinho" não era capturado
+**Próximo passo autorizado T9**: Repetir T9.15B-PROVA-REAL-CANARY
+**Classificação**: `contratual` — PR-IMPL dentro do contrato T9 (parsers L04-L17, frente funil)
+
+### O que esta PR fez
+
+1. Corrigiu `src/core/text-extractor.ts` — função `extractDiscovery`:
+   - Adicionou guarda de negação: `const isNegation = contains(n, 'nao quero comprar', ...)` — evita falso positivo em "Não quero comprar nada agora"
+   - Adicionou vocabulário natural real para `customer_goal='comprar_imovel'`:
+     - `'compro sozinho'`, `'compro sozinha'` — cobre frase real do canary
+     - `'vou comprar'`, `'pretendo comprar'`, `'gostaria de comprar'`
+     - `'tenho interesse'`
+   - Manteve TODOS os padrões existentes intactos
+2. Atualizou `src/core/text-extractor-smoke.ts`:
+   - Adicionou 8 casos PASS (T9.15C — linguagem natural real)
+   - Adicionou 3 regressões negativas (D-N1/D-N2/D-N3 — falsos positivos)
+   - Total: 69 PASS | 0 FAIL (era 56 PASS)
+3. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+4. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+5. Atualizou `schema/contracts/_INDEX.md` — próxima PR: Repetir T9.15B-PROVA-REAL-CANARY
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `src/core/engine.ts` — zero diff
+- **Não alterou** `src/core/top-parser.ts` — zero diff
+- **Não alterou** `src/core/top-gates.ts` — zero diff
+- **Não alterou** `src/meta/canary-pipeline.ts` — zero diff
+- **Não alterou** `src/llm/` — zero diff
+- **Não alterou** `src/supabase/` — zero diff
+- **Não alterou** `panel-nextjs/` — zero diff
+- **Não alterou** `wrangler.toml` — zero diff
+- **Não alterou** migrations/schema/RLS Supabase
+- **Não ativou** `CLIENT_REAL_ENABLED` — zero diff em flags
+- **Não fechou** G9 — frente permanece aberta
+- **Não implementou** multi-stage extraction nem LLM structured extraction
+- **Não mexeu** em RNM, qualification_special, docs ou visitas
+
+### Provas entregues
+
+| Prova | Resultado |
+|-------|-----------|
+| `smoke:core:text-extractor` | **69 PASS \| 0 FAIL** (era 56) |
+| Frase real do canary capturada | `customer_goal='comprar_imovel'` ✅ |
+| `smoke:meta:canary` | **41/41 PASS** (regressão) |
+| `prove:t9.15-write-read-restart` | **44/44 PASS \| 1 SKIP** (regressão) |
+| `prove:t9.14-reverse-mapper` | **15/15 PASS** (regressão) |
+
+### Causa raiz resolvida
+
+**Mensagem real do canary**: "Sou solteiro, compro sozinho e ganho 3500 CLT."
+- **Antes**: `text_extractor.result facts_extracted_count=0 fact_keys=[]` → `block_advance=true`
+- **Depois**: `customer_goal='comprar_imovel'` capturado → funil desbloqueado para `qualification_civil`
+
+### Estado de G9 após esta PR
+
+| Critério | Status |
+|----------|--------|
+| G9-01 — Worker chama `runCoreEngine` | ⚠️ provado logicamente — pendente tail real |
+| G9-02 — `stage_current` em Supabase real | ⚠️ provado logicamente — pendente Bloco F real |
+| G9-03 — conversa real ≥3 turnos avança funil | ⚠️ roteiro pronto + parser corrigido — pendente execução Vasques |
+| G9-04 — restart preserva stage | ⚠️ provado logicamente — pendente restart real |
+| G9-05 — output guard bloqueia aprovação | ✅ PROVADO (smoke 48/48) |
+| G9-06 — LLM recebe LlmContext estruturado | ✅ PROVADO (smoke) |
+| G9-07 — facts extraídos em produção real | ⚠️ parser corrigido — pendente execução Vasques |
+| G9-08 — Supabase real ativo em PROD | ✅ PROVADO (health check) |
+| G9-09 — trace com correlation_id em tail | ⚠️ pendente tail real Vasques |
+| G9-10 — Vasques confirma ≥5 conversas | ⚠️ pendente confirmação Vasques |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           src/core/text-extractor-smoke.ts (69/69 PASS)
+Estado da evidência:                   completa — para o escopo desta PR (correção do parser)
+Há lacuna remanescente?:               não — para o escopo desta PR; G9 continua aberto
+Há item parcial/inconclusivo bloqueante?: não — para esta PR
+Fechamento permitido nesta PR?:        sim — para correção do parser e smoke
+                                       NÃO — para G9; G9 permanece aberto
+Estado permitido após esta PR:         T9 em execução; G9 aberto; parser corrigido
+Próxima PR autorizada:                 Repetir T9.15B-PROVA-REAL-CANARY
+```
+
+---
+
 ## T9.15B-PROVA-REAL-CANARY — Roteiro Real Canary Criado (2026-05-04)
 
 **Tipo**: PR-PROVA / contratual | **Branch**: `prove/t9.15b-real-canary-funnel`

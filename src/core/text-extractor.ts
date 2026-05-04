@@ -42,6 +42,9 @@ function contains(normalized: string, ...terms: string[]): boolean {
 function extractDiscovery(n: string): Record<string, unknown> {
   const facts: Record<string, unknown> = {};
 
+  // Negação explícita bloqueia intenção de compra ("não quero comprar nada agora")
+  const isNegation = contains(n, 'nao quero comprar', 'nao tenho interesse em comprar');
+
   // Entender tem prioridade: "como funciona o MCMV" é entender, não comprar
   // Padrões usados são específicos para evitar falsos positivos com textos de triagem inicial
   if (
@@ -51,10 +54,14 @@ function extractDiscovery(n: string): Record<string, unknown> {
   ) {
     facts['customer_goal'] = 'entender_programa';
   } else if (
+    !isNegation &&
     // "minha casa minha vida" sem sinal de entender = intenção de comprar
+    // T9.15C: vocabulário natural real adicionado ("compro sozinho", "vou comprar", etc.)
     contains(n, 'minha casa minha vida', 'quero comprar', 'comprar imovel',
       'financiamento', 'programa habitacional', 'casa propria', 'quero a casa',
-      'quero um imovel', 'quero financiar', 'minha casa', 'financiar imovel')
+      'quero um imovel', 'quero financiar', 'minha casa', 'financiar imovel',
+      'compro sozinho', 'compro sozinha', 'vou comprar', 'pretendo comprar',
+      'gostaria de comprar', 'tenho interesse')
   ) {
     facts['customer_goal'] = 'comprar_imovel';
   } else if (contains(n, 'enviar documentos', 'enviar docs', 'mandar documentos', 'mando os docs')) {
