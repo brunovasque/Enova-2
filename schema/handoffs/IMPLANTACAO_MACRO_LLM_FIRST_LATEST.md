@@ -1,5 +1,80 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.3-IMPORT — Import bruto do painel Enova 1 para panel-nextjs/ (2026-05-03)
+
+**Tipo**: PR-IMPL | **Branch**: `feat/t10.3-panel-import-bruto`
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Próximo passo autorizado T10**: T10.4-ADAPT — PR-IMPL — adaptação mínima (envs, auth, WORKER_BASE_URL, build)
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `contratual` — execução de T10.3-IMPORT conforme §3 do contrato T10
+
+### O que esta PR fez
+
+1. Copiou integralmente `D:\Enova\panel` → `panel-nextjs/` via robocopy
+2. 100 arquivos copiados (origem=100, destino=100, delta=0) — cópia bruta/fiel sem adaptação
+3. Verificou e confirmou 8/8 arquivos principais obrigatórios presentes
+4. Atualizou `.gitignore` root com entradas `panel-nextjs/node_modules/`, `panel-nextjs/.next/`, `panel-nextjs/.env*`, `panel-nextjs/tsconfig.tsbuildinfo`, `panel-nextjs/public/pdf.worker.min.mjs`
+5. Criou `schema/proofs/T10_3_PANEL_IMPORT_PROOF.md` com evidência completa
+6. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` — entrada T10.3 no topo
+7. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- Não adaptou nenhum código funcional do painel
+- Não alterou auth, envs, chamadas Supabase, chamadas Worker, visual/UX
+- Não alterou `src/` do Worker (zero diff em src/)
+- Não alterou nenhum arquivo em `D:\Enova` (READ-ONLY preservado)
+- Não copiou segredos (.env, .env.local, .env.production)
+- Não copiou node_modules, .next, caches
+- Não executou `next build` (fica para T10.5-RUN)
+- Não configurou envs (fica para T10.4-ADAPT)
+- Não fechou G9/T9 — frentes completamente separadas
+
+### Estado T10 após esta PR
+
+| Aspecto | Estado |
+|---------|--------|
+| T10 contrato | **ABERTO** — em execução |
+| Gate G10.1 | APROVADO (T10.2-CONTRACT) |
+| Gate G10.2 | **APROVADO** — import sem perda (100=100, 8/8 arquivos principais) |
+| Próxima PR T10 | T10.4-ADAPT (PR-IMPL) |
+| Pré-requisito T10.4 | G10.2 aprovado ✅ (esta PR) |
+
+### Estado T9 após esta PR
+
+| Aspecto | Estado |
+|---------|--------|
+| T9 contrato | **ABERTO** — G9 ainda não fechado |
+| BLK-T9.13-STATE-MAPPING | RESOLVIDO (PR #212) |
+| Próxima PR T9 | T9.14-IMPL |
+| Relação com T10 | Completamente independente — não afetado |
+
+### Riscos herdados
+
+| Risco | Status |
+|-------|--------|
+| Envs não configuradas | A tratar em T10.4-ADAPT |
+| Auth header divergente (x-enova-admin-key vs X-CRM-Admin-Key) | A tratar em T10.4-ADAPT |
+| `next build` pode ter erros TypeScript/import | A tratar em T10.5-RUN |
+| 26 arquivos app/lib/ ENOVA IA dependem de contexto Enova 1 | ENOVA IA pode não funcionar inicialmente — não bloqueante para CRM |
+| Views Supabase não confirmadas | A diagnosticar em T10.6-CRM-LINK |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/proofs/T10_3_PANEL_IMPORT_PROOF.md
+Estado da evidência:                   completa
+Há lacuna remanescente?:               não — lacunas existentes são de fases futuras, não bloqueiam G10.2
+Há item parcial/inconclusivo bloqueante?: não — 100=100, 8/8 presentes, src/ intocado, D:\Enova read-only preservado
+Fechamento permitido nesta PR?:        sim — G10.2 aprovado
+Estado permitido após esta PR:         G10.2 APROVADO; T10.4-ADAPT desbloqueada
+Próxima PR autorizada:                 T10.4-ADAPT (PR-IMPL — envs, auth, WORKER_BASE_URL, build mínimo)
+```
+
+---
+
 ## T10.2-CONTRACT — Contrato formal de migração Panel/CRM (2026-05-03)
 
 **Tipo**: PR-DOC | **Branch**: `docs/t10.2-panel-crm-migration-contract`

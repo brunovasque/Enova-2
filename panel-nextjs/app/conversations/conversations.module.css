@@ -1,0 +1,938 @@
+.pageMain {
+  height: 100vh;
+  min-height: 100vh;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.shell {
+  height: 100vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: clamp(340px, 33vw, 420px) 1fr;
+  background: #0b0b0b;
+}
+
+.sidebar {
+  border-right: 1px solid #2a2a2a;
+  background: #131313;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.sidebarHeader {
+  padding: 16px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.sidebarTitle {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+}
+
+.searchInput {
+  width: 100%;
+  border: 1px solid #2d2d2d;
+  border-radius: 10px;
+  background: #1a1a1a;
+  color: #dbe7f3;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: #2f9e89;
+}
+
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+}
+
+.list::-webkit-scrollbar,
+.messagesArea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list::-webkit-scrollbar-thumb,
+.messagesArea::-webkit-scrollbar-thumb {
+  background: #353535;
+  border-radius: 999px;
+}
+
+.conversationItem {
+  width: calc(100% - 16px);
+  margin: 8px;
+  text-align: left;
+  border: 1px solid #303030;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
+  color: #e6edf3;
+  padding: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.conversationItem:hover {
+  transform: translateY(-1px);
+  border-color: #3a3a3a;
+  background: linear-gradient(180deg, #202020 0%, #1a1a1a 100%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+.conversationItemActive {
+  border-color: #7a7a7a;
+  box-shadow: 0 0 0 1px rgba(122, 122, 122, 0.35), 0 10px 24px rgba(0, 0, 0, 0.45);
+  background: linear-gradient(180deg, #242424 0%, #1a1a1a 100%);
+}
+
+.itemTopRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.itemMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.itemName {
+  display: block;
+  font-size: 0.97rem;
+  font-weight: 600;
+}
+
+.itemTime {
+  font-size: 0.75rem;
+  color: #9db1c5;
+  white-space: nowrap;
+}
+
+.unreadSidebarBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(47, 230, 208, 0.16);
+  border: 1px solid rgba(47, 230, 208, 0.4);
+  color: #98efe0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.itemWaId {
+  margin-top: 4px;
+  color: #8ea3b7;
+  font-size: 0.76rem;
+}
+
+.itemPreview {
+  margin-top: 6px;
+  color: #b7c5d4;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.threadPane {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: radial-gradient(circle at top, #0a0a0a 0%, #000000 55%);
+}
+
+.threadPane {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Watermark (ENOVA) — fixo no viewport (não acompanha scroll das mensagens) */
+.threadWatermark {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.threadWatermark::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(calc(-50% + 180px), -50%);
+
+  width: min(860px, 88vw);
+  height: min(860px, 88vh);
+
+  background-image: url("/brand/enova-watermark.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+
+  opacity: 0.30;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.35));
+}
+
+/* garante que UI fica clicável acima */
+.threadHeader,
+.messagesArea,
+.threadFooter {
+  position: relative;
+  z-index: 1;
+}
+
+.threadHeader {
+  border-bottom: 1px solid #2a2a2a;
+  padding: 14px 18px;
+  background: linear-gradient(180deg, #181818 0%, #141414 100%);
+}
+
+.threadHeaderMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.threadHeaderText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.threadHeader span {
+  color: #9db1c5;
+  font-size: 0.8rem;
+}
+
+.messagesArea {
+  min-height: 0;
+  overflow: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: transparent;
+}
+
+.threadUnreadWrap {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+
+.threadUnreadButton {
+  border: 1px solid rgba(79, 202, 189, 0.45);
+  border-radius: 999px;
+  background: rgba(10, 36, 43, 0.92);
+  color: #9fe7dc;
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.messageRow {
+  display: flex;
+}
+
+.messageRowIn {
+  justify-content: flex-start;
+}
+
+.messageRowOut {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: min(70ch, 75%);
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid #353535;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.bubble p {
+  margin: 0;
+  color: #e7edf3;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bubbleIn {
+  background: linear-gradient(180deg, #1f1f1f 0%, #171717 100%);
+}
+
+.bubbleOut {
+  background: linear-gradient(180deg, #0f6258 0%, #0a4f47 100%);
+  border-color: #238478;
+}
+
+.messageMeta {
+  margin-top: 8px;
+  font-size: 0.72rem;
+  color: #b8c8d8;
+  text-align: right;
+}
+
+.threadFooter {
+  border-top: 1px solid #2a2a2a;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filesSection {
+  border: 1px solid #2d2d2d;
+  border-radius: 12px;
+  padding: 10px;
+  background: #121212;
+}
+
+.filesSectionIdle {
+  border-style: dashed;
+  border-color: #262626;
+  background: transparent;
+}
+
+.filesHeader {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.filesConversationInfo {
+  color: #96abc0;
+  font-size: 0.76rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+.filesHint {
+  margin: 0;
+  color: #afbfce;
+  font-size: 0.85rem;
+}
+
+.filesHintDiscreet {
+  margin: 0;
+  color: #7d8d9c;
+  font-size: 0.8rem;
+}
+
+.filesList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.filesItem {
+  border: 1px solid #303030;
+  border-radius: 10px;
+  background: #171717;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.filesItemMeta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filesName {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #e7edf3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filesMetaLine {
+  font-size: 0.76rem;
+  color: #aebdcb;
+}
+
+.fileOpenButton {
+  border-radius: 8px;
+  border: 1px solid #238478;
+  background: linear-gradient(180deg, #0f6258 0%, #0a4f47 100%);
+  color: #e6f4f2;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ─── WhatsApp-style file card ─────────────────────────────────── */
+
+.fileBubble {
+  padding: 8px 10px 6px;
+  min-width: 260px;
+  max-width: min(64ch, 75%);
+}
+
+/* ── Image bubble ───────────────────────────────────────────────── */
+
+.fileBubbleImage {
+  padding: 0;
+  min-width: 260px;
+  max-width: min(52ch, 68%);
+  overflow: hidden;
+}
+
+.fileCardImageBtn {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+}
+
+.fileCardImageWrap {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 210px;      /* fixed-height preview frame — same as PDF */
+  background: #131313;
+  overflow: hidden;
+}
+
+.fileCardImageThumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* fills frame, cropping edges rather than letter-boxing */
+}
+
+.fileCardImageFallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  display: none; /* hidden by default; shown when img has data-error */
+}
+
+/* when the image fails to load, hide it and show the fallback badge */
+.fileCardImageThumb[data-error] {
+  display: none;
+}
+
+.fileCardImageThumb[data-error] + .fileCardImageFallback {
+  display: grid;
+}
+
+.fileCardImageCaption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px 10px 3px;
+}
+
+/* ── PDF bubble (same proportions as image bubble) ─────────────── */
+
+.fileBubblePdf {
+  padding: 0;
+  min-width: 260px;
+  max-width: min(52ch, 68%);
+  overflow: hidden;
+}
+
+.fileCardPdfWrap {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 210px;      /* fixed-height preview frame — same as image */
+  background: #131313;
+  overflow: hidden;
+}
+
+.fileCardPdfCanvas {
+  display: block;
+  width: 100%;
+  height: auto;       /* natural aspect ratio; container clips below 210px */
+}
+
+.fileCardPdfLoading {
+  display: block;
+  width: 100%;
+  height: 210px;      /* matches frame height so shimmer fills the frame */
+  background: linear-gradient(90deg, #1c1c1c 25%, #252525 50%, #1c1c1c 75%);
+  background-size: 200% 100%;
+  animation: pdfThumbShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes pdfThumbShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+
+.fileCardClickable {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+}
+
+.fileCardClickable:hover .fileCardName {
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Paper-with-lines document preview */
+.fileCardDocPreview {
+  flex-shrink: 0;
+  position: relative;
+  width: 58px;
+  height: 72px;
+  background: linear-gradient(160deg, #2e2e2e 0%, #1c1c1c 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 7px 6px;
+  gap: 4px;
+}
+
+.fileCardDocLinesWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.fileCardDocLine {
+  display: block;
+  height: 2.5px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.fileCardDocLine:nth-child(1) { width: 88%; }
+.fileCardDocLine:nth-child(2) { width: 72%; }
+.fileCardDocLine:nth-child(3) { width: 82%; }
+.fileCardDocLine:nth-child(4) { width: 55%; }
+
+.fileCardDocBadge {
+  display: block;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.48rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  align-self: flex-end;
+}
+
+/* ── Shared content area (doc card) ───────────────────────────── */
+
+.fileCardIcon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #fff;
+  opacity: 0.92;
+}
+
+.fileCardContent {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fileCardName {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #e7edf3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileCardMeta {
+  display: block;
+  font-size: 0.72rem;
+  color: #8fa5b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.fileBubbleImage .fileCardFooter {
+  margin: 0;
+  padding: 5px 10px 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.fileCardTimestamp {
+  font-size: 0.69rem;
+  color: #6d8399;
+}
+
+.fileCardDownloadBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #9db8cc;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+
+.fileCardDownloadBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #dbe7f3;
+}
+
+.previewOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.66);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+}
+
+.previewCard {
+  width: min(920px, 95vw);
+  height: min(82vh, 760px);
+  border: 1px solid #343434;
+  border-radius: 12px;
+  background: #0f0f0f;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.previewHeader {
+  padding: 10px 12px;
+  border-bottom: 1px solid #2b2b2b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.previewCloseButton {
+  border-radius: 8px;
+  border: 1px solid #3c3c3c;
+  background: #1f1f1f;
+  color: #dbe7f3;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.previewBody {
+  padding: 10px;
+  min-height: 0;
+}
+
+.previewFrame,
+.previewImage {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: #161616;
+  object-fit: contain;
+}
+
+.previewActions {
+  border-top: 1px solid #2b2b2b;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.previewLink {
+  color: #8dd9cf;
+  text-decoration: none;
+  font-size: 0.84rem;
+}
+
+.readOnlyInput {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #2d2d2d;
+  background: #1a1a1a;
+  color: #8fa5b8;
+  padding: 10px 12px;
+}
+
+.panelHint,
+.panelError,
+.emptyState {
+  margin: auto;
+  color: #afbfce;
+}
+
+.panelError {
+  color: #ff9b9b;
+}
+
+.emptyState {
+  font-size: 1.05rem;
+}
+
+.sidebarHeaderSkeleton,
+.searchSkeleton,
+.itemSkeleton,
+.threadHeaderSkeleton,
+.bubbleSkeleton,
+.footerSkeleton {
+  border-radius: 10px;
+  background: linear-gradient(90deg, #1a1a1a 20%, #242424 40%, #1a1a1a 60%);
+  background-size: 300% 100%;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.sidebarHeaderSkeleton {
+  height: 28px;
+  margin: 16px;
+}
+
+.searchSkeleton {
+  height: 42px;
+  margin: 0 16px 12px;
+}
+
+.itemSkeleton {
+  height: 72px;
+  margin: 0 0 1px;
+}
+
+.threadHeaderSkeleton {
+  height: 56px;
+  margin: 14px 18px;
+}
+
+.bubbleSkeleton {
+  width: 52%;
+  height: 68px;
+}
+
+.bubbleSkeletonOut {
+  margin-left: auto;
+  width: 45%;
+}
+
+.footerSkeleton {
+  height: 44px;
+  margin: 14px 18px;
+}
+
+@keyframes pulse {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+@media (max-width: 920px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    max-height: 45vh;
+    height: auto;
+  }
+
+  .list {
+    min-height: 160px;
+  }
+}
+
+
+.itemMainRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.itemBody {
+  min-width: 0;
+  flex: 1;
+}
+
+.avatar,
+.threadAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e4e7eb;
+  background: linear-gradient(145deg, #3a3a3a, #1f1f1f);
+  border: 1px solid #4a4a4a;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.threadAvatar {
+  width: 44px;
+  height: 44px;
+}
+
+.badgesRow {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.69rem;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  border: 1px solid transparent;
+}
+
+.badgePhase {
+  color: #d2d7de;
+  background: rgba(122, 122, 122, 0.2);
+  border-color: rgba(122, 122, 122, 0.4);
+}
+
+.badgeNeutral {
+  color: #d2dbe5;
+  background: rgba(93, 109, 128, 0.3);
+  border-color: rgba(130, 147, 166, 0.45);
+}
+
+.badgeWarn {
+  color: #ffd6a7;
+  background: rgba(161, 94, 23, 0.34);
+  border-color: rgba(203, 129, 52, 0.5);
+}
+
+.manualToggleWrap {
+  margin-left: auto;
+}
+
+.toggleLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #c8d8e8;
+}
+
+.manualBanner {
+  background: linear-gradient(90deg, #2fe6d0 0%, #43f08a 100%);
+  color: #062019;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(47, 230, 208, 0.55);
+  box-shadow: 0 0 0 2px rgba(67, 240, 138, 0.18), 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.composerWrap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.composerWrapActive {
+  border: 1px solid rgba(47, 230, 208, 0.75);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 0 0 2px rgba(67, 240, 138, 0.18), 0 0 18px rgba(47, 230, 208, 0.12);
+}
+
+.composerInput {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #2d2d2d;
+  background: #1a1a1a;
+  color: #dbe7f3;
+  padding: 10px 12px;
+}
+
+.sendButton {
+  border-radius: 10px;
+  border: 1px solid #238478;
+  background: linear-gradient(180deg, #0f6258 0%, #0a4f47 100%);
+  color: #e6f4f2;
+  padding: 10px 16px;
+  font-weight: 600;
+}
+
+.sendButton:disabled {
+  opacity: 0.6;
+}

@@ -1,3 +1,10 @@
 node_modules/
 dist/
 .wrangler/
+
+# panel-nextjs — subprojeto Next.js isolado
+panel-nextjs/node_modules/
+panel-nextjs/.next/
+panel-nextjs/.env*
+panel-nextjs/tsconfig.tsbuildinfo
+panel-nextjs/public/pdf.worker.min.mjs

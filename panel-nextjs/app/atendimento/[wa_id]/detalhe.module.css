@@ -1,0 +1,2937 @@
+/* ===========================================
+   ATENDIMENTO DETALHE — Ficha do Lead
+   Dark theme consistent with Enova Panel
+   Based on aprovado-ficha.module.css patterns
+   =========================================== */
+
+.fichaPage {
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #09090b;
+  overflow: hidden;
+}
+
+/* ── Top bar ── */
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, #0f0f11 0%, #0a0a0c 100%);
+  flex-shrink: 0;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #9a9aa3;
+  padding: 7px 14px;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e0e0e7;
+}
+
+.topBarTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #f4f4f5;
+  letter-spacing: -0.015em;
+}
+
+.topBarSubtitle {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #71717a;
+  font-weight: 400;
+}
+
+/* ── Scrollable body ── */
+.fichaBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px 48px;
+}
+
+.fichaBody::-webkit-scrollbar {
+  width: 6px;
+}
+
+.fichaBody::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+/* ── Header card ── */
+.headerCard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(45, 165, 165, 0.06) 0%, rgba(45, 165, 165, 0.02) 100%);
+  border: 1px solid rgba(45, 165, 165, 0.12);
+  margin-bottom: 24px;
+}
+
+.headerItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.headerItemLabel {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #5eaead;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.headerItemValue {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #f4f4f5;
+}
+
+.headerItemValueMuted {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: #71717a;
+  font-style: italic;
+}
+
+/* ── Blocks container: 2-column layout ── */
+.blocksGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ── Individual block ── */
+.block {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.012);
+  overflow: hidden;
+}
+
+.blockFull {
+  grid-column: 1 / -1;
+}
+
+.blockHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.008);
+}
+
+.blockIcon {
+  font-size: 0.875rem;
+  opacity: 0.6;
+}
+
+.blockTitle {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #d4d4d8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.blockBody {
+  padding: 16px 20px;
+}
+
+/* ── Archived block (amber left border) ── */
+.blockArchived {
+  border-left: 3px solid rgba(251, 191, 36, 0.45);
+}
+
+/* ── Detail grid inside block ── */
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+.fieldItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fieldItemFull {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  grid-column: 1 / -1;
+}
+
+.fieldLabel {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #5a5a66;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fieldValue {
+  font-size: 0.875rem;
+  font-weight: 450;
+  color: #e4e4e7;
+  line-height: 1.4;
+}
+
+.fieldValueHighlight {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #7dd3d3;
+}
+
+.fieldValueMuted {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #52525b;
+  font-style: italic;
+}
+
+.fieldValueWarn {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #fbbf24;
+}
+
+.fieldValueDanger {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fca5a5;
+}
+
+/* ── Boolean badges ── */
+.boolBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.boolYes {
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+}
+
+.boolNo {
+  background: rgba(248, 113, 113, 0.1);
+  color: #fca5a5;
+}
+
+.boolUnknown {
+  background: rgba(255, 255, 255, 0.04);
+  color: #52525b;
+}
+
+/* ── Fase funil badge ── */
+.faseBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.faseBadgeDefault {
+  background: rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
+}
+
+.faseBadgeActive {
+  background: rgba(45, 165, 165, 0.12);
+  color: #7dd3d3;
+}
+
+.faseBadgeWarning {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fcd34d;
+}
+
+.faseBadgeDanger {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+}
+
+/* ── Atenção badge ── */
+.atencaoBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.atencaoNormal {
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+}
+
+.atencaoAlerta {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fcd34d;
+}
+
+.atencaoCritico {
+  background: rgba(248, 113, 113, 0.1);
+  color: #fca5a5;
+}
+
+.atencaoDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.atencaoNormal .atencaoDot {
+  background: #34d399;
+}
+
+.atencaoAlerta .atencaoDot {
+  background: #fbbf24;
+}
+
+.atencaoCritico .atencaoDot {
+  background: #f87171;
+}
+
+/* ── Base badge ── */
+.baseBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.baseBadgeFria {
+  background: rgba(96, 165, 250, 0.1);
+  color: #93c5fd;
+}
+
+.baseBadgeMorna {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fcd34d;
+}
+
+.baseBadgeQuente {
+  background: rgba(248, 113, 113, 0.1);
+  color: #fca5a5;
+}
+
+/* ── Incidente badge ── */
+.incidenteBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.incidenteBadgeCritical {
+  background: rgba(248, 113, 113, 0.18);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.incidenteBadgeHigh {
+  background: rgba(251, 146, 60, 0.15);
+  color: #fdba74;
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.incidenteBadgeMedium {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.25);
+}
+
+.incidenteBadgeLow {
+  background: rgba(96, 165, 250, 0.1);
+  color: #93c5fd;
+  border-color: rgba(96, 165, 250, 0.2);
+}
+
+/* ── Next action card ── */
+.nextActionCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  background: rgba(45, 165, 165, 0.06);
+  border: 1px solid rgba(45, 165, 165, 0.1);
+}
+
+.nextActionIcon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.nextActionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nextActionText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #7dd3d3;
+  line-height: 1.4;
+}
+
+.nextActionMeta {
+  font-size: 0.8125rem;
+  color: #52525b;
+}
+
+.nextActionMuted {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #52525b;
+  font-style: italic;
+}
+
+/* ── Timeline ── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timelineItem {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.timelineItem:last-child {
+  border-bottom: none;
+}
+
+.timelineDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(45, 165, 165, 0.4);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.timelineContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timelineLabel {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #d4d4d8;
+}
+
+.timelineDate {
+  font-size: 0.75rem;
+  color: #52525b;
+}
+
+.timelineEmpty {
+  font-size: 0.8125rem;
+  color: #52525b;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+/* ── Loading / error states ── */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 12px;
+  background: #09090b;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(45, 165, 165, 0.2);
+  border-top-color: #4d9f9f;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingText {
+  font-size: 0.875rem;
+  color: #71717a;
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 12px;
+  background: #09090b;
+  text-align: center;
+  padding: 24px;
+}
+
+.errorTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fca5a5;
+}
+
+.errorSubtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #52525b;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .headerCard {
+    grid-template-columns: 1fr 1fr;
+  }
+  .blocksGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .headerCard {
+    grid-template-columns: 1fr;
+  }
+  .topBar {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+  }
+  .fichaBody {
+    padding: 16px;
+  }
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Top bar extended ── */
+.topBarInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.topBarMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.topBarMetaItem {
+  font-size: 0.75rem;
+  color: #71717a;
+}
+
+.topBarMetaItem + .topBarMetaItem::before {
+  content: "·";
+  margin-right: 8px;
+  color: #3f3f46;
+}
+
+.topBarBaseBadge {
+  font-size: 0.6875rem !important;
+  padding: 2px 7px !important;
+}
+
+.topBarArchivedBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  background: rgba(251, 191, 36, 0.12);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Archive toggle button ── */
+.archiveToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.05);
+  color: #fcd34d;
+  padding: 7px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.archiveToggleBtn:hover {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.archiveToggleBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.archiveToggleBtnUnarchive {
+  border-color: rgba(52, 211, 153, 0.25);
+  background: rgba(52, 211, 153, 0.05);
+  color: #6ee7b7;
+}
+
+.archiveToggleBtnUnarchive:hover {
+  background: rgba(52, 211, 153, 0.1);
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+/* ── Archive inline panel ── */
+.archivePanel {
+  border-bottom: 1px solid rgba(251, 191, 36, 0.15);
+  background: rgba(251, 191, 36, 0.03);
+  padding: 16px 32px;
+  flex-shrink: 0;
+}
+
+.archivePanelInner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 640px;
+}
+
+.archivePanelTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fcd34d;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.archivePanelRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.archivePanelError {
+  font-size: 0.8125rem;
+  color: #fca5a5;
+  margin: 0;
+}
+
+.archivePanelFooter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.archiveNoteTextarea {
+  min-height: 48px !important;
+}
+
+/* ── Secondary / Confirm buttons ── */
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #9a9aa3;
+  padding: 7px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #e0e0e7;
+}
+
+.archiveConfirmBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.1);
+  color: #fcd34d;
+  padding: 7px 16px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.archiveConfirmBtn:hover:not(:disabled) {
+  background: rgba(251, 191, 36, 0.18);
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+.archiveConfirmBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Global feedback banners ── */
+.globalFeedback {
+  padding: 10px 32px;
+  font-size: 0.8125rem;
+  color: #6ee7b7;
+  background: rgba(52, 211, 153, 0.06);
+  border-bottom: 1px solid rgba(52, 211, 153, 0.12);
+  flex-shrink: 0;
+}
+
+.globalFeedbackError {
+  padding: 10px 32px;
+  font-size: 0.8125rem;
+  color: #fca5a5;
+  background: rgba(248, 113, 113, 0.06);
+  border-bottom: 1px solid rgba(248, 113, 113, 0.12);
+  flex-shrink: 0;
+}
+
+/* ── Profile editing grid ── */
+.profileGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+/* ── Prefill form inputs (matches atendimento.module.css) ── */
+.prefillFieldRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prefillFieldRowFull {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  grid-column: 1 / -1;
+}
+
+.prefillFieldHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.prefillInput {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #e4e4e7;
+  padding: 7px 10px;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.prefillInput:focus {
+  border-color: rgba(45, 165, 165, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.prefillInput::placeholder {
+  color: #52525b;
+}
+
+.prefillSelect {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #e4e4e7;
+  padding: 7px 10px;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.prefillSelect:focus {
+  border-color: rgba(45, 165, 165, 0.4);
+}
+
+.prefillTextarea {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #e4e4e7;
+  padding: 7px 10px;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 64px;
+  transition: border-color 0.15s ease;
+}
+
+.prefillTextarea:focus {
+  border-color: rgba(45, 165, 165, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Profile source badges ── */
+.prefillStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.prefillStatusConfirmed {
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+}
+
+.prefillStatusPending {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fcd34d;
+}
+
+.prefillStatusEmpty {
+  background: rgba(255, 255, 255, 0.04);
+  color: #52525b;
+}
+
+/* ── Profile save row ── */
+.profileSaveRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.profileSaveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(45, 165, 165, 0.3);
+  border-radius: 6px;
+  background: rgba(45, 165, 165, 0.08);
+  color: #7dd3d3;
+  padding: 7px 16px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.profileSaveBtn:hover:not(:disabled) {
+  background: rgba(45, 165, 165, 0.14);
+  border-color: rgba(45, 165, 165, 0.45);
+}
+
+.profileSaveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.profileFeedback {
+  font-size: 0.8125rem;
+  color: #6ee7b7;
+}
+
+.profileFeedbackError {
+  font-size: 0.8125rem;
+  color: #fca5a5;
+}
+
+/* ── Perfil: subsection "Dados Apurados" ── */
+.perfilSubSection {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.perfilSubTitle {
+  margin: 0 0 12px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #52525b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Bloco Resumo Comercial (teal accent) ── */
+.blockComercial {
+  border-left: 3px solid rgba(45, 165, 165, 0.35);
+}
+
+/* ── Bloco Feedback Humano (purple accent) ── */
+.blockFeedback {
+  border-left: 3px solid rgba(167, 139, 250, 0.3);
+}
+
+/* ── Temperatura do lead ── */
+.tempBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.tempBadgeHot {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.tempBadgeWarm {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.tempBadgeCold {
+  background: rgba(96, 165, 250, 0.1);
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.18);
+}
+
+.tempBadgeUnknown {
+  background: rgba(255, 255, 255, 0.04);
+  color: #52525b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── Placeholder tag inline (campos sem backend ainda) ── */
+.placeholderTag {
+  font-size: 0.625rem;
+  font-weight: 400;
+  color: #3f3f46;
+  text-transform: none;
+  letter-spacing: 0;
+  font-style: italic;
+}
+
+/* ── Resumo comercial: empty state ── */
+.comercialEmpty {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #3f3f46;
+  font-style: italic;
+  padding: 4px 0;
+}
+
+/* ── Feedback grid: 2 col + full ── */
+.feedbackGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+/* ── Feedback field hint ── */
+.feedbackFieldHint {
+  font-size: 0.625rem;
+  font-weight: 400;
+  color: #3f3f46;
+  text-transform: none;
+  letter-spacing: 0;
+  font-style: italic;
+}
+
+/* ── Bloco Interação AI (indigo accent) ── */
+.blockConversa {
+  border-left: 3px solid rgba(129, 140, 248, 0.3);
+}
+
+.blockConversa .blockBody {
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+/* ── Conversation scroll container ── */
+.convScroll {
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 6px;
+}
+
+.convScroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.convScroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+}
+
+/* ── Date divider ── */
+.convDateDivider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 8px;
+}
+
+.convDateDivider::before,
+.convDateDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.convDateLabel {
+  font-size: 0.6875rem;
+  color: #52525b;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Bubble rows — full-width so no lateral dead space ── */
+.convBubbleRow {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.convBubbleRowIn {
+  align-items: flex-start;
+}
+
+.convBubbleRowOut {
+  align-items: flex-end;
+}
+
+/* ── Sender + time meta line ── */
+.convMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.convSender {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.convSenderIn {
+  color: #71717a;
+}
+
+.convSenderOut {
+  color: #4d9f9f;
+}
+
+.convTime {
+  font-size: 0.625rem;
+  color: #3f3f46;
+}
+
+/* ── Bubbles ── */
+.convBubble {
+  max-width: 88%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.convBubbleIn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #d4d4d8;
+  border-bottom-left-radius: 3px;
+}
+
+.convBubbleOut {
+  background: rgba(45, 165, 165, 0.1);
+  color: #7dd3d3;
+  border: 1px solid rgba(45, 165, 165, 0.1);
+  border-bottom-right-radius: 3px;
+}
+
+/* ── Empty / loading / error states ── */
+.convEmpty {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #3f3f46;
+  font-style: italic;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.convLoading {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #52525b;
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* ── Conversa + Sinais split layout ── */
+.convSinaisWrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Main conversation panel: fills remaining space */
+.convMainPanel {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Sinais panel: fixed width ~300px, ~35% of typical card width */
+.blockSinais {
+  flex: 0 0 290px;
+  min-width: 240px;
+  max-width: 320px;
+  min-height: 200px;
+  border-left: 3px solid rgba(99, 102, 241, 0.35);
+}
+
+/* ── Sinais da Conversa — list layout ── */
+.sinaisList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sinaisItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sinaisItem:last-child {
+  border-bottom: none;
+}
+
+.sinaisItemFull {
+  padding-top: 12px;
+}
+
+.sinaisLabel {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #52525b;
+}
+
+.sinaisValue {
+  font-size: 0.8125rem;
+  color: #d4d4d8;
+  line-height: 1.4;
+}
+
+.sinaisAbordagem {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── Bola com badges ── */
+.sinaisBolaEnova {
+  color: #5eead4; /* teal — Enova */
+}
+
+.sinaisBolaCliente {
+  color: #a3a3a3; /* neutral — Cliente */
+}
+
+/* ── Risco de travamento badges ── */
+.sinaisBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sinaisRiscoBaixo {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+}
+
+.sinaisRiscoMedio {
+  background: rgba(234, 179, 8, 0.1);
+  color: #facc15;
+}
+
+.sinaisRiscoAlto {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+}
+
+/* ── Chamar cliente — header button ── */
+.callHeaderBtn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(52, 211, 153, 0.28);
+  border-radius: 6px;
+  background: rgba(52, 211, 153, 0.07);
+  color: #6ee7b7;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.callHeaderBtn:hover {
+  background: rgba(52, 211, 153, 0.14);
+  border-color: rgba(52, 211, 153, 0.45);
+  color: #a7f3d0;
+}
+
+/* ── Chamar cliente — inline feedback banners ── */
+.callBannerOk {
+  padding: 7px 20px;
+  font-size: 0.8125rem;
+  color: #6ee7b7;
+  background: rgba(52, 211, 153, 0.06);
+  border-bottom: 1px solid rgba(52, 211, 153, 0.1);
+}
+
+.callBannerErr {
+  padding: 7px 20px;
+  font-size: 0.8125rem;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.06);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.1);
+}
+
+/* ── Chamar cliente — overlay modal ── */
+.callOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.callModal {
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  width: 480px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.callModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.callModalTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #d4d4d8;
+}
+
+.callModalClose {
+  background: none;
+  border: none;
+  color: #71717a;
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.callModalClose:hover {
+  color: #e4e4e7;
+}
+
+.callModalBody {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.callModalHint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #71717a;
+}
+
+.callModalTextarea {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #e4e4e7;
+  padding: 8px 10px;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  transition: border-color 0.15s ease;
+}
+
+.callModalTextarea:focus {
+  border-color: rgba(52, 211, 153, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.callModalError {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #fca5a5;
+}
+
+.callModalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.callSendBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 6px;
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+  padding: 7px 18px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.callSendBtn:hover:not(:disabled) {
+  background: rgba(52, 211, 153, 0.18);
+  border-color: rgba(52, 211, 153, 0.48);
+}
+
+.callSendBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════
+   BLOCO COGNITIVO — Estado Cognitivo do Lead
+   PR 3 — visual-only, read-only, sem automação
+   ══════════════════════════════════════════ */
+
+.blockCognitivo {
+  border-left: 3px solid rgba(251, 191, 36, 0.4);
+}
+
+/* 2-column grid for the cognitive fields */
+.cognitiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0;
+  margin-bottom: 12px;
+}
+
+.cognitiItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.cognitiItem:last-child {
+  border-bottom: none;
+}
+
+.cognitiLabel {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #52525b;
+}
+
+.cognitiValue {
+  font-size: 0.8125rem;
+  color: #d4d4d8;
+  line-height: 1.4;
+}
+
+/* Generic badge base */
+.cognitiBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  width: fit-content;
+}
+
+/* ── Estado do cliente ── */
+.cognitiEstado {
+  background: rgba(99, 102, 241, 0.12);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* ── Momento de compra ── */
+.cognitiMomentoAgora {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.cognitiMomentoCurto {
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+}
+
+.cognitiMomentoMedio {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.cognitiMomentoSem {
+  background: rgba(113, 113, 122, 0.12);
+  color: #a1a1aa;
+  border: 1px solid rgba(113, 113, 122, 0.2);
+}
+
+.cognitiMomentoCurioso {
+  background: rgba(139, 92, 246, 0.1);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+/* ── Nível de interesse ── */
+.cognitiInteresseAlto {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+}
+
+.cognitiInteresseMedio {
+  background: rgba(234, 179, 8, 0.1);
+  color: #facc15;
+}
+
+.cognitiInteresseBaixo {
+  background: rgba(113, 113, 122, 0.12);
+  color: #a1a1aa;
+}
+
+/* ── Risco de travamento ── */
+.cognitiRiscoBaixo {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+}
+
+.cognitiRiscoMedio {
+  background: rgba(234, 179, 8, 0.1);
+  color: #facc15;
+}
+
+.cognitiRiscoAlto {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+}
+
+/* ── Bola com ── */
+.cognitiBolaEnova {
+  color: #5eead4;
+}
+
+.cognitiBolaLead {
+  color: #a3a3a3;
+}
+
+/* ── Próxima melhor ação ── */
+.cognitiAcaoPadrao {
+  background: rgba(99, 102, 241, 0.08);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.cognitiAcaoUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ── Confiança badge (header) ── */
+.cognitiConfBadge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.cognitiConfAlta {
+  background: rgba(34, 197, 94, 0.08);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.cognitiConfMedia {
+  background: rgba(251, 191, 36, 0.08);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.15);
+}
+
+.cognitiConfBaixa {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.15);
+}
+
+/* ── Justificativa ── */
+.cognitiJustificativaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.cognitiJustificativa {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Sub-blocos cognitivos em linha — PR4 + PR5 + PR6
+   Wrapper de 3 colunas (follow-up / pastas / reclassificação) em desktop.
+   Em telas menores cai para 1 coluna de forma limpa.
+   ────────────────────────────────────────────────────────────────────────── */
+.subBlocosRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+  .subBlocosRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1200px) {
+  .subBlocosRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   PR 4 — Organizador de Follow-up (sub-bloco dentro de Estado Cognitivo)
+   ══════════════════════════════════════════════════════ */
+
+.followupSubBloco {
+  min-width: 0;
+  padding: 10px 12px;
+  background: rgba(30, 30, 35, 0.4);
+  border: 1px solid rgba(63, 63, 70, 0.35);
+  border-radius: 6px;
+}
+
+.followupSubHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.followupSubIcon {
+  font-size: 0.875rem;
+}
+
+.followupSubTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* 2x2 grid for the follow-up fields */
+.followupGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 16px;
+  margin-bottom: 8px;
+}
+
+.followupItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.followupLabel {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.followupValue {
+  font-size: 0.8125rem;
+  color: #d4d4d8;
+}
+
+.followupBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+/* ── Status do follow-up ── */
+.followupStatusVencido {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.followupStatusAtivo {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.followupStatusAguardando {
+  background: rgba(234, 179, 8, 0.1);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.15);
+}
+
+.followupStatusSem {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+.followupStatusNulo {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+/* ── Janela ideal ── */
+.followupJanelaAgora {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.18);
+}
+
+.followupJanelaBreve {
+  background: rgba(99, 102, 241, 0.08);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.followupJanelaObservar {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+/* ── Urgência badge (header da sub-seção) ── */
+.followupUrgBadge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.followupUrgAlta {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.18);
+}
+
+.followupUrgMedia {
+  background: rgba(234, 179, 8, 0.1);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.15);
+}
+
+.followupUrgBaixa {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+/* ── Ação sugerida ── */
+.followupAcaoUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.followupAcaoPadrao {
+  background: rgba(99, 102, 241, 0.08);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.followupAcaoNula {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+/* ── Justificativa do follow-up ── */
+.followupJustificativaRow {
+  padding-top: 6px;
+}
+
+.followupJustificativa {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Máquina de Pastas (PR 5) — sub-bloco dentro de Estado Cognitivo
+   Prefixo: docs*
+   ════════════════════════════════════════════════════════════ */
+
+/* Sub-bloco container */
+.docsSubBloco {
+  min-width: 0;
+  padding: 10px 12px;
+  background: rgba(16, 185, 129, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.12);
+  border-radius: 6px;
+}
+
+/* Header da sub-seção */
+.docsSubHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.docsSubIcon {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.docsSubTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #d1d5db;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Probabilidade badge (header) */
+.docsProbBadge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.docsProbAlta {
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.docsProbMedia {
+  background: rgba(234, 179, 8, 0.1);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.15);
+}
+
+.docsProbBaixa {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+/* Grid de campos */
+.docsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 12px;
+  margin-bottom: 8px;
+}
+
+.docsItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docsLabel {
+  font-size: 0.6875rem;
+  color: #71717a;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.docsValue {
+  font-size: 0.75rem;
+  color: #e4e4e7;
+}
+
+/* Badge base */
+.docsBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+/* ── Status pasta ── */
+.docsStatusEmDocs {
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.docsStatusPronto {
+  background: rgba(34, 197, 94, 0.1);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.18);
+}
+
+.docsStatusQuase {
+  background: rgba(99, 102, 241, 0.08);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.docsStatusTravado {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.18);
+}
+
+.docsStatusNaoPronto {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+.docsStatusSemSinal {
+  background: rgba(63, 63, 70, 0.3);
+  color: #52525b;
+  border: 1px solid rgba(63, 63, 70, 0.2);
+}
+
+/* ── Maturidade ── */
+.docsMaturidadeAlta {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.docsMaturidadeMedia {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.14);
+}
+
+.docsMaturidadeBaixa {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+/* ── Ação sugerida ── */
+.docsAcaoAtiva {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.docsAcaoUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.docsAcaoPadrao {
+  background: rgba(99, 102, 241, 0.08);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.docsAcaoNula {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+/* ── Estratégia ── */
+.docsEstrategiaRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.docsEstrategiaLabel {
+  font-size: 0.6875rem;
+  color: #71717a;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.docsEstrategiaValue {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+/* ── Justificativa ── */
+.docsJustificativaRow {
+  padding-top: 2px;
+}
+
+.docsJustificativa {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   PR 6 — Reclassificação Assistida de Base + Lead Frio Recuperável
+   CSS prefix: reclass*
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Sub-bloco container */
+.reclassSubBloco {
+  min-width: 0;
+  padding: 10px 12px;
+  background: rgba(30, 30, 35, 0.4);
+  border: 1px solid rgba(63, 63, 70, 0.35);
+  border-radius: 6px;
+}
+
+/* Header */
+.reclassSubHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.reclassSubIcon {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.reclassSubTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #d1d5db;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Calor real badge (header) */
+.reclassCalorBadge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.reclassCalorQuente {
+  background: rgba(249, 115, 22, 0.12);
+  color: #fdba74;
+  border: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+.reclassCalorMorno {
+  background: rgba(234, 179, 8, 0.1);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.18);
+}
+
+.reclassCalorFrio {
+  background: rgba(59, 130, 246, 0.1);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.18);
+}
+
+.reclassCalorIndefinido {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+/* Grid de campos */
+.reclassGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 12px;
+  margin-bottom: 8px;
+}
+
+.reclassItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reclassLabel {
+  font-size: 0.6875rem;
+  color: #71717a;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.reclassValue {
+  font-size: 0.75rem;
+  color: #e4e4e7;
+}
+
+/* Badge base */
+.reclassBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+/* ── Base sugerida ── */
+.reclassBaseQuente {
+  background: rgba(249, 115, 22, 0.1);
+  color: #fdba74;
+  border: 1px solid rgba(249, 115, 22, 0.18);
+}
+
+.reclassBaseMorna {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.15);
+}
+
+.reclassBaseFria {
+  background: rgba(59, 130, 246, 0.08);
+  color: #bfdbfe;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.reclassBaseReativacao {
+  background: rgba(99, 102, 241, 0.1);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.reclassBaseManter {
+  background: rgba(113, 113, 122, 0.08);
+  color: #a1a1aa;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+/* ── Reclassificação sugerida ── */
+.reclassSubir {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.reclassDescer {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.15);
+}
+
+.reclassReativacao {
+  background: rgba(99, 102, 241, 0.1);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.reclassArquivavel {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.15);
+}
+
+.reclassManter {
+  background: rgba(63, 63, 70, 0.2);
+  color: #a1a1aa;
+  border: 1px solid rgba(63, 63, 70, 0.15);
+}
+
+.reclassIndefinido {
+  background: rgba(63, 63, 70, 0.15);
+  color: #52525b;
+  border: 1px solid rgba(63, 63, 70, 0.12);
+}
+
+/* ── Recuperável ── */
+.reclassRecuperavelSim {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.reclassRecuperavelNao {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.12);
+}
+
+.reclassRecuperavelIncerto {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.12);
+}
+
+/* ── Ação de reativação ── */
+.reclassAcaoAtiva {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.reclassAcaoUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.reclassAcaoPadrao {
+  background: rgba(99, 102, 241, 0.08);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.reclassAcaoNula {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+/* ── Motivo + Estratégia ── */
+.reclassEstrategiaRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+}
+
+.reclassEstrategiaLabel {
+  font-size: 0.6875rem;
+  color: #71717a;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.reclassEstrategiaValue {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+/* ── Justificativa ── */
+.reclassJustificativaRow {
+  padding-top: 4px;
+}
+
+.reclassJustificativa {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PR7 — Prontidão para Plantão / Maturidade Comercial
+   Prefixo: visit*
+   ═══════════════════════════════════════════════════════ */
+
+.visitSubBloco {
+  background: rgba(15, 15, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+/* ── Header ── */
+.visitSubHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.visitSubIcon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.visitSubTitle {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex: 1;
+}
+
+/* ── Badge "Pronto para visita?" ── */
+.visitProntoBadge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.visitProntoSim {
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.22);
+}
+
+.visitProntoIncerto {
+  background: rgba(234, 179, 8, 0.1);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.18);
+}
+
+.visitProntoNao {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.14);
+}
+
+/* ── Grid de campos ── */
+.visitGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 8px;
+}
+
+.visitItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.visitLabel {
+  font-size: 0.625rem;
+  color: #52525b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+.visitBadge {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* ── Maturidade ── */
+.visitMaturidadeAlta {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.visitMaturidadeMedia {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.14);
+}
+
+.visitMaturidadeBaixa {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.14);
+}
+
+/* ── Status plantão ── */
+.visitStatusPronto {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.visitStatusQuase {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.14);
+}
+
+.visitStatusPos {
+  background: rgba(99, 102, 241, 0.1);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.visitStatusSemSinal {
+  background: rgba(63, 63, 70, 0.15);
+  color: #52525b;
+  border: 1px solid rgba(63, 63, 70, 0.12);
+}
+
+.visitStatusLonge {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+/* ── Bloqueio ── */
+.visitBloqueioNenhum {
+  background: rgba(16, 185, 129, 0.08);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.14);
+}
+
+.visitBloqueioUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.visitBloqueioPadrao {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.12);
+}
+
+/* ── Ação ── */
+.visitAcaoConvidar {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.visitAcaoChamar {
+  background: rgba(99, 102, 241, 0.08);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.visitAcaoUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.visitAcaoNula {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+.visitAcaoPadrao {
+  background: rgba(63, 63, 70, 0.18);
+  color: #a1a1aa;
+  border: 1px solid rgba(63, 63, 70, 0.15);
+}
+
+/* ── Estratégia ── */
+.visitEstrategiaRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+}
+
+.visitEstrategiaLabel {
+  font-size: 0.6875rem;
+  color: #71717a;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.visitEstrategiaValue {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+/* ── Justificativa ── */
+.visitJustificativaRow {
+  padding-top: 4px;
+}
+
+.visitJustificativa {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Meta-operação Cognitiva (PR8) — metaOps* CSS classes
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ── Sub-bloco container ── */
+.metaOpsSubBloco {
+  border-top: 1px solid rgba(63, 63, 70, 0.25);
+  padding-top: 12px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Header do sub-bloco ── */
+.metaOpsSubHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.metaOpsSubIcon {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.metaOpsSubTitle {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex: 1;
+}
+
+/* ── Badge de prioridade ── */
+.metaOpsPrioridadeBadge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.metaOpsPrioridadeAlta {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.metaOpsPrioridadeMedia {
+  background: rgba(234, 179, 8, 0.1);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.18);
+}
+
+.metaOpsPrioridadeBaixa {
+  background: rgba(113, 113, 122, 0.1);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.14);
+}
+
+/* ── Grid de campos ── */
+.metaOpsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 8px;
+}
+
+.metaOpsItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metaOpsLabel {
+  font-size: 0.625rem;
+  color: #52525b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+.metaOpsBadge {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* ── Gargalo ── */
+.metaOpsGargaloNenhum {
+  background: rgba(16, 185, 129, 0.08);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.14);
+}
+
+.metaOpsGargaloUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.metaOpsGargaloPadrao {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.12);
+}
+
+/* ── Melhoria ── */
+.metaOpsMelhoriaNenhuma {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+.metaOpsMelhoriaUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.metaOpsMelhoriaPadrao {
+  background: rgba(99, 102, 241, 0.08);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.14);
+}
+
+/* ── Sugestão operacional ── */
+.metaOpsSugestaoNenhuma {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+.metaOpsSugestaoUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.metaOpsSugestaoPadrao {
+  background: rgba(63, 63, 70, 0.18);
+  color: #a1a1aa;
+  border: 1px solid rgba(63, 63, 70, 0.15);
+}
+
+/* ── Programa sugerido ── */
+.metaOpsProgramaNenhum {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+.metaOpsProgramaPadrao {
+  background: rgba(99, 102, 241, 0.1);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+/* ── Evolução estrutural ── */
+.metaOpsEvolucaoRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+}
+
+.metaOpsEvolucaoLabel {
+  font-size: 0.6875rem;
+  color: #71717a;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.metaOpsEvolucaoBadge {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.metaOpsEvolucaoSim {
+  background: rgba(234, 179, 8, 0.1);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.18);
+}
+
+.metaOpsEvolucaoIncerto {
+  background: rgba(63, 63, 70, 0.18);
+  color: #a1a1aa;
+  border: 1px solid rgba(63, 63, 70, 0.15);
+}
+
+.metaOpsEvolucaoNao {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+/* ── Justificativa ── */
+.metaOpsJustificativaRow {
+  padding-top: 2px;
+}
+
+.metaOpsJustificativa {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PR 9 — Autonomia Assistida
+   Prefixo: autonomy*
+   ════════════════════════════════════════════════════════════ */
+
+.autonomySubBloco {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(63, 63, 70, 0.25);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+/* ── Header ── */
+.autonomySubHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.autonomySubIcon {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.autonomySubTitle {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex: 1;
+}
+
+/* ── Badge de risco ── */
+.autonomyRiscoBadge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.autonomyRiscoBaixo {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.autonomyRiscoMedio {
+  background: rgba(234, 179, 8, 0.1);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.18);
+}
+
+.autonomyRiscoAlto {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ── Grid de campos ── */
+.autonomyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 8px;
+}
+
+.autonomyItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.autonomyLabel {
+  font-size: 0.625rem;
+  color: #52525b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+.autonomyBadge {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* ── Autonomia ── */
+.autonomyNenhuma {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+.autonomyUrgente {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.autonomyPadrao {
+  background: rgba(99, 102, 241, 0.1);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+/* ── Executor ── */
+.autonomyExecutorSim {
+  background: rgba(16, 185, 129, 0.08);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.14);
+}
+
+.autonomyExecutorIncerto {
+  background: rgba(234, 179, 8, 0.08);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.12);
+}
+
+.autonomyExecutorNao {
+  background: rgba(113, 113, 122, 0.08);
+  color: #52525b;
+  border: 1px solid rgba(113, 113, 122, 0.1);
+}
+
+/* ── Aprovação ── */
+.autonomyAprovacaoSim {
+  background: rgba(99, 102, 241, 0.08);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.14);
+}
+
+/* ── Justificativa ── */
+.autonomyJustificativaRow {
+  padding-top: 2px;
+}
+
+.autonomyJustificativa {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── CTA executor assistido de baixo risco ── */
+.autonomyCtaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid rgba(63, 63, 70, 0.2);
+  margin-top: 2px;
+}
+
+.autonomyCtaBtn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.08);
+  color: #6ee7b7;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.autonomyCtaBtn:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.autonomyCtaHint {
+  font-size: 0.625rem;
+  color: #52525b;
+  font-style: italic;
+}
