@@ -1,4 +1,104 @@
-# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
+﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
+
+## FIX/WRANGLER-NO-VARS-OVERWRITE -- Deploy seguro: wrangler nao sobrescreve mais flags PROD/canary (2026-05-04)
+
+**Tipo**: PR-FIX / hotfix / config-deploy -- bloqueante para T9.15B real
+**Branch**: fix/wrangler-no-vars-overwrite
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.15C-FIX-PARSER-TOPO-FUNIL (PR #231) -- extractDiscovery corrigido; smoke 69/69 PASS
+**Proximo passo autorizado T9**: Repetir T9.15B-PROVA-REAL-CANARY (apos deploy seguro com wrangler.toml corrigido)
+**Classificacao**: hotfix -- correcao urgente de deploy config; bloqueante para canary real
+
+### Causa raiz documentada
+
+Deploy do Worker nv-enova-2 via wrangler deploy sobrescrevia todas as flags PROD/canary configuradas
+manualmente no painel Cloudflare com os defaults false do [vars] do wrangler.toml.
+Flags afetadas que voltavam a false/vazio apos deploy:
+- ENOVA2_ENABLED -- pipeline inbound desligado
+- LLM_REAL_ENABLED -- chamadas OpenAI desligadas
+- OUTBOUND_CANARY_ENABLED -- outbound canary desligado
+- OUTBOUND_CANARY_WA_ID -- wa_id voltava a vazio
+- SUPABASE_REAL_ENABLED -- Supabase desligado
+- SUPABASE_WRITE_ENABLED -- escrita Supabase desligada
+- CANARY_PERCENT -- canary desligado
+
+Sem keep_vars = true, o wrangler tambem removeria do painel quaisquer vars nao listadas no arquivo.
+
+### O que esta PR fez
+
+1. Adicionou keep_vars = true no topo do wrangler.toml -- preserva no painel Cloudflare todas as
+   variaveis que nao estao listadas no arquivo durante o deploy.
+2. Removeu da secao [vars] top-level as 7 flags PROD/canary que nao podem ser resetadas por deploy.
+3. Manteve na secao [vars] apenas os defaults de seguranca invariantes:
+   - CLIENT_REAL_ENABLED = false -- SEMPRE false, nunca habilitar via deploy
+   - MEMORY_SUPABASE_ENABLED = false
+   - ROLLBACK_FLAG = false
+   - MAINTENANCE_MODE = false
+   - GOLIVE_HARNESS_ENABLED = false
+4. Manteve [env.test.vars] intacto -- ambiente de teste deve ter flags controladas pelo arquivo.
+5. Adicionou comentario de seguranca no wrangler.toml documentando as flags removidas e como configurar.
+6. Atualizou schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md.
+7. Atualizou schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md (este arquivo).
+8. Atualizou schema/contracts/_INDEX.md.
+
+### O que esta PR NAO fez
+
+- **Nao alterou** src/core/ -- zero diff
+- **Nao alterou** src/llm/ -- zero diff
+- **Nao alterou** src/meta/ -- zero diff
+- **Nao alterou** src/supabase/ -- zero diff
+- **Nao alterou** panel-nextjs/ -- zero diff
+- **Nao alterou** parser T9.15C -- zero diff
+- **Nao alterou** Supabase schema/migrations/RLS -- zero diff
+- **Nao ativou** CLIENT_REAL_ENABLED -- permanece false no arquivo
+- **Nao colocou** secrets reais no repo -- zero secrets
+- **Nao quebrou** deploy TEST -- [env.test.vars] intacto
+
+### Como fazer deploy apos este fix
+
+**Deploy PROD (nao sobrescreve mais flags PROD/canary):**
+
+Comportamento apos fix:
+- Flags configuradas no painel (ENOVA2_ENABLED=true, LLM_REAL_ENABLED=true, etc.) sao preservadas
+- wrangler nao envia defaults falsos para essas flags (foram removidas do [vars])
+- wrangler nao deleta flags do painel que nao estao no arquivo (keep_vars=true)
+
+**Deploy TEST (comportamento inalterado):**
+
+[env.test.vars] continua controlando todas as flags -- ambiente de teste com defaults seguros.
+
+**Configurar flags PROD/canary manualmente (apos deploy):**
+
+Ou configurar via Cloudflare Dashboard > Workers > nv-enova-2 > Settings > Variables.
+
+### Provas
+
+| Prova | Resultado |
+|-------|-----------|
+| diff wrangler.toml | keep_vars=true adicionado; 7 flags removidas de [vars] |
+| zero diff em src/ | confirmado |
+| zero diff em panel-nextjs/ | confirmado |
+| zero secrets no repo | confirmado |
+| [env.test.vars] intacto | confirmado |
+
+### Estado de G9 apos esta PR
+
+Inalterado. G9 permanece aberto. Esta PR nao fecha nenhum criterio G9 -- remove bloqueante de deploy.
+
+### Bloco E
+
+--- BLOCO E -- FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidencia:           wrangler.toml (diff direto)
+Estado da evidencia:                   completa -- para o escopo desta PR (fix de config/deploy)
+Ha lacuna remanescente?:               nao -- para o escopo desta PR; G9 continua aberto
+Ha item parcial/inconclusivo bloqueante?: nao -- para esta PR
+Fechamento permitido nesta PR?:        sim -- para fix de config/deploy
+                                       NAO -- para G9; G9 permanece aberto
+Estado permitido apos esta PR:         T9 em execucao; G9 aberto; deploy seguro
+Proxima PR autorizada:                 Repetir T9.15B-PROVA-REAL-CANARY
+
+---
+
 
 ## T9.15C-FIX-PARSER-TOPO-FUNIL — Parser extractDiscovery corrigido (2026-05-04)
 

@@ -29,7 +29,7 @@ Contrato macro ativo: **T9 — aberto formalmente em 2026-05-01 via PR-T9.0** (G
 
 | Fase | Status | Próximo passo autorizado |
 |------|--------|--------------------------|
-| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — T9.15C-FIX-PARSER-TOPO-FUNIL implementada em 2026-05-04; `extractDiscovery` corrigido: `compro sozinho` e variantes naturais detectam `customer_goal=comprar_imovel`; smoke 69/69 PASS; causa raiz da falha T9.15B resolvida; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **Repetir T9.15B-PROVA-REAL-CANARY** (executar roteiro canary com parser corrigido; se passar: T9.R-CLOSEOUT-G9) |
+| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — FIX/WRANGLER-NO-VARS-OVERWRITE implementada em 2026-05-04; `wrangler.toml` corrigido: `keep_vars=true` adicionado + 7 flags PROD/canary removidas de `[vars]`; deploy não sobrescreve mais flags PROD/canary; bloqueante de T9.15B resolvido; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **Repetir T9.15B-PROVA-REAL-CANARY** após deploy seguro com wrangler.toml corrigido (flags PROD preservadas no painel) |
 
 ## Contratos de frentes paralelas ativas
 
@@ -146,6 +146,7 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
+- 2026-05-04 — FIX/WRANGLER-NO-VARS-OVERWRITE implementada: `wrangler.toml` corrigido — `keep_vars=true` adicionado; 7 flags PROD/canary removidas de `[vars]` top-level (`ENOVA2_ENABLED`, `LLM_REAL_ENABLED`, `OUTBOUND_CANARY_ENABLED`, `OUTBOUND_CANARY_WA_ID`, `SUPABASE_REAL_ENABLED`, `SUPABASE_WRITE_ENABLED`, `CANARY_PERCENT`); deploy não sobrescreve mais flags PROD/canary configuradas no painel; zero diff em `src/`; zero diff em `panel-nextjs/`; bloqueante de T9.15B resolvido; próxima PR: Repetir T9.15B-PROVA-REAL-CANARY após deploy seguro.
 - 2026-05-04 — T9.15C-FIX-PARSER-TOPO-FUNIL implementada: `extractDiscovery` em `src/core/text-extractor.ts` corrigido — `compro sozinho` e variantes naturais agora detectam `customer_goal=comprar_imovel`; guarda de negação adicionada; smoke 69/69 PASS; G9 permanece aberto; próxima PR: Repetir T9.15B-PROVA-REAL-CANARY.
 - 2026-05-04 — T9.15B-PROVA-REAL-CANARY criada: roteiro canary real completo em `schema/proofs/T9_15B_REAL_CANARY_FUNNEL_PROOF.md`; pré-condições, roteiro 3 turnos, comandos SQL/tail, checklists, plano rollback, critérios G9, análise risco documentados; G9-03/G9-07/G9-09/G9-10 pendentes execução Vasques; G9 permanece aberto; próxima PR: T9.R-CLOSEOUT-G9 (somente após prova real confirmada) ou PR-FIX cirúrgica se falhar.
 - 2026-05-04 — T9.15-PROVA criada: write/read/restart lógico 44/44 PASS; `src/supabase/write-read-restart-proof.ts`; `prove:t9.15-write-read-restart` adicionado; G9-02/G9-04 provados logicamente; G9-03/G9-07/G9-09/G9-10 pendentes conversa real; Bloco F real pendente Vasques.
