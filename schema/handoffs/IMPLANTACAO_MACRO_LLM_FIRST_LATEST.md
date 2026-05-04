@@ -1,5 +1,67 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.5-RUN — Build local e health do panel-nextjs/ (2026-05-03)
+
+**Tipo**: PR-PROVA | **Branch**: `prove/t10.5-panel-run-build-health`
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Próximo passo autorizado T10**: T10.6-CRM-LINK — PR-IMPL — ligar CRM real com Supabase atual; validar views/tabelas reais
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `contratual` — execução de T10.5-RUN conforme §3 do contrato T10
+
+### O que esta PR fez
+
+1. Executou `npm install` em `panel-nextjs/` — 67 pacotes instalados, postinstall executado (pdf.worker.min.mjs copiado para public/)
+2. Executou `npm run build` em `panel-nextjs/` — PASS sem erros (✓ Compiled, 25 rotas, zero TS errors)
+3. Confirmou `/api/health` compilada como Dynamic route (G10.3 APROVADO)
+4. Registrou lacunas controladas: Vercel preview (G10.4) e /api/health real (G10.5) — dependem de ação Vasques
+5. Criou `schema/proofs/T10_5_PANEL_RUN_BUILD_HEALTH_PROOF.md` com evidência completa
+6. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+7. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- Não fez deploy em Vercel (LAC-T10.5-01 — requer Vasques)
+- Não validou `/api/health` com Worker real (LAC-T10.5-02 — requer envs reais)
+- Não alterou nenhum código funcional do painel
+- Não alterou `src/` do Worker (zero diff em src/)
+- Não alterou Supabase, RLS, migrations
+- Não criou .env.local ou commitou segredo real
+- Não fechou G9/T9 — frentes completamente separadas
+
+### Riscos herdados
+
+| ID | Risco | Status |
+|----|-------|--------|
+| LAC-T10.5-01 | Preview Vercel — painel carrega no browser | ABERTA — ação Vasques (G10.4) |
+| LAC-T10.5-02 | /api/health ok:true com Worker real | ABERTA — requer envs reais + deploy (G10.5) |
+| BLK-T10-05 | 26 arquivos app/lib/ ENOVA IA | PERMANECE — não bloqueante para CRM |
+
+### Estado do gate
+
+- **G10.1 (contrato)**: APROVADO — T10.2 ✅
+- **G10.2 (import)**: APROVADO — T10.3 ✅
+- **G10.3 (build local)**: **APROVADO** — T10.5 ✅ (esta PR)
+- **G10.4 (preview Vercel)**: ABERTO — requer Vasques
+- **G10.5 (/api/health)**: ABERTO — requer Vasques
+- **G10.6 (CRM real)**: ABERTO — T10.6-CRM-LINK
+- **G10.7 (readiness)**: ABERTO — T10.7-READINESS
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/proofs/T10_5_PANEL_RUN_BUILD_HEALTH_PROOF.md
+Estado da evidência:                   parcial
+Há lacuna remanescente?:               sim — LAC-T10.5-01 (Vercel preview) e LAC-T10.5-02 (/api/health real)
+Há item parcial/inconclusivo bloqueante?: não — build local PASS é o pré-requisito central de T10.5
+Fechamento permitido nesta PR?:        NÃO — G10.4 e G10.5 permanecem abertos
+Estado permitido após esta PR:         G10.3 APROVADO; T10.5 parcialmente executada; G10.4/G10.5 ABERTOS
+Próxima PR autorizada:                 T10.6-CRM-LINK (autorizada por Vasques — build local validado)
+```
+
+---
+
 ## T10.4-ADAPT — Adaptação mínima de envs e auth do panel-nextjs/ (2026-05-03)
 
 **Tipo**: PR-IMPL | **Branch**: `feat/t10.4-panel-adapt-env-auth`
