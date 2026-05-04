@@ -1,5 +1,99 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.6D-DIAG — Mapa de persistência de mensagens Enova 1 (2026-05-04)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t10.6d-enova1-message-persistence-map`
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Próximo passo autorizado T10**: T10.7-READINESS (readiness/closeout formal da frente Panel/CRM)
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `diagnostico` — PR-DIAG READ-ONLY; D:\Enova lido como fonte somente leitura; zero alteração de código
+
+### O que esta PR fez
+
+1. Leu repo legado `D:\Enova` (READ-ONLY) e mapeou completamente o fluxo Meta → Worker → Supabase → Painel
+2. Identificou a função `logger()` do Enova 1 (linha ~903 de `Enova worker.js`) que persiste em `enova_log`
+3. Mapeou os 3 tags canônicos E1: `meta_minimal` (inbound), `DECISION_OUTPUT` (outbound decision), `SEND_OK` (outbound ACK)
+4. Confirmou que `panel-nextjs/app/api/messages/route.ts` (E2) é **código idêntico** ao painel E1 — lê os mesmos 3 tags
+5. Definiu o menor patch possível: `writeEnovaLog()` em `src/supabase/crm-store.ts` + 3 chamadas em `canary-pipeline.ts`
+6. Descartou opção de nova tabela (mais PRs, mais risco, `enova_log` já existe e painel já a lê)
+7. Criou `schema/diagnostics/T10_6D_ENOVA1_MESSAGE_PERSISTENCE_MAP.md` (14 seções)
+8. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- **Não alterou** nenhum arquivo em `D:\Enova` — READ-ONLY absoluto
+- **Não alterou** `src/` do Worker — zero diff em src/
+- **Não alterou** `panel-nextjs/**` — zero diff em panel-nextjs/
+- **Não alterou** Supabase schema, RLS, migrations, views
+- **Não fechou** G10.7 — frente T10 continua com T10.7-READINESS
+
+### Mapa E1 resumido
+
+```
+Meta → POST /webhook/meta → handleMetaWebhook()
+  → extrai: wa_id, message_id, text, type, timestamp
+  → GRAVA enova_log {tag:"meta_minimal", wa_id, meta_text, meta_type, meta_message_id}
+  → processa resposta do bot
+  → GRAVA enova_log {tag:"DECISION_OUTPUT", wa_id, meta_text: botReply, details:{stage}}
+  → sendMessage() → Meta API
+  → GRAVA enova_log {tag:"SEND_OK", wa_id, details:{provider_message_id}}
+
+Painel: GET enova_log WHERE tag IN (meta_minimal, DECISION_OUTPUT, SEND_OK)
+  → meta_minimal → direction:"in"
+  → DECISION_OUTPUT / SEND_OK → direction:"out"
+```
+
+### Recomendação técnica
+
+Menor patch Worker para ter thread atual no painel E2:
+1. `src/supabase/crm-store.ts`: adicionar `writeEnovaLog(entry)` → POST `/rest/v1/enova_log`
+2. `src/meta/canary-pipeline.ts`: 3 chamadas — inbound, pre-outbound, post-outbound
+3. `panel-nextjs/app/api/messages/route.ts`: **zero mudança** — já lê os tags corretos
+
+Pré-requisitos (Vasques):
+- `SELECT column_name, is_nullable FROM information_schema.columns WHERE table_name='enova_log'`
+- Verificar RLS/INSERT com service role em `enova_log`
+
+### Estado dos gates T10
+
+| Gate | Status |
+|------|--------|
+| G10.1 (contrato) | APROVADO — T10.2 ✅ |
+| G10.2 (import) | APROVADO — T10.3 ✅ |
+| G10.3 (build local) | APROVADO — T10.5 ✅ |
+| G10.4 (preview Vercel) | ABERTO — requer Vasques |
+| G10.5 (/api/health real) | APROVADO — Vasques confirmou `ok=true` |
+| G10.6 (CRM real) | APROVÁVEL — aguarda validação visual Vasques |
+| G10.7 (readiness) | ABERTO — T10.7-READINESS |
+
+### Riscos herdados
+
+| ID | Risco | Status |
+|----|-------|--------|
+| LAC-T10.6D-01 | Schema real de `enova_log` não confirmado por SQL (pré-req da PR-IMPL Worker) | ABERTA — ação Vasques |
+| LAC-T10.6D-02 | RLS/INSERT permission service role em `enova_log` não verificada | ABERTA — ação Vasques |
+| LAC-T10.6C-01 | `crm_turns` in-memory — thread vazia para leads E2 puros | ABERTA — resolúvel com PR-IMPL Worker |
+| LAC-T10.6-01 | Validação visual Vasques dos modais CRM pós-deploy | ABERTA — não bloqueante |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/diagnostics/T10_6D_ENOVA1_MESSAGE_PERSISTENCE_MAP.md
+Estado da evidência:                   completa — mapa E1 completo; comparação E1 vs E2; plano mínimo
+Há lacuna remanescente?:               sim — LAC-T10.6D-01: schema real enova_log (pré-req PR-IMPL)
+                                        LAC-T10.6D-02: RLS verificação (pré-req PR-IMPL)
+                                        Não bloqueantes para este PR-DIAG
+Há item parcial/inconclusivo bloqueante?: não — PR-DIAG completa; D:\Enova lido; mapa criado
+Fechamento permitido nesta PR?:        sim — PR-DIAG encerrada; G10.7 permanece ABERTO
+Estado permitido após esta PR:         T10.6D-DIAG concluída; próxima T10: T10.7-READINESS
+Próxima PR autorizada:                 T10.7-READINESS (T10) | PR-IMPL Worker enova_log (requer Vasques)
+```
+
+---
+
 ## T10.6-CRM-LINK — CRM linkado ao Supabase real + fix de modais (2026-05-04)
 
 **Tipo**: PR-DIAGFIX | **Branch**: `diagfix/t10.6-crm-link-supabase-real`  
