@@ -6,5 +6,6 @@ dist/
 panel-nextjs/node_modules/
 panel-nextjs/.next/
 panel-nextjs/.env*
+!panel-nextjs/.env.example
 panel-nextjs/tsconfig.tsbuildinfo
 panel-nextjs/public/pdf.worker.min.mjs

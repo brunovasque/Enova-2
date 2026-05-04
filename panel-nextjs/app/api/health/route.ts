@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getAdminKey } from "../../lib/get-admin-key";
 
 type HealthResponse = {
   ok: boolean;
@@ -61,7 +62,7 @@ async function checkWorker(
     const response = await fetch(new URL("/__admin__/health", workerBaseUrl), {
       method: "GET",
       headers: {
-        "x-enova-admin-key": adminKey,
+        "X-CRM-Admin-Key": adminKey,
       },
       cache: "no-store",
     });
@@ -112,7 +113,7 @@ export async function GET() {
   const envInfo = {
     hasSupabaseUrl: Boolean(process.env.SUPABASE_URL),
     hasServiceRole: Boolean(process.env.SUPABASE_SERVICE_ROLE),
-    hasAdminKey: Boolean(process.env.ENOVA_ADMIN_KEY),
+    hasAdminKey: Boolean(getAdminKey()),
     workerBaseHost: getWorkerBaseHost(process.env.WORKER_BASE_URL),
   };
 
@@ -148,7 +149,7 @@ export async function GET() {
     const supabaseUrl = process.env.SUPABASE_URL as string;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE as string;
     const workerBaseUrl = process.env.WORKER_BASE_URL as string;
-    const adminKey = process.env.ENOVA_ADMIN_KEY as string;
+    const adminKey = getAdminKey();
 
     const [dbResult, workerResult] = await Promise.all([
       checkSupabase(supabaseUrl, serviceRoleKey),

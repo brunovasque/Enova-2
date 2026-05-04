@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
+import { getAdminKey } from "../../../lib/get-admin-key";
 
 const REQUIRED_ENVS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE", "ENOVA_ADMIN_KEY"] as const;
 const URL_FIELDS = ["url", "document_url", "download_url", "media_url", "link"] as const;
@@ -121,7 +122,7 @@ export async function GET(request: Request) {
     );
   }
 
-  const adminKey = process.env.ENOVA_ADMIN_KEY as string;
+  const adminKey = getAdminKey();
   const receivedAdminKey = request.headers.get("x-enova-admin-key") || "";
   if (!receivedAdminKey) {
     return jsonResponse(

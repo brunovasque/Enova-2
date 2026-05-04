@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 import { getPrefillMeta, upsertPrefillMeta, PrefillUpdatePayload } from "./_shared";
+import { getAdminKey } from "../../lib/get-admin-key";
 
 const AUTH_ENVS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE", "ENOVA_ADMIN_KEY"] as const;
 
@@ -20,7 +21,7 @@ function authGuard(request: Request): NextResponse | null {
     );
   }
 
-  const adminKey = process.env.ENOVA_ADMIN_KEY as string;
+  const adminKey = getAdminKey();
   const receivedKey = request.headers.get("x-enova-admin-key") ?? "";
 
   if (!receivedKey) {

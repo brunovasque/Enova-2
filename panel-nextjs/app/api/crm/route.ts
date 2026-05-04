@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 
 import { CrmRequest, REQUIRED_ENVS, listCrmLeads, runCrmAction } from "./_shared";
+import { getAdminKey } from "../../lib/get-admin-key";
 
 const AUTH_ENVS = [...REQUIRED_ENVS, "ENOVA_ADMIN_KEY"] as const;
 
@@ -23,7 +24,7 @@ function authGuard(request: Request): NextResponse | null {
     );
   }
 
-  const adminKey = process.env.ENOVA_ADMIN_KEY as string;
+  const adminKey = getAdminKey();
   const receivedKey = request.headers.get("x-enova-admin-key") || "";
 
   if (!receivedKey) {

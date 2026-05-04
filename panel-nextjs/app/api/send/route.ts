@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getAdminKey } from "../../lib/get-admin-key";
 
 type SendRequest = {
   wa_id?: string;
@@ -71,14 +72,14 @@ export async function POST(request: Request) {
     }
 
     const workerBaseUrl = process.env.WORKER_BASE_URL as string;
-    const adminKey = process.env.ENOVA_ADMIN_KEY as string;
+    const adminKey = getAdminKey();
     const workerEndpoint = new URL("/__admin__/send", workerBaseUrl);
 
     const workerResponse = await fetch(workerEndpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-enova-admin-key": adminKey,
+        "X-CRM-Admin-Key": adminKey,
       },
       body: JSON.stringify({ wa_id: waId, text }),
       cache: "no-store",

@@ -1,3 +1,5 @@
+import { getAdminKey } from "../../lib/get-admin-key";
+
 export const LEAD_POOLS = ["COLD_POOL", "WARM_POOL", "HOT_POOL"] as const;
 export const LEAD_TEMPS = ["COLD", "WARM", "HOT"] as const;
 export const CANONICAL_SOURCE_TYPES = ["campanha", "morna", "fria", "lyx"] as const;
@@ -820,7 +822,7 @@ export async function runBasesAction(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-enova-admin-key": envMap.ENOVA_ADMIN_KEY as string,
+          "X-CRM-Admin-Key": getAdminKey(envMap as Record<string, string | undefined>),
         },
         body: JSON.stringify({ wa_id: waId, text }),
         cache: "no-store",
