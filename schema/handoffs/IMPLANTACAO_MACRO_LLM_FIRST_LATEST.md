@@ -1,5 +1,74 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.2-CONTRACT — Contrato formal de migração Panel/CRM (2026-05-03)
+
+**Tipo**: PR-DOC | **Branch**: `docs/t10.2-panel-crm-migration-contract`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md` (T10 aberto por esta PR)
+**Próximo passo autorizado T10**: T10.3-IMPORT — PR-IMPL — import bruto `D:\Enova\panel` → `panel-nextjs/` (branch sugerido: `feat/t10.3-panel-import-bruto`)
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `contratual` — abertura formal de contrato de frente nova T10
+
+### O que esta PR fez
+
+1. Criou `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md` — contrato formal completo (§1–§18 + Bloco E)
+2. Definiu sequência oficial de PRs T10: T10.1-DIAG ✅ → T10.2-CONTRACT ✅ → T10.3-IMPORT → T10.4-ADAPT → T10.5-RUN → T10.6-CRM-LINK → T10.7-READINESS → T10.X futuro opcional
+3. Definiu gates G10.1–G10.7 com critérios verificáveis
+4. Definiu 10 critérios de aceite CA-T10-01..10
+5. Definiu 7 provas obrigatórias P-T10-01..07
+6. Definiu 5 bloqueios BLK-T10-01..05
+7. Definiu 13 regras duras (hard rules) para a frente
+8. Mapeou 7 riscos com severidade e mitigação
+9. Atualizou `schema/contracts/_INDEX.md` — T10 registrado como frente paralela ativa; T9 próxima PR corrigida para T9.14-IMPL
+10. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md` — entrada T10.2 no topo
+11. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- Não copiou nenhum arquivo do painel Enova 1
+- Não criou `panel-nextjs/`
+- Não alterou `src/` do Worker (zero src/ modificado)
+- Não alterou Worker, LLM, WhatsApp, webhook, outbound
+- Não alterou Supabase, schema, RLS, migrations
+- Não fechou G9/T9 — frentes completamente separadas
+- Não criou aba Funil/Qualificação
+- Não modificou nenhum arquivo em `D:\Enova`
+- Não executou deploys
+
+### Estado T10 após esta PR
+
+| Aspecto | Estado |
+|---------|--------|
+| T10 contrato | **ABERTO** — G10.1 APROVADO (contrato aprovado) |
+| T10 frente | **em execução** — contrato criado, sequência definida |
+| Próxima PR T10 | T10.3-IMPORT (PR-IMPL) |
+| Pré-requisito T10.3 | G10.1 aprovado ✅ (esta PR) |
+
+### Estado T9 após esta PR
+
+| Aspecto | Estado |
+|---------|--------|
+| T9 contrato | **ABERTO** — G9 ainda não fechado |
+| BLK-T9.13-STATE-MAPPING | **RESOLVIDO** (PR #212) |
+| Próxima PR T9 | T9.14-IMPL |
+| Relação com T10 | Completamente independente — não afetado |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md
+Estado da evidência:                   completa (PR-DOC — contrato criado integralmente)
+Há lacuna remanescente?:               não — T10.2 é docs-only; contrato define todo o escopo
+Há item parcial/inconclusivo bloqueante?: não
+Fechamento permitido nesta PR?:        sim — G10.1 (contrato aprovado) fechado por esta PR
+Estado permitido após esta PR:         G10.1 APROVADO; T10.3-IMPORT desbloqueada
+Próxima PR autorizada T10:             T10.3-IMPORT (PR-IMPL — import bruto panel-nextjs/)
+Próxima PR autorizada T9:             T9.14-IMPL
+```
+
+---
+
 ## T10.1-DIAG — Crosscheck Panel CRM Enova 1 para migração ao Enova-2 (2026-05-03)
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t10.1-panel-crm-enova1-crosscheck`
