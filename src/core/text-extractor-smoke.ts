@@ -65,6 +65,53 @@ eq('D6: "quero saber sobre" → customer_goal entender_programa',
   extractFactsFromText('Quero saber sobre o programa', 'discovery')['customer_goal'],
   'entender_programa');
 
+// T9.15C — Linguagem natural real (discovery) ─────────────────────────────────
+console.log('\n── discovery — T9.15C ──');
+
+eq('D-C1: frase real do canary → customer_goal comprar_imovel',
+  extractFactsFromText('Sou solteiro, compro sozinho e ganho 3500 CLT.', 'discovery')['customer_goal'],
+  'comprar_imovel');
+
+eq('D-C2: "Compro sozinho" isolado → customer_goal comprar_imovel',
+  extractFactsFromText('Compro sozinho.', 'discovery')['customer_goal'],
+  'comprar_imovel');
+
+eq('D-C3: "Vou comprar um apartamento" → customer_goal comprar_imovel',
+  extractFactsFromText('Vou comprar um apartamento.', 'discovery')['customer_goal'],
+  'comprar_imovel');
+
+eq('D-C4: "Tenho interesse no programa" → customer_goal comprar_imovel',
+  extractFactsFromText('Tenho interesse no programa.', 'discovery')['customer_goal'],
+  'comprar_imovel');
+
+eq('D-C5: "Quero participar do Minha Casa Minha Vida" → customer_goal comprar_imovel',
+  extractFactsFromText('Quero participar do Minha Casa Minha Vida.', 'discovery')['customer_goal'],
+  'comprar_imovel');
+
+eq('D-C6: "Pretendo comprar pelo MCMV" → customer_goal comprar_imovel',
+  extractFactsFromText('Pretendo comprar pelo MCMV.', 'discovery')['customer_goal'],
+  'comprar_imovel');
+
+eq('D-C7: "Gostaria de comprar uma casa" → customer_goal comprar_imovel',
+  extractFactsFromText('Gostaria de comprar uma casa.', 'discovery')['customer_goal'],
+  'comprar_imovel');
+
+eq('D-C8: "Quero financiar meu imóvel" → customer_goal comprar_imovel',
+  extractFactsFromText('Quero financiar meu imóvel.', 'discovery')['customer_goal'],
+  'comprar_imovel');
+
+// T9.15C — Regressões negativas (falsos positivos) ────────────────────────────
+console.log('\n── discovery — regressões negativas T9.15C ──');
+
+empty('D-N1: "Compro comida todo dia" → sem customer_goal',
+  extractFactsFromText('Compro comida todo dia.', 'discovery'));
+
+empty('D-N2: "Compro roupa às vezes" → sem customer_goal',
+  extractFactsFromText('Compro roupa às vezes.', 'discovery'));
+
+empty('D-N3: "Não quero comprar nada agora" → sem customer_goal (negação)',
+  extractFactsFromText('Não quero comprar nada agora.', 'discovery'));
+
 // ── qualification_civil ───────────────────────────────────────────────────────
 console.log('\n── qualification_civil ──');
 
