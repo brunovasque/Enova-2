@@ -1,5 +1,90 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.6A-DIAG — Diagnóstico conversas desatualizadas (2026-05-03)
+
+**Tipo**: PR-DIAG | **Branch**: `diag/t10.6a-conversations-stale-data`  
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`  
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)  
+**Próximo passo autorizado T10**: T10.6B-FIX (corrigir aba Conversas para não exibir dados E1 obsoletos) OU T10.6-CRM-LINK (ligar CRM real — paralela); Vasques confirma qual iniciar  
+**Próximo passo autorizado T9**: T9.14-IMPL  
+**Classificação**: `diagnostico` — READ-ONLY; nenhuma alteração de código
+
+### O que esta PR fez
+
+1. Leu e analisou `panel-nextjs/app/api/conversations/route.ts` — mapeou fluxo completo: lê `enova_state` (stage/snippet fallback) + `enova_log` (tags `meta_minimal`, `DECISION_OUTPUT`, `SEND_OK`)
+2. Leu e analisou `panel-nextjs/app/api/messages/route.ts` — confirma: lê `enova_log` com mesmos tags do Enova-1
+3. Leu `panel-nextjs/app/conversations/ConversationUI.tsx` — polling 1s; chama `/api/conversations` e `/api/messages`
+4. Leu `panel-nextjs/app/api/bases/_shared.ts` — bases usa `bases_leads_v1` VIEW (crm_lead_meta); escreve em `enova_log` com tags `bases_*` (não os tags de conversas)
+5. Leu `panel-nextjs/app/api/crm/route.ts` — CRM usa `enova_attendance_v1` VIEW
+6. Leu `src/supabase/crm-store.ts:190-206` — `mapStageCurrentToFaseConversa()`: stages pré-docs retornam null → `fase_conversa` NÃO atualizada para discovery/qualification_*
+7. Leu `src/supabase/types.ts:218-234` — `EnovaStateRow`: Worker só escreve `lead_id`, `updated_at`, `fase_conversa` — nunca `last_incoming_text`/`last_user_msg`/`last_bot_msg`
+8. Grep em `src/meta/ingest.ts` e `src/meta/webhook.ts` — **zero ocorrências** de `meta_minimal`, `DECISION_OUTPUT`, `SEND_OK`
+9. Identificou 4 causas raiz (ROOT-01..04)
+10. Criou `schema/diagnostics/T10_6A_CONVERSATIONS_STALE_DATA_DIAG.md`
+11. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+12. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- Não alterou nenhum arquivo em `panel-nextjs/`
+- Não alterou `src/` do Worker (zero diff em src/)
+- Não alterou Supabase, RLS, migrations, views
+- Não fechou G10.6 — permanece ABERTO
+- Não fechou G9/T9 — frentes completamente separadas
+- Não implementou nenhuma correção
+
+### Causas raiz identificadas
+
+| ID | Causa | Evidência |
+|----|-------|-----------|
+| ROOT-01 | `enova_state.fase_conversa` tem valores do Enova-1 (ex: `clt_renda_perfil_informativo`) nunca atualizados para stages pré-docs pelo Enova-2 | `crm-store.ts:190-206`: mapper retorna null para discovery/qualification_* |
+| ROOT-02 | Tags `meta_minimal`/`DECISION_OUTPUT`/`SEND_OK` em `enova_log` são exclusivamente do Enova-1 | `src/meta/ingest.ts` e `src/meta/webhook.ts`: zero escrita desses tags |
+| ROOT-03 | Campos `last_incoming_text`, `last_user_msg`, `last_bot_msg` em `enova_state` nunca atualizados pelo Enova-2 | `types.ts:226-234`: `EnovaStateRow` não expõe esses campos para escrita |
+| ROOT-04 | Worker escreve `enova_state` por `lead_id` (UUID), panel lê por `wa_id` — possível mismatch para leads novos | `crm-store.ts:111` vs `conversations/route.ts:111-113` |
+
+### Por que `/bases` e `/crm` funcionam mas `/conversations` não
+
+| Aba | Tabela fonte | Quem escreve | Resultado |
+|-----|-------------|--------------|-----------|
+| `/bases` | `crm_lead_meta` | Panel (ações Bases) | OK — dado atual |
+| `/crm` | `enova_attendance_meta` | Panel (ações CRM) | OK — dado atual |
+| `/conversations` | `enova_state` + `enova_log` (tags E1) | Enova-1 (legado); Enova-2 parcial | STALE — dado histórico |
+
+### Estado dos gates T10
+
+| Gate | Status |
+|------|--------|
+| G10.1 (contrato) | APROVADO — T10.2 ✅ |
+| G10.2 (import) | APROVADO — T10.3 ✅ |
+| G10.3 (build local) | APROVADO — T10.5 ✅ |
+| G10.4 (preview Vercel) | ABERTO — requer Vasques |
+| G10.5 (/api/health real) | **APROVADO** — Vasques confirmou `ok=true` |
+| G10.6 (CRM real) | ABERTO — T10.6-CRM-LINK |
+| G10.7 (readiness) | ABERTO — T10.7-READINESS |
+
+### Riscos herdados
+
+| ID | Risco | Status |
+|----|-------|--------|
+| LAC-T10.6A-01 | Quais tags o Worker Enova-2 escreve em `enova_log` em PROD | ABERTA — necessário para T10.6B-FIX opção B1 |
+| LAC-T10.5-01 | Preview Vercel — painel carrega no browser | ABERTA — ação Vasques (G10.4) |
+| BLK-T10-05 | 26 arquivos app/lib/ ENOVA IA | PERMANECE — não bloqueante para CRM |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/diagnostics/T10_6A_CONVERSATIONS_STALE_DATA_DIAG.md
+Estado da evidência:                   completa — diagnóstico READ-ONLY, causa raiz identificada
+Há lacuna remanescente?:               sim — LAC-T10.6A-01: tags que Enova-2 escreve em enova_log
+Há item parcial/inconclusivo bloqueante?: não — PR-DIAG encerrada; LAC-T10.6A-01 é contexto para fix
+Fechamento permitido nesta PR?:        sim — PR-DIAG encerrada; G10.6 permanece ABERTO (gate técnico)
+Estado permitido após esta PR:         T10.6A-DIAG concluída; G10.5 APROVADO; G10.6 ABERTO
+Próxima PR autorizada:                 T10.6B-FIX (conversations fix) OU T10.6-CRM-LINK (paralela)
+```
+
+---
+
 ## T10.5C-FIX — Correção endpoint health panel→Worker (2026-05-03)
 
 **Tipo**: PR-FIX | **Branch**: `fix/t10.5c-panel-health-endpoint`
