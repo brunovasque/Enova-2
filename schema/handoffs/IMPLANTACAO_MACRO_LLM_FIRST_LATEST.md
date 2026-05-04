@@ -1,5 +1,94 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.15H-FIX-FACTS-PERSISTENCE-TOPO — Facts acumulados entre turnos via enova_state.last_context (2026-05-04)
+
+**Tipo**: PR-FIX / contratual / frente T9
+**Branch**: fix/t9.15h-facts-persistence-topo
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.15G-FIX-STAGE-AFTER-PERSISTENCE (PR #235) — stage_after pré-docs persistido em fase_conversa; smokes 53/53+19/19+24/24+41/41+19/19 PASS
+**Próximo passo autorizado T9**: Repetir T9.15B-PROVA-REAL-CANARY com facts acumulados entre turnos
+**Classificação**: PR-FIX — correção cirúrgica do ciclo de vida de facts em crm-store.ts + canary-pipeline.ts
+
+### ESTADO HERDADO
+
+- Branch base: main (após merge PR #235)
+- Contrato ativo: T9 aberto; G9 em aberto
+- PR anterior concluída: T9.15G (PR #235) — stage_after pré-docs persistido em fase_conversa; loop discovery resolvido
+- Bloqueio identificado: em turno 2 (cliente diz "Bruno Vasques"), `customer_goal` do turno 1 desaparece — Core vê apenas `nome_completo`, gate 1 falha, Enova pergunta interesse novamente em vez de pedir nacionalidade
+- Causa raiz: `crm_facts` é writeBuffer-only em `SupabaseCrmBackend`; ao reiniciar isolate Cloudflare Worker, novo `SupabaseCrmBackend` tem writeBuffer vazio; turno 1 facts (`customer_goal`) nunca chegam ao turno 2
+- Smokes herdados: `smoke` 24/24, `smoke:meta:canary` 41/41, `smoke:core:semantic-objectives` 19/19, `prove:t9.15g-write-read-restart` 53/53, `prove:t9.14-reverse-mapper` 19/19 PASS
+
+### DIAGNÓSTICO CONFIRMADO
+
+`src/crm/store.ts` — `SupabaseCrmBackend`:
+- `crm_facts` vai apenas para `this.writeBuffer` (confirmado T9.12-DIAG BLK-WRITE-04)
+- `supabaseBackendSingleton` é module-level → reset em cada restart de isolate
+- Novo singleton = novo `CrmInMemoryBackend()` = writeBuffer zerado
+- Sem persistência de facts no Supabase real → facts morrem com o isolate
+
+Solução sem migration:
+- `enova_state.last_context` (coluna TEXT — confirmada T9.13G P0 no schema real) usada como storage JSON
+- Merge `{ ...persistedFacts, ...extractedFacts }` — turno atual tem precedência (para correções do cliente)
+- Falha silenciosa: se Supabase indisponível, `persistedFacts = {}` → degradação graceful para comportamento pré-T9.15H
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.15h-facts-persistence-topo
+- Arquivos modificados (3): `src/supabase/crm-store.ts`, `src/meta/canary-pipeline.ts`, `package.json`
+- Arquivos criados (1): `src/supabase/facts-persistence-proof.ts`
+- Zero diff fora do escopo: zero `src/core/engine.ts`, zero `src/llm/`, zero `panel-nextjs/`, zero wrangler.toml, zero Supabase schema/RLS/migrations
+
+### O que esta PR fez
+
+**src/supabase/crm-store.ts (modificado)**
+- `readLeadAccumulatedFacts(cfg, lead_id)`: lê `enova_state.last_context` via `supabaseSelect` com filter `{ lead_id: 'eq.${lead_id}' }`; parseia TEXT→JSON.parse ou usa JSONB direto; retorna `{}` em qualquer falha (never throws)
+- `writeLeadAccumulatedFacts(cfg, lead_id, facts)`: upserta `enova_state` com `last_context = JSON.stringify(facts)` e `updated_at = new Date().toISOString()`
+
+**src/meta/canary-pipeline.ts (modificado)**
+- Import expandido: `readLeadAccumulatedFacts, writeLeadAccumulatedFacts` adicionados
+- Bloco [B]+[C] expandido:
+  - `readLeadAccumulatedFacts` chamado antes do Core (retorna `{}` silenciosamente se Supabase off)
+  - Facts do turno atual gravados no writeBuffer normalmente
+  - Facts de turnos anteriores (`persistedFacts`) injetados no writeBuffer apenas para keys não presentes no `extractedFacts`
+  - `diagLog('text_extractor.result')` inclui `persisted_facts_count` e `persisted_fact_keys`
+- Após `upsertLeadState`: `writeLeadAccumulatedFacts` grava facts acumulados em `last_context`
+  - `diagLog('facts_persistence.write')` com `ok`, `facts_count`, `fact_keys`, `error`
+
+**src/supabase/facts-persistence-proof.ts (novo)**
+- 7 cenários, 34 checks — pure logic sem Supabase real
+- A: merge básico; B: não-sobrescrita writeBuffer restart; C: acumulação 3 turnos; D: restart completo 4 facts; E: parse TEXT/JSONB/null/inválido/array; F: precedência turno atual; G: topo completo → autoriza qualification_civil
+
+**package.json (modificado)**
+- `"prove:t9.15h-facts-persistence"` adicionado
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run prove:t9.15h-facts-persistence` | **34/34 PASS** |
+| `npm run prove:t9.15g-write-read-restart` | 53/53 PASS \| 1 SKIP |
+| `npm run prove:t9.14-reverse-mapper` | 19/19 PASS |
+| `npm run smoke` (core) | 24/24 PASS |
+| `npm run smoke:meta:canary` | 41/41 PASS |
+| `npm run smoke:core:semantic-objectives` | 19/19 PASS |
+| `npm run smoke:core:text-extractor` | 81/81 PASS |
+
+### Bloco E — Fechamento por Prova (A00-ADENDO-03)
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           src/supabase/facts-persistence-proof.ts (34/34 PASS)
+PR que fecha:                          T9.15H-FIX-FACTS-PERSISTENCE-TOPO
+Contrato ativo:                        schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md
+Estado da evidência:                   completa — 7 cenários, 34 checks, pure logic
+Há lacuna remanescente?:               não — merge, não-sobrescrita, acumulação, restart, parse dual, precedência, topo completo provados
+Fechamento permitido nesta PR?:        sim
+Estado permitido após esta PR:         T9.15H concluída; próxima: Repetir T9.15B-PROVA-REAL-CANARY com facts acumulados
+Próxima PR autorizada:                 Repetir T9.15B-PROVA-REAL-CANARY
+```
+
+---
+
 ## T9.15G-FIX-STAGE-AFTER-PERSISTENCE — Persistência stage_after pré-docs em fase_conversa (2026-05-04)
 
 **Tipo**: PR-FIX / contratual / frente T9

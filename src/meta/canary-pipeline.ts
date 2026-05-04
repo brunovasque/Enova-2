@@ -38,7 +38,7 @@ import { getLeadState, getLeadFacts, upsertLeadState, writeLeadFact, getLeadTime
 import { extractFactsFromText } from '../core/text-extractor.ts';
 import { emitTelemetry } from '../telemetry/emit.ts';
 import { diagLog, maskId } from './prod-diag.ts';
-import { writeEnovaLog } from '../supabase/crm-store.ts';
+import { writeEnovaLog, readLeadAccumulatedFacts, writeLeadAccumulatedFacts } from '../supabase/crm-store.ts';
 import type { SupabaseConfig } from '../supabase/types.ts';
 import { toSemanticNextObjective } from '../core/semantic-next-objective.ts';
 
@@ -213,6 +213,16 @@ export async function runCanaryPipeline(
       const extractedFacts = extractFactsFromText(event.text_body ?? '', currentStage);
       const extractedKeys = Object.keys(extractedFacts);
 
+      // T9.15H: Carregar facts acumulados de turnos anteriores (enova_state.last_context).
+      // crm_facts é writeBuffer-only — perde dados após restart de isolate Cloudflare Worker.
+      // last_context persiste o mapa de facts no Supabase real entre turnos/restarts.
+      let persistedFacts: Record<string, unknown> = {};
+      if (supabaseCfg) {
+        try {
+          persistedFacts = await readLeadAccumulatedFacts(supabaseCfg, crmResult.lead_id);
+        } catch { /* falha silenciosa — persisted facts = {} */ }
+      }
+
       // Bloco [C] — Persistência de facts extraídos (status: 'pending')
       // Facts ficam 'pending' até confirmação — LLM/operador promove para 'accepted'.
       for (const [factKey, factValue] of Object.entries(extractedFacts)) {
@@ -226,10 +236,27 @@ export async function runCanaryPipeline(
         });
       }
 
+      // T9.15H: Injetar facts de turnos anteriores no writeBuffer (se não sobrescritos pelo turno atual).
+      // Garante que getLeadFacts retorne o acumulado completo sem exigir tabela Supabase para crm_facts.
+      for (const [factKey, factValue] of Object.entries(persistedFacts)) {
+        if (!(factKey in extractedFacts)) {
+          await writeLeadFact(coreBackend, {
+            lead_id: crmResult.lead_id,
+            fact_key: factKey,
+            fact_value: factValue,
+            confidence: 0.8,
+            status: 'pending',
+            source_turn_id: null,
+          });
+        }
+      }
+
       diagLog('text_extractor.result', {
         stage_current: currentStage,
         facts_extracted_count: extractedKeys.length,
         fact_keys: extractedKeys,
+        persisted_facts_count: Object.keys(persistedFacts).length,
+        persisted_fact_keys: Object.keys(persistedFacts),
       });
 
       const factsResult = await getLeadFacts(coreBackend, crmResult.lead_id);
@@ -276,6 +303,20 @@ export async function runCanaryPipeline(
       });
 
       await upsertLeadState(coreBackend, crmResult.lead_id, coreDecision);
+
+      // T9.15H: Persistir facts acumulados em enova_state.last_context para sobreviver restart do isolate.
+      // factsMap inclui todos os facts (anteriores + atuais). Core já tomou decisão com eles.
+      if (supabaseCfg) {
+        try {
+          const factsWriteResult = await writeLeadAccumulatedFacts(supabaseCfg, crmResult.lead_id, factsMap);
+          diagLog('facts_persistence.write', {
+            ok: factsWriteResult.ok,
+            facts_count: Object.keys(factsMap).length,
+            fact_keys: Object.keys(factsMap),
+            error: factsWriteResult.ok ? null : factsWriteResult.error,
+          });
+        } catch { /* falha silenciosa — pipeline não bloqueia */ }
+      }
 
       diagLog('core.decision', {
         lead_id_present: true,
