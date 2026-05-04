@@ -638,7 +638,11 @@ export function smokeScenario22_Topo_BrasileiroCompleto_Avanca(): SmokeResult {
       assert('stage_current = discovery', 'discovery', decision.stage_current),
       assert('block_advance = false', false, decision.block_advance),
       assert('stage_after = qualification_civil', 'qualification_civil', decision.stage_after),
-      assert('next_objective = avancar_para_qualification_civil', 'avancar_para_qualification_civil', decision.next_objective),
+      assert(
+        'next_objective contém estado civil/solteiro/casado/união estável',
+        'Perguntar estado civil: solteiro, casado, união estável ou divorciado.',
+        decision.next_objective,
+      ),
       assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
@@ -689,7 +693,11 @@ export function smokeScenario24_Topo_EstrangeiroComRNM_Avanca(): SmokeResult {
       assert('stage_current = discovery', 'discovery', decision.stage_current),
       assert('block_advance = false', false, decision.block_advance),
       assert('stage_after = qualification_civil', 'qualification_civil', decision.stage_after),
-      assert('next_objective = avancar_para_qualification_civil', 'avancar_para_qualification_civil', decision.next_objective),
+      assert(
+        'next_objective contém estado civil/solteiro/casado/união estável',
+        'Perguntar estado civil: solteiro, casado, união estável ou divorciado.',
+        decision.next_objective,
+      ),
       assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };

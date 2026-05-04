@@ -134,8 +134,8 @@ export const TOPO_NEXT_OBJECTIVES = {
   PERGUNTAR_NACIONALIDADE: 'perguntar_nacionalidade',
   /** estrangeiro detectado, RNM não confirmado — perguntar RNM e validade. */
   PERGUNTAR_RNM: 'perguntar_rnm_e_validade',
-  /** topo completo — avançar para estado civil. */
-  AVANCAR_PARA_CIVIL: 'avancar_para_qualification_civil',
+  /** topo completo — instruir LLM a perguntar estado civil. */
+  AVANCAR_PARA_CIVIL: 'Perguntar estado civil: solteiro, casado, união estável ou divorciado.',
 } as const;
 
 // ---------------------------------------------------------------------------
