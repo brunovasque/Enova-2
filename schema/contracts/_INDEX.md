@@ -29,7 +29,7 @@ Contrato macro ativo: **T9 — aberto formalmente em 2026-05-01 via PR-T9.0** (G
 
 | Fase | Status | Próximo passo autorizado |
 |------|--------|--------------------------|
-| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — T9.15-PROVA executada em 2026-05-04; write/read/restart lógico 44/44 PASS; Bloco F real pendente Vasques; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **T9.16-PROVA-CONVERSA-REAL** (próxima PR autorizada — conversa real multi-turno WhatsApp/canary ≥3 turnos com Vasques) |
+| T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria | **aberto** — T9.15B-PROVA-REAL-CANARY executada em 2026-05-04; roteiro canary real criado em `schema/proofs/T9_15B_REAL_CANARY_FUNNEL_PROOF.md`; prova real pendente execução por Vasques; contrato ativo em `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` | **T9.R-CLOSEOUT-G9** (somente após Vasques executar roteiro e confirmar todos os critérios G9) — se algum item falhar: PR-FIX cirúrgica |
 
 ## Contratos de frentes paralelas ativas
 
@@ -146,7 +146,8 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
-- 2026-05-04 — T9.15-PROVA criada: write/read/restart lógico 44/44 PASS; `src/supabase/write-read-restart-proof.ts`; `prove:t9.15-write-read-restart` adicionado; G9-02/G9-04 provados logicamente; G9-03/G9-07/G9-09/G9-10 pendentes conversa real; Bloco F real pendente Vasques; próxima PR: T9.16-PROVA-CONVERSA-REAL.
+- 2026-05-04 — T9.15B-PROVA-REAL-CANARY criada: roteiro canary real completo em `schema/proofs/T9_15B_REAL_CANARY_FUNNEL_PROOF.md`; pré-condições, roteiro 3 turnos, comandos SQL/tail, checklists, plano rollback, critérios G9, análise risco documentados; G9-03/G9-07/G9-09/G9-10 pendentes execução Vasques; G9 permanece aberto; próxima PR: T9.R-CLOSEOUT-G9 (somente após prova real confirmada) ou PR-FIX cirúrgica se falhar.
+- 2026-05-04 — T9.15-PROVA criada: write/read/restart lógico 44/44 PASS; `src/supabase/write-read-restart-proof.ts`; `prove:t9.15-write-read-restart` adicionado; G9-02/G9-04 provados logicamente; G9-03/G9-07/G9-09/G9-10 pendentes conversa real; Bloco F real pendente Vasques.
 - 2026-05-04 — T9.14-IMPL concluída: BLK-T9.14-READ-PATH resolvido em código; `mapFaseConversaToStageCurrent()` criada em `src/supabase/crm-store.ts`; `mapLeadStateFromEnovaState` corrigida — removida dependência de `row.stage_current` (inexistente), usa `row.fase_conversa`; prova 15/15 PASS; regressões 70/70 + 41/41 PASS; G9-02/G9-04 desbloqueados em código — prova real pendente T9.15-PROVA; G9 permanece aberto; próxima PR: T9.15-PROVA.
 - 2026-05-04 — T10.7-READINESS concluída: frente T10 Panel/CRM ENCERRADA POR PROVA; G10 APROVADO (G10.1–G10.7 todos fechados por evidência real); 13 PRs (#213–#225 + T10.7) executadas; 10/10 critérios de aceite cumpridos; canary end-to-end validado por Vasques (WhatsApp → Worker → LLM → enova_log → Painel); contrato T10 movido para encerrados; próxima frente recomendada: T9-READINESS/T9.14-IMPL; T9/G9 permanece aberto e independente; readiness: `schema/readiness/T10_7_PANEL_CRM_READINESS_CLOSEOUT.md`.
 - 2026-05-03 — T10.5C-FIX implementada: `panel-nextjs/app/api/health/route.ts` corrigido — `/__admin__/health` → `/__admin__/go-live/health` (6 ocorrências); build PASS; G10.3 APROVADO; G10.5 ABERTO aguardando Vasques testar /api/health real pós-deploy Vercel; T9 permanece aberto e independente; próxima PR autorizada T9: T9.14-IMPL.
