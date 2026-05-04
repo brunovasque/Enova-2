@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 
 import { CrmRequest, REQUIRED_ENVS, listCrmLeads, runCrmAction } from "./_shared";
+import { getAdminKey } from "../../lib/get-admin-key";
 
-const AUTH_ENVS = [...REQUIRED_ENVS, "ENOVA_ADMIN_KEY"] as const;
+const AUTH_ENVS = [...REQUIRED_ENVS] as const;
 
 function hasValidAdminKey(received: string, expected: string): boolean {
   const receivedBuffer = Buffer.from(received);
@@ -23,7 +24,13 @@ function authGuard(request: Request): NextResponse | null {
     );
   }
 
-  const adminKey = process.env.ENOVA_ADMIN_KEY as string;
+  const adminKey = getAdminKey();
+  if (!adminKey) {
+    return NextResponse.json(
+      { ok: false, error: "missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
+  }
   const receivedKey = request.headers.get("x-enova-admin-key") || "";
 
   if (!receivedKey) {

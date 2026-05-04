@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
+import { getAdminKey } from "../../../lib/get-admin-key";
 
-const REQUIRED_ENVS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE", "ENOVA_ADMIN_KEY"] as const;
+const REQUIRED_ENVS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE"] as const;
 const URL_FIELDS = ["url", "document_url", "download_url", "media_url", "link"] as const;
 const MAX_DIAGNOSTIC_ROWS = 500;
 const MAX_ERROR_MESSAGE_LENGTH = 160;
@@ -121,7 +122,34 @@ export async function GET(request: Request) {
     );
   }
 
-  const adminKey = process.env.ENOVA_ADMIN_KEY as string;
+  const adminKey = getAdminKey();
+  if (!adminKey) {
+    return jsonResponse(
+      {
+        ok: false,
+        wa_id: null,
+        row_count: 0,
+        exact_wa_id_match_all: false,
+        column_availability: {
+          url: false,
+          document_url: false,
+          download_url: false,
+          media_url: false,
+          link: false,
+        },
+        filled_counts: {
+          url: null,
+          document_url: null,
+          download_url: null,
+          media_url: null,
+          link: null,
+        },
+        rows: [],
+        error: "missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY",
+      },
+      500,
+    );
+  }
   const receivedAdminKey = request.headers.get("x-enova-admin-key") || "";
   if (!receivedAdminKey) {
     return jsonResponse(

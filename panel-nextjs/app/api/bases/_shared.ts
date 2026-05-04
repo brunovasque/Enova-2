@@ -1,3 +1,5 @@
+import { getAdminKey } from "../../lib/get-admin-key";
+
 export const LEAD_POOLS = ["COLD_POOL", "WARM_POOL", "HOT_POOL"] as const;
 export const LEAD_TEMPS = ["COLD", "WARM", "HOT"] as const;
 export const CANONICAL_SOURCE_TYPES = ["campanha", "morna", "fria", "lyx"] as const;
@@ -120,7 +122,7 @@ type AuditLogRow = {
 };
 
 export const REQUIRED_ENVS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE"] as const;
-export const CALL_NOW_ENVS = ["WORKER_BASE_URL", "ENOVA_ADMIN_KEY"] as const;
+export const CALL_NOW_ENVS = ["WORKER_BASE_URL"] as const;
 export const VALID_STATUS_OPERACIONAL = ["SEM_CONTATO", "CONTATADO", "AGUARDANDO_RETORNO", "PAUSADO"] as const;
 export type StatusOperacional = (typeof VALID_STATUS_OPERACIONAL)[number];
 
@@ -814,13 +816,16 @@ export async function runBasesAction(
           body: { ok: false, error: `missing env: ${missingCallNowEnvs.join(", ")}` },
         };
       }
+      if (!getAdminKey(envMap as Record<string, string | undefined>)) {
+        return { status: 500, body: { ok: false, error: "missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY" } };
+      }
 
       const workerEndpoint = new URL("/__admin__/send", envMap.WORKER_BASE_URL as string);
       const workerResponse = await fetch(workerEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-enova-admin-key": envMap.ENOVA_ADMIN_KEY as string,
+          "X-CRM-Admin-Key": getAdminKey(envMap as Record<string, string | undefined>),
         },
         body: JSON.stringify({ wa_id: waId, text }),
         cache: "no-store",
@@ -921,6 +926,9 @@ export async function runBasesAction(
           body: { ok: false, error: `missing env: ${missingCallNowEnvs.join(", ")}` },
         };
       }
+      if (!getAdminKey(envMap as Record<string, string | undefined>)) {
+        return { status: 500, body: { ok: false, error: "missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY" } };
+      }
 
       const workerEndpoint = new URL("/__admin__/send", envMap.WORKER_BASE_URL as string);
 
@@ -939,7 +947,7 @@ export async function runBasesAction(
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "x-enova-admin-key": envMap.ENOVA_ADMIN_KEY as string,
+              "X-CRM-Admin-Key": getAdminKey(envMap as Record<string, string | undefined>),
             },
             body: JSON.stringify({ wa_id: waId, text }),
             cache: "no-store",

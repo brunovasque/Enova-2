@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getAdminKey } from "../../lib/get-admin-key";
 
 type SendRequest = {
   wa_id?: string;
@@ -13,7 +14,6 @@ const REQUIRED_ENVS = [
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE",
   "WORKER_BASE_URL",
-  "ENOVA_ADMIN_KEY",
 ] as const;
 
 export async function POST(request: Request) {
@@ -22,6 +22,13 @@ export async function POST(request: Request) {
   if (missingEnvs.length > 0) {
     return NextResponse.json(
       { ok: false, error: `missing env: ${missingEnvs.join(", ")}` },
+      { status: 500 },
+    );
+  }
+
+  if (!getAdminKey()) {
+    return NextResponse.json(
+      { ok: false, error: "missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY" },
       { status: 500 },
     );
   }
@@ -71,14 +78,14 @@ export async function POST(request: Request) {
     }
 
     const workerBaseUrl = process.env.WORKER_BASE_URL as string;
-    const adminKey = process.env.ENOVA_ADMIN_KEY as string;
+    const adminKey = getAdminKey();
     const workerEndpoint = new URL("/__admin__/send", workerBaseUrl);
 
     const workerResponse = await fetch(workerEndpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-enova-admin-key": adminKey,
+        "X-CRM-Admin-Key": adminKey,
       },
       body: JSON.stringify({ wa_id: waId, text }),
       cache: "no-store",

@@ -1,5 +1,70 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.4-ADAPT — Adaptação mínima de envs e auth do panel-nextjs/ (2026-05-03)
+
+**Tipo**: PR-IMPL | **Branch**: `feat/t10.4-panel-adapt-env-auth`
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Próximo passo autorizado T10**: T10.5-RUN — PR-PROVA — `npm install`, `next build`, preview Vercel, `/api/health`
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `contratual` — execução de T10.4-ADAPT conforme §3 do contrato T10
+
+### O que esta PR fez
+
+1. Criou `panel-nextjs/.env.example` com 6 variáveis documentadas sem valores reais
+2. Criou `panel-nextjs/app/lib/get-admin-key.ts` — helper `getAdminKey()` resolve `CRM_ADMIN_KEY` (preferencial) com fallback `ENOVA_ADMIN_KEY`
+3. Atualizou 4 rotas de auth guard (incoming browser→panel): `crm/route.ts`, `prefill/route.ts`, `client-profile/route.ts`, `case-files/diagnostic/route.ts` — chave esperada agora via `getAdminKey()`
+4. Atualizou 3 arquivos de chamada outgoing (panel→Worker): `send/route.ts`, `health/route.ts`, `bases/_shared.ts` — header `x-enova-admin-key` → `X-CRM-Admin-Key`; chave via `getAdminKey()`
+5. Corrigiu `.gitignore` root com exceção `!panel-nextjs/.env.example`
+6. Reescreveu `panel-nextjs/README.md` para Enova-2/panel-nextjs
+7. Confirmou: `WORKER_BASE_URL` já era lido de env — nenhum hardcode encontrado
+8. Criou `schema/proofs/T10_4_PANEL_ADAPT_ENV_AUTH_PROOF.md` com mapa completo de auth
+9. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+10. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### Fix 2ª passagem (mesmo PR #216)
+
+11. Removeu `"ENOVA_ADMIN_KEY"` de todos os arrays de envs obrigatórias: `AUTH_ENVS` (`crm/route.ts`, `prefill/route.ts`, `client-profile/route.ts`), `REQUIRED_ENVS` (`send/route.ts`, `health/route.ts`, `case-files/diagnostic/route.ts`), `CALL_NOW_ENVS` (`bases/_shared.ts`)
+12. Adicionou verificação `!getAdminKey()` → 500 `"missing CRM_ADMIN_KEY or ENOVA_ADMIN_KEY"` em todos os 7 pontos (após check de envs de infra, antes do request de auth key)
+13. Corrigiu header hardcoded em `bases/_shared.ts` (bulk call now): `"x-enova-admin-key": envMap.ENOVA_ADMIN_KEY` → `"X-CRM-Admin-Key": getAdminKey(envMap...)`
+14. Atualizou prova `schema/proofs/T10_4_PANEL_ADAPT_ENV_AUTH_PROOF.md` para refletir política final: `CRM_ADMIN_KEY` sozinha → ✅, `ENOVA_ADMIN_KEY` sozinha → ✅, ambas ausentes → 500 explícito
+
+### O que esta PR NÃO fez
+
+- Não executou `npm install` ou `next build`
+- Não configurou preview Vercel
+- Não testou `/api/health` com Worker real
+- Não alterou `x-enova-admin-key` header incoming (browser→panel) — mantido para compat legado
+- Não adaptou 26 arquivos `app/lib/` ENOVA IA
+- Não alterou `src/` do Worker (zero diff em src/)
+- Não alterou `D:\Enova` (READ-ONLY preservado)
+- Não copiou segredos
+- Não alterou Supabase, RLS, migrations
+
+### Riscos herdados
+
+| ID | Risco | Status |
+|----|-------|--------|
+| BLK-T10-02 | Gap de auth header (painel vs Worker) | **RESOLVIDO** — outgoing agora usa `X-CRM-Admin-Key` |
+| BLK-T10-03 | `WORKER_BASE_URL` não configurada | **RESOLVIDO** — documentada no `.env.example` |
+| BLK-T10-04 | `OPENAI_API_KEY` ausente | **DOCUMENTADA** — `.env.example`; ENOVA IA opcional |
+| BLK-T10-05 | 26 arquivos `app/lib/` ENOVA IA | **PERMANECE** — T10.3 importou sem alterar; T10.4 não adapta |
+| RISK-T10-03 | Divergência de admin key/header | **RESOLVIDO** — `X-CRM-Admin-Key` + `getAdminKey()` |
+
+### Plano de rollback
+
+Reverter o branch `feat/t10.4-panel-adapt-env-auth` para o commit anterior a T10.4.
+Nenhuma alteração em infraestrutura, Supabase, Worker ou D:\Enova — rollback é puramente de código.
+
+### Estado do gate
+
+- **G10.2 (import)**: APROVADO — T10.3 ✅
+- **G10.3 (build local)**: ABERTO — T10.5-RUN
+- **G10.4 (preview Vercel)**: ABERTO — T10.5-RUN
+- **G10.5 (/api/health)**: ABERTO — T10.5-RUN
+
+---
+
 ## T10.3-IMPORT — Import bruto do painel Enova 1 para panel-nextjs/ (2026-05-03)
 
 **Tipo**: PR-IMPL | **Branch**: `feat/t10.3-panel-import-bruto`
