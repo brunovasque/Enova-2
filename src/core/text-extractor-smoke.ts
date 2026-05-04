@@ -100,6 +100,66 @@ eq('D-C8: "Quero financiar meu imóvel" → customer_goal comprar_imovel',
   extractFactsFromText('Quero financiar meu imóvel.', 'discovery')['customer_goal'],
   'comprar_imovel');
 
+// T9.15E — nome_completo em discovery ────────────────────────────────────────
+console.log('\n── discovery — nome_completo T9.15E ──');
+
+eq('D-N1: "Bruno Vasques" → nome_completo preservado',
+  extractFactsFromText('Bruno Vasques', 'discovery')['nome_completo'],
+  'Bruno Vasques');
+
+eq('D-N2: "Maria Santos Silva" → nome_completo preservado',
+  extractFactsFromText('Maria Santos Silva', 'discovery')['nome_completo'],
+  'Maria Santos Silva');
+
+eq('D-N3: "João Carlos Oliveira" → nome_completo preservado',
+  extractFactsFromText('João Carlos Oliveira', 'discovery')['nome_completo'],
+  'João Carlos Oliveira');
+
+// Negativos: textos funcionais não devem ser capturados como nome
+{
+  const r4 = extractFactsFromText('Sou solteiro', 'discovery');
+  check('D-N4: "Sou solteiro" → sem nome_completo', !('nome_completo' in r4));
+}
+{
+  const r5 = extractFactsFromText('Olá tudo bem', 'discovery');
+  check('D-N5: "Olá tudo bem" → sem nome_completo', !('nome_completo' in r5));
+}
+{
+  const r6 = extractFactsFromText('Sou brasileiro', 'discovery');
+  check('D-N6: "Sou brasileiro" → sem nome_completo', !('nome_completo' in r6));
+}
+
+// T9.15E — nacionalidade em discovery ────────────────────────────────────────
+console.log('\n── discovery — nacionalidade T9.15E ──');
+
+eq('D-E1: "Sou brasileiro" no discovery → nacionalidade brasileiro',
+  extractFactsFromText('Sou brasileiro', 'discovery')['nacionalidade'],
+  'brasileiro');
+
+eq('D-E2: "Sou brasileira" no discovery → nacionalidade brasileiro',
+  extractFactsFromText('Sou brasileira', 'discovery')['nacionalidade'],
+  'brasileiro');
+
+eq('D-E3: "Sou estrangeiro" no discovery → nacionalidade estrangeiro',
+  extractFactsFromText('Sou estrangeiro', 'discovery')['nacionalidade'],
+  'estrangeiro');
+
+eq('D-E4: "Sou naturalizado" no discovery → nacionalidade naturalizado',
+  extractFactsFromText('Sou naturalizado', 'discovery')['nacionalidade'],
+  'naturalizado');
+
+// T9.15E — rnm_valido em discovery ───────────────────────────────────────────
+console.log('\n── discovery — rnm_valido T9.15E ──');
+
+{
+  const r = extractFactsFromText('Meu RNM está válido', 'discovery');
+  check('D-R1: "Meu RNM está válido" → rnm_valido true', r['rnm_valido'] === true, `got: ${r['rnm_valido']}`);
+}
+{
+  const r = extractFactsFromText('Não tenho RNM', 'discovery');
+  check('D-R2: "Não tenho RNM" → rnm_valido false', r['rnm_valido'] === false, `got: ${r['rnm_valido']}`);
+}
+
 // T9.15C — Regressões negativas (falsos positivos) ────────────────────────────
 console.log('\n── discovery — regressões negativas T9.15C ──');
 

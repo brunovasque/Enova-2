@@ -1,5 +1,93 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.15E-IMPL-TOPO-CANONICO-ROUTE — Rota canônica do topo restaurada (2026-05-04)
+
+**Tipo**: PR-IMPL / contratual / frente T9
+**Branch**: fix/t9.15e-topo-canonico-route
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: FIX/WRANGLER-NO-VARS-OVERWRITE (PR #232) — wrangler.toml corrigido; deploy não sobrescreve flags PROD/canary
+**Próximo passo autorizado T9**: Repetir T9.15B-PROVA-REAL-CANARY com rota canônica do topo
+**Classificação**: PR-IMPL — correção cirúrgica Core Mecânico 2 (L04/L05/L06 + text-extractor + smoke)
+
+### ESTADO HERDADO
+
+- Branch base: main (após merge PR #232)
+- Contrato ativo: T9 aberto; G9 em aberto
+- PR anterior concluída: FIX/WRANGLER-NO-VARS-OVERWRITE (PR #232) — hotfix config/deploy bloqueante para canary real
+- Bloqueio resolvido nesta PR: rota canônica do topo violada — `discovery` avançava para `qualification_civil` com apenas `customer_goal`, sem coletar `nome_completo` e `nacionalidade`
+- Smokes herdados: `smoke` 20/20 PASS, `smoke:core:text-extractor` 69/69 PASS, `smoke:meta:canary` 41/41 PASS, `prove:t9.15-write-read-restart` 44/44 PASS, `prove:t9.14-reverse-mapper` 15/15 PASS
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.15e-topo-canonico-route
+- Arquivos modificados (7): `src/core/topo-rules.ts`, `src/core/topo-parser.ts`, `src/core/topo-gates.ts`, `src/core/engine.ts`, `src/core/text-extractor.ts`, `src/core/smoke.ts`, `src/core/text-extractor-smoke.ts`
+- Zero diff fora do escopo: zero `src/llm/`, zero `src/meta/`, zero `src/supabase/`, zero `panel-nextjs/`, zero Supabase schema/RLS/migrations, zero wrangler.toml, zero flags de rollout, zero `CLIENT_REAL_ENABLED`
+
+### Causa raiz corrigida
+
+`topo-rules.ts` definia `TOPO_REQUIRED_FACTS = ['customer_goal']` e `topo-gates.ts` avançava com `can_advance=true` assim que `customer_goal_detected=true`, ignorando coleta de `nome_completo` e `nacionalidade`. A rota canônica do topo exige:
+
+1. customer_goal detectado → bloqueia, pede interesse
+2. nome_completo ausente → bloqueia, explica MCMV e pede nome
+3. nacionalidade ausente → bloqueia, pergunta brasileiro/estrangeiro
+4. estrangeiro sem RNM válido → bloqueia, pede RNM e validade
+5. tudo completo → avança para qualification_civil
+
+### O que esta PR fez
+
+**topo-rules.ts (L04)**
+- `TOPO_REQUIRED_FACTS` expandido para `['customer_goal', 'nome_completo', 'nacionalidade']`
+- `TOPO_BLOCKING_CONDITIONS`: 4 códigos (CUSTOMER_GOAL_AUSENTE, NOME_COMPLETO_AUSENTE, NACIONALIDADE_AUSENTE, ESTRANGEIRO_SEM_RNM_VALIDO)
+- `TOPO_ADVANCE_CRITERIA`: 4 códigos incluindo TOPO_MINIMO_COMPLETO
+- `TOPO_NEXT_OBJECTIVES`: 5 objetivos canônicos por etapa (COLETAR_CUSTOMER_GOAL, EXPLICAR_MCMV_E_COLETAR_NOME, PERGUNTAR_NACIONALIDADE, PERGUNTAR_RNM, AVANCAR_PARA_CIVIL)
+
+**topo-parser.ts (L05)**
+- `TopoSignals` recebe: `nome_completo_detected`, `nome_completo_value`, `nacionalidade_detected`, `nacionalidade_value` (`'brasileiro'|'estrangeiro'|'naturalizado'|null`), `rnm_detectado`, `rnm_valido`
+- `extractNomeCompletoCandidato`: heurística conservadora — 2-5 palavras, sem palavras funcionais, sem termos de programa, sem caracteres não-alfa
+- `normalizeNacionalidade`: normaliza strings brutas para tipo canônico
+- `resolveRnmValido`: resolve `rnm_valido=true` → true; `rnm_status='valido'` → true; 'invalido'/'expirado'/'ausente' → false; else null
+
+**topo-gates.ts (L06)**
+- `TopoCriteriaResult` recebe campo `next_objective: string`
+- `evaluateTopoCriteria` reescrito com 4 gates sequenciais conforme rota canônica
+- `isTopoFactoCriticoAusente` atualizado para checar todos os 4 gates
+
+**engine.ts (Core)**
+- `runTopoDecision`: `nextObjective` usa `topoCriteria.next_objective` diretamente (não mais template string)
+
+**text-extractor.ts**
+- `extractDiscovery` expandido para extrair `nome_completo`, `nacionalidade`, `rnm_valido`
+- Negação checada ANTES do positivo em `rnm_valido` (fix D-R2: "Não tenho RNM" não deve retornar `rnm_valido=true`)
+- `extractNomeCompletoCandidato` e `PALAVRAS_FUNCIONAIS_NOME`, `KEYWORDS_PROGRAMA_NOME` adicionados como helpers locais
+
+**smoke.ts / text-extractor-smoke.ts**
+- Cenário 2: atualizado — customer_goal sem nome_completo bloqueia (era avanço)
+- Cenário 19: atualizado — inclui nome_completo e nacionalidade nos facts
+- Cenários 21-24: novos — testa cada gate sequencial da rota canônica
+- D-N1..D-N6: nome_completo detection em discovery
+- D-E1..D-E4: nacionalidade detection em discovery
+- D-R1..D-R2: rnm_valido detection em discovery
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke` (core) | 24/24 PASS |
+| `npm run smoke:core:text-extractor` | 81/81 PASS |
+| `npm run smoke:meta:canary` | 41/41 PASS |
+| `npm run prove:t9.14-reverse-mapper` | 15/15 PASS |
+| `npm run prove:t9.15-write-read-restart` | 44/44 PASS | 1 SKIP (controlado) |
+
+### Plano de rollback
+
+`git revert <commit>` neste branch reverte os 7 arquivos ao estado anterior. Nenhuma tabela Supabase, nenhuma migration, nenhum flag de rollout, nenhum wrangler.toml foi tocado. Rollback é instantâneo e sem impacto em produção.
+
+### Contrato encerrado nesta PR?
+
+Não. T9/G9 permanece aberto. Esta PR é uma PR-IMPL contratual da frente T9.
+
+---
+
 ## FIX/WRANGLER-NO-VARS-OVERWRITE -- Deploy seguro: wrangler nao sobrescreve mais flags PROD/canary (2026-05-04)
 
 **Tipo**: PR-FIX / hotfix / config-deploy -- bloqueante para T9.15B real

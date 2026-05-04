@@ -36,10 +36,50 @@ function contains(normalized: string, ...terms: string[]): boolean {
 }
 
 // ---------------------------------------------------------------------------
+// Extração de nome completo — heurística conservadora para discovery
+// ---------------------------------------------------------------------------
+
+// Palavras funcionais que nunca aparecem em nomes próprios
+const PALAVRAS_FUNCIONAIS_NOME = new Set([
+  'sou', 'estou', 'vou', 'quero', 'gosto', 'tenho', 'moro', 'faco', 'trabalho',
+  'como', 'por', 'que', 'uma', 'um', 'e', 'o', 'a', 'os', 'as', 'de', 'da', 'do',
+  'em', 'no', 'na', 'ao', 'para', 'com', 'sem', 'me', 'te', 'se', 'nos', 'nao',
+  'sim', 'olha', 'oi', 'ola', 'tudo', 'bem', 'bom', 'dia', 'tarde', 'noite',
+  'obrigado', 'obrigada', 'ok', 'certo', 'claro', 'pode', 'meu', 'minha', 'seu', 'sua',
+  'isso', 'isto', 'aqui', 'la', 'assim', 'entao', 'mais', 'menos', 'muito', 'pouco',
+  'quando', 'onde', 'quem', 'qual', 'quanto', 'ja', 'ainda', 'so', 'tambem',
+  'brasileiro', 'brasileira', 'estrangeiro', 'estrangeira', 'naturalizado', 'naturalizada',
+  'rnm', 'registro',
+]);
+
+// Keywords do programa que nunca compõem nomes
+const KEYWORDS_PROGRAMA_NOME = new Set([
+  'mcmv', 'comprar', 'imovel', 'financiar', 'casa', 'programa', 'habitacional',
+  'credito', 'banco', 'caixa', 'financiamento', 'proprio', 'propria', 'apartamento',
+]);
+
+/**
+ * Tenta extrair nome completo do texto normalizado.
+ * Heurística conservadora: texto com 2-5 palavras, apenas letras, sem palavras funcionais
+ * e sem keywords de programa. Retorna o texto original preservado ou null.
+ */
+function extractNomeCompletoCandidato(n: string, original: string): string | null {
+  const palavras = n.split(' ').filter((p) => p.length > 0);
+
+  if (palavras.length < 2 || palavras.length > 5) return null;
+  if (palavras.some((p) => PALAVRAS_FUNCIONAIS_NOME.has(p))) return null;
+  if (palavras.some((p) => !/^[a-z]+$/.test(p))) return null;
+  if (palavras.some((p) => KEYWORDS_PROGRAMA_NOME.has(p))) return null;
+  if (palavras.some((p) => p.length < 3)) return null;
+
+  return original.trim();
+}
+
+// ---------------------------------------------------------------------------
 // Extração por stage
 // ---------------------------------------------------------------------------
 
-function extractDiscovery(n: string): Record<string, unknown> {
+function extractDiscovery(n: string, original: string): Record<string, unknown> {
   const facts: Record<string, unknown> = {};
 
   // Negação explícita bloqueia intenção de compra ("não quero comprar nada agora")
@@ -68,6 +108,35 @@ function extractDiscovery(n: string): Record<string, unknown> {
     facts['customer_goal'] = 'enviar_docs';
   } else if (contains(n, 'quero visitar', 'agendar visita', 'ver o imovel', 'ver o apartamento')) {
     facts['customer_goal'] = 'visitar_imovel';
+  }
+
+  // nome_completo: heurística conservadora — texto simples que parece um nome próprio
+  const nomeCandidate = extractNomeCompletoCandidato(n, original);
+  if (nomeCandidate !== null) {
+    facts['nome_completo'] = nomeCandidate;
+  }
+
+  // nacionalidade no topo (rota canônica T9.15E: coletar antes de estado civil)
+  if (contains(n, 'brasileiro', 'brasileira', 'nasci no brasil', 'sou do brasil')) {
+    facts['nacionalidade'] = 'brasileiro';
+  } else if (
+    contains(n, 'estrangeiro', 'estrangeira', 'nao sou brasileiro', 'nao sou brasileira',
+      'sou de outro pais', 'sou imigrante')
+  ) {
+    facts['nacionalidade'] = 'estrangeiro';
+  } else if (contains(n, 'naturalizado', 'naturalizada', 'naturalizacao')) {
+    facts['nacionalidade'] = 'naturalizado';
+  }
+
+  // rnm_valido — negação primeiro para evitar falsos positivos ("Não tenho RNM" tem "tenho rnm")
+  if (
+    contains(n, 'sem rnm', 'nao tenho rnm', 'rnm invalido', 'rnm vencido', 'rnm expirado')
+  ) {
+    facts['rnm_valido'] = false;
+  } else if (
+    contains(n, 'rnm valido', 'rnm ok', 'tenho rnm', 'meu rnm', 'registro valido', 'rnm em dia')
+  ) {
+    facts['rnm_valido'] = true;
   }
 
   return facts;
@@ -289,7 +358,7 @@ export function extractFactsFromText(
 
     switch (stage) {
       case 'discovery':
-        return extractDiscovery(n);
+        return extractDiscovery(n, text);
       case 'qualification_civil':
         return extractQualificationCivil(n);
       case 'qualification_renda':
