@@ -498,3 +498,56 @@ Se o runtime gravar os valores canônicos T9 diretamente em `fase_conversa`
 | Tabela de tradução completa | **INCOMPLETO** — 2 stages sem candidato (`qualification_civil`, `visit`) |
 | CRM/panel antigo acessível para verificação | **NÃO** — gap registrado (§16.5) |
 | `BLK-T9.13-STATE-MAPPING` | **PERMANECE ATIVO** — aguardando confirmação Vasques dos mapeamentos faltantes |
+
+---
+
+## 17. Retificação pós-crosscheck Enova 1 (T9.13L-DIAG, 2026-05-03)
+
+**Branch**: `diag/t9.13l-enova1-crm-crosscheck`
+**Documento de evidência**: `schema/diagnostics/T9_13L_ENOVA1_CRM_CROSSCHECK.md`
+
+Vasques acessou diretamente o repositório `brunovasque/Enova` (Enova 1) e forneceu duas evidências:
+
+1. **`schema/crm_leads_v1.sql`**: view `crm_leads_v1` faz `e.fase_conversa AS fase_funil` e filtra
+   o CRM operacional com `fase_conversa IN ('envio_docs', 'aguardando_retorno_correspondente',
+   'agendamento_visita', 'visita_confirmada', 'finalizacao_processo')` — mais flags
+   `processo_aprovado`/`processo_reprovado`/`visita_confirmada`.
+
+2. **`panel/app/crm/CrmUI.tsx`**: painel classifica abas como PASTA (`envio_docs`),
+   ANALISE (`aguardando_retorno_correspondente`), VISITA (`agendamento_visita`, `visita_confirmada`,
+   `finalizacao_processo`). Aprovado/reprovado vêm por flags/status, não apenas por `fase_conversa`.
+
+### 17.1 Leitura corrigida dos candidatos de §16.4
+
+A §16.4 listou `qualification_renda → clt_renda_perfil_informativo` (MÉDIA) e
+`qualification_eligibility → quem_pode_somar` (MÉDIA) como candidatos.
+
+**Retificação**: esses mapeamentos estão **errados**. Esses são stages pré-CRM operacional.
+Gravar `clt_renda_perfil_informativo` ou `quem_pode_somar` em `fase_conversa` para stages
+pré-docs faria o lead **desaparecer do CRM operacional** (view `crm_leads_v1` não filtra esses valores).
+
+### 17.2 Regra corrigida
+
+> **Stages pré-docs (`discovery`, `qualification_civil`, `qualification_renda`,
+> `qualification_eligibility`) NÃO devem ser mapeados para valores de CRM operacional
+> em `fase_conversa`.**
+>
+> O mapper futuro deve **preservar `fase_conversa = 'inicio'` (default)** para esses stages
+> e só gravar valores operacionais quando o stage T9 alcançar `docs_prep` ou posterior.
+
+### 17.3 Mapper conservador correto
+
+```
+docs_prep              → 'envio_docs'
+analysis_waiting       → 'aguardando_retorno_correspondente'
+visit_scheduling       → 'agendamento_visita'
+visit_confirmed        → 'visita_confirmada'
+finalization           → 'finalizacao_processo'
+discovery/qual_*/pré-docs → não gravar / manter 'inicio' (default banco)
+aprovado/reprovado     → flags booleanas (processo_aprovado, processo_reprovado) — não fase_conversa
+```
+
+### 17.4 Impacto no BLK
+
+`BLK-T9.13-STATE-MAPPING` **PERMANECE ATIVO** — mapper ainda não implementado em `src/`.
+PR-FIX **NÃO está autorizada** se tentar mapear stages pré-docs para CRM operacional.
