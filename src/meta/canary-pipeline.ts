@@ -40,6 +40,7 @@ import { emitTelemetry } from '../telemetry/emit.ts';
 import { diagLog, maskId } from './prod-diag.ts';
 import { writeEnovaLog } from '../supabase/crm-store.ts';
 import type { SupabaseConfig } from '../supabase/types.ts';
+import { toSemanticNextObjective } from '../core/semantic-next-objective.ts';
 
 export type CanaryBlockReason =
   | 'rollback_active'
@@ -343,7 +344,7 @@ export async function runCanaryPipeline(
           llmContext = {
             stage_current: coreDecision.stage_current,
             stage_after: coreDecision.stage_after,
-            next_objective: coreDecision.next_objective,
+            next_objective: toSemanticNextObjective(coreDecision.next_objective),
             facts_count: Object.keys(cachedFacts).length,
             facts_summary: factsSummary,
             speech_intent: coreDecision.speech_intent,
