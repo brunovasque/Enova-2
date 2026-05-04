@@ -1,5 +1,92 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.15F-FIX-NEXT-OBJECTIVES-SEMANTICOS — Mapper semântico de next_objective (2026-05-04)
+
+**Tipo**: PR-FIX / contratual / frente T9
+**Branch**: fix/t9.15f-next-objectives-semanticos
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.15E-IMPL-TOPO-CANONICO-ROUTE (PR #233) — rota canônica do topo restaurada; smokes 24/24 + 81/81 + 41/41 + 15/15 + 44/44 PASS
+**Próximo passo autorizado T9**: Repetir T9.15B-PROVA-REAL-CANARY com next_objectives semânticos
+**Classificação**: PR-FIX — correção cirúrgica da camada de tradução next_objective → LlmContext
+
+### ESTADO HERDADO
+
+- Branch base: main (após merge PR #233)
+- Contrato ativo: T9 aberto; G9 em aberto
+- PR anterior concluída: T9.15E-IMPL-TOPO-CANONICO-ROUTE (PR #233) — rota canônica restaurada mas next_objective continuava opaco para LLM
+- Bloqueio identificado: após T9.15E, prova real Turno 2 mostrou que Enova respondia "Olá Bruno! Como posso te ajudar hoje?" em vez de perguntar nacionalidade — causa: `coreDecision.next_objective = 'perguntar_nacionalidade'` (código opaco) entregue diretamente ao LLM sem tradução semântica
+- Smokes herdados: `smoke` 24/24 PASS, `smoke:core:text-extractor` 81/81 PASS, `smoke:meta:canary` 41/41 PASS, `prove:t9.15-write-read-restart` 44/44 PASS, `prove:t9.14-reverse-mapper` 15/15 PASS
+
+### DIAGNÓSTICO CONFIRMADO
+
+Todos os `next_objective` emitidos pelo Core são códigos opacos estruturais:
+- Topo: `coletar_customer_goal`, `explicar_mcmv_e_coletar_nome_completo`, `perguntar_nacionalidade`, `perguntar_rnm_e_validade`
+- Meio A: `coletar_estado_civil`, `coletar_processo`, `avancar_para_qualification_renda`
+- Meio B: `coletar_regime_trabalho`, `coletar_renda_principal`
+- `AVANCAR_PARA_CIVIL` já era semi-semântico mas sem padronização "(a)"
+
+`LlmContext` era montado em `canary-pipeline.ts` linha 346 com `next_objective: coreDecision.next_objective` — código opaco ia direto ao LLM.
+
+Melhor ponto de conversão: `canary-pipeline.ts` na montagem de `llmContext`. Não toca `src/llm/client.ts` nem SYSTEM_PROMPT.
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.15f-next-objectives-semanticos
+- Arquivos criados (2): `src/core/semantic-next-objective.ts`, `src/core/semantic-next-objective-smoke.ts`
+- Arquivos modificados (2): `src/meta/canary-pipeline.ts` (import + aplicação mapper), `package.json` (script smoke)
+- Zero diff fora do escopo: zero `src/llm/`, zero `src/meta/outbound.ts`, zero `src/supabase/`, zero `panel-nextjs/`, zero Supabase schema/RLS/migrations, zero wrangler.toml, zero flags, zero SYSTEM_PROMPT, zero topo-rules/topo-gates/engine
+
+### O que esta PR fez
+
+**src/core/semantic-next-objective.ts (novo)**
+- `toSemanticNextObjective(code: string): string` — mapper puro, sem I/O
+- 11 mapeamentos canônicos: códigos opacos do Core → instruções semânticas em português
+- Fallback: código desconhecido → retorna original sem modificação (lacuna documentada, não quebra pipeline)
+- `hasSemanticMapping(code): boolean` — para diagnóstico e smoke
+- `getAllSemanticMappings()` — para inspeção
+
+**src/core/semantic-next-objective-smoke.ts (novo)**
+- 12 smokes unitários (um por código mapeado + código desconhecido)
+- 7 smokes de rota realista: Core emite código → mapper converte → instrução semântica correta
+- Rota coberta: customer_goal → nome → nacionalidade → estado_civil → processo → regime → renda
+
+**src/meta/canary-pipeline.ts (modificado)**
+- Import: `import { toSemanticNextObjective } from '../core/semantic-next-objective.ts'`
+- Montagem LlmContext: `next_objective: toSemanticNextObjective(coreDecision.next_objective)`
+- Core permanece inalterado — decisão estrutural soberana emite código opaco
+- LLM recebe instrução semântica — nunca código interno
+
+**package.json (modificado)**
+- `"smoke:core:semantic-objectives": "tsx src/core/semantic-next-objective-smoke.ts"` adicionado
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke:core:semantic-objectives` | 19/19 PASS |
+| `npm run smoke` (core) | 24/24 PASS |
+| `npm run smoke:core:text-extractor` | 81/81 PASS |
+| `npm run smoke:meta:canary` | 41/41 PASS |
+| `npm run prove:t9.14-reverse-mapper` | 15/15 PASS |
+| `npm run prove:t9.15-write-read-restart` | 44/44 PASS | 1 SKIP (controlado) |
+
+### Comportamento esperado após deploy
+
+- Após nome_completo: LLM recebe "Perguntar se o cliente é brasileiro(a) ou estrangeiro(a)." → pergunta nacionalidade ✓
+- Após nacionalidade brasileiro: LLM recebe "Perguntar estado civil: solteiro(a), casado(a), união estável ou divorciado(a)." → pergunta estado civil ✓
+- Após estado_civil sem processo: LLM recebe "Perguntar se pretende comprar sozinho(a) ou com alguém." ✓
+- Após processo: LLM recebe "Perguntar regime de trabalho e renda mensal." ✓
+
+### Plano de rollback
+
+`git revert <commit>` reverte os 4 arquivos ao estado anterior. Nenhuma tabela Supabase, nenhuma migration, nenhum flag de rollout, nenhum wrangler.toml foi tocado. Rollback instantâneo e sem impacto em produção.
+
+### Contrato encerrado nesta PR?
+
+Não. T9/G9 permanece aberto. Esta PR é uma PR-FIX contratual da frente T9.
+
+---
+
 ## T9.15E-IMPL-TOPO-CANONICO-ROUTE — Rota canônica do topo restaurada (2026-05-04)
 
 **Tipo**: PR-IMPL / contratual / frente T9
