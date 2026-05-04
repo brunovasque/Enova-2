@@ -1,5 +1,68 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.14-DIAG — Read Path stage_current Diagnosticado (2026-05-04)
+
+**Tipo**: PR-DIAG / READINESS | **Branch**: `diag/t9.14-read-path-stage-mapping`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto)
+**T10**: encerrada por prova (G10 APROVADO — T10.7-READINESS, 2026-05-04)
+**Próximo passo autorizado T9**: T9.14-IMPL (somente reverse mapper / read path)
+**Classificação**: `diagnostico` — PR-DIAG pura; DOCS-ONLY; zero src/; zero panel-nextjs/; zero Supabase
+
+### O que esta PR fez
+
+1. Criou `schema/diagnostics/T9_14_READ_PATH_STAGE_MAPPING_DIAG.md` — diagnóstico formal do bug de read path
+2. Identificou `BLK-T9.14-READ-PATH`: `mapLeadStateFromEnovaState` lê `row.stage_current` (coluna inexistente no schema real — PGRST204 confirmado em T9.13G); resultado: `stage_current` sempre retorna `'discovery'` após restart
+3. Documentou causa raiz: write path OK (T9.13M-FIX, fase_conversa gravada corretamente), mas reverse mapper `fase_conversa → stage_current` nunca implementado
+4. Documentou critérios G9 bloqueados (G9-02, G9-04) e não provados (G9-03, G9-07, G9-09, G9-10)
+5. Documentou o que T10 provou vs. o que T10 NÃO provou (por ser frente separada)
+6. Propôs escopo delimitado de T9.14-IMPL: somente reverse mapper em `src/supabase/crm-store.ts`
+7. Marcou itens opcionais como "não mexer agora" (memória Supabase, resumo automático, KV, RLS, frontend stages, crm_turns)
+8. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+9. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `src/` do Worker — zero diff em src/
+- **Não alterou** `panel-nextjs/**` — zero diff em panel-nextjs/
+- **Não alterou** Supabase schema, RLS, migrations
+- **Não alterou** `wrangler.toml`
+- **Não implementou** reverse mapper — escopo de T9.14-IMPL
+- **Não fechou** G9 — frente permanece aberta
+
+### Bloqueio identificado
+
+| ID | Status | Descrição |
+|----|--------|-----------|
+| `BLK-T9.14-READ-PATH` | **ATIVO** | `mapLeadStateFromEnovaState` lê `row.stage_current` (inexistente no schema real); reverse mapper `fase_conversa → stage_current` ausente; `stage_current` sempre retorna `'discovery'` após restart |
+
+### Critérios G9 impactados
+
+| Critério | Status |
+|----------|--------|
+| G9-02 — `stage_current` gravado/lido corretamente em Supabase real | ❌ BLOQUEADO (read path bug) |
+| G9-04 — restart preserva stage | ❌ BLOQUEADO (read path bug) |
+| G9-03 — conversa real ≥3 turnos avança funil | ❌ NÃO PROVADO |
+| G9-07 — facts extraídos e persistidos em produção real | ❌ NÃO PROVADO |
+| G9-09 — wrangler tail com cadeia correlacionada | ❌ NÃO PROVADO |
+| G9-10 — Vasques confirma ≥5 conversas reais | ❌ NÃO PROVADO |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/diagnostics/T9_14_READ_PATH_STAGE_MAPPING_DIAG.md
+Estado da evidência:                   completa — diagnóstico formal do bug de read path
+Há lacuna remanescente?:               sim — BLK-T9.14-READ-PATH ativo; G9-02/G9-04 bloqueados;
+                                            G9-03/G9-07/G9-09/G9-10 não provados
+Há item parcial/inconclusivo bloqueante?: sim — bug de read path impede G9-02 e G9-04
+Fechamento permitido nesta PR?:        NÃO — T9.14-DIAG fecha apenas o diagnóstico;
+                                         G9 permanece aberto; T9 permanece em execução
+Estado permitido após esta PR:         T9 em execução; G9 aberto; próxima PR: T9.14-IMPL
+Próxima PR autorizada:                 T9.14-IMPL (somente reverse mapper / read path)
+```
+
+---
+
 ## T10.7-READINESS — T10 Panel/CRM Encerrada por Prova (2026-05-04)
 
 **Tipo**: PR-PROVA/CLOSEOUT | **Branch**: `closeout/t10.7-panel-crm-readiness`
