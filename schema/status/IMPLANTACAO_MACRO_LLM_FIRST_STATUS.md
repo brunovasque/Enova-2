@@ -2,6 +2,8 @@
 
 ## Estado atual
 
+**T10.1-DIAG CRIADA** (2026-05-03) — abertura diagnóstica da frente Panel/CRM; `schema/diagnostics/T10_1_PANEL_CRM_ENOVA1_CROSSCHECK.md` criado; diagnóstico READ-ONLY de `D:\Enova\panel`; achados: painel Enova 1 = Next.js 14.2.5 + React 18 + TypeScript, 7 abas, 13 rotas API, 26 arquivos lógica IA; tabelas Supabase principais: `enova_state`, `crm_lead_meta`, `crm_leads_v1` (VIEW), `crm_override_log`, `enova_attendance_v1`, `enova_attendance_meta`, `bases_leads_v1`, `enova_prefill_meta`, `enova_log`; envs necessárias: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE`, `ENOVA_ADMIN_KEY`, `WORKER_BASE_URL`, `OPENAI_API_KEY`; gap de auth: `x-enova-admin-key` (Enova 1) ≠ `X-CRM-Admin-Key` (Enova-2); painel NÃO pode rodar dentro do Cloudflare Worker — precisa ser projeto Next.js separado; estratégia recomendada: Vercel para painel (menor risco), Worker Cloudflare para runtime; plano: T10.2-CONTRACT → T10.3-IMPORT → T10.4-ADAPT → T10.5-RUN → T10.6-CRM-LINK; T9 PERMANECE ABERTO; nenhum src/ alterado; nenhum arquivo em D:\Enova alterado. **Próxima ação autorizada T10**: criar contrato T10 (PR-T10.2-CONTRACT) — requer autorização de Vasques. **Próxima ação autorizada T9**: T9.14-IMPL (ou T9.13N-PROVA).
+
 Fase macro ativa: **T9 — Integração LLM ↔ Funil Mecânico ↔ Supabase Real ↔ Telemetria** — contrato T9 aberto formalmente em 2026-05-01 via PR-T9.0 (docs/t9-contrato-llm-funil-supabase-runtime). Contrato T8 ENCERRADO — G8 APROVADO frente WhatsApp PROD + LLM + Outbound.
 
 **Veredito G7: APROVADO DOCUMENTALMENTE COM RESTRIÇÕES OPERACIONAIS** — PR-T7.R executada em 2026-04-29.
