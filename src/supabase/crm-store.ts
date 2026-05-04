@@ -39,6 +39,7 @@ import type {
 } from '../crm/types.ts';
 import { CrmInMemoryBackend } from '../crm/store.ts';
 import {
+  supabaseInsert,
   supabaseSelect,
   supabaseUpsert,
 } from './client.ts';
@@ -46,6 +47,7 @@ import type {
   CrmLeadMetaRow,
   CrmOverrideLogRow,
   EnovaDocsRow,
+  EnovaLogEntry,
   EnovaStateRow,
   SupabaseConfig,
   SupabaseQueryResult,
@@ -538,5 +540,38 @@ export class SupabaseCrmBackend implements CrmBackend {
       }
     }
     return this.writeBuffer.update<T>(table, matcher, patch);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// writeEnovaLog — writer seguro para public.enova_log (T10.6E)
+// ---------------------------------------------------------------------------
+
+/**
+ * Insere um registro em `enova_log` via Supabase REST com service role.
+ *
+ * Regras de segurança:
+ *   - Se cfg for null (Supabase não configurado), retorna skip silencioso.
+ *   - Nunca lança exceção — captura internamente e retorna ok=false.
+ *   - Nunca loga secrets ou dados sensíveis.
+ *   - Falha de insert NÃO propaga para o pipeline — caller deve usar try/catch
+ *     ou ignorar o retorno para garantir que o fluxo principal não bloqueie.
+ *
+ * Compatibilidade painel (T10.6D):
+ *   Tags `meta_minimal`, `DECISION_OUTPUT`, `SEND_OK` são os 3 exatos lidos por
+ *   `panel-nextjs/app/api/messages/route.ts` — zero mudança de painel necessária.
+ */
+export async function writeEnovaLog(
+  cfg: SupabaseConfig | null,
+  entry: EnovaLogEntry,
+): Promise<{ ok: boolean; skip: boolean; error: string | null }> {
+  if (!cfg?.url || !cfg?.serviceRoleKey) {
+    return { ok: false, skip: true, error: null };
+  }
+  try {
+    const result = await supabaseInsert<EnovaLogEntry>(cfg, 'enova_log', entry);
+    return { ok: result.ok, skip: false, error: result.error };
+  } catch (e) {
+    return { ok: false, skip: false, error: String(e) };
   }
 }

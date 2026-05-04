@@ -264,3 +264,20 @@ export interface CrmOverrideLogRow {
   created_at?: string | null;
   [k: string]: unknown;
 }
+
+/**
+ * Payload de inserção em `enova_log`.
+ * Compatível com os 3 tags lidos pelo painel: meta_minimal, DECISION_OUTPUT, SEND_OK.
+ * Schema confirmado por Vasques (pré-flight T10.6E): todas as colunas abaixo são nullable.
+ * Colunas `id` e `created_at` são auto-geradas — não enviar.
+ */
+export interface EnovaLogEntry {
+  tag: 'meta_minimal' | 'DECISION_OUTPUT' | 'SEND_OK';
+  wa_id?: string | null;
+  meta_type?: string | null;
+  meta_text?: string | null;
+  meta_message_id?: string | null;
+  meta_status?: string | null;
+  stage?: string | null;
+  details?: Record<string, unknown> | null;
+}
