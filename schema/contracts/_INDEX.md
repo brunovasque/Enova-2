@@ -35,7 +35,7 @@ Contrato macro ativo: **T9 — aberto formalmente em 2026-05-01 via PR-T9.0** (G
 
 | Frente | Contrato | Status | Próximo passo autorizado |
 |--------|----------|--------|--------------------------|
-| T10 — Migração Panel/CRM Enova 1 → Enova-2 | `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md` | **aberto** — PR-T10.2-CONTRACT executada em 2026-05-03; G10.1 APROVADO | **T10.3-IMPORT** — PR-IMPL — import bruto `D:\Enova\panel` → `panel-nextjs/` (branch: `feat/t10.3-panel-import-bruto`) |
+| T10 — Migração Panel/CRM Enova 1 → Enova-2 | `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md` | **aberto** — T10.5C-FIX implementada em 2026-05-03; G10.1/G10.2/G10.3 APROVADOS; G10.4/G10.5 ABERTOS | **validação real Vasques**: testar `https://enova-2.vercel.app/api/health` após merge+deploy Vercel; se ok:true → G10.5 APROVADO → **T10.6-CRM-LINK** autorizada |
 
 ## Contratos encerrados
 
@@ -147,7 +147,8 @@ schema/contracts/
 
 ## Ultima sincronizacao
 
-- 2026-05-03 — T10 aberto formalmente como frente Panel/CRM: contrato `CONTRATO_T10_PANEL_CRM_MIGRATION.md` criado via PR-T10.2-CONTRACT; G10.1 APROVADO; próxima PR autorizada T10: T10.3-IMPORT; T9 permanece aberto e independente; próxima PR autorizada T9: T9.14-IMPL.
+- 2026-05-03 — T10.5C-FIX implementada: `panel-nextjs/app/api/health/route.ts` corrigido — `/__admin__/health` → `/__admin__/go-live/health` (6 ocorrências); build PASS; G10.3 APROVADO; G10.5 ABERTO aguardando Vasques testar /api/health real pós-deploy Vercel; T9 permanece aberto e independente; próxima PR autorizada T9: T9.14-IMPL.
+- 2026-05-03 — T10 aberto formalmente como frente Panel/CRM: contrato `CONTRATO_T10_PANEL_CRM_MIGRATION.md` criado via PR-T10.2-CONTRACT; G10.1 APROVADO; T10.3-IMPORT → T10.4-ADAPT → T10.5-RUN → T10.5B-DIAG executadas.
 - 2026-05-01 — Sincronização de governança T9: contrato macro ativo atualizado de T8 → T9; T8 movido para contratos encerrados (G8 APROVADO frente WhatsApp PROD + LLM + outbound); CLAUDE.md atualizado para ler contrato ativo via _INDEX.md em vez de path fixo T8; próxima PR autorizada: T9.1 — Supabase runtime/env readiness.
 - 2026-05-01 — PR-T9.0 executada (PR #178): contrato T9 aberto via `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md`; plano executivo `schema/implementation/T9_PLANO_EXECUTIVO_LLM_FUNIL_SUPABASE.md`; handoff `schema/handoffs/T9_LLM_FUNIL_SUPABASE_HANDOFF.md`; 15 micro-PRs planejadas (T9.0–T9.R); critérios G9-01..G9-10 declarados.
 - 2026-05-01 — G8 APROVADO FRENTE WHATSAPP PROD + LLM + OUTBOUND (PR #176): `prove:g8-readiness` 7/7 PASS; `meta_ready=true`; WhatsApp PROD respondendo naturalmente via LLM (confirmado Vasques); `external_dispatch=true`, `mode=client_real_outbound`; Ressalva: funil completo (stages/MCMV) segue em T9.

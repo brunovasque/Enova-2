@@ -1,5 +1,70 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T10.5C-FIX — Correção endpoint health panel→Worker (2026-05-03)
+
+**Tipo**: PR-FIX | **Branch**: `fix/t10.5c-panel-health-endpoint`
+**Contrato ativo T10**: `schema/contracts/active/CONTRATO_T10_PANEL_CRM_MIGRATION.md`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto — separado, não afetado)
+**Próximo passo autorizado T10**: Vasques testa `https://enova-2.vercel.app/api/health` após merge+deploy Vercel; se `ok: true` → G10.5 APROVADO → T10.6-CRM-LINK autorizada; se falhar → novo diagnóstico
+**Próximo passo autorizado T9**: T9.14-IMPL
+**Classificação**: `contratual` — PR-FIX dentro do escopo T10.5C autorizado pelo T10.5B-DIAG
+
+### O que esta PR fez
+
+1. Alterou `panel-nextjs/app/api/health/route.ts` — 6 ocorrências de `/__admin__/health` → `/__admin__/go-live/health`:
+   - Linha 15: TypeScript type literal `endpointTested`
+   - Linha 61: chamada `new URL("/__admin__/go-live/health", workerBaseUrl)` — o único fetch real
+   - Linhas 137, 155, 186, 203: JSON responses `endpointTested` nos 4 code paths de resposta
+2. Executou `npm run build` — PASS: `✓ Compiled successfully`, 25 rotas, `/api/health` Dynamic, zero TypeScript errors
+3. Criou `schema/proofs/T10_5C_PANEL_HEALTH_ENDPOINT_FIX_PROOF.md`
+4. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+5. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- Não alterou `src/` do Worker (zero diff em src/)
+- Não alterou Supabase, RLS, migrations
+- Não alterou auth, getAdminKey(), WORKER_BASE_URL, header X-CRM-Admin-Key
+- Não adicionou fallback
+- Não fechou G10.5 — permanece ABERTO até validação real de Vasques em Vercel PROD
+- Não fechou G9/T9 — frentes completamente separadas
+- Não commitou .env.local (não existe)
+
+### Estado dos gates T10
+
+| Gate | Status |
+|------|--------|
+| G10.1 (contrato) | APROVADO — T10.2 ✅ |
+| G10.2 (import) | APROVADO — T10.3 ✅ |
+| G10.3 (build local) | APROVADO — T10.5 ✅ |
+| G10.4 (preview Vercel) | ABERTO — requer Vasques |
+| G10.5 (/api/health real) | ABERTO — fix implementado; aguarda merge+deploy Vercel+Vasques |
+| G10.6 (CRM real) | ABERTO — T10.6-CRM-LINK |
+| G10.7 (readiness) | ABERTO — T10.7-READINESS |
+
+### Riscos herdados
+
+| ID | Risco | Status |
+|----|-------|--------|
+| LAC-T10.5C-01 | Validação real /api/health após deploy Vercel | ABERTA — depende de Vasques pós-merge |
+| LAC-T10.5-01 | Preview Vercel — painel carrega no browser | ABERTA — ação Vasques (G10.4) |
+| BLK-T10-05 | 26 arquivos app/lib/ ENOVA IA | PERMANECE — não bloqueante para CRM |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/proofs/T10_5C_PANEL_HEALTH_ENDPOINT_FIX_PROOF.md
+Estado da evidência:                   parcial — fix implementado e build PASS; validação real ABERTA
+Há lacuna remanescente?:               sim — LAC-T10.5C-01: /api/health real em Vercel PROD depende de Vasques
+Há item parcial/inconclusivo bloqueante?: não — o fix é correto; lacuna é de validação externa
+Fechamento permitido nesta PR?:        não — G10.5 permanece ABERTO
+Estado permitido após esta PR:         T10.5C-FIX implementada; build PASS; G10.5 aguarda Vasques
+Próxima PR autorizada:                 se Vasques confirmar ok: true → T10.6-CRM-LINK; se falhar → T10.5D-DIAG
+```
+
+---
+
 ## T10.5B-DIAG — Diagnóstico alinhamento health panel→Worker (2026-05-03)
 
 **Tipo**: PR-DIAG | **Branch**: `diag/t10.5b-panel-worker-health`

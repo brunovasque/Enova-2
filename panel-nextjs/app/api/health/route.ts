@@ -12,7 +12,7 @@ type HealthResponse = {
     workerBaseHost: string | null;
   };
   worker: {
-    endpointTested: "/__admin__/health";
+    endpointTested: "/__admin__/go-live/health";
     status: number | null;
     error: string | null;
   };
@@ -58,7 +58,7 @@ async function checkWorker(
   adminKey: string,
 ): Promise<{ ok: boolean; status: number | null; build?: unknown; error: string | null }> {
   try {
-    const response = await fetch(new URL("/__admin__/health", workerBaseUrl), {
+    const response = await fetch(new URL("/__admin__/go-live/health", workerBaseUrl), {
       method: "GET",
       headers: {
         "X-CRM-Admin-Key": adminKey,
@@ -134,7 +134,7 @@ export async function GET() {
         worker_ok: false,
         env: envInfo,
         worker: {
-          endpointTested: "/__admin__/health",
+          endpointTested: "/__admin__/go-live/health",
           status: null,
           error: null,
         },
@@ -152,7 +152,7 @@ export async function GET() {
         worker_ok: false,
         env: envInfo,
         worker: {
-          endpointTested: "/__admin__/health",
+          endpointTested: "/__admin__/go-live/health",
           status: null,
           error: null,
         },
@@ -183,7 +183,7 @@ export async function GET() {
         worker_ok: workerResult.ok,
         env: envInfo,
         worker: {
-          endpointTested: "/__admin__/health",
+          endpointTested: "/__admin__/go-live/health",
           status: workerResult.status,
           error: workerResult.error,
         },
@@ -200,7 +200,7 @@ export async function GET() {
         worker_ok: false,
         env: envInfo,
         worker: {
-          endpointTested: "/__admin__/health",
+          endpointTested: "/__admin__/go-live/health",
           status: null,
           error: null,
         },
