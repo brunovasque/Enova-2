@@ -1,5 +1,99 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.15-PROVA — Write/Read/Restart Lógico Provado (2026-05-04)
+
+**Tipo**: PR-PROVA / contratual | **Branch**: `prove/t9.15-write-read-restart-real`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto)
+**PR anterior**: T9.14-IMPL (PR #228) — reverse mapper implementado; BLK-T9.14-READ-PATH resolvido em código
+**Próximo passo autorizado T9**: T9.16-PROVA-CONVERSA-REAL (ou Vasques executar Bloco F real com envs PROD)
+**Classificação**: `contratual` — PR-PROVA dentro do contrato T9
+
+### O que esta PR fez
+
+1. Criou `src/supabase/write-read-restart-proof.ts` — prova T9.15 dual-mode com 5 blocos:
+   - Bloco A (12 checks): write path `mapStageCurrentToFaseConversa` — 5 pós-docs + 7 pré-docs conservadores
+   - Bloco B (11 checks): read path `mapFaseConversaToStageCurrent` — 5 pós-docs + 6 pré-docs/default/legado
+   - Bloco C (9 checks): round-trip bidirecional — 5 pós-docs `stage→fase→stage` + 4 pré-docs conservadores
+   - Bloco D (8 checks): restart lógico — simula rows `enova_state` pós-restart (sem `stage_current` no schema real)
+   - Bloco E (4 checks): `SupabaseCrmBackend` local writeBuffer — insert/findOne/update/writeLog=0
+   - Bloco F (SKIP controlado): Supabase real — exige `SUPABASE_T915_REAL_ENABLED=true` + envs reais
+2. Adicionou `prove:t9.15-write-read-restart` ao `package.json`
+3. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+4. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+5. Atualizou `schema/contracts/_INDEX.md` — próxima PR: T9.16-PROVA-CONVERSA-REAL
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `panel-nextjs/**` — zero diff
+- **Não alterou** `src/core/`, `src/llm/` — zero diff
+- **Não alterou** `src/meta/outbound` gates — zero diff
+- **Não alterou** `wrangler.toml` — zero diff
+- **Não alterou** migrations/schema/RLS Supabase
+- **Não ativou** `CLIENT_REAL_ENABLED` — zero diff em flags
+- **Não fechou** G9 — frente permanece aberta
+- **Não provou** Bloco F real (sem env disponível em ambiente Claude)
+
+### Provas entregues
+
+| Prova | Resultado |
+|-------|-----------|
+| `prove:t9.15-write-read-restart` | **44 PASS | 0 FAIL | 1 SKIP** |
+| `prove:t9.14-reverse-mapper` | **15/15 PASS** (regressão) |
+| `smoke:supabase` | **70/70 PASS** (regressão) |
+| `smoke:meta:canary` | **41/41 PASS** (regressão) |
+
+### Critérios G9 impactados
+
+| Critério | Status após T9.15-PROVA |
+|----------|------------------------|
+| G9-02 — `stage_current` gravado/lido corretamente | ⚠️ PROVADO LOGICAMENTE — round-trip + restart lógico 9/9 PASS; prova Supabase real (Bloco F) pendente Vasques |
+| G9-04 — restart preserva stage | ⚠️ PROVADO LOGICAMENTE — Bloco D 8/8 PASS; prova real pós-restart pendente Vasques |
+| G9-03 — conversa real ≥3 turnos avança funil | ❌ NÃO PROVADO — T9.16-PROVA-CONVERSA-REAL |
+| G9-07 — facts extraídos e persistidos em produção real | ❌ NÃO PROVADO — T9.16-PROVA-CONVERSA-REAL |
+| G9-09 — wrangler tail com cadeia correlacionada | ❌ NÃO PROVADO — T9.16-PROVA-CONVERSA-REAL |
+| G9-10 — Vasques confirma ≥5 conversas reais | ❌ NÃO PROVADO — T9.16-PROVA-CONVERSA-REAL |
+
+### Comando para Vasques executar prova Supabase real (Bloco F)
+
+```bash
+# Executar em terminal com envs reais (NUNCA commitar envs)
+SUPABASE_T915_REAL_ENABLED=true \
+SUPABASE_REAL_ENABLED=true \
+SUPABASE_WRITE_ENABLED=true \
+SUPABASE_URL="<url_supabase>" \
+SUPABASE_SERVICE_ROLE_KEY="<service_role_key>" \
+npm run prove:t9.15-write-read-restart
+```
+
+Resultado esperado: 44+ PASS | 0 FAIL — Bloco F passa se a FK constraint em `enova_state.lead_id`
+for satisfeita com um `lead_id` de teste pré-existente, ou SKIP controlado se FK falhar
+(comportamento esperado sem lead real).
+
+### Riscos e lacunas
+
+| ID | Descrição | Bloqueante? |
+|----|-----------|-------------|
+| LAC-T9.15-01 | Bloco F real não executado — G9-02/G9-04 provados logicamente, não em Supabase real | Não — pendente Vasques + env real |
+| LAC-T9.15-02 | G9-03/G9-07/G9-09/G9-10 não provados — exigem conversa real multi-turno | Não — pendente T9.16-PROVA-CONVERSA-REAL |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           src/supabase/write-read-restart-proof.ts (44/44 PASS)
+Estado da evidência:                   completa — para o escopo desta PROVA (lógico + writeBuffer)
+Há lacuna remanescente?:               sim — Bloco F real (Supabase PROD) não executado;
+                                            G9-03/G9-07/G9-09/G9-10 não provados
+Há item parcial/inconclusivo bloqueante?: não — para o escopo desta PROVA (lógica do mapper)
+Fechamento permitido nesta PR?:        sim — para G9-02/G9-04 como "provados logicamente"
+                                       NÃO — para G9-02/G9-04 em prova Supabase real;
+                                             G9 permanece aberto
+Estado permitido após esta PR:         T9 em execução; G9 aberto; G9-02/G9-04 lógicos PASS
+Próxima PR autorizada:                 T9.16-PROVA-CONVERSA-REAL
+```
+
+---
+
 ## T9.14-IMPL — BLK-T9.14-READ-PATH Resolvido em Código (2026-05-04)
 
 **Tipo**: PR-IMPL / contratual | **Branch**: `fix/t9.14-reverse-mapper-read-path`
