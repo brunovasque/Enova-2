@@ -1,5 +1,87 @@
 # IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.15B-PROVA-REAL-CANARY — Roteiro Real Canary Criado (2026-05-04)
+
+**Tipo**: PR-PROVA / contratual | **Branch**: `prove/t9.15b-real-canary-funnel`
+**Contrato ativo T9**: `schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md` (T9 aberto)
+**PR anterior**: T9.15-PROVA (PR #229) — write/read/restart lógico 44/44 PASS; G9-02/G9-04 provados logicamente
+**Próximo passo autorizado T9**: T9.R-CLOSEOUT-G9 (somente após Vasques executar roteiro e confirmar evidências) — se falhar: PR-FIX cirúrgica
+**Classificação**: `contratual` — PR-PROVA dentro do contrato T9
+
+### O que esta PR fez
+
+1. Criou `schema/proofs/T9_15B_REAL_CANARY_FUNNEL_PROOF.md` — roteiro operacional completo da prova real canary:
+   - Seção 1: Contexto herdado (T9.15 vs T10 vs T9.15B)
+   - Seção 2: Objetivo — criar roteiro sem executar WhatsApp real
+   - Seção 3: Pré-condições (flags obrigatórias, health check, wrangler tail)
+   - Seção 4: Roteiro mínimo 3 turnos (discovery → qualification_civil → qualification_renda)
+   - Seção 5: Comandos SQL seguros para evidências pós-prova
+   - Seção 6: Critérios de evidência (comprovado / comprovado indiretamente / não comprovado / pendente Vasques)
+   - Seção 7: Critérios G9 e o que pode ser marcado nesta PR
+   - Seção 8: Checklist 15 itens (PIPELINE, SB, FUNIL, TEL, PAINEL)
+   - Seção 9: Plano rollback
+   - Seção 10: Análise de risco
+   - Seção 11: O que acontece depois (T9.R-CLOSEOUT-G9 ou PR-FIX)
+   - Seção 12: Bloco E (A00-ADENDO-03)
+   - Seção 13: Estado de G9 após esta PR
+   - Seção 14: Referências
+2. Atualizou `schema/contracts/_INDEX.md` — próxima PR: T9.R-CLOSEOUT-G9 (após prova real confirmada)
+3. Atualizou `schema/status/IMPLANTACAO_MACRO_LLM_FIRST_STATUS.md`
+4. Atualizou `schema/handoffs/IMPLANTACAO_MACRO_LLM_FIRST_LATEST.md` (este arquivo)
+
+### O que esta PR NÃO fez
+
+- **Não alterou** `panel-nextjs/**` — zero diff
+- **Não alterou** `src/core/`, `src/llm/` — zero diff
+- **Não alterou** `src/meta/outbound` gates — zero diff
+- **Não alterou** `wrangler.toml` — zero diff
+- **Não alterou** migrations/schema/RLS Supabase
+- **Não ativou** `CLIENT_REAL_ENABLED` — zero diff em flags
+- **Não fechou** G9 — frente permanece aberta
+- **Não abriu** etapa T9.16 — esta é T9.15B por instrução explícita de Vasques
+- **Não executou** conversa WhatsApp real — esta é a PR que cria o roteiro
+
+### Estado de G9 após esta PR
+
+| Critério | Status |
+|----------|--------|
+| G9-01 — Worker chama `runCoreEngine` | ⚠️ provado por smoke — pendente confirmação em tail real |
+| G9-02 — `stage_current` em Supabase real | ⚠️ provado logicamente (T9.15 Bloco D) — pendente Bloco F real |
+| G9-03 — conversa real ≥3 turnos avança funil | ⚠️ ROTEIRO CRIADO — pendente execução Vasques |
+| G9-04 — restart preserva stage | ⚠️ provado logicamente — pendente restart real deliberado |
+| G9-05 — output guard bloqueia aprovação | ✅ PROVADO (smoke 48/48 PASS) |
+| G9-06 — LLM recebe LlmContext estruturado | ✅ PROVADO (smoke) — pendente confirmação em tail real |
+| G9-07 — facts extraídos em produção real | ⚠️ ROTEIRO CRIADO — pendente execução Vasques |
+| G9-08 — Supabase real ativo em PROD | ✅ PROVADO (health check) |
+| G9-09 — trace com correlation_id em tail | ⚠️ ROTEIRO CRIADO — pendente tail real Vasques |
+| G9-10 — Vasques confirma ≥5 conversas | ⚠️ ROTEIRO CRIADO — pendente confirmação Vasques |
+
+### Lacunas e riscos
+
+| ID | Descrição | Bloqueante? |
+|----|-----------|-------------|
+| LAC-T9.15B-01 | Prova real canary não executada — roteiro criado, execução pendente Vasques | Não — pendente Vasques |
+| LAC-T9.15B-02 | G9-03/G9-07/G9-09/G9-10 não provados — requerem conversa real multi-turno | Não — pendente T9.R-CLOSEOUT-G9 |
+| LAC-T9.15B-03 | Bloco F real (T9.15) não executado — G9-02/G9-04 provados logicamente | Não — pendente Vasques |
+
+### Bloco E
+
+```
+--- BLOCO E — FECHAMENTO POR PROVA (A00-ADENDO-03) ---
+Documento-base da evidência:           schema/proofs/T9_15B_REAL_CANARY_FUNNEL_PROOF.md
+Estado da evidência:                   parcial — roteiro criado; prova real pendente Vasques
+Há lacuna remanescente?:               sim — prova real canary não executada;
+                                            G9-03/G9-07/G9-09/G9-10 pendentes
+Há item parcial/inconclusivo bloqueante?: não — para o escopo desta PR (criação do roteiro)
+Fechamento permitido nesta PR?:        sim — para roteiro e documentação
+                                       NÃO — para G9; G9 permanece aberto
+Estado permitido após esta PR:         T9 em execução; G9 aberto; roteiro real pronto
+Próxima PR autorizada:                 T9.R-CLOSEOUT-G9 após prova real confirmada
+                                       OU PR-FIX cirúrgica se algum item falhar
+```
+
+---
+
 ## T9.15-PROVA — Write/Read/Restart Lógico Provado (2026-05-04)
 
 **Tipo**: PR-PROVA / contratual | **Branch**: `prove/t9.15-write-read-restart-real`
