@@ -219,7 +219,7 @@ export async function runCanaryPipeline(
       let persistedFacts: Record<string, unknown> = {};
       if (supabaseCfg) {
         try {
-          persistedFacts = await readLeadAccumulatedFacts(supabaseCfg, crmResult.lead_id);
+          persistedFacts = await readLeadAccumulatedFacts(supabaseCfg, event.wa_id ?? '');
         } catch (e) {
           diagLog('facts_persistence.read.error', { error: String(e) });
         }
@@ -227,7 +227,7 @@ export async function runCanaryPipeline(
           ok: Object.keys(persistedFacts).length >= 0,
           persisted_count: Object.keys(persistedFacts).length,
           persisted_keys: Object.keys(persistedFacts),
-          lead_id_present: !!crmResult.lead_id,
+          wa_id_present: !!(event.wa_id),
         });
       }
 
@@ -322,7 +322,7 @@ export async function runCanaryPipeline(
       // factsMap inclui todos os facts (anteriores + atuais). Core já tomou decisão com eles.
       if (supabaseCfg) {
         try {
-          const factsWriteResult = await writeLeadAccumulatedFacts(supabaseCfg, crmResult.lead_id, factsMap);
+          const factsWriteResult = await writeLeadAccumulatedFacts(supabaseCfg, event.wa_id ?? '', factsMap);
           diagLog('facts_persistence.write', {
             ok: factsWriteResult.ok,
             facts_count: Object.keys(factsMap).length,

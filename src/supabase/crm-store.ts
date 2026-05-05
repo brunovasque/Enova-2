@@ -592,11 +592,11 @@ export class SupabaseCrmBackend implements CrmBackend {
  */
 export async function readLeadAccumulatedFacts(
   cfg: SupabaseConfig,
-  lead_id: string,
+  wa_id: string,
 ): Promise<Record<string, unknown>> {
   try {
     const result = await supabaseSelect<EnovaStateRow>(cfg, 'enova_state', {
-      filters: { lead_id: `eq.${lead_id}` },
+      filters: { wa_id: `eq.${wa_id}` },
       limit: 1,
     });
     if (!result.ok || result.rows.length === 0) return {};
@@ -619,7 +619,7 @@ export async function readLeadAccumulatedFacts(
 
 /**
  * Persiste facts acumulados em enova_state.last_context como JSON serializado.
- * Upsert cirúrgico: lead_id + last_context + updated_at.
+ * Upsert cirúrgico: wa_id + last_context + updated_at.
  * Nunca lança exceção. Falha silenciosa — pipeline nunca bloqueia.
  *
  * Por que last_context: campo existente no schema real (T9.13G P0).
@@ -627,12 +627,12 @@ export async function readLeadAccumulatedFacts(
  */
 export async function writeLeadAccumulatedFacts(
   cfg: SupabaseConfig,
-  lead_id: string,
+  wa_id: string,
   facts: Record<string, unknown>,
 ): Promise<{ ok: boolean; error: string | null }> {
   try {
     const row: EnovaStateRow = {
-      lead_id,
+      wa_id,
       last_context: JSON.stringify(facts),
       updated_at: new Date().toISOString(),
     };
