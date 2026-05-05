@@ -619,7 +619,7 @@ export async function readLeadAccumulatedFacts(
 
 /**
  * Persiste facts acumulados em enova_state.last_context como JSON serializado.
- * Upsert cirúrgico: wa_id + last_context + updated_at.
+ * SELECT por wa_id → upsert por id (PK) — evita duplicatas sem depender de UNIQUE em wa_id.
  * Nunca lança exceção. Falha silenciosa — pipeline nunca bloqueia.
  *
  * Por que last_context: campo existente no schema real (T9.13G P0).
@@ -631,8 +631,21 @@ export async function writeLeadAccumulatedFacts(
   facts: Record<string, unknown>,
 ): Promise<{ ok: boolean; error: string | null }> {
   try {
+    // 1. Buscar row existente por wa_id para obter o id (PK)
+    const existing = await supabaseSelect<EnovaStateRow>(cfg, 'enova_state', {
+      filters: { wa_id: `eq.${wa_id}` },
+      limit: 1,
+    });
+    if (!existing.ok || existing.rows.length === 0) {
+      return { ok: false, error: 'no_existing_row_for_wa_id' };
+    }
+    const rowId = existing.rows[0].id;
+    if (!rowId) {
+      return { ok: false, error: 'existing_row_has_no_id' };
+    }
+    // 2. Upsert por id (PK) — conflict target garantido
     const row: EnovaStateRow = {
-      wa_id,
+      id: rowId,
       last_context: JSON.stringify(facts),
       updated_at: new Date().toISOString(),
     };
