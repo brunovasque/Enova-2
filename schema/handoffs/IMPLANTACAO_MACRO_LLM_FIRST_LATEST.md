@@ -1,5 +1,210 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.15J-FIX2 — writeLeadAccumulatedFacts SELECT→upsert por id (PK) (2026-05-05)
+
+**Tipo**: PR-FIX / contratual / frente T9
+**Branch**: fix/t9.15j-fix2-upsert-by-id
+**PR**: #239 — aberta, aguardando merge Vasques
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.15J (PR #238, mergeada) — lead_id → wa_id em read/write enova_state
+**Próximo passo autorizado T9**: Vasques merge PR #239 → Repetir T9.15B-PROVA-REAL-CANARY
+**Classificação**: PR-FIX — correção cirúrgica de writeLeadAccumulatedFacts para evitar duplicatas em enova_state
+
+### ESTADO HERDADO
+
+- T9.15J (PR #238) mergeada — `readLeadAccumulatedFacts` e `writeLeadAccumulatedFacts` usam `wa_id` em vez de `lead_id`
+- Bug remanescente pós-T9.15J: `supabaseUpsert` usa `Prefer: resolution=merge-duplicates` sem `on_conflict` explícito
+- `enova_state.wa_id` não tem UNIQUE constraint (file 28 confirmado via grep schema/)
+- Sem UNIQUE em `wa_id`, PostgREST não encontra conflict target → INSERT nova linha a cada turno → duplicatas em `enova_state`
+- Smokes herdados: smoke PASS, smoke:meta:canary 41/41, prove:t9.15h-facts-persistence 34/34, smoke:core:text-extractor 81/81, prove:t9.14-reverse-mapper 19/19
+
+### DIAGNÓSTICO CONFIRMADO
+
+`src/supabase/client.ts` — `supabaseUpsert`:
+- Usa `prefer: 'resolution=merge-duplicates,return=representation'` — sem `on_conflict` column parameter
+- PostgREST resolve conflict target pelos UNIQUE constraints do schema automaticamente
+- `enova_state` PK = `id` (UUID auto); `wa_id` = TEXT sem UNIQUE
+- Upsert por `{ wa_id, last_context, updated_at }` → sem UNIQUE em wa_id → sem conflict target → INSERT sempre
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.15j-fix2-upsert-by-id
+- Commits: `9fba2d0` (fix), `293f34e` (docs PR-T9.15J-v2-review.md)
+- Arquivos modificados (1): `src/supabase/crm-store.ts` — corpo de `writeLeadAccumulatedFacts`
+- Arquivos criados (1): `docs/diagnostics/T9.15I-DIAG-FACTS-PERSISTENCE-RUNTIME/PR-T9.15J-v2-review.md`
+- Zero diff fora do escopo: zero `src/core/`, zero `src/llm/`, zero `src/meta/canary-pipeline.ts`, zero `panel-nextjs/`, zero wrangler.toml, zero Supabase schema
+
+### O que esta PR fez
+
+**src/supabase/crm-store.ts — writeLeadAccumulatedFacts (corpo reescrito)**
+
+```typescript
+// 1. SELECT por wa_id → obtém id (PK)
+const existing = await supabaseSelect<EnovaStateRow>(cfg, 'enova_state', {
+  filters: { wa_id: `eq.${wa_id}` },
+  limit: 1,
+});
+if (!existing.ok || existing.rows.length === 0) {
+  return { ok: false, error: 'no_existing_row_for_wa_id' };
+}
+const rowId = existing.rows[0].id;
+if (!rowId) {
+  return { ok: false, error: 'existing_row_has_no_id' };
+}
+// 2. Upsert por id (PK) — conflict target garantido
+const row: EnovaStateRow = {
+  id: rowId,
+  last_context: JSON.stringify(facts),
+  updated_at: new Date().toISOString(),
+};
+const result = await supabaseUpsert<EnovaStateRow>(cfg, 'enova_state', row);
+```
+
+### Comportamento de degradação graceful
+
+| Cenário | Resultado |
+|---------|-----------|
+| Row existe → upsert por id | `ok=true` |
+| Sem row para wa_id | `ok=false, error='no_existing_row_for_wa_id'` |
+| Row existe mas id ausente | `ok=false, error='existing_row_has_no_id'` |
+| Supabase indisponível | `ok=false, error=String(e)` |
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke` (core) | **PASS** |
+| `npm run smoke:meta:canary` | **41/41 PASS** |
+| `npm run prove:t9.15h-facts-persistence` | **34/34 PASS** |
+| `npm run smoke:core:text-extractor` | **81/81 PASS** |
+| `npm run prove:t9.14-reverse-mapper` | **19/19 PASS** |
+
+### Plano de rollback
+
+```bash
+git revert 9fba2d0   # reverte FIX2 (SELECT→upsert por PK)
+```
+
+### Estado esperado em PROD após merge
+
+```
+Turno 1: facts_persistence.write: ok=true, facts_count=1
+Turno 2: facts_persistence.read: persisted_count=1 (customer_goal)
+         core.facts_received: facts_count=2 (customer_goal + nome_completo)
+         facts_persistence.write: ok=true, facts_count=2
+Turno 3: facts_persistence.read: persisted_count=2
+         core.facts_received: facts_count=3
+         → stage_after=qualification_civil
+```
+
+---
+
+## T9.15J — facts persistence: lead_id → wa_id em enova_state read/write (2026-05-05)
+
+**Tipo**: PR-FIX / contratual / frente T9
+**Branch**: fix/t9.15j-facts-persistence-wa-id
+**PR**: #238 — mergeada
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.15I (PR #237, mergeada) — telemetria facts_persistence
+**Próximo passo autorizado T9**: T9.15J-FIX2 (PR #239) → T9.15B-PROVA-REAL-CANARY
+**Classificação**: PR-FIX — correção do parâmetro/filtro em readLeadAccumulatedFacts e writeLeadAccumulatedFacts + canary-pipeline.ts
+
+### ESTADO HERDADO
+
+- T9.15H implementou `readLeadAccumulatedFacts(cfg, lead_id)` e `writeLeadAccumulatedFacts(cfg, lead_id, facts)` usando `lead_id` como parâmetro/filtro
+- T9.15I revelou via wrangler tail: 100% das escritas falhando com `pg_code=22P02 invalid input syntax for type uuid: "554185260518"`
+- Causa raiz: `crmResult.lead_id` = wa_id telefone texto (mapLeadFromMeta seta `lead_id = wa_id`); `enova_state.lead_id` = UUID → type mismatch
+
+### DIAGNÓSTICO CONFIRMADO (files 26-27)
+
+`src/supabase/crm-store.ts` — `mapLeadFromMeta`:
+```typescript
+const wa_id = asString(row.wa_id);
+const lead_id = wa_id || `crm_lead_meta:${fallbackId}`;
+return { lead_id, ... };
+```
+- `crm_lead_meta` tem `wa_id` como PK (TEXT UNIQUE), não `lead_id` UUID
+- `crmResult.lead_id = "554185260518"` (número telefone)
+- `enova_state.lead_id` = UUID column → Postgres rejeita `22P02`
+- T9.15H nunca funcionou em PROD desde sua implementação
+
+### ESTADO ENTREGUE
+
+- Arquivos modificados (2): `src/supabase/crm-store.ts`, `src/meta/canary-pipeline.ts`
+- Commits: `0e48df7` (fix), `978d93d` (docs PR-T9.15J-review.md)
+
+**src/supabase/crm-store.ts**:
+- `readLeadAccumulatedFacts(cfg, wa_id: string)` — parâmetro e filtro: `wa_id: eq.${wa_id}`
+- `writeLeadAccumulatedFacts(cfg, wa_id: string, facts)` — idem
+
+**src/meta/canary-pipeline.ts**:
+- `readLeadAccumulatedFacts(supabaseCfg, event.wa_id ?? '')`
+- diagLog: `wa_id_present: !!(event.wa_id)` (era `lead_id_present: !!crmResult.lead_id`)
+- `writeLeadAccumulatedFacts(supabaseCfg, event.wa_id ?? '', factsMap)`
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke:meta:canary` | **41/41 PASS** |
+| `npm run prove:t9.15h-facts-persistence` | **34/34 PASS** |
+| `npm run smoke:core:text-extractor` | **81/81 PASS** |
+| `npm run prove:t9.14-reverse-mapper` | **19/19 PASS** |
+
+---
+
+## T9.15I — Telemetria facts_persistence: catches observáveis + diagLogs (2026-05-05)
+
+**Tipo**: PR-DIAG+FIX / contratual / frente T9
+**Branch**: fix/t9.15i-facts-persistence-telemetry
+**PR**: #237 — mergeada
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.15H (PR #236, mergeada) — facts acumulados entre turnos via enova_state.last_context
+**Próximo passo autorizado T9**: T9.15J-FIX (lead_id → wa_id)
+**Classificação**: PR-DIAG+FIX — telemetria para diagnosticar falha silenciosa de facts persistence
+
+### ESTADO HERDADO
+
+- T9.15H implementou facts persistence mas sem telemetria observável
+- Catches em read/write retornavam `{}` / `{ ok: false }` silenciosamente
+- Wrangler tail não mostrava motivo das falhas
+- Suspeita de bug mas sem evidência real de PROD
+
+### O que esta PR fez
+
+**src/supabase/crm-store.ts**:
+- Catch em `readLeadAccumulatedFacts`: agora emite `diagLog('facts_persistence.read')` com `ok=false, error` antes de retornar `{}`
+- Catch em `writeLeadAccumulatedFacts`: capturado e retornado como `{ ok: false, error: String(e) }`
+
+**src/meta/canary-pipeline.ts**:
+- `diagLog('facts_persistence.read')`: `ok, persisted_count, persisted_keys, lead_id_present`
+- `diagLog('facts_persistence.write')`: `ok, facts_count, fact_keys, error`
+- `diagLog('core.facts_received')`: `facts_count, fact_keys, stage`
+
+**docs/diagnostics/T9.15I-DIAG-FACTS-PERSISTENCE-RUNTIME/** (9 arquivos):
+- Files 23+25: wrangler tail 90s confirmou `facts_persistence.write: ok=false, error="http_400: pg_code=22P02"` em 100% das escritas PROD
+- File 26: rastreamento `lead_id` → `mapLeadFromMeta` → `pipeline.ts:105`
+- File 27: causa raiz — `crm_lead_meta` tem `wa_id` como PK (não `lead_id` UUID)
+- File 28: `enova_state.wa_id` sem UNIQUE constraint
+- File 29: `supabaseUpsert` sem `on_conflict` explícito
+
+### Evidência PROD (wrangler tail)
+
+```json
+{"diag":"facts_persistence.write","ok":false,"facts_count":1,"fact_keys":["customer_goal"],"error":"http_400: pg_code=22P02 pg_message=invalid input syntax for type uuid: \"554185260518\""}
+```
+
+### Testes
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke:meta:canary` | **41/41 PASS** |
+| `npm run prove:t9.15h-facts-persistence` | **34/34 PASS** |
+| `npm run smoke:core:text-extractor` | **81/81 PASS** |
+| `npm run prove:t9.14-reverse-mapper` | **19/19 PASS** |
+
+---
+
 ## T9.15H-FIX-FACTS-PERSISTENCE-TOPO — Facts acumulados entre turnos via enova_state.last_context (2026-05-04)
 
 **Tipo**: PR-FIX / contratual / frente T9
