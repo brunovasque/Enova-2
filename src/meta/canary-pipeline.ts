@@ -220,7 +220,15 @@ export async function runCanaryPipeline(
       if (supabaseCfg) {
         try {
           persistedFacts = await readLeadAccumulatedFacts(supabaseCfg, crmResult.lead_id);
-        } catch { /* falha silenciosa — persisted facts = {} */ }
+        } catch (e) {
+          diagLog('facts_persistence.read.error', { error: String(e) });
+        }
+        diagLog('facts_persistence.read', {
+          ok: Object.keys(persistedFacts).length >= 0,
+          persisted_count: Object.keys(persistedFacts).length,
+          persisted_keys: Object.keys(persistedFacts),
+          lead_id_present: !!crmResult.lead_id,
+        });
       }
 
       // Bloco [C] — Persistência de facts extraídos (status: 'pending')
@@ -296,6 +304,12 @@ export async function runCanaryPipeline(
         diagLog('short_memory.built', { turns_total: 0, turns_included: 0, error: String(e) });
       }
 
+      diagLog('core.facts_received', {
+        facts_count: Object.keys(factsMap).length,
+        fact_keys: Object.keys(factsMap),
+        stage_current: currentStage,
+      });
+
       coreDecision = runCoreEngine({
         lead_id: crmResult.lead_id,
         current_stage: currentStage,
@@ -315,7 +329,9 @@ export async function runCanaryPipeline(
             fact_keys: Object.keys(factsMap),
             error: factsWriteResult.ok ? null : factsWriteResult.error,
           });
-        } catch { /* falha silenciosa — pipeline não bloqueia */ }
+        } catch (e) {
+          diagLog('facts_persistence.write.error', { error: String(e) });
+        }
       }
 
       diagLog('core.decision', {
