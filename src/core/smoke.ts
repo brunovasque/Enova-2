@@ -131,6 +131,7 @@ export function smokeScenario4_MeioAIntegrado_AvancoValido(): SmokeResult {
     estado_civil: 'solteiro',
     processo: 'composicao_familiar',
     composition_actor: 'mae',
+    estado_civil_p3: 'solteiro',
     p3_required: false,
     dependents_applicable: false,
   });
@@ -162,6 +163,7 @@ export function smokeScenario5_MeioAIntegrado_DependentesAlteramNextStep(): Smok
     estado_civil: 'solteiro',
     processo: 'composicao_familiar',
     composition_actor: 'mae',
+    estado_civil_p3: 'solteiro',
     p3_required: false,
     dependents_applicable: true,
   });
@@ -193,6 +195,7 @@ export function smokeScenario6_MeioAIntegrado_P3SegueParaMeioB(): SmokeResult {
     estado_civil: 'solteiro',
     processo: 'composicao_familiar',
     composition_actor: 'irmao',
+    estado_civil_p3: 'casado_civil',
     p3_required: true,
     dependents_applicable: false,
   });
@@ -817,6 +820,93 @@ export function smokeScenario28_Topo_SegundoTurno_SemCustomerGoal_NaoRepeteGreet
   };
 }
 
+// ---------------------------------------------------------------------------
+// Cenário 29 (T9.17A-v2): Meio A com composition_actor=mae (não cônjuge) + estado_civil_p3 ausente
+// → Gate 3B bloqueia. Confirma que exclusão de 'conjuge' não afeta 'mae'.
+// ---------------------------------------------------------------------------
+export function smokeScenario29_MeioA_CompositionActor_SemEstadoCivilP3_Gate3B(): SmokeResult {
+  const state = makeState('qualification_civil', {
+    estado_civil: 'solteiro',
+    processo: 'composicao_familiar',
+    composition_actor: 'mae', // não cônjuge — Gate 3B deve bloquear
+    // estado_civil_p3 ausente
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 29 (T9.17A-v2) — composition_actor=mae + sem estado_civil_p3 → Gate 3B bloqueia (cônjuge excluído)',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_civil', 'qualification_civil', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em qualification_civil', 'qualification_civil', decision.stage_after),
+      assert(
+        'next_objective = coletar_estado_civil_p3 (Gate 3B — não cônjuge)',
+        'coletar_estado_civil_p3',
+        decision.next_objective,
+      ),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 30 (T9.17A): Meio A com composition_actor + estado_civil_p3=casado_civil
+// → Gate 3B não bloqueia, avança para qualification_renda (p3_required_auto=true implícito)
+// ---------------------------------------------------------------------------
+export function smokeScenario30_MeioA_EstadoCivilP3CasadoCivil_Avanca(): SmokeResult {
+  const state = makeState('qualification_civil', {
+    estado_civil: 'solteiro',
+    processo: 'composicao_familiar',
+    composition_actor: 'mae',
+    estado_civil_p3: 'casado_civil',
+    // p3_required_auto derivado automaticamente no parser
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 30 (T9.17A) — composition_actor=mae + estado_civil_p3=casado_civil → avança (Gate 3B não bloqueia)',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_civil', 'qualification_civil', decision.stage_current),
+      assert('block_advance = false (Gate 3B liberado)', false, decision.block_advance),
+      assert('stage_after = qualification_renda', 'qualification_renda', decision.stage_after),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 31 (T9.17A-v2): composition_actor=conjuge → Gate 3B NÃO dispara
+// Cônjuge já tem tratamento no Gate 2 (casado_civil força processo=conjunto).
+// Quando processo=conjunto + composition_actor=conjuge, Gate 3B deve ser bypassado.
+// ---------------------------------------------------------------------------
+export function smokeScenario31_MeioA_CompositionActorConjuge_Gate3BNaoDispara(): SmokeResult {
+  const state = makeState('qualification_civil', {
+    estado_civil: 'casado_civil',
+    processo: 'conjunto',
+    composition_actor: 'conjuge',
+    // estado_civil_p3 ausente — Gate 3B NÃO deve bloquear para cônjuge
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 31 (T9.17A-v2) — composition_actor=conjuge + sem estado_civil_p3 → Gate 3B NÃO dispara, avança',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = qualification_civil', 'qualification_civil', decision.stage_current),
+      assert('block_advance = false (Gate 3B não dispara para cônjuge)', false, decision.block_advance),
+      assert('stage_after = qualification_renda', 'qualification_renda', decision.stage_after),
+      assert(
+        'next_objective NÃO é coletar_estado_civil_p3 (Gate 3B bypassado)',
+        false,
+        decision.next_objective === 'coletar_estado_civil_p3',
+      ),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
 export interface SmokeSuiteResult {
   total: number;
   passed: number;
@@ -870,6 +960,9 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario26_Topo_RnmInvalido_SemAlternativaConfirmada_Encerrar,
     smokeScenario27_Topo_RnmInvalido_ComAlternativaFamiliar_Avanca,
     smokeScenario28_Topo_SegundoTurno_SemCustomerGoal_NaoRepeteGreeting,
+    smokeScenario29_MeioA_CompositionActor_SemEstadoCivilP3_Gate3B,
+    smokeScenario30_MeioA_EstadoCivilP3CasadoCivil_Avanca,
+    smokeScenario31_MeioA_CompositionActorConjuge_Gate3BNaoDispara,
   ];
 
   const results = scenarios.map((fn) => {

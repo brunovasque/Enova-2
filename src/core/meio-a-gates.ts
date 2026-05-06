@@ -78,6 +78,25 @@ export function evaluateMeioACriteria(signals: MeioASignals): MeioACriteriaResul
     };
   }
 
+  // Gate 3B: composition_actor detectado (exceto cônjuge — já tratado no Gate 2) mas estado_civil_p3 ausente (T9.17A)
+  if (
+    signals.composition_actor_detected &&
+    signals.composition_actor_value !== 'conjuge' &&
+    !signals.estado_civil_p3_detected
+  ) {
+    return {
+      can_advance: false,
+      authorized_next_step: MEIO_A_NEXT_STEP.REMAIN_IN_QUALIFICATION_CIVIL,
+      next_objective: 'coletar_estado_civil_p3',
+      criteria_code: 'meio_a.estado_civil_p3_ausente',
+      structural_reason:
+        `composition_actor='${signals.composition_actor_value}' identificado; estado_civil_p3 ausente.`,
+      track_signal: MEIO_A_SIGNAL_POLICY.COMPOSICAO_RELEVANTE_DETECTADA,
+      missing_required_facts: ['estado_civil_p3'],
+      activated_gates: ['G_COMPOSICAO_FAMILIAR'],
+    };
+  }
+
   if (signals.dependents_required && !signals.dependents_count_detected) {
     return {
       can_advance: false,

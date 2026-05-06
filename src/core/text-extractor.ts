@@ -275,10 +275,90 @@ function extractQualificationCivil(n: string, pendingObjective?: string): Record
     }
   }
 
+  // composition_actor — quem é o familiar/parceiro na composição (T9.17A)
+  if (facts['composition_actor'] === undefined) {
+    if (
+      pendingObjective === 'coletar_composition_actor' ||
+      contains(n, 'minha mae', 'meu pai', 'minha irma', 'meu irmao',
+        'minha filha', 'meu filho', 'minha avo', 'meu avo')
+    ) {
+      if (contains(n, 'mae')) facts['composition_actor'] = 'mae';
+      else if (contains(n, 'pai')) facts['composition_actor'] = 'pai';
+      else if (contains(n, 'irma')) facts['composition_actor'] = 'irmao';
+      else if (contains(n, 'irmao')) facts['composition_actor'] = 'irmao';
+      else if (contains(n, 'filha')) facts['composition_actor'] = 'outro';
+      else if (contains(n, 'filho')) facts['composition_actor'] = 'outro';
+      else if (contains(n, 'avo')) facts['composition_actor'] = 'outro';
+    }
+    if (contains(n, 'namorada', 'namorado', 'noiva', 'noivo')) {
+      facts['composition_actor'] = 'parceiro';
+    }
+    if (
+      contains(n, 'esposa', 'marido', 'conjuge', 'companheiro', 'companheira') &&
+      facts['composition_actor'] === undefined
+    ) {
+      facts['composition_actor'] = 'conjuge';
+    }
+  }
+
+  // estado_civil_p3 — estado civil do familiar/parceiro (nunca sobrescreve estado_civil do lead)
+  if (facts['estado_civil_p3'] === undefined) {
+    if (pendingObjective === 'coletar_estado_civil_p3') {
+      if (contains(n, 'solteiro', 'solteira')) {
+        facts['estado_civil_p3'] = 'solteiro';
+      } else if (contains(n, 'casado', 'casada', 'casamento civil')) {
+        facts['estado_civil_p3'] = 'casado_civil';
+      } else if (
+        contains(n, 'uniao', 'junto', 'junta', 'amasiado', 'namorado', 'namorada')
+      ) {
+        facts['estado_civil_p3'] = 'uniao_estavel';
+      } else if (contains(n, 'divorciado', 'divorciada', 'separado', 'separada')) {
+        facts['estado_civil_p3'] = 'divorciado';
+      } else if (contains(n, 'viuvo', 'viuva')) {
+        facts['estado_civil_p3'] = 'viuvo';
+      }
+    }
+  }
+
+  // dependents_applicable — tem dependente menor 18 anos ou parente até 3º grau sem renda/CNPJ
+  if (facts['dependents_applicable'] === undefined) {
+    if (pendingObjective === 'coletar_dependents_applicable') {
+      if (
+        contains(n, 'sim', 'tenho', 'possuo', 'tenho filho', 'tenho filha', 'tenho dependente')
+      ) {
+        facts['dependents_applicable'] = true;
+      } else if (contains(n, 'nao', 'nenhum')) {
+        facts['dependents_applicable'] = false;
+      }
+    }
+    if (
+      contains(n, 'tenho filho', 'tenho filha', 'tenho dependente', 'filho menor', 'filha menor') &&
+      facts['dependents_applicable'] === undefined
+    ) {
+      facts['dependents_applicable'] = true;
+    }
+  }
+
+  // dependents_count — quantos dependentes
+  if (facts['dependents_count'] === undefined) {
+    if (pendingObjective === 'coletar_dependents_count') {
+      const numMatch = n.match(/\b([1-9])\b/);
+      if (numMatch) {
+        facts['dependents_count'] = parseInt(numMatch[1], 10);
+      } else if (contains(n, 'um ', 'uma ')) {
+        facts['dependents_count'] = 1;
+      } else if (contains(n, 'dois', 'duas')) {
+        facts['dependents_count'] = 2;
+      } else if (contains(n, 'tres')) {
+        facts['dependents_count'] = 3;
+      }
+    }
+  }
+
   return facts;
 }
 
-function extractQualificationRenda(n: string, original: string): Record<string, unknown> {
+function extractQualificationRenda(n: string, original: string, pendingObjective?: string): Record<string, unknown> {
   const facts: Record<string, unknown> = {};
 
   // regime_trabalho
@@ -313,6 +393,49 @@ function extractQualificationRenda(n: string, original: string): Record<string, 
   const renda = extractRenda(original);
   if (renda !== null) {
     facts['renda_principal'] = renda;
+  }
+
+  // autonomo_tem_ir — autônomo declarou IR nos últimos 2 anos (T9.17A)
+  if (facts['autonomo_tem_ir'] === undefined) {
+    if (pendingObjective === 'coletar_autonomo_tem_ir') {
+      if (
+        contains(n, 'sim', 'declaro', 'declarei', 'tenho ir', 'faco ir')
+      ) {
+        facts['autonomo_tem_ir'] = true;
+      } else if (
+        contains(n, 'nao', 'nao declaro', 'nao declarei', 'nenhum')
+      ) {
+        facts['autonomo_tem_ir'] = false;
+      }
+    }
+    if (
+      contains(n, 'declaro imposto', 'declarei imposto', 'faco declaracao',
+        'declaro ir', 'declarei ir', 'fiz declaracao') &&
+      facts['autonomo_tem_ir'] === undefined
+    ) {
+      facts['autonomo_tem_ir'] = true;
+    }
+    if (
+      contains(n, 'nao declaro imposto', 'nunca declarei', 'nao faco declaracao') &&
+      facts['autonomo_tem_ir'] === undefined
+    ) {
+      facts['autonomo_tem_ir'] = false;
+    }
+  }
+
+  // ctps_36 — CTPS ativa há pelo menos 36 meses (T9.17A)
+  if (facts['ctps_36'] === undefined) {
+    if (pendingObjective === 'coletar_ctps_36') {
+      if (
+        contains(n, 'sim', 'tenho', 'mais de 3 anos', 'mais de tres anos')
+      ) {
+        facts['ctps_36'] = true;
+      } else if (
+        contains(n, 'nao', 'menos de 3 anos', 'menos de tres')
+      ) {
+        facts['ctps_36'] = false;
+      }
+    }
   }
 
   return facts;
@@ -459,7 +582,7 @@ export function extractFactsFromText(
       case 'qualification_civil':
         return extractQualificationCivil(n, pendingObjective);
       case 'qualification_renda':
-        return extractQualificationRenda(n, text);
+        return extractQualificationRenda(n, text, pendingObjective);
       case 'qualification_eligibility':
         return extractQualificationEligibility(n);
       case 'docs_prep':
