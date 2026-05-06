@@ -1,5 +1,77 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.16A — Confirmações Contextuais no text-extractor — pendingObjective via _next_objective (2026-05-05)
+
+**Tipo**: PR-IMPL / contratual / frente T9
+**Branch**: fix/t9.16a-contextual-confirmation
+**PR**: #240 — aberta, aguardando merge Vasques
+**Commit**: f839d38
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.15J-FIX2 (PR #239, mergeada) — SELECT por wa_id → upsert por id (PK)
+**Próximo passo autorizado T9**: Vasques merge PR #240 → Repetir T9.15B-PROVA-REAL-CANARY com confirmações contextuais
+
+### ESTADO HERDADO
+
+- T9.15J-FIX2 (PR #239) mergeada — `writeLeadAccumulatedFacts` upserta por id (PK), evitando duplicatas em `enova_state`
+- `_next_objective` não era persistido entre turnos — extractor não sabia o contexto da pergunta anterior
+- Extração de `rnm_valido`, `estado_civil`, `processo` dependia exclusivamente de keywords — "sim" isolado = ambíguo = sem extração
+- Smokes herdados: smoke PASS, smoke:meta:canary 41/41, prove:t9.15h-facts-persistence 34/34, smoke:core:text-extractor 81/81 (pré-T9.16A)
+
+### DIAGNÓSTICO CONFIRMADO
+
+Causa raiz: `extractFactsFromText` não recebia contexto da pergunta anterior. Quando LLM perguntava
+"Você tem RNM por prazo indeterminado?" e cliente respondia "sim", extractor não associava "sim" a
+`rnm_valido=true` — resultado: fact nunca extraído, Core nunca avançava pelo gate RNM.
+
+Solução: `_next_objective` (valor de `coreDecision.next_objective`) persistido em `last_context`
+a cada turno, lido como `pendingObjective` no turno seguinte, passado para `extractFactsFromText`.
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.16a-contextual-confirmation
+- Commit principal: `f839d38`
+- Arquivo de review: `docs/diagnostics/FUNIL-QUALIFICACAO/PR-T9.16A-review.md`
+- 4 arquivos modificados: `src/core/text-extractor.ts`, `src/core/semantic-next-objective.ts`, `src/meta/canary-pipeline.ts`, `src/core/text-extractor-smoke.ts`
+- Zero diff fora do escopo: zero `src/supabase/`, zero `src/llm/`, zero `panel-nextjs/`, zero wrangler.toml, zero Supabase schema, zero flags
+
+### O que esta PR fez
+
+**src/core/text-extractor.ts**
+- `extractFactsFromText(text, stage, pendingObjective?)` — novo parâmetro opcional
+- `extractDiscovery`: bloco contextual RNM (8 keywords positivos + 6 negativos) antes do bloco keyword-only; guard `facts['rnm_valido'] === undefined` evita sobrescrita
+- `extractQualificationCivil`: bloco contextual `estado_civil` (4 ramos) + bloco contextual `processo` (2 ramos); guards equivalentes
+
+**src/meta/canary-pipeline.ts**
+- `extractFactsFromText` movida para APÓS bloco `persistedFacts` (ordem corrigida)
+- `pendingObjective` derivado de `persistedFacts['_next_objective']`
+- `_next_objective` gravado em `factsMap` antes de `writeLeadAccumulatedFacts`
+
+**src/core/semantic-next-objective.ts**
+- `perguntar_rnm_e_validade`: instrução atualizada com regra explícita prazo determinado/indeterminado
+
+**src/core/text-extractor-smoke.ts**
+- 8 novos casos CTX1–CTX8 cobrindo confirmações contextuais RNM, estado_civil e processo
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke:core:text-extractor` | **89/89 PASS** (era 81) |
+| `npm run smoke` (core) | **24/24 PASS** |
+| `npm run smoke:meta:canary` | **41/41 PASS** |
+| `npm run prove:t9.15h-facts-persistence` | **34/34 PASS** |
+| `npm run prove:t9.14-reverse-mapper` | **19/19 PASS** |
+
+### Rollback
+
+```bash
+git revert f839d38
+```
+
+`pendingObjective` é `undefined` por default — revert restaura comportamento pré-T9.16A sem side effects.
+
+---
+
 ## T9.15J-FIX2 — writeLeadAccumulatedFacts SELECT→upsert por id (PK) (2026-05-05)
 
 **Tipo**: PR-FIX / contratual / frente T9
