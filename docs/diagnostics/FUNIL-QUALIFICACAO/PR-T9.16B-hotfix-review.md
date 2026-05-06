@@ -1,6 +1,6 @@
 # PR-T9.16B-hotfix — Instrução greeting v3 ausente do main
 
-**PR:** a abrir
+**PR:** #242 — https://github.com/brunovasque/Enova-2/pull/242
 **Branch:** `fix/t9.16b-greeting-fix`
 **Base:** `main` (commit `e993dfc` — merge PR #241)
 **Commit cherry-picked:** `6113251` → `112b527` (cherry-pick sha)
