@@ -54,7 +54,8 @@ const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   'coletar_estado_civil':
     'Perguntar estado civil: solteiro(a), casado(a), união estável ou divorciado(a).',
   'avancar_para_qualification_civil':
-    'Perguntar estado civil: solteiro(a), casado(a), união estável ou divorciado(a).',
+    'Estado civil coletado. Agora perguntar se o cliente pretende comprar sozinho(a) '
+    + 'ou se vai ter alguém junto no processo — cônjuge, familiar ou parceiro(a).',
   'coletar_processo':
     'Perguntar se pretende comprar sozinho(a) ou com alguém.',
   'avancar_para_qualification_renda':
