@@ -25,6 +25,9 @@ import { TOPO_REQUIRED_FACTS, TOPO_OPTIONAL_FACTS, TOPO_OFFTRACK_FACT_KEY } from
 // Tipo local de nacionalidade para o topo (sem depender de meio-b-rules)
 type NacionalidadeValue = 'brasileiro' | 'estrangeiro' | 'naturalizado';
 
+// Tipo local de alternativa RNM (quando rnm_valido=false — T9.16B)
+type AlternativaRnm = 'tem_conjuge_brasileiro' | 'tem_familiar_brasileiro' | 'sem_alternativa';
+
 // ---------------------------------------------------------------------------
 // Tipos de entrada e saída do extrator do topo
 // ---------------------------------------------------------------------------
@@ -83,8 +86,15 @@ export interface TopoSignals {
 
   /** RNM foi mencionado/verificado (relevante apenas para estrangeiros)? */
   rnm_detectado: boolean;
-  /** RNM está válido? true=sim, false=inválido/ausente, null=não informado. */
+  /** RNM está válido? true=sim, false=inválido/determinado, null=não informado ainda. */
   rnm_valido: boolean | null;
+  /**
+   * Alternativa ao RNM inválido (T9.16B) — relevante apenas quando rnm_valido=false.
+   * 'tem_conjuge_brasileiro' | 'tem_familiar_brasileiro' → pode avançar via cônjuge/familiar.
+   * 'sem_alternativa' → sem alternativa, encerramento com porta aberta.
+   * null → não perguntado ainda.
+   */
+  alternativa_rnm: AlternativaRnm | null;
 
   /**
    * Status da extração do topo.
@@ -164,6 +174,7 @@ export function extractTopoSignals(input: TopoTurnExtract): TopoSignals {
     'nacionalidade',
     'rnm_valido',
     'rnm_status',
+    'alternativa_rnm',
   ];
 
   // --- F0: customer_goal ---
@@ -199,6 +210,9 @@ export function extractTopoSignals(input: TopoTurnExtract): TopoSignals {
   const rnmValidoResolved = resolveRnmValido(rawRnmValido, rawRnmStatus);
   const rnmDetectado = rawRnmValido !== undefined || rawRnmStatus !== undefined;
 
+  // --- alternativa_rnm (T9.16B — relevante quando rnm_valido=false) ---
+  const alternativaRnm = normalizeAlternativaRnm(merged['alternativa_rnm']);
+
   // --- parse_status ---
   const parseStatus = computeParseStatus(customerGoalDetected, currentIntentDetected);
 
@@ -215,6 +229,7 @@ export function extractTopoSignals(input: TopoTurnExtract): TopoSignals {
     nacionalidade_value: nacionalidadeValue,
     rnm_detectado: rnmDetectado,
     rnm_valido: rnmValidoResolved,
+    alternativa_rnm: alternativaRnm,
     parse_status: parseStatus,
     keys_checked: keysChecked,
   };
@@ -295,5 +310,16 @@ function resolveRnmValido(rawRnmValido: unknown, rawRnmStatus: unknown): boolean
   if (rawRnmValido === false) return false;
   if (rawRnmStatus === 'valido') return true;
   if (rawRnmStatus === 'invalido' || rawRnmStatus === 'expirado' || rawRnmStatus === 'ausente') return false;
+  return null;
+}
+
+/**
+ * Normaliza o valor bruto de alternativa_rnm para o tipo canônico (T9.16B).
+ * Retorna null se ausente ou inválido.
+ */
+function normalizeAlternativaRnm(raw: unknown): AlternativaRnm | null {
+  if (raw === 'tem_conjuge_brasileiro') return 'tem_conjuge_brasileiro';
+  if (raw === 'tem_familiar_brasileiro') return 'tem_familiar_brasileiro';
+  if (raw === 'sem_alternativa') return 'sem_alternativa';
   return null;
 }

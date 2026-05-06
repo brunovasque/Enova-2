@@ -374,8 +374,13 @@ function runTopoDecision(state: LeadState): CoreDecision {
     facts_extracted: {},
   });
 
+  // Primeiro turno real: state.facts completamente vazio (nenhum fact persistido ainda).
+  // Não usar parse_status='empty' — esse status ocorre em qualquer turno onde o extractor
+  // não reconhece a mensagem, causando greeting repetido em turnos subsequentes.
+  const isFirstTurn = Object.keys(state.facts).length === 0;
+
   // L06: avaliar critérios mínimos do topo e determinar next step estrutural
-  const topoCriteria = evaluateTopoCriteria(topoSignals);
+  const topoCriteria = evaluateTopoCriteria(topoSignals, isFirstTurn);
 
   // Derivar CoreDecision a partir de TopoCriteriaResult (L06)
   // next_objective vem diretamente do gates (L06) — TOPO_NEXT_OBJECTIVES define cada etapa canônica

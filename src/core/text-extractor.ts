@@ -156,6 +156,29 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     }
   }
 
+  // alternativa_rnm — quando RNM é inválido, verificar se tem cônjuge/familiar brasileiro (T9.16B)
+  if (pendingObjective === 'verificar_alternativa_rnm') {
+    if (
+      contains(n, 'nao tenho', 'nao tem', 'ninguem', 'sem alternativa', 'nenhum')
+    ) {
+      facts['alternativa_rnm'] = 'sem_alternativa';
+    } else if (
+      contains(n, 'esposa', 'marido', 'conjuge', 'companheiro', 'companheira',
+        'mae', 'ma', 'pai', 'irmao', 'irma', 'familiar', 'parente', 'brasileiro')
+    ) {
+      facts['alternativa_rnm'] = 'tem_familiar_brasileiro';
+    }
+  }
+  // Keywords diretas sem contexto — apenas frases específicas para evitar falsos positivos
+  if (facts['alternativa_rnm'] === undefined) {
+    if (
+      contains(n, 'minha esposa e brasileira', 'meu marido e brasileiro',
+        'conjuge brasileiro', 'familiar brasileiro', 'parente brasileiro')
+    ) {
+      facts['alternativa_rnm'] = 'tem_familiar_brasileiro';
+    }
+  }
+
   return facts;
 }
 

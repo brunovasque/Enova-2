@@ -46,17 +46,17 @@ export interface SmokeResult {
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 1: Stage sem facts obrigatórios → deve bloquear
+// Cenário 1: Stage sem facts obrigatórios → deve bloquear com greeting
 //
 // Prova: G_FATO_CRITICO_AUSENTE bloqueia avanço quando required_fact ausente.
-// Stage discovery exige customer_goal. Sem ele, block_advance=true, stage não avança.
+// Stage discovery sem nenhum fact: isFirstTurn=true → apresentar_e_verificar_conhecimento.
 // ---------------------------------------------------------------------------
 export function smokeScenario1_BlockQuandoFactAusente(): SmokeResult {
-  const state = makeState('discovery'); // nenhum fact
+  const state = makeState('discovery'); // nenhum fact — isFirstTurn=true → greeting
   const decision = runCoreEngine(state);
 
   return {
-    scenario: 'Cenário 1 — Stage sem facts: deve bloquear',
+    scenario: 'Cenário 1 — Stage sem facts: deve bloquear com apresentação (T9.16B)',
     passed: true,
     decision,
     assertions: [
@@ -64,7 +64,7 @@ export function smokeScenario1_BlockQuandoFactAusente(): SmokeResult {
       assert('block_advance = true (G_FATO_CRITICO_AUSENTE)', true, decision.block_advance),
       assert('stage_after permanece em discovery', 'discovery', decision.stage_after),
       assert('gates_activated inclui G_FATO_CRITICO_AUSENTE', true, decision.gates_activated.includes('G_FATO_CRITICO_AUSENTE')),
-      assert('next_objective = coletar_customer_goal', 'coletar_customer_goal', decision.next_objective),
+      assert('next_objective = apresentar_e_verificar_conhecimento (topo vazio → greeting)', 'apresentar_e_verificar_conhecimento', decision.next_objective),
       assert('speech_intent = bloqueio (sinal estrutural — não é fala)', 'bloqueio', decision.speech_intent),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
@@ -703,6 +703,120 @@ export function smokeScenario24_Topo_EstrangeiroComRNM_Avanca(): SmokeResult {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Cenário 25 (T9.16B): Estrangeiro + rnm_valido=false + sem alternativa → verificar alternativa
+// ---------------------------------------------------------------------------
+export function smokeScenario25_Topo_RnmInvalido_SemAlternativa_VerificarAlternativa(): SmokeResult {
+  const state = makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+    nome_completo: 'Carlos Mendez',
+    nacionalidade: 'estrangeiro',
+    rnm_valido: false,
+    // alternativa_rnm ausente → Gate 4A dispara
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 25 (T9.16B) — Estrangeiro + RNM inválido + sem alternativa → verificar_alternativa_rnm',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = true (RNM inválido, alternativa ausente)', true, decision.block_advance),
+      assert('stage_after permanece em discovery', 'discovery', decision.stage_after),
+      assert('next_objective = verificar_alternativa_rnm', 'verificar_alternativa_rnm', decision.next_objective),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 26 (T9.16B): Estrangeiro + rnm_valido=false + alternativa=sem_alternativa → encerrar
+// ---------------------------------------------------------------------------
+export function smokeScenario26_Topo_RnmInvalido_SemAlternativaConfirmada_Encerrar(): SmokeResult {
+  const state = makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+    nome_completo: 'Carlos Mendez',
+    nacionalidade: 'estrangeiro',
+    rnm_valido: false,
+    alternativa_rnm: 'sem_alternativa',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 26 (T9.16B) — Estrangeiro + RNM inválido + sem_alternativa → encerrar_sem_alternativa_rnm',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = true (sem alternativa — encerramento)', true, decision.block_advance),
+      assert('stage_after permanece em discovery', 'discovery', decision.stage_after),
+      assert('next_objective = encerrar_sem_alternativa_rnm', 'encerrar_sem_alternativa_rnm', decision.next_objective),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 27 (T9.16B): Estrangeiro + rnm_valido=false + alternativa=tem_familiar → avança
+// ---------------------------------------------------------------------------
+export function smokeScenario27_Topo_RnmInvalido_ComAlternativaFamiliar_Avanca(): SmokeResult {
+  const state = makeState('discovery', {
+    customer_goal: 'comprar_imovel',
+    nome_completo: 'Carlos Mendez',
+    nacionalidade: 'estrangeiro',
+    rnm_valido: false,
+    alternativa_rnm: 'tem_familiar_brasileiro',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 27 (T9.16B) — Estrangeiro + RNM inválido + familiar brasileiro → avança para qualification_civil',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = false (alternativa confirmada — avança via familiar)', false, decision.block_advance),
+      assert('stage_after = qualification_civil', 'qualification_civil', decision.stage_after),
+      assert('speech_intent = transicao_stage', 'transicao_stage', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cenário 28 (T9.16B-v2): turno 2 com _next_objective persisted mas sem customer_goal
+// → deve receber coletar_customer_goal, NÃO o greeting (prova do fix T9.16B-v2)
+//
+// Regressão: com o bug original (parse_status='empty'), um lead que enviou "ok"
+// no turno 2 receberia o greeting novamente porque parse_status='empty' mesmo
+// com _next_objective persisted. O fix usa isFirstTurn=false (facts.length > 0).
+// ---------------------------------------------------------------------------
+export function smokeScenario28_Topo_SegundoTurno_SemCustomerGoal_NaoRepeteGreeting(): SmokeResult {
+  // Simula turno 2: extractor não reconheceu nada (ex: "ok"), mas _next_objective
+  // foi persistido no turno 1. facts.length > 0 → isFirstTurn=false → sem greeting.
+  const state = makeState('discovery', {
+    _next_objective: 'apresentar_e_verificar_conhecimento',
+  });
+  const decision = runCoreEngine(state);
+
+  return {
+    scenario: 'Cenário 28 (T9.16B-v2) — Turno 2 sem customer_goal: coletar_customer_goal (sem greeting repetido)',
+    passed: true,
+    decision,
+    assertions: [
+      assert('stage_current = discovery', 'discovery', decision.stage_current),
+      assert('block_advance = true', true, decision.block_advance),
+      assert('stage_after permanece em discovery', 'discovery', decision.stage_after),
+      assert(
+        'next_objective = coletar_customer_goal (NÃO greeting — turno 2)',
+        'coletar_customer_goal',
+        decision.next_objective,
+      ),
+      assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
+    ].map((a) => ({ ...a, passed: a.expected === a.actual })),
+  };
+}
+
 export interface SmokeSuiteResult {
   total: number;
   passed: number;
@@ -718,10 +832,11 @@ export interface SmokeSuiteResult {
  * Prova exigida (A01-05, Gate 2):
  * "Smoke de trilho e next step autorizado"
  *
- * Cenários L03/L04-L17 integrados (20): topo segue válido, o Meio A e Meio B
+ * Cenários L03/L04-L17 integrados (28): topo segue válido, o Meio A e Meio B
  * permanecem íntegros, os Especiais continuam roteando P3/multi e o Final
  * agora cobre docs, visita e handoff sem abrir fala mecânica. O cenário 20
- * protege a recusa explícita de visita no trilho presencial.
+ * protege a recusa explícita de visita no trilho presencial. Cenários 25-28
+ * (T9.16B) cobrem RNM alternativa (Gate 4A/4B) e greeting de topo vazio.
  * Todos os cenários passam pelo `runCoreEngine()`. Nenhum usa decisão fake.
  * Nenhum cenário gera fala ao cliente.
  */
@@ -751,6 +866,10 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario22_Topo_BrasileiroCompleto_Avanca,
     smokeScenario23_Topo_EstrangeiroSemRNM_Bloqueia,
     smokeScenario24_Topo_EstrangeiroComRNM_Avanca,
+    smokeScenario25_Topo_RnmInvalido_SemAlternativa_VerificarAlternativa,
+    smokeScenario26_Topo_RnmInvalido_SemAlternativaConfirmada_Encerrar,
+    smokeScenario27_Topo_RnmInvalido_ComAlternativaFamiliar_Avanca,
+    smokeScenario28_Topo_SegundoTurno_SemCustomerGoal_NaoRepeteGreeting,
   ];
 
   const results = scenarios.map((fn) => {

@@ -96,8 +96,12 @@ export const TOPO_BLOCKING_CONDITIONS = {
   NOME_COMPLETO_AUSENTE: 'topo.nome_completo_ausente',
   /** nacionalidade ausente — nome coletado, aguardando brasileiro/estrangeiro. */
   NACIONALIDADE_AUSENTE: 'topo.nacionalidade_ausente',
-  /** estrangeiro declarado, RNM válido ainda não confirmado. */
+  /** estrangeiro declarado, RNM válido ainda não confirmado (null). */
   ESTRANGEIRO_SEM_RNM_VALIDO: 'topo.estrangeiro_sem_rnm_valido',
+  /** RNM inválido/com prazo determinado; verificando alternativa (cônjuge/familiar brasileiro). */
+  RNM_INVALIDO_VERIFICAR_ALTERNATIVA: 'topo.rnm_invalido_verificar_alternativa',
+  /** Sem alternativa de RNM — nenhum familiar/cônjuge brasileiro; encerramento com porta aberta. */
+  SEM_ALTERNATIVA_RNM: 'topo.sem_alternativa_rnm',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -126,14 +130,20 @@ export const TOPO_ADVANCE_CRITERIA = {
  * O LLM usa esses objetivos como instrução de condução — não como fala ao cliente.
  */
 export const TOPO_NEXT_OBJECTIVES = {
-  /** customer_goal ausente — detectar interesse do lead. */
+  /** topo completamente vazio (parse_status=empty) — apresentar Enova e verificar conhecimento do programa. */
+  APRESENTAR_E_VERIFICAR_CONHECIMENTO: 'apresentar_e_verificar_conhecimento',
+  /** customer_goal ausente com algum sinal (parse_status=partial) — detectar interesse do lead. */
   COLETAR_CUSTOMER_GOAL: 'coletar_customer_goal',
   /** customer_goal presente, nome ausente — explicar programa brevemente e pedir nome. */
   EXPLICAR_MCMV_E_COLETAR_NOME: 'explicar_mcmv_e_coletar_nome_completo',
   /** nome coletado, nacionalidade ausente — perguntar se brasileiro ou estrangeiro. */
   PERGUNTAR_NACIONALIDADE: 'perguntar_nacionalidade',
-  /** estrangeiro detectado, RNM não confirmado — perguntar RNM e validade. */
+  /** estrangeiro detectado, RNM não confirmado (null) — perguntar RNM e validade. */
   PERGUNTAR_RNM: 'perguntar_rnm_e_validade',
+  /** RNM inválido/determinado — verificar se tem cônjuge ou familiar brasileiro. */
+  VERIFICAR_ALTERNATIVA_RNM: 'verificar_alternativa_rnm',
+  /** sem alternativa RNM — encerrar com porta aberta para retorno futuro. */
+  ENCERRAR_SEM_ALTERNATIVA_RNM: 'encerrar_sem_alternativa_rnm',
   /** topo completo — instruir LLM a perguntar estado civil. */
   AVANCAR_PARA_CIVIL: 'Perguntar estado civil: solteiro, casado, união estável ou divorciado.',
 } as const;
@@ -181,6 +191,8 @@ export const TOPO_SIGNAL_POLICY = {
 export const TOPO_NEXT_STEP = {
   /** Lead avança para o Meio A — qualificação civil (estado civil, composição). */
   ADVANCE_TO_QUALIFICATION: 'qualification_civil',
+  /** Lead avança para o Meio A via alternativa RNM (cônjuge/familiar brasileiro). */
+  ADVANCE_TO_QUALIFICATION_VIA_ALTERNATIVA: 'qualification_civil',
   /** Lead permanece no topo — facts mínimos ainda ausentes. */
   REMAIN_IN_DISCOVERY: 'discovery',
 } as const;
