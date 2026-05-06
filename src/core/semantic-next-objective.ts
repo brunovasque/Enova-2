@@ -24,7 +24,7 @@ const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   'perguntar_nacionalidade':
     'Perguntar se o cliente é brasileiro(a) ou estrangeiro(a).',
   'perguntar_rnm_e_validade':
-    'Perguntar se o cliente estrangeiro possui RNM válido e se o documento é por prazo indeterminado.',
+    'Perguntar se o cliente possui RNM (Registro Nacional Migratório) por prazo indeterminado. Deixar claro que apenas RNM por prazo indeterminado é aceito pelo programa MCMV — RNM com data de validade não é permitido, independente de estar vigente.',
 
   // Topo → civil: já semi-semântico na origem (TOPO_NEXT_OBJECTIVES.AVANCAR_PARA_CIVIL)
   // Mapper padroniza para versão canônica com "(a)".

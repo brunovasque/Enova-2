@@ -207,12 +207,6 @@ export async function runCanaryPipeline(
           : 'discovery'
       ) as LeadState['current_stage'];
 
-      // Bloco [B] — Extração de facts do texto WhatsApp real (T9.6 — BLK-03 fix)
-      // Função pura: sem I/O, nunca lança exceção.
-      // Texto completo do cliente nunca é logado.
-      const extractedFacts = extractFactsFromText(event.text_body ?? '', currentStage);
-      const extractedKeys = Object.keys(extractedFacts);
-
       // T9.15H: Carregar facts acumulados de turnos anteriores (enova_state.last_context).
       // crm_facts é writeBuffer-only — perde dados após restart de isolate Cloudflare Worker.
       // last_context persiste o mapa de facts no Supabase real entre turnos/restarts.
@@ -230,6 +224,18 @@ export async function runCanaryPipeline(
           wa_id_present: !!(event.wa_id),
         });
       }
+
+      // T9.16A: Recuperar next_objective do turno anterior para contextualizar extração.
+      // Permite que respostas curtas ("sim", "solteiro") sejam interpretadas no contexto certo.
+      const pendingObjective = typeof persistedFacts['_next_objective'] === 'string'
+        ? persistedFacts['_next_objective']
+        : undefined;
+
+      // Bloco [B] — Extração de facts do texto WhatsApp real (T9.6 — BLK-03 fix)
+      // Função pura: sem I/O, nunca lança exceção.
+      // Texto completo do cliente nunca é logado.
+      const extractedFacts = extractFactsFromText(event.text_body ?? '', currentStage, pendingObjective);
+      const extractedKeys = Object.keys(extractedFacts);
 
       // Bloco [C] — Persistência de facts extraídos (status: 'pending')
       // Facts ficam 'pending' até confirmação — LLM/operador promove para 'accepted'.
@@ -317,6 +323,12 @@ export async function runCanaryPipeline(
       });
 
       await upsertLeadState(coreBackend, crmResult.lead_id, coreDecision);
+
+      // T9.16A: Persistir next_objective atual para contextualizar extração no próximo turno.
+      // _next_objective é chave interna — não é fact de negócio, nunca exposto ao lead.
+      if (coreDecision.next_objective) {
+        factsMap['_next_objective'] = coreDecision.next_objective;
+      }
 
       // T9.15H: Persistir facts acumulados em enova_state.last_context para sobreviver restart do isolate.
       // factsMap inclui todos os facts (anteriores + atuais). Core já tomou decisão com eles.

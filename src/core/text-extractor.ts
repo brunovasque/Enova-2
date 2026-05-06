@@ -79,7 +79,7 @@ function extractNomeCompletoCandidato(n: string, original: string): string | nul
 // Extração por stage
 // ---------------------------------------------------------------------------
 
-function extractDiscovery(n: string, original: string): Record<string, unknown> {
+function extractDiscovery(n: string, original: string, pendingObjective?: string): Record<string, unknown> {
   const facts: Record<string, unknown> = {};
 
   // Negação explícita bloqueia intenção de compra ("não quero comprar nada agora")
@@ -128,55 +128,106 @@ function extractDiscovery(n: string, original: string): Record<string, unknown> 
     facts['nacionalidade'] = 'naturalizado';
   }
 
+  // Confirmação contextual de RNM — quando sistema estava aguardando resposta sobre RNM (T9.16A)
+  if (pendingObjective === 'perguntar_rnm_e_validade') {
+    if (
+      contains(n, 'sim', 'tenho', 'possuo', 'prazo indeterminado', 'indeterminado',
+        'sem prazo', 'permanente', 'por tempo indeterminado')
+    ) {
+      facts['rnm_valido'] = true;
+    } else if (
+      contains(n, 'nao', 'nao tenho', 'nao possuo', 'determinado', 'tem validade',
+        'com validade', 'vence', 'expira', 'prazo determinado')
+    ) {
+      facts['rnm_valido'] = false;
+    }
+  }
+
   // rnm_valido — negação primeiro para evitar falsos positivos ("Não tenho RNM" tem "tenho rnm")
-  if (
-    contains(n, 'sem rnm', 'nao tenho rnm', 'rnm invalido', 'rnm vencido', 'rnm expirado')
-  ) {
-    facts['rnm_valido'] = false;
-  } else if (
-    contains(n, 'rnm valido', 'rnm ok', 'tenho rnm', 'meu rnm', 'registro valido', 'rnm em dia')
-  ) {
-    facts['rnm_valido'] = true;
+  if (facts['rnm_valido'] === undefined) {
+    if (
+      contains(n, 'sem rnm', 'nao tenho rnm', 'rnm invalido', 'rnm vencido', 'rnm expirado')
+    ) {
+      facts['rnm_valido'] = false;
+    } else if (
+      contains(n, 'rnm valido', 'rnm ok', 'tenho rnm', 'meu rnm', 'registro valido', 'rnm em dia')
+    ) {
+      facts['rnm_valido'] = true;
+    }
   }
 
   return facts;
 }
 
-function extractQualificationCivil(n: string): Record<string, unknown> {
+function extractQualificationCivil(n: string, pendingObjective?: string): Record<string, unknown> {
   const facts: Record<string, unknown> = {};
 
-  // estado_civil
-  if (contains(n, 'sou solteiro', 'sou solteira', 'estou solteiro', 'estou solteira')) {
-    facts['estado_civil'] = 'solteiro';
-  } else if (
-    contains(n, 'sou casado', 'sou casada', 'casado no civil', 'casada no civil',
-      'casamento civil', 'tenho casamento civil')
+  // Confirmação contextual de estado civil — quando sistema estava aguardando estado civil (T9.16A)
+  if (
+    pendingObjective === 'coletar_estado_civil' ||
+    pendingObjective === 'avancar_para_qualification_civil' ||
+    pendingObjective === 'Perguntar estado civil: solteiro(a), casado(a), união estável ou divorciado(a).'
   ) {
-    facts['estado_civil'] = 'casado_civil';
-  } else if (
-    contains(n, 'uniao estavel', 'moro junto', 'moro com minha', 'moro com meu',
-      'amasiado', 'amasiada', 'vivemos juntos', 'vivemos juntas')
-  ) {
-    facts['estado_civil'] = 'uniao_estavel';
-  } else if (contains(n, 'divorciado', 'divorciada', 'separado', 'separada')) {
-    facts['estado_civil'] = 'divorciado';
-  } else if (contains(n, 'viuvo', 'viuva', 'meu marido faleceu', 'minha esposa faleceu')) {
-    facts['estado_civil'] = 'viuvo';
+    if (contains(n, 'solteiro', 'solteira')) {
+      facts['estado_civil'] = 'solteiro';
+    } else if (contains(n, 'casado', 'casada')) {
+      facts['estado_civil'] = 'casado_civil';
+    } else if (contains(n, 'uniao', 'junto', 'junta', 'amasiado', 'amasiada')) {
+      facts['estado_civil'] = 'uniao_estavel';
+    } else if (contains(n, 'divorciado', 'divorciada', 'separado', 'separada')) {
+      facts['estado_civil'] = 'divorciado';
+    } else if (contains(n, 'viuvo', 'viuva')) {
+      facts['estado_civil'] = 'viuvo';
+    }
   }
 
-  // processo
-  if (contains(n, 'sozinho', 'so eu', 'apenas eu', 'sou eu so', 'eu sozinha', 'eu sozinho')) {
-    facts['processo'] = 'solo';
-  } else if (
-    contains(n, 'eu e minha esposa', 'eu e meu marido', 'minha esposa', 'meu marido',
-      'nos dois', 'meu companheiro', 'minha companheira', 'meu conjuge', 'minha conjuge')
-  ) {
-    facts['processo'] = 'conjunto';
-  } else if (
-    contains(n, 'com minha mae', 'com meu pai', 'com meus pais', 'com familiar',
-      'composicao familiar', 'minha irma', 'meu irmao', 'minha filha', 'meu filho')
-  ) {
-    facts['processo'] = 'composicao_familiar';
+  // Confirmação contextual de processo — quando sistema estava aguardando processo (T9.16A)
+  if (pendingObjective === 'coletar_processo') {
+    if (contains(n, 'sozinho', 'sozinha', 'so eu', 'apenas eu')) {
+      facts['processo'] = 'solo';
+    } else if (
+      contains(n, 'junto', 'juntos', 'conjuge', 'esposa', 'marido', 'companheiro', 'companheira')
+    ) {
+      facts['processo'] = 'conjunto';
+    }
+  }
+
+  // estado_civil — keywords específicas (apenas quando contextual não resolveu)
+  if (facts['estado_civil'] === undefined) {
+    if (contains(n, 'sou solteiro', 'sou solteira', 'estou solteiro', 'estou solteira')) {
+      facts['estado_civil'] = 'solteiro';
+    } else if (
+      contains(n, 'sou casado', 'sou casada', 'casado no civil', 'casada no civil',
+        'casamento civil', 'tenho casamento civil')
+    ) {
+      facts['estado_civil'] = 'casado_civil';
+    } else if (
+      contains(n, 'uniao estavel', 'moro junto', 'moro com minha', 'moro com meu',
+        'amasiado', 'amasiada', 'vivemos juntos', 'vivemos juntas')
+    ) {
+      facts['estado_civil'] = 'uniao_estavel';
+    } else if (contains(n, 'divorciado', 'divorciada', 'separado', 'separada')) {
+      facts['estado_civil'] = 'divorciado';
+    } else if (contains(n, 'viuvo', 'viuva', 'meu marido faleceu', 'minha esposa faleceu')) {
+      facts['estado_civil'] = 'viuvo';
+    }
+  }
+
+  // processo — keywords específicas (apenas quando contextual não resolveu)
+  if (facts['processo'] === undefined) {
+    if (contains(n, 'sozinho', 'so eu', 'apenas eu', 'sou eu so', 'eu sozinha', 'eu sozinho')) {
+      facts['processo'] = 'solo';
+    } else if (
+      contains(n, 'eu e minha esposa', 'eu e meu marido', 'minha esposa', 'meu marido',
+        'nos dois', 'meu companheiro', 'minha companheira', 'meu conjuge', 'minha conjuge')
+    ) {
+      facts['processo'] = 'conjunto';
+    } else if (
+      contains(n, 'com minha mae', 'com meu pai', 'com meus pais', 'com familiar',
+        'composicao familiar', 'minha irma', 'meu irmao', 'minha filha', 'meu filho')
+    ) {
+      facts['processo'] = 'composicao_familiar';
+    }
   }
 
   return facts;
@@ -349,6 +400,7 @@ function extractVisit(n: string): Record<string, unknown> {
 export function extractFactsFromText(
   text: string,
   stage: StageId,
+  pendingObjective?: string,
 ): Record<string, unknown> {
   try {
     if (!text || typeof text !== 'string' || !text.trim()) return {};
@@ -358,9 +410,9 @@ export function extractFactsFromText(
 
     switch (stage) {
       case 'discovery':
-        return extractDiscovery(n, text);
+        return extractDiscovery(n, text, pendingObjective);
       case 'qualification_civil':
-        return extractQualificationCivil(n);
+        return extractQualificationCivil(n, pendingObjective);
       case 'qualification_renda':
         return extractQualificationRenda(n, text);
       case 'qualification_eligibility':
