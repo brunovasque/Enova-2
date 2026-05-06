@@ -78,8 +78,12 @@ export function evaluateMeioACriteria(signals: MeioASignals): MeioACriteriaResul
     };
   }
 
-  // Gate 3B: composition_actor detectado mas estado_civil_p3 ausente (T9.17A)
-  if (signals.composition_actor_detected && !signals.estado_civil_p3_detected) {
+  // Gate 3B: composition_actor detectado (exceto cônjuge — já tratado no Gate 2) mas estado_civil_p3 ausente (T9.17A)
+  if (
+    signals.composition_actor_detected &&
+    signals.composition_actor_value !== 'conjuge' &&
+    !signals.estado_civil_p3_detected
+  ) {
     return {
       can_advance: false,
       authorized_next_step: MEIO_A_NEXT_STEP.REMAIN_IN_QUALIFICATION_CIVIL,
