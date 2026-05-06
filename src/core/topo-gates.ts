@@ -93,11 +93,14 @@ export interface TopoCriteriaResult {
 /**
  * Avalia os critérios mínimos de aceite e o next step estrutural do topo.
  *
- * Rota canônica obrigatória (T9.15E):
- *   1. customer_goal ausente → bloqueia, pedir interesse
+ * Rota canônica obrigatória (T9.15E + T9.16B):
+ *   0. topo vazio (parse_status=empty) → apresentar Enova e verificar conhecimento
+ *   1. customer_goal ausente (parse_status=partial) → pedir interesse
  *   2. nome_completo ausente → bloqueia, explicar programa e pedir nome
  *   3. nacionalidade ausente → bloqueia, perguntar se brasileiro ou estrangeiro
- *   4. estrangeiro sem RNM válido → bloqueia, perguntar RNM e validade
+ *   4. estrangeiro com rnm_valido=null → bloqueia, perguntar RNM e validade
+ *   4A. estrangeiro com rnm_valido=false + sem alternativa confirmada → verificar alternativa
+ *   4B. estrangeiro com rnm_valido=false + sem_alternativa → encerrar com porta aberta
  *   5. topo mínimo completo → autoriza qualification_civil
  *
  * Fonte: E6.1 — PDF 4, p. 8; rota canônica topo ENOVA 2.
@@ -105,7 +108,12 @@ export interface TopoCriteriaResult {
  */
 export function evaluateTopoCriteria(signals: TopoSignals): TopoCriteriaResult {
   // --- Gate 1: customer_goal ausente ---
+  // parse_status='empty' (nenhum sinal) → saudar e verificar conhecimento do programa
+  // parse_status='partial' (tem contexto mas sem interesse) → coletar customer_goal
   if (!signals.customer_goal_detected) {
+    const nextObj = signals.parse_status === 'empty'
+      ? TOPO_NEXT_OBJECTIVES.APRESENTAR_E_VERIFICAR_CONHECIMENTO
+      : TOPO_NEXT_OBJECTIVES.COLETAR_CUSTOMER_GOAL;
     return {
       can_advance: false,
       authorized_next_step: TOPO_NEXT_STEP.REMAIN_IN_DISCOVERY,
@@ -113,7 +121,7 @@ export function evaluateTopoCriteria(signals: TopoSignals): TopoCriteriaResult {
       structural_reason: 'customer_goal ausente — aguardando interesse do lead.',
       track_signal: TOPO_SIGNAL_POLICY.OFFTRACK_DETECTED,
       missing_required_facts: ['customer_goal'],
-      next_objective: TOPO_NEXT_OBJECTIVES.COLETAR_CUSTOMER_GOAL,
+      next_objective: nextObj,
     };
   }
 
@@ -143,8 +151,8 @@ export function evaluateTopoCriteria(signals: TopoSignals): TopoCriteriaResult {
     };
   }
 
-  // --- Gate 4: estrangeiro sem RNM válido ---
-  if (signals.nacionalidade_value === 'estrangeiro' && !signals.rnm_valido) {
+  // --- Gate 4: estrangeiro — RNM não respondido ainda (null) → perguntar ---
+  if (signals.nacionalidade_value === 'estrangeiro' && signals.rnm_valido === null) {
     return {
       can_advance: false,
       authorized_next_step: TOPO_NEXT_STEP.REMAIN_IN_DISCOVERY,
@@ -156,14 +164,48 @@ export function evaluateTopoCriteria(signals: TopoSignals): TopoCriteriaResult {
     };
   }
 
+  // --- Gates 4A / 4B: estrangeiro com rnm_valido=false ---
+  const alternativaRnm = signals.alternativa_rnm;
+  if (signals.nacionalidade_value === 'estrangeiro' && signals.rnm_valido === false) {
+    if (alternativaRnm === 'tem_conjuge_brasileiro' || alternativaRnm === 'tem_familiar_brasileiro') {
+      // Alternativa confirmada → deixa passar para o avanço final (topo mínimo completo via alternativa)
+    } else if (alternativaRnm === 'sem_alternativa') {
+      // Gate 4B: sem alternativa → encerrar com porta aberta
+      return {
+        can_advance: false,
+        authorized_next_step: TOPO_NEXT_STEP.REMAIN_IN_DISCOVERY,
+        criteria_code: TOPO_BLOCKING_CONDITIONS.SEM_ALTERNATIVA_RNM,
+        structural_reason: 'sem alternativa de RNM ou familiar brasileiro; encerramento com porta aberta.',
+        track_signal: TOPO_SIGNAL_POLICY.ON_TRACK,
+        missing_required_facts: [],
+        next_objective: TOPO_NEXT_OBJECTIVES.ENCERRAR_SEM_ALTERNATIVA_RNM,
+      };
+    } else {
+      // Gate 4A: alternativa não informada ainda → verificar
+      return {
+        can_advance: false,
+        authorized_next_step: TOPO_NEXT_STEP.REMAIN_IN_DISCOVERY,
+        criteria_code: TOPO_BLOCKING_CONDITIONS.RNM_INVALIDO_VERIFICAR_ALTERNATIVA,
+        structural_reason: 'RNM inválido/determinado; verificando alternativa (cônjuge/familiar brasileiro).',
+        track_signal: TOPO_SIGNAL_POLICY.ON_TRACK,
+        missing_required_facts: ['alternativa_rnm'],
+        next_objective: TOPO_NEXT_OBJECTIVES.VERIFICAR_ALTERNATIVA_RNM,
+      };
+    }
+  }
+
   // --- Topo mínimo completo → avança para qualification_civil ---
   const trackSignal = signals.offtrack_detected
     ? TOPO_SIGNAL_POLICY.OFFTRACK_DETECTED
     : TOPO_SIGNAL_POLICY.ON_TRACK;
 
+  const advanceStep = alternativaRnm === 'tem_conjuge_brasileiro' || alternativaRnm === 'tem_familiar_brasileiro'
+    ? TOPO_NEXT_STEP.ADVANCE_TO_QUALIFICATION_VIA_ALTERNATIVA
+    : TOPO_NEXT_STEP.ADVANCE_TO_QUALIFICATION;
+
   return {
     can_advance: true,
-    authorized_next_step: TOPO_NEXT_STEP.ADVANCE_TO_QUALIFICATION,
+    authorized_next_step: advanceStep,
     criteria_code: TOPO_ADVANCE_CRITERIA.TOPO_MINIMO_COMPLETO,
     structural_reason:
       `topo mínimo completo: customer_goal='${signals.customer_goal_value}', ` +
@@ -190,6 +232,13 @@ export function isTopoFactoCriticoAusente(signals: TopoSignals): boolean {
   if (!signals.customer_goal_detected) return true;
   if (!signals.nome_completo_detected) return true;
   if (!signals.nacionalidade_detected) return true;
-  if (signals.nacionalidade_value === 'estrangeiro' && !signals.rnm_valido) return true;
+  if (signals.nacionalidade_value === 'estrangeiro') {
+    if (signals.rnm_valido === null) return true; // não perguntado ainda
+    if (signals.rnm_valido === false) {
+      const alt = signals.alternativa_rnm;
+      // sem alternativa confirmada → ainda bloqueado
+      if (alt !== 'tem_conjuge_brasileiro' && alt !== 'tem_familiar_brasileiro') return true;
+    }
+  }
   return false;
 }

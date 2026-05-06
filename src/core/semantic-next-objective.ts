@@ -17,6 +17,10 @@
 
 const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   // --- Topo (discovery) ---
+  'apresentar_e_verificar_conhecimento':
+    'Se apresentar como Enova, especialista em Minha Casa Minha Vida. Perguntar de forma '
+    + 'natural se o cliente já conhece o programa ou se gostaria de entender como funciona. '
+    + 'Tom: acolhedor, sem pressão.',
   'coletar_customer_goal':
     'Perguntar se o cliente tem interesse em comprar um imóvel pelo Minha Casa Minha Vida.',
   'explicar_mcmv_e_coletar_nome_completo':
@@ -25,6 +29,16 @@ const SEMANTIC_MAP: Readonly<Record<string, string>> = {
     'Perguntar se o cliente é brasileiro(a) ou estrangeiro(a).',
   'perguntar_rnm_e_validade':
     'Perguntar se o cliente possui RNM (Registro Nacional Migratório) por prazo indeterminado. Deixar claro que apenas RNM por prazo indeterminado é aceito pelo programa MCMV — RNM com data de validade não é permitido, independente de estar vigente.',
+  'verificar_alternativa_rnm':
+    'Informar ao cliente que o RNM com data de validade não é aceito pelo programa MCMV '
+    + '(financiamento de até 35 anos requer prazo indeterminado). Perguntar se possui cônjuge '
+    + 'ou familiar brasileiro que possa fazer o financiamento, pois nesse caso é possível '
+    + 'seguir o processo no nome dessa pessoa.',
+  'encerrar_sem_alternativa_rnm':
+    'Informar com empatia que infelizmente sem RNM por prazo indeterminado e sem cônjuge ou '
+    + 'familiar brasileiro, não é possível seguir com o financiamento pelo MCMV no momento. '
+    + 'Orientar que assim que regularizar o RNM (obter prazo indeterminado), pode retornar '
+    + 'que a Enova estará aqui para ajudar. Encerrar deixando a porta aberta.',
 
   // Topo → civil: já semi-semântico na origem (TOPO_NEXT_OBJECTIVES.AVANCAR_PARA_CIVIL)
   // Mapper padroniza para versão canônica com "(a)".
