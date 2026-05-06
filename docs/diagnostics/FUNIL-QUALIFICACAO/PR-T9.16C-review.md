@@ -1,6 +1,6 @@
 # PR-T9.16C — Fix greeting: captura contextual de conhecimento MCMV + instrução clara
 
-**PR:** a abrir
+**PR:** #243 — https://github.com/brunovasque/Enova-2/pull/243
 **Branch:** `fix/t9.16c-greeting-contextual`
 **Base:** `main` (commit `2a125f2` — merge PR #242)
 **Commit:** `1a5ac80`
