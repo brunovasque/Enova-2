@@ -442,6 +442,22 @@ eq('CTX20: "declaro ir" → autonomo_tem_ir=true (qualification_renda)',
   extractFactsFromText('declaro ir', 'qualification_renda')['autonomo_tem_ir'],
   true);
 
+eq('CTX21: "sozinho" + pendingObjective=Estado civil coletado... + stage=discovery → processo=solo',
+  extractFactsFromText(
+    'sozinho',
+    'discovery',
+    'Estado civil coletado. Agora perguntar se o cliente pretende comprar sozinho(a) ou se vai ter alguém junto no processo — cônjuge, familiar ou parceiro(a).',
+  )['processo'],
+  'solo');
+
+eq('CTX22: "com minha esposa" + pendingObjective=Estado civil coletado... + stage=discovery → processo=conjunto',
+  extractFactsFromText(
+    'com minha esposa',
+    'discovery',
+    'Estado civil coletado. Agora perguntar se o cliente pretende comprar sozinho(a) ou se vai ter alguém junto no processo — cônjuge, familiar ou parceiro(a).',
+  )['processo'],
+  'conjunto');
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 

@@ -31,7 +31,8 @@ const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   'explicar_mcmv_e_coletar_nome_completo':
     'Explicar rapidamente que o Minha Casa Minha Vida pode facilitar a compra do imóvel com condições melhores conforme o perfil e pedir o nome completo.',
   'perguntar_nacionalidade':
-    'Perguntar se o cliente é brasileiro(a) ou estrangeiro(a).',
+    'Perguntar APENAS se o cliente é brasileiro(a) ou estrangeiro(a). '
+    + 'Não fazer mais nenhuma pergunta neste turno.',
   'perguntar_rnm_e_validade':
     'Perguntar se o cliente possui RNM (Registro Nacional Migratório) por prazo indeterminado. Deixar claro que apenas RNM por prazo indeterminado é aceito pelo programa MCMV — RNM com data de validade não é permitido, independente de estar vigente.',
   'verificar_alternativa_rnm':
@@ -48,15 +49,15 @@ const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   // Topo → civil: AVANCAR_PARA_CIVIL emitido quando estado_civil já foi coletado no topo.
   // Objetivo correto: perguntar processo (solo/conjunto), não re-perguntar estado civil.
   'Perguntar estado civil: solteiro, casado, união estável ou divorciado.':
-    'Estado civil coletado. Agora perguntar se o cliente pretende comprar sozinho(a) '
-    + 'ou se vai ter alguém junto no processo — cônjuge, familiar ou parceiro(a).',
+    'Perguntar APENAS se o cliente pretende comprar sozinho(a) ou terá alguém junto '
+    + 'no processo — cônjuge, familiar ou parceiro(a). Uma pergunta só. Não perguntar mais nada.',
 
   // --- Meio A (qualification_civil) ---
   'coletar_estado_civil':
     'Perguntar estado civil: solteiro(a), casado(a), união estável ou divorciado(a).',
   'avancar_para_qualification_civil':
-    'Estado civil coletado. Agora perguntar se o cliente pretende comprar sozinho(a) '
-    + 'ou se vai ter alguém junto no processo — cônjuge, familiar ou parceiro(a).',
+    'Perguntar APENAS se o cliente pretende comprar sozinho(a) ou terá alguém junto '
+    + 'no processo — cônjuge, familiar ou parceiro(a). Uma pergunta só. Não perguntar mais nada.',
   'coletar_processo':
     'Perguntar se pretende comprar sozinho(a) ou com alguém.',
   'avancar_para_qualification_renda':
