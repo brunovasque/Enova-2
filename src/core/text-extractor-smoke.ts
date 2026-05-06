@@ -352,6 +352,41 @@ eq('V5: "vou ver" → visit_interest talvez',
   extractFactsFromText('Vou ver se consigo', 'visit')['visit_interest'],
   'talvez');
 
+// ── T9.16A — confirmações contextuais ─────────────────────────────────────────
+console.log('\n── T9.16A: confirmações contextuais ──');
+
+eq('CTX1: "sim" + pendingObjective=perguntar_rnm_e_validade → rnm_valido=true',
+  extractFactsFromText('sim', 'discovery', 'perguntar_rnm_e_validade')['rnm_valido'],
+  true);
+
+eq('CTX2: "prazo indeterminado" + pendingObjective=perguntar_rnm_e_validade → rnm_valido=true',
+  extractFactsFromText('prazo indeterminado', 'discovery', 'perguntar_rnm_e_validade')['rnm_valido'],
+  true);
+
+eq('CTX3: "solteiro" + stage=qualification_civil + pendingObjective=coletar_estado_civil → estado_civil=solteiro',
+  extractFactsFromText('solteiro', 'qualification_civil', 'coletar_estado_civil')['estado_civil'],
+  'solteiro');
+
+eq('CTX4: "nao" + pendingObjective=perguntar_rnm_e_validade → rnm_valido=false',
+  extractFactsFromText('nao', 'discovery', 'perguntar_rnm_e_validade')['rnm_valido'],
+  false);
+
+eq('CTX5: "casado" + pendingObjective=coletar_estado_civil → estado_civil=casado_civil',
+  extractFactsFromText('casado', 'qualification_civil', 'coletar_estado_civil')['estado_civil'],
+  'casado_civil');
+
+eq('CTX6: "sozinho" + pendingObjective=coletar_processo → processo=solo',
+  extractFactsFromText('sozinho', 'qualification_civil', 'coletar_processo')['processo'],
+  'solo');
+
+eq('CTX7: "sim" sem pendingObjective → rnm_valido ausente (sem contexto, "sim" não deve extrair)',
+  extractFactsFromText('sim', 'discovery', undefined)['rnm_valido'],
+  undefined);
+
+eq('CTX8: pendingObjective irrelevante não interfere em extração normal',
+  extractFactsFromText('quero comprar uma casa', 'discovery', 'coletar_processo')['customer_goal'],
+  'comprar_imovel');
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 
