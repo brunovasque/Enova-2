@@ -18,9 +18,13 @@
 const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   // --- Topo (discovery) ---
   'apresentar_e_verificar_conhecimento':
-    'Se apresentar como Enova, especialista em Minha Casa Minha Vida. Perguntar de forma '
-    + 'natural se o cliente já conhece o programa ou se gostaria de entender como funciona. '
-    + 'Tom: acolhedor, sem pressão.',
+    'Se apresentar como Enova, especialista em Minha Casa Minha Vida. Perguntar se o cliente '
+    + 'já conhece o programa MCMV. '
+    + 'Se já conhece: agradecer e pedir o nome completo para iniciar o atendimento. '
+    + 'Se não conhece: explicar brevemente em 1-2 frases que o MCMV facilita a compra do '
+    + 'imóvel com condições especiais dependendo do perfil, e já aproveitar o gancho para '
+    + 'pedir o nome completo para orientar melhor. '
+    + 'Objetivo: sair dessa mensagem com o nome do cliente coletado ou a pergunta feita.',
   'coletar_customer_goal':
     'Perguntar se o cliente tem interesse em comprar um imóvel pelo Minha Casa Minha Vida.',
   'explicar_mcmv_e_coletar_nome_completo':
