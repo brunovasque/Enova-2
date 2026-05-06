@@ -1,5 +1,92 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.16B — RNM Alternativa + Greeting para topo vazio (2026-05-05)
+
+**Tipo**: PR-IMPL / contratual / frente T9
+**Branch**: fix/t9.16b-rnm-alternativa-greeting
+**PR**: #241 — aberta, aguardando merge Vasques
+**Commit**: 9dc5585
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.16A (PR #240, aberta — aguardando merge Vasques) — confirmações contextuais + pendingObjective
+**Próximo passo autorizado T9**: Vasques merge PR #241 → Repetir T9.15B-PROVA-REAL-CANARY com topo completo
+
+### PROBLEMA RESOLVIDO
+
+Dois bugs em paralelo:
+1. Estrangeiro com `rnm_valido=false` (RNM com prazo determinado) ficava preso em loop eterno — Gate 4 original usava `!signals.rnm_valido`, que capturava `null` E `false`. `rnm_valido=false` não tinha rota de saída.
+2. Lead novo com topo vazio (`parse_status='empty'`) recebia "Tem interesse em comprar?" como primeira mensagem, em vez de um greeting estruturado apresentando a Enova.
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.16b-rnm-alternativa-greeting
+- Commit principal: `9dc5585`
+- Arquivo de review: `docs/diagnostics/FUNIL-QUALIFICACAO/PR-T9.16B-review.md`
+- 6 arquivos modificados: `topo-rules.ts`, `topo-parser.ts`, `topo-gates.ts`, `text-extractor.ts`, `semantic-next-objective.ts`, `smoke.ts`
+- Zero diff fora do escopo: zero `src/supabase/`, zero `src/llm/`, zero `panel-nextjs/`, zero wrangler.toml, zero Supabase schema, zero flags
+
+### O que esta PR fez
+
+**src/core/topo-rules.ts**
+- `TOPO_BLOCKING_CONDITIONS`: 2 novos — `RNM_INVALIDO_VERIFICAR_ALTERNATIVA`, `SEM_ALTERNATIVA_RNM`
+- `TOPO_NEXT_OBJECTIVES`: 3 novos — `APRESENTAR_E_VERIFICAR_CONHECIMENTO`, `VERIFICAR_ALTERNATIVA_RNM`, `ENCERRAR_SEM_ALTERNATIVA_RNM`
+- `TOPO_NEXT_STEP`: 1 novo — `ADVANCE_TO_QUALIFICATION_VIA_ALTERNATIVA`
+
+**src/core/topo-parser.ts**
+- Tipo local `AlternativaRnm = 'tem_conjuge_brasileiro' | 'tem_familiar_brasileiro' | 'sem_alternativa'`
+- Campo `alternativa_rnm: AlternativaRnm | null` adicionado a `TopoSignals`
+- `normalizeAlternativaRnm` normalizador adicionado; extração em `extractTopoSignals`
+
+**src/core/topo-gates.ts**
+- Gate 1: `parse_status='empty'` → `APRESENTAR_E_VERIFICAR_CONHECIMENTO`; `parse_status='partial'` → `COLETAR_CUSTOMER_GOAL`
+- Gate 4: restrito a `=== null` (antes era `!signals.rnm_valido`, que capturava null E false)
+- Gates 4A/4B: bloco único para `rnm_valido === false` → 3 ramos: confirmada (pass), sem_alternativa (4B), null (4A)
+- `isTopoFactoCriticoAusente`: atualizado para bloquear enquanto `alternativa_rnm` não for `tem_conjuge_brasileiro` ou `tem_familiar_brasileiro`
+
+**src/core/text-extractor.ts**
+- Extração contextual de `alternativa_rnm` após bloco `rnm_valido` em `extractDiscovery`
+- Bloco contextual (pendingObjective=`verificar_alternativa_rnm`): negação → `sem_alternativa`; familiar/cônjuge → `tem_familiar_brasileiro`
+- Bloco keywords diretas (frases específicas): `minha esposa e brasileira`, `conjuge brasileiro`, etc.
+
+**src/core/semantic-next-objective.ts**
+- 3 novos mapeamentos: `apresentar_e_verificar_conhecimento`, `verificar_alternativa_rnm`, `encerrar_sem_alternativa_rnm`
+
+**src/core/smoke.ts**
+- Cenário 1 atualizado: `coletar_customer_goal` → `apresentar_e_verificar_conhecimento` (topo vazio = greeting)
+- 4 novos cenários (25–28): Gate 4A, Gate 4B, 4A pass-through via familiar, greeting
+
+### Mapa de rota do estrangeiro (pós-T9.16B)
+
+```
+estrangeiro declarado
+    ├─ rnm_valido=null   → Gate 4 → PERGUNTAR_RNM
+    ├─ rnm_valido=true   → avança qualification_civil
+    └─ rnm_valido=false
+           ├─ alternativa=null          → Gate 4A → VERIFICAR_ALTERNATIVA_RNM
+           ├─ alternativa=tem_familiar  → avança qualification_civil (via familiar)
+           ├─ alternativa=tem_conjuge   → avança qualification_civil (via cônjuge)
+           └─ alternativa=sem_alternativa → Gate 4B → ENCERRAR_SEM_ALTERNATIVA_RNM
+```
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke` (core) | **28/28 PASS** (era 24) |
+| `npm run smoke:core:text-extractor` | **89/89 PASS** |
+| `npm run smoke:meta:canary` | **41/41 PASS** |
+| `npm run prove:t9.15h-facts-persistence` | **34/34 PASS** |
+| `npm run prove:t9.14-reverse-mapper` | **19/19 PASS** |
+
+### Rollback
+
+```bash
+git revert 9dc5585
+```
+
+Seguro: sem migration, sem schema, sem flags. `alternativa_rnm=null` → Gate 4A bloqueia (comportamento correto como estado intermediário).
+
+---
+
 ## T9.16A — Confirmações Contextuais no text-extractor — pendingObjective via _next_objective (2026-05-05)
 
 **Tipo**: PR-IMPL / contratual / frente T9
