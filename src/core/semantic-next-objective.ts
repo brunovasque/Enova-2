@@ -60,11 +60,34 @@ const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   'avancar_para_qualification_renda':
     'Perguntar regime de trabalho e renda mensal.',
 
+  // --- Meio A (qualification_civil) — composição e dependentes (T9.17A) ---
+  'coletar_composition_actor':
+    'Perguntar quem é a pessoa que vai comprar junto — nome e grau de parentesco ou relação.',
+  'coletar_estado_civil_p3':
+    'Perguntar qual é o estado civil do familiar ou pessoa que vai entrar na composição. '
+    + 'Solteiro(a), casado(a) no civil, união estável ou divorciado(a).',
+  'coletar_dependents_applicable':
+    'Perguntar se o cliente possui dependente menor de 18 anos ou algum parente de até '
+    + 'terceiro grau (pai, mãe, irmão, filho) que não possua renda própria nem CNPJ.',
+  'coletar_dependents_count':
+    'Perguntar quantos dependentes o cliente possui nessa condição.',
+  'corrigir_processo_para_conjunto':
+    'Explicar que quem é casado no civil precisa incluir o cônjuge obrigatoriamente no '
+    + 'financiamento. Confirmar que o processo será feito em conjunto com o cônjuge.',
+  'avaliar_composicao_renda':
+    'O cliente demonstrou interesse em seguir solo. Perguntar se possui algum familiar '
+    + 'que possa compor renda para aumentar o poder de compra e ter mais opções de imóvel.',
+
   // --- Meio B (qualification_renda) ---
   'coletar_regime_trabalho':
     'Perguntar se trabalha CLT, autônomo, servidor público, aposentado ou outro regime.',
   'coletar_renda_principal':
     'Perguntar a renda mensal aproximada.',
+  'coletar_autonomo_tem_ir':
+    'Perguntar se o cliente autônomo declarou Imposto de Renda nos últimos 2 anos.',
+  'coletar_ctps_36':
+    'Perguntar há quanto tempo o cliente possui carteira assinada ativa. '
+    + 'Se for há mais de 3 anos, pode melhorar as condições do financiamento.',
 };
 
 /**

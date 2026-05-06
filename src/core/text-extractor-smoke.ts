@@ -415,6 +415,33 @@ eq('CTX14: pendingObjective=apresentar_e_verificar_conhecimento não interfere e
   extractFactsFromText('sim', 'discovery', 'apresentar_e_verificar_conhecimento')['rnm_valido'],
   undefined);
 
+// ── T9.17A — composição, dependentes, autonomo_tem_ir, ctps_36 ───────────────
+console.log('\n── T9.17A: F2 completo (composição / dependentes / renda) ──');
+
+eq('CTX15: "com minha mãe" → composition_actor=mae (qualification_civil)',
+  extractFactsFromText('com minha mãe', 'qualification_civil')['composition_actor'],
+  'mae');
+
+eq('CTX16: "minha namorada" → composition_actor=parceiro (qualification_civil)',
+  extractFactsFromText('minha namorada', 'qualification_civil')['composition_actor'],
+  'parceiro');
+
+eq('CTX17: "ela é casada no civil" + pendingObjective=coletar_estado_civil_p3 → estado_civil_p3=casado_civil',
+  extractFactsFromText('ela é casada no civil', 'qualification_civil', 'coletar_estado_civil_p3')['estado_civil_p3'],
+  'casado_civil');
+
+eq('CTX18: "sim tenho 2 filhos" + pendingObjective=coletar_dependents_applicable → dependents_applicable=true',
+  extractFactsFromText('sim tenho 2 filhos', 'qualification_civil', 'coletar_dependents_applicable')['dependents_applicable'],
+  true);
+
+eq('CTX19: "dois" + pendingObjective=coletar_dependents_count → dependents_count=2',
+  extractFactsFromText('dois', 'qualification_civil', 'coletar_dependents_count')['dependents_count'],
+  2);
+
+eq('CTX20: "declaro ir" → autonomo_tem_ir=true (qualification_renda)',
+  extractFactsFromText('declaro ir', 'qualification_renda')['autonomo_tem_ir'],
+  true);
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 

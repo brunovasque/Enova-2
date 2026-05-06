@@ -34,6 +34,9 @@ export interface MeioASignals {
   dependents_applicable_value: boolean | null;
   dependents_count_detected: boolean;
   dependents_count_value: number | null;
+  estado_civil_p3_detected: boolean;
+  estado_civil_p3_value: EstadoCivil | null;
+  p3_required_auto: boolean;
   composition_required: boolean;
   dependents_required: boolean;
   parse_status: MeioAParseStatus;
@@ -75,6 +78,7 @@ export function extractMeioASignals(input: MeioATurnExtract): MeioASignals {
   const p3RequiredValue = normalizeBoolean(merged['p3_required']);
   const dependentsApplicableValue = normalizeBoolean(merged['dependents_applicable']);
   const dependentsCountValue = normalizeDependentsCount(merged['dependents_count']);
+  const estadoCivilP3Value = normalizeEstadoCivil(merged['estado_civil_p3']);
 
   const estadoCivilDetected = estadoCivilValue !== null;
   const processoDetected = processoValue !== null;
@@ -82,6 +86,8 @@ export function extractMeioASignals(input: MeioATurnExtract): MeioASignals {
   const p3RequiredDetected = p3RequiredValue !== null;
   const dependentsApplicableDetected = dependentsApplicableValue !== null;
   const dependentsCountDetected = dependentsCountValue !== null;
+  const estadoCivilP3Detected = estadoCivilP3Value !== null;
+  const p3RequiredAuto = estadoCivilP3Value === 'casado_civil';
   const compositionRequired = processoValue === 'composicao_familiar';
   const dependentsRequired =
     processoValue !== 'conjunto' && dependentsApplicableValue === true;
@@ -99,6 +105,9 @@ export function extractMeioASignals(input: MeioATurnExtract): MeioASignals {
     dependents_applicable_value: dependentsApplicableValue,
     dependents_count_detected: dependentsCountDetected,
     dependents_count_value: dependentsCountValue,
+    estado_civil_p3_detected: estadoCivilP3Detected,
+    estado_civil_p3_value: estadoCivilP3Value,
+    p3_required_auto: p3RequiredAuto,
     composition_required: compositionRequired,
     dependents_required: dependentsRequired,
     parse_status: computeParseStatus(
