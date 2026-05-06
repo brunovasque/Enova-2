@@ -18,13 +18,14 @@
 const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   // --- Topo (discovery) ---
   'apresentar_e_verificar_conhecimento':
-    'Se apresentar como Enova, especialista em Minha Casa Minha Vida. Perguntar se o cliente '
-    + 'já conhece o programa MCMV. '
-    + 'Se já conhece: agradecer e pedir o nome completo para iniciar o atendimento. '
-    + 'Se não conhece: explicar brevemente em 1-2 frases que o MCMV facilita a compra do '
-    + 'imóvel com condições especiais dependendo do perfil, e já aproveitar o gancho para '
-    + 'pedir o nome completo para orientar melhor. '
-    + 'Objetivo: sair dessa mensagem com o nome do cliente coletado ou a pergunta feita.',
+    'Se apresentar como Enova, especialista em Minha Casa Minha Vida. '
+    + 'Fazer UMA pergunta simples: o cliente já conhece o programa Minha Casa Minha Vida? '
+    + 'IMPORTANTE: "sim" ou "não" aqui se refere a conhecer o programa — NÃO a ter interesse. '
+    + 'Se responder que conhece: dizer "Ótimo!" e perguntar o nome completo para iniciar. '
+    + 'Se responder que não conhece: explicar em 1 frase curta que o MCMV oferece condições '
+    + 'especiais para compra do primeiro imóvel, e já pedir o nome completo para orientar melhor. '
+    + 'Em qualquer caso: encerrar a mensagem pedindo o nome completo. '
+    + 'NUNCA interpretar "não" como falta de interesse — apenas como desconhecimento do programa.',
   'coletar_customer_goal':
     'Perguntar se o cliente tem interesse em comprar um imóvel pelo Minha Casa Minha Vida.',
   'explicar_mcmv_e_coletar_nome_completo':

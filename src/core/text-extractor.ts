@@ -82,32 +82,54 @@ function extractNomeCompletoCandidato(n: string, original: string): string | nul
 function extractDiscovery(n: string, original: string, pendingObjective?: string): Record<string, unknown> {
   const facts: Record<string, unknown> = {};
 
+  // Confirmação contextual de greeting — quando sistema perguntou se conhece o MCMV (T9.16C)
+  // PRIMEIRO bloco: captura resposta ao greeting antes de qualquer extração por keyword.
+  // Guard: nunca sobrescreve customer_goal já capturado por outro mecanismo.
+  if (facts['customer_goal'] === undefined && pendingObjective === 'apresentar_e_verificar_conhecimento') {
+    // Negação PRIMEIRO — "não conheço" contém "conheco" como substring; negativo tem prioridade
+    if (
+      contains(n, 'nao', 'nao conheco', 'nao sei', 'nunca ouvi', 'primeira vez',
+        'desconheco', 'nao ouvi', 'nao tenho', 'nenhuma')
+    ) {
+      facts['customer_goal'] = 'entender_programa';
+      facts['conhece_mcmv'] = false;
+    } else if (
+      contains(n, 'sim', 'ja conheco', 'conheco', 'sei', 'claro', 'ja sei')
+    ) {
+      facts['customer_goal'] = 'comprar_imovel';
+      facts['conhece_mcmv'] = true;
+    }
+  }
+
   // Negação explícita bloqueia intenção de compra ("não quero comprar nada agora")
   const isNegation = contains(n, 'nao quero comprar', 'nao tenho interesse em comprar');
 
-  // Entender tem prioridade: "como funciona o MCMV" é entender, não comprar
-  // Padrões usados são específicos para evitar falsos positivos com textos de triagem inicial
-  if (
-    contains(n, 'como funciona', 'quero entender', 'me explica', 'pode explicar',
-      'o que e o mcmv', 'o que e minha casa', 'saber sobre o programa',
-      'quero informacoes', 'quero informacao', 'explica o programa')
-  ) {
-    facts['customer_goal'] = 'entender_programa';
-  } else if (
-    !isNegation &&
-    // "minha casa minha vida" sem sinal de entender = intenção de comprar
-    // T9.15C: vocabulário natural real adicionado ("compro sozinho", "vou comprar", etc.)
-    contains(n, 'minha casa minha vida', 'quero comprar', 'comprar imovel',
-      'financiamento', 'programa habitacional', 'casa propria', 'quero a casa',
-      'quero um imovel', 'quero financiar', 'minha casa', 'financiar imovel',
-      'compro sozinho', 'compro sozinha', 'vou comprar', 'pretendo comprar',
-      'gostaria de comprar', 'tenho interesse')
-  ) {
-    facts['customer_goal'] = 'comprar_imovel';
-  } else if (contains(n, 'enviar documentos', 'enviar docs', 'mandar documentos', 'mando os docs')) {
-    facts['customer_goal'] = 'enviar_docs';
-  } else if (contains(n, 'quero visitar', 'agendar visita', 'ver o imovel', 'ver o apartamento')) {
-    facts['customer_goal'] = 'visitar_imovel';
+  // Extração por keyword — guardado para não sobrescrever bloco contextual acima (T9.16C)
+  if (facts['customer_goal'] === undefined) {
+    // Entender tem prioridade: "como funciona o MCMV" é entender, não comprar
+    // Padrões usados são específicos para evitar falsos positivos com textos de triagem inicial
+    if (
+      contains(n, 'como funciona', 'quero entender', 'me explica', 'pode explicar',
+        'o que e o mcmv', 'o que e minha casa', 'saber sobre o programa',
+        'quero informacoes', 'quero informacao', 'explica o programa')
+    ) {
+      facts['customer_goal'] = 'entender_programa';
+    } else if (
+      !isNegation &&
+      // "minha casa minha vida" sem sinal de entender = intenção de comprar
+      // T9.15C: vocabulário natural real adicionado ("compro sozinho", "vou comprar", etc.)
+      contains(n, 'minha casa minha vida', 'quero comprar', 'comprar imovel',
+        'financiamento', 'programa habitacional', 'casa propria', 'quero a casa',
+        'quero um imovel', 'quero financiar', 'minha casa', 'financiar imovel',
+        'compro sozinho', 'compro sozinha', 'vou comprar', 'pretendo comprar',
+        'gostaria de comprar', 'tenho interesse')
+    ) {
+      facts['customer_goal'] = 'comprar_imovel';
+    } else if (contains(n, 'enviar documentos', 'enviar docs', 'mandar documentos', 'mando os docs')) {
+      facts['customer_goal'] = 'enviar_docs';
+    } else if (contains(n, 'quero visitar', 'agendar visita', 'ver o imovel', 'ver o apartamento')) {
+      facts['customer_goal'] = 'visitar_imovel';
+    }
   }
 
   // nome_completo: heurística conservadora — texto simples que parece um nome próprio
