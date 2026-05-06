@@ -46,13 +46,13 @@ export interface SmokeResult {
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 1: Stage sem facts obrigatórios → deve bloquear
+// Cenário 1: Stage sem facts obrigatórios → deve bloquear com greeting
 //
 // Prova: G_FATO_CRITICO_AUSENTE bloqueia avanço quando required_fact ausente.
-// Stage discovery exige customer_goal. Sem ele, block_advance=true, stage não avança.
+// Stage discovery sem nenhum fact: isFirstTurn=true → apresentar_e_verificar_conhecimento.
 // ---------------------------------------------------------------------------
 export function smokeScenario1_BlockQuandoFactAusente(): SmokeResult {
-  const state = makeState('discovery'); // nenhum fact — parse_status='empty' → greeting
+  const state = makeState('discovery'); // nenhum fact — isFirstTurn=true → greeting
   const decision = runCoreEngine(state);
 
   return {
@@ -784,21 +784,34 @@ export function smokeScenario27_Topo_RnmInvalido_ComAlternativaFamiliar_Avanca()
 }
 
 // ---------------------------------------------------------------------------
-// Cenário 28 (T9.16B): facts={} → apresentar_e_verificar_conhecimento (greeting)
+// Cenário 28 (T9.16B-v2): turno 2 com _next_objective persisted mas sem customer_goal
+// → deve receber coletar_customer_goal, NÃO o greeting (prova do fix T9.16B-v2)
+//
+// Regressão: com o bug original (parse_status='empty'), um lead que enviou "ok"
+// no turno 2 receberia o greeting novamente porque parse_status='empty' mesmo
+// com _next_objective persisted. O fix usa isFirstTurn=false (facts.length > 0).
 // ---------------------------------------------------------------------------
-export function smokeScenario28_Topo_Vazio_Greeting(): SmokeResult {
-  const state = makeState('discovery', {}); // topo completamente vazio → parse_status='empty'
+export function smokeScenario28_Topo_SegundoTurno_SemCustomerGoal_NaoRepeteGreeting(): SmokeResult {
+  // Simula turno 2: extractor não reconheceu nada (ex: "ok"), mas _next_objective
+  // foi persistido no turno 1. facts.length > 0 → isFirstTurn=false → sem greeting.
+  const state = makeState('discovery', {
+    _next_objective: 'apresentar_e_verificar_conhecimento',
+  });
   const decision = runCoreEngine(state);
 
   return {
-    scenario: 'Cenário 28 (T9.16B) — Topo vazio (facts={}) → apresentar_e_verificar_conhecimento',
+    scenario: 'Cenário 28 (T9.16B-v2) — Turno 2 sem customer_goal: coletar_customer_goal (sem greeting repetido)',
     passed: true,
     decision,
     assertions: [
       assert('stage_current = discovery', 'discovery', decision.stage_current),
       assert('block_advance = true', true, decision.block_advance),
       assert('stage_after permanece em discovery', 'discovery', decision.stage_after),
-      assert('next_objective = apresentar_e_verificar_conhecimento', 'apresentar_e_verificar_conhecimento', decision.next_objective),
+      assert(
+        'next_objective = coletar_customer_goal (NÃO greeting — turno 2)',
+        'coletar_customer_goal',
+        decision.next_objective,
+      ),
       assert('speech_intent = bloqueio', 'bloqueio', decision.speech_intent),
     ].map((a) => ({ ...a, passed: a.expected === a.actual })),
   };
@@ -856,7 +869,7 @@ export function runSmokeSuite(): SmokeSuiteResult {
     smokeScenario25_Topo_RnmInvalido_SemAlternativa_VerificarAlternativa,
     smokeScenario26_Topo_RnmInvalido_SemAlternativaConfirmada_Encerrar,
     smokeScenario27_Topo_RnmInvalido_ComAlternativaFamiliar_Avanca,
-    smokeScenario28_Topo_Vazio_Greeting,
+    smokeScenario28_Topo_SegundoTurno_SemCustomerGoal_NaoRepeteGreeting,
   ];
 
   const results = scenarios.map((fn) => {

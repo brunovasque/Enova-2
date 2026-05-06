@@ -93,9 +93,9 @@ export interface TopoCriteriaResult {
 /**
  * Avalia os critérios mínimos de aceite e o next step estrutural do topo.
  *
- * Rota canônica obrigatória (T9.15E + T9.16B):
- *   0. topo vazio (parse_status=empty) → apresentar Enova e verificar conhecimento
- *   1. customer_goal ausente (parse_status=partial) → pedir interesse
+ * Rota canônica obrigatória (T9.15E + T9.16B + T9.16B-v2):
+ *   0. primeiro turno real (isFirstTurn=true, state.facts vazio) → apresentar Enova e verificar conhecimento
+ *   1. customer_goal ausente (turno 2+) → pedir interesse
  *   2. nome_completo ausente → bloqueia, explicar programa e pedir nome
  *   3. nacionalidade ausente → bloqueia, perguntar se brasileiro ou estrangeiro
  *   4. estrangeiro com rnm_valido=null → bloqueia, perguntar RNM e validade
@@ -103,15 +103,20 @@ export interface TopoCriteriaResult {
  *   4B. estrangeiro com rnm_valido=false + sem_alternativa → encerrar com porta aberta
  *   5. topo mínimo completo → autoriza qualification_civil
  *
+ * @param isFirstTurn true apenas quando state.facts está completamente vazio (primeiro turno real).
+ *   Derivado em engine.ts: Object.keys(state.facts).length === 0.
+ *   NÃO usar parse_status='empty' — esse status pode ocorrer em qualquer turno onde o
+ *   extractor não reconhece a mensagem, causando greeting repetido.
+ *
  * Fonte: E6.1 — PDF 4, p. 8; rota canônica topo ENOVA 2.
  * INVIOLÁVEL: NÃO pular direto para estado civil; NÃO mover nacionalidade para depois.
  */
-export function evaluateTopoCriteria(signals: TopoSignals): TopoCriteriaResult {
+export function evaluateTopoCriteria(signals: TopoSignals, isFirstTurn?: boolean): TopoCriteriaResult {
   // --- Gate 1: customer_goal ausente ---
-  // parse_status='empty' (nenhum sinal) → saudar e verificar conhecimento do programa
-  // parse_status='partial' (tem contexto mas sem interesse) → coletar customer_goal
+  // isFirstTurn=true (state.facts vazio — primeiro turno) → saudar e verificar conhecimento do programa
+  // isFirstTurn=false/undefined (turno 2+ — facts persistidos existem) → coletar customer_goal diretamente
   if (!signals.customer_goal_detected) {
-    const nextObj = signals.parse_status === 'empty'
+    const nextObj = isFirstTurn === true
       ? TOPO_NEXT_OBJECTIVES.APRESENTAR_E_VERIFICAR_CONHECIMENTO
       : TOPO_NEXT_OBJECTIVES.COLETAR_CUSTOMER_GOAL;
     return {
