@@ -45,10 +45,11 @@ const SEMANTIC_MAP: Readonly<Record<string, string>> = {
     + 'Orientar que assim que regularizar o RNM (obter prazo indeterminado), pode retornar '
     + 'que a Enova estará aqui para ajudar. Encerrar deixando a porta aberta.',
 
-  // Topo → civil: já semi-semântico na origem (TOPO_NEXT_OBJECTIVES.AVANCAR_PARA_CIVIL)
-  // Mapper padroniza para versão canônica com "(a)".
+  // Topo → civil: AVANCAR_PARA_CIVIL emitido quando estado_civil já foi coletado no topo.
+  // Objetivo correto: perguntar processo (solo/conjunto), não re-perguntar estado civil.
   'Perguntar estado civil: solteiro, casado, união estável ou divorciado.':
-    'Perguntar estado civil: solteiro(a), casado(a), união estável ou divorciado(a).',
+    'Estado civil coletado. Agora perguntar se o cliente pretende comprar sozinho(a) '
+    + 'ou se vai ter alguém junto no processo — cônjuge, familiar ou parceiro(a).',
 
   // --- Meio A (qualification_civil) ---
   'coletar_estado_civil':
