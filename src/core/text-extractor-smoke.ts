@@ -387,6 +387,34 @@ eq('CTX8: pendingObjective irrelevante não interfere em extração normal',
   extractFactsFromText('quero comprar uma casa', 'discovery', 'coletar_processo')['customer_goal'],
   'comprar_imovel');
 
+// ── T9.16C — confirmação contextual de conhecimento MCMV (greeting) ──────────
+console.log('\n── T9.16C: confirmação contextual greeting MCMV ──');
+
+eq('CTX9: "sim" + pendingObjective=apresentar_e_verificar_conhecimento → customer_goal=comprar_imovel',
+  extractFactsFromText('sim', 'discovery', 'apresentar_e_verificar_conhecimento')['customer_goal'],
+  'comprar_imovel');
+
+eq('CTX10: "já conheço" + pendingObjective=apresentar_e_verificar_conhecimento → customer_goal=comprar_imovel',
+  extractFactsFromText('já conheço', 'discovery', 'apresentar_e_verificar_conhecimento')['customer_goal'],
+  'comprar_imovel');
+
+eq('CTX11: "não" + pendingObjective=apresentar_e_verificar_conhecimento → customer_goal=entender_programa',
+  extractFactsFromText('não', 'discovery', 'apresentar_e_verificar_conhecimento')['customer_goal'],
+  'entender_programa');
+
+eq('CTX12: "não conheço" + pendingObjective=apresentar_e_verificar_conhecimento → customer_goal=entender_programa',
+  extractFactsFromText('não conheço', 'discovery', 'apresentar_e_verificar_conhecimento')['customer_goal'],
+  'entender_programa');
+
+// segurança do bloco contextual greeting
+eq('CTX13: "sim" sem pendingObjective → customer_goal ausente (sem contexto)',
+  extractFactsFromText('sim', 'discovery', undefined)['customer_goal'],
+  undefined);
+
+eq('CTX14: pendingObjective=apresentar_e_verificar_conhecimento não interfere em rnm_valido',
+  extractFactsFromText('sim', 'discovery', 'apresentar_e_verificar_conhecimento')['rnm_valido'],
+  undefined);
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 
