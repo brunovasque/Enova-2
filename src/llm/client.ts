@@ -205,7 +205,10 @@ export interface LlmContext {
 export function buildDynamicSystemPrompt(context: LlmContext): string {
   const lines: string[] = [SYSTEM_PROMPT_BASE, ''];
 
-  lines.push('--- CONTEXTO DO ATENDIMENTO ATUAL ---');
+  lines.push(`OBJETIVO ATUAL — execute agora: ${context.next_objective}`);
+  lines.push('REGRA: faça apenas esta ação. Uma pergunta só. Não antecipe próximas etapas.');
+
+  lines.push('\n--- CONTEXTO DO ATENDIMENTO ATUAL ---');
   lines.push(`Etapa: ${context.stage_current}`);
   if (context.stage_after !== context.stage_current) {
     lines.push(`Próxima etapa ao avançar: ${context.stage_after}`);
@@ -236,9 +239,6 @@ export function buildDynamicSystemPrompt(context: LlmContext): string {
       lines.push(`  ${label}: ${turn.content.slice(0, 150)}`);
     }
   }
-
-  lines.push(`\nOBJETIVO ATUAL — execute agora: ${context.next_objective}`);
-  lines.push('REGRA: faça apenas esta ação. Uma pergunta só. Não antecipe próximas etapas.');
 
   return lines.join('\n').slice(0, 8000);
 }
