@@ -11,7 +11,7 @@
  */
 
 const LLM_API_URL = 'https://api.openai.com/v1/chat/completions';
-const LLM_MODEL = 'gpt-4o-mini';
+const LLM_MODEL = 'gpt-5.4';
 const LLM_MAX_TOKENS = 400;
 const LLM_TEMPERATURE = 0.7;
 
