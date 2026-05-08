@@ -157,6 +157,7 @@ export async function processMetaWebhookPost(input: {
   env: MetaWorkerEnv;
   telemetryContext?: Pick<TelemetryRequestContext, 'trace_id' | 'correlation_id' | 'request_id'>;
   dedupeStore?: DedupeStore;
+  testBypassHeader?: string | null;
 }): Promise<MetaWebhookPostResult> {
   const t0 = Date.now();
   const ctx = safeContext(input.telemetryContext);
@@ -171,34 +172,40 @@ export async function processMetaWebhookPost(input: {
     prod_marker: true,
   });
 
-  const sig = await verifyMetaSignature(input.rawBody, input.signatureHeader, appSecret ?? null);
+  const testBypass =
+    input.testBypassHeader === 'true' &&
+    readEnvString(input.env, 'E2E_TEST_ENABLED') === 'true';
 
-  // Log 2 — signature
-  diagLog('meta.prod.webhook.signature', {
-    ok: sig.ok,
-    reason: sig.ok ? null : sig.reason,
-  });
+  if (!testBypass) {
+    const sig = await verifyMetaSignature(input.rawBody, input.signatureHeader, appSecret ?? null);
 
-  if (!sig.ok) {
-    emitWebhookEvent(ctx, 'meta.webhook.signature.fail', 'rejected', 'warn', {
-      route: META_WEBHOOK_ROUTE,
-      reason: sig.reason,
+    // Log 2 — signature
+    diagLog('meta.prod.webhook.signature', {
+      ok: sig.ok,
+      reason: sig.ok ? null : sig.reason,
     });
-    const status = sig.reason === 'signature_missing' ? 401 : 403;
-    return {
-      status,
-      body: {
-        accepted: false,
-        route: META_WEBHOOK_ROUTE,
-        error: 'signature_invalid',
-        reason: sig.reason,
-      },
-    };
-  }
 
-  emitWebhookEvent(ctx, 'meta.webhook.signature.ok', 'accepted', 'info', {
-    route: META_WEBHOOK_ROUTE,
-  });
+    if (!sig.ok) {
+      emitWebhookEvent(ctx, 'meta.webhook.signature.fail', 'rejected', 'warn', {
+        route: META_WEBHOOK_ROUTE,
+        reason: sig.reason,
+      });
+      const status = sig.reason === 'signature_missing' ? 401 : 403;
+      return {
+        status,
+        body: {
+          accepted: false,
+          route: META_WEBHOOK_ROUTE,
+          error: 'signature_invalid',
+          reason: sig.reason,
+        },
+      };
+    }
+
+    emitWebhookEvent(ctx, 'meta.webhook.signature.ok', 'accepted', 'info', {
+      route: META_WEBHOOK_ROUTE,
+    });
+  }
 
   let payload: unknown;
   try {
@@ -407,6 +414,7 @@ export async function handleMetaWebhook(
       signatureHeader,
       env,
       telemetryContext: ctx,
+      testBypassHeader: request.headers.get('x-enova-test-bypass'),
     });
     return jsonResponse(result.body, result.status);
   }
