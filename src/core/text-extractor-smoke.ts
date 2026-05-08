@@ -458,6 +458,14 @@ eq('CTX22: "com minha esposa" + pendingObjective=Estado civil coletado... + stag
   )['processo'],
   'conjunto');
 
+eq('CTX23: "Não conheço, sou Bruno Vasques" + pendingObjective=apresentar_e_verificar_conhecimento → nome_completo=Bruno Vasques',
+  extractFactsFromText(
+    'Não conheço, sou Bruno Vasques',
+    'discovery',
+    'apresentar_e_verificar_conhecimento',
+  )['nome_completo'],
+  'Bruno Vasques');
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 

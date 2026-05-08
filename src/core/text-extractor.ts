@@ -132,6 +132,20 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     }
   }
 
+  // nome_completo: captura contextual quando cliente fornece nome junto à resposta de MCMV
+  // ex: "Não conheço, sou Bruno Vasques" / "Sim, me chamo Ana Silva"
+  if (facts['nome_completo'] === undefined) {
+    if (
+      pendingObjective === 'apresentar_e_verificar_conhecimento' ||
+      pendingObjective === 'Apresente-se como Enova, especialista em Minha Casa Minha Vida. Faça APENAS UMA pergunta: o cliente já conhece o programa Minha Casa Minha Vida? NÃO peça nome neste turno. NÃO faça mais nenhuma pergunta. Aguarde a resposta antes de continuar.'
+    ) {
+      const nomeMatch = original.match(/(?:sou|me chamo|meu nome[eé é]+|chamo[- ]me)\s+([A-ZÀ-Ú][a-zà-ú]+(?:\s+[A-ZÀ-Ú][a-zà-ú]+)+)/i);
+      if (nomeMatch) {
+        facts['nome_completo'] = nomeMatch[1];
+      }
+    }
+  }
+
   // nome_completo: heurística conservadora — texto simples que parece um nome próprio
   const nomeCandidate = extractNomeCompletoCandidato(n, original);
   if (nomeCandidate !== null) {

@@ -18,14 +18,10 @@
 const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   // --- Topo (discovery) ---
   'apresentar_e_verificar_conhecimento':
-    'Se apresentar como Enova, especialista em Minha Casa Minha Vida. '
-    + 'Fazer UMA pergunta simples: o cliente já conhece o programa Minha Casa Minha Vida? '
-    + 'IMPORTANTE: "sim" ou "não" aqui se refere a conhecer o programa — NÃO a ter interesse. '
-    + 'Se responder que conhece: dizer "Ótimo!" e perguntar o nome completo para iniciar. '
-    + 'Se responder que não conhece: explicar em 1 frase curta que o MCMV oferece condições '
-    + 'especiais para compra do primeiro imóvel, e já pedir o nome completo para orientar melhor. '
-    + 'Em qualquer caso: encerrar a mensagem pedindo o nome completo. '
-    + 'NUNCA interpretar "não" como falta de interesse — apenas como desconhecimento do programa.',
+    'Apresente-se como Enova, especialista em Minha Casa Minha Vida. '
+    + 'Faça APENAS UMA pergunta: o cliente já conhece o programa Minha Casa Minha Vida? '
+    + 'NÃO peça nome neste turno. NÃO faça mais nenhuma pergunta. '
+    + 'Aguarde a resposta antes de continuar.',
   'coletar_customer_goal':
     'Perguntar se o cliente tem interesse em comprar um imóvel pelo Minha Casa Minha Vida.',
   'explicar_mcmv_e_coletar_nome_completo':
@@ -49,15 +45,17 @@ const SEMANTIC_MAP: Readonly<Record<string, string>> = {
   // Topo → civil: AVANCAR_PARA_CIVIL emitido quando estado_civil já foi coletado no topo.
   // Objetivo correto: perguntar processo (solo/conjunto), não re-perguntar estado civil.
   'Perguntar estado civil: solteiro, casado, união estável ou divorciado.':
-    'Perguntar APENAS se o cliente pretende comprar sozinho(a) ou terá alguém junto '
-    + 'no processo — cônjuge, familiar ou parceiro(a). Uma pergunta só. Não perguntar mais nada.',
+    'Perguntar APENAS o estado civil do cliente: '
+    + 'solteiro(a), casado(a) no civil, união estável ou divorciado(a)/viúvo(a). '
+    + 'Uma pergunta só. Não perguntar mais nada.',
 
   // --- Meio A (qualification_civil) ---
   'coletar_estado_civil':
     'Perguntar estado civil: solteiro(a), casado(a), união estável ou divorciado(a).',
   'avancar_para_qualification_civil':
-    'Perguntar APENAS se o cliente pretende comprar sozinho(a) ou terá alguém junto '
-    + 'no processo — cônjuge, familiar ou parceiro(a). Uma pergunta só. Não perguntar mais nada.',
+    'Perguntar APENAS o estado civil do cliente: '
+    + 'solteiro(a), casado(a) no civil, união estável ou divorciado(a)/viúvo(a). '
+    + 'Uma pergunta só. Não perguntar mais nada.',
   'coletar_processo':
     'Perguntar se pretende comprar sozinho(a) ou com alguém.',
   'avancar_para_qualification_renda':
