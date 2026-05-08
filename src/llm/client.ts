@@ -48,18 +48,6 @@ const SYSTEM_PROMPT_BASE =
   '- Quando o cliente estiver enrolando, conduzir para uma escolha objetiva A ou B.\n' +
   '- Encerramento deve ser temporário e claro, nunca abandonar o cliente.\n' +
   '\n' +
-  'FUNIL MCMV — SEQUÊNCIA MACRO:\n' +
-  'F1 Topo: interesse inicial → explicação breve do programa → nome → nacionalidade → RNM se estrangeiro.\n' +
-  'F2 Perfil civil/composição: estado civil → casamento civil/união estável/solteiro/divorciado/viúvo → financiamento solo/conjunto/composição familiar → quem vai compor renda → dados do parceiro/familiar quando aplicável.\n' +
-  'F3 Contexto de moradia e compra: onde mora atualmente → onde trabalha → onde pretende comprar → motivo da compra → urgência/prazo desejado.\n' +
-  'F4 Perfil socioeconômico: se possui curso superior → se tem filhos/dependentes quando aplicável → se já possui imóvel → se possui FGTS (e valor aproximado se tiver, se não souber ou não quiser informar, não tem problema) → se tem entrada/reserva (se não tiver, não quiser informar, não tem problema) → parcela máxima confortável por mês.\n' +
-  'F5 Renda e formalização: regime de trabalho → renda principal → múltiplas rendas → renda extra/bicos → IR para autônomo → autônomo sem IR sugerir composição de renda com alguem → saber se cliente possui 36 meses de registro em CTPS em qualquer situação (isso ajuda na aprovação, reduzindo a taxa de juros e aumentando o valor de financiamento) → renda do parceiro/familiar/P3 quando houver.\n' +
-  'F6 Elegibilidade e riscos: restrição no nome → possibilidade de regularização → averbação se divorciado → se possui certidão de óbito se viúvo → pendências documentais ou bancárias relevantes.\n' +
-  'F7 Pré-análise: organizar dados → explicar que aprovação depende de análise bancária/correspondente → direcionar para documentos.\n' +
-  'F8 Documentos: escolher canal de envio → pedir documentos conforme perfil → confirmar recebimento → apontar pendências → montar/encaminhar dossiê.\n' +
-  'F9 Correspondente: enviar caso para análise → aguardar retorno → interpretar aprovado/reprovado/pendente/aprovado condicionado.\n' +
-  'F10 Visita: se aprovado ou aprovado condicionado, conduzir para plantão → oferecer horários válidos → confirmar dia/horário → orientar próximo passo.\n' +
-  '\n' +
   'REGRAS DE NEGÓCIO — NACIONALIDADE/RNM:\n' +
   '- Brasileiro segue fluxo normal.\n' +
   '- Estrangeiro precisa ter RNM/RNE válido por prazo indeterminado.\n' +
@@ -200,45 +188,42 @@ export interface LlmContext {
   recent_turns?: Array<{ role: 'user' | 'assistant'; content: string }>;
 }
 
-// Constrói system prompt dinâmico a partir do LlmContext.
-// Orçamento máximo: ≤8000 chars. Nunca imprime secrets ou renda bruta.
 export function buildDynamicSystemPrompt(context: LlmContext): string {
-  const lines: string[] = [SYSTEM_PROMPT_BASE, ''];
+  const lines: string[] = [SYSTEM_PROMPT_BASE];
 
-  lines.push(`OBJETIVO ATUAL — execute agora: ${context.next_objective}`);
-  lines.push('REGRA: faça apenas esta ação. Uma pergunta só. Não antecipe próximas etapas.');
+  // BLOCO 1: Tarefa atual — PRIMEIRO, máxima prioridade
+  lines.push('');
+  lines.push('=== SUA TAREFA NESTE TURNO ===');
+  lines.push(context.next_objective);
+  lines.push('REGRA ABSOLUTA: execute apenas esta tarefa. Uma pergunta só. Não antecipe.');
+  lines.push('');
 
-  lines.push('\n--- CONTEXTO DO ATENDIMENTO ATUAL ---');
-  lines.push(`Etapa: ${context.stage_current}`);
-  if (context.stage_after !== context.stage_current) {
-    lines.push(`Próxima etapa ao avançar: ${context.stage_after}`);
-  }
-
-  if (context.speech_intent) {
-    const intentMap: Record<string, string> = {
-      'coleta_dado': 'coletar informação',
-      'transicao_stage': 'confirmar avanço e fazer próxima pergunta',
-      'bloqueio': 'informar bloqueio com empatia e orientar alternativa',
-    };
-    lines.push(`Intenção: ${intentMap[context.speech_intent] ?? context.speech_intent}`);
-  }
+  // BLOCO 2: Situação atual do atendimento
+  lines.push('=== SITUAÇÃO ATUAL DO ATENDIMENTO ===');
 
   const factEntries = Object.entries(context.facts_summary)
     .filter(([k]) => !k.startsWith('_'));
+
   if (factEntries.length > 0) {
-    lines.push('\nDados já coletados:');
+    lines.push('Já coletado:');
     for (const [k, v] of factEntries.slice(0, 12)) {
-      lines.push(`  ${k}: ${v}`);
+      lines.push(`  ✓ ${k}: ${v}`);
     }
+  } else {
+    lines.push('Ainda não coletado nenhum dado do cliente.');
   }
 
   if (context.recent_turns && context.recent_turns.length > 0) {
-    lines.push('\nÚltimas mensagens:');
+    lines.push('');
+    lines.push('Últimas mensagens:');
     for (const turn of context.recent_turns.slice(0, 3)) {
       const label = turn.role === 'user' ? 'Cliente' : 'Enova';
       lines.push(`  ${label}: ${turn.content.slice(0, 150)}`);
     }
   }
+
+  lines.push('');
+  lines.push('=== FIM DO CONTEXTO ===');
 
   return lines.join('\n').slice(0, 8000);
 }
