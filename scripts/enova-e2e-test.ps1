@@ -12,6 +12,15 @@ param(
 $SupabaseUrl = $env:SUPABASE_URL
 $SupabaseKey = $env:SUPABASE_SERVICE_KEY
 
+if (-not $SupabaseUrl) {
+  Write-Host "[ERRO] SUPABASE_URL nao definido. Exporte a variavel antes de rodar o script." -ForegroundColor Red
+  exit 1
+}
+if (-not $SupabaseKey) {
+  Write-Host "[ERRO] SUPABASE_SERVICE_KEY nao definido. Exporte a variavel antes de rodar o script." -ForegroundColor Red
+  exit 1
+}
+
 function Reset-LeadContext {
   param([string]$WaId)
   $headers = @{
@@ -30,7 +39,7 @@ function Send-Turn {
   param([string]$WaId, [string]$PhoneNumberId, [string]$Message, [string]$WorkerUrl)
 
   $msgId = "wam_test_$(Get-Date -Format 'yyyyMMddHHmmssfff')"
-  $ts = [int](Get-Date -UFormat %s)
+  $ts = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
 
   $payload = @{
     object = "whatsapp_business_account"
@@ -60,9 +69,13 @@ function Send-Turn {
     })
   } | ConvertTo-Json -Depth 10
 
+  $headers = @{
+    "x-enova-test-bypass" = "true"
+  }
+
   try {
     $response = Invoke-RestMethod -Uri $WorkerUrl -Method Post `
-      -ContentType "application/json" -Body $payload -TimeoutSec 15
+      -ContentType "application/json" -Headers $headers -Body $payload -TimeoutSec 15
     return $true
   } catch {
     Write-Host "  [ERROR] Turno falhou: $_"
