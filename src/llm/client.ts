@@ -189,17 +189,42 @@ export interface LlmContext {
 }
 
 export function buildDynamicSystemPrompt(context: LlmContext): string {
-  const lines: string[] = [SYSTEM_PROMPT_BASE];
+  const lines: string[] = [];
 
-  // BLOCO 1: Tarefa atual — PRIMEIRO, máxima prioridade
-  lines.push('');
-  lines.push('=== SUA TAREFA NESTE TURNO ===');
+  // ═══ BLOCO 1: INSTRUÇÃO OBRIGATÓRIA — VEM PRIMEIRO, ANTES DE TUDO ═══
+  lines.push('INSTRUÇÃO OBRIGATÓRIA — LEIA ANTES DE QUALQUER COISA:');
+  lines.push('Você deve executar EXATAMENTE e APENAS isto agora:');
   lines.push(context.next_objective);
-  lines.push('REGRA ABSOLUTA: execute apenas esta tarefa. Uma pergunta só. Não antecipe.');
+  lines.push('NÃO faça nada além disso. NÃO antecipe próximas perguntas. NÃO reordene o fluxo.');
   lines.push('');
 
-  // BLOCO 2: Situação atual do atendimento
-  lines.push('=== SITUAÇÃO ATUAL DO ATENDIMENTO ===');
+  // ═══ BLOCO 2: SYSTEM_PROMPT_BASE — regras de negócio e tom ═══
+  lines.push(SYSTEM_PROMPT_BASE);
+  lines.push('');
+
+  // ═══ BLOCO 3: SEQUÊNCIA DE REFERÊNCIA — contexto, não trilho autônomo ═══
+  lines.push('SEQUÊNCIA DO ATENDIMENTO (referência de contexto — quem manda é a INSTRUÇÃO acima):');
+  lines.push('1. Apresentar-se como Enova + verificar se o cliente conhece o MCMV');
+  lines.push('2. Coletar nome completo (nome E sobrenome)');
+  lines.push('3. Coletar nacionalidade → se estrangeiro: verificar RNM prazo indeterminado');
+  lines.push('4. Coletar estado civil');
+  lines.push('5. Coletar processo: sozinho, com cônjuge (conjunto) ou com familiar (composição)');
+  lines.push('   → Se casado civil: cônjuge entra obrigatoriamente');
+  lines.push('   → Se composição: coletar quem é + estado civil do familiar');
+  lines.push('   → Se familiar casado civil: cônjuge desse familiar entra obrigatoriamente');
+  lines.push('6. Coletar regime de trabalho');
+  lines.push('7. Coletar renda mensal');
+  lines.push('   → Se autônomo: verificar IR');
+  lines.push('   → Se renda ≤ R$3.000 e solo: sugerir composição de renda');
+  lines.push('   → Se renda ≤ R$4.000 e solo ou composição: verificar dependentes');
+  lines.push('8. Coletar contexto: onde mora, onde trabalha, onde pretende comprar');
+  lines.push('9. Verificar elegibilidade: restrição, FGTS, entrada, parcela confortável');
+  lines.push('10. Solicitar documentos conforme perfil');
+  lines.push('11. Encaminhar para correspondente → visita ao plantão');
+  lines.push('');
+
+  // ═══ BLOCO 4: SITUAÇÃO ATUAL — o que já foi coletado ═══
+  lines.push('SITUAÇÃO ATUAL DO ATENDIMENTO:');
 
   const factEntries = Object.entries(context.facts_summary)
     .filter(([k]) => !k.startsWith('_'));
@@ -210,7 +235,7 @@ export function buildDynamicSystemPrompt(context: LlmContext): string {
       lines.push(`  ✓ ${k}: ${v}`);
     }
   } else {
-    lines.push('Ainda não coletado nenhum dado do cliente.');
+    lines.push('Nenhum dado coletado ainda — este é o primeiro contato.');
   }
 
   if (context.recent_turns && context.recent_turns.length > 0) {
@@ -223,7 +248,12 @@ export function buildDynamicSystemPrompt(context: LlmContext): string {
   }
 
   lines.push('');
-  lines.push('=== FIM DO CONTEXTO ===');
+
+  // ═══ BLOCO 5: LEMBRETE FINAL — âncora dupla ═══
+  lines.push('LEMBRETE FINAL — ANTES DE RESPONDER:');
+  lines.push('Sua única ação neste turno é executar a INSTRUÇÃO OBRIGATÓRIA do início.');
+  lines.push('A sequência acima é referência de contexto — não substitui a instrução.');
+  lines.push('Uma pergunta só. Não antecipe. Não reordene.');
 
   return lines.join('\n').slice(0, 8000);
 }
