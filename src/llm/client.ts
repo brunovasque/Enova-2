@@ -279,7 +279,7 @@ export async function callLlm(
           { role: 'system', content: systemPrompt },
           { role: 'user', content: msg.slice(0, 2000) },
         ],
-        max_tokens: LLM_MAX_TOKENS,
+        max_completion_tokens: LLM_MAX_TOKENS,
         temperature: LLM_TEMPERATURE,
       }),
     });
