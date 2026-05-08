@@ -19,6 +19,8 @@
     "smoke:meta:client-real-flag": "tsx src/meta/client-real-flag-smoke.ts",
     "smoke:meta:core-pipeline": "tsx src/meta/core-pipeline-smoke.ts",
     "smoke:core:text-extractor": "tsx src/core/text-extractor-smoke.ts",
+    "smoke:core:funil-static": "tsx src/core/funil-static-diagnostic.ts",
+    "smoke:core:funil-conversation": "tsx src/core/funil-conversation-smoke.ts",
     "smoke:core:semantic-objectives": "tsx src/core/semantic-next-objective-smoke.ts",
     "smoke:llm:context": "tsx src/llm/context-smoke.ts",
     "smoke:llm:output-guard": "tsx src/llm/output-guard-smoke.ts",
