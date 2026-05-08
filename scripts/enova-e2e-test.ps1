@@ -4,7 +4,8 @@
 
 param(
   [string]$WorkerUrl = "https://nv-enova-2.brunovasque.workers.dev/__meta__/webhook",
-  [string]$WaId = "554185260518",
+  [string]$WaId_C1 = "554185260001",
+  [string]$WaId_C2 = "554185260002",
   [string]$PhoneNumberId = "766000000780",
   [int]$TurnDelay = 3
 )
@@ -27,12 +28,12 @@ function Reset-LeadContext {
     "apikey" = $SupabaseKey
     "Authorization" = "Bearer $SupabaseKey"
     "Content-Type" = "application/json"
-    "Prefer" = "return=minimal"
+    "Prefer" = "resolution=merge-duplicates"
   }
-  $body = '{"last_context": null}'
-  $url = "$SupabaseUrl/rest/v1/enova_state?wa_id=eq.$WaId"
-  Invoke-RestMethod -Uri $url -Method Patch -Headers $headers -Body $body | Out-Null
-  Write-Host "  [RESET] last_context limpo para $WaId"
+  $body = @{ wa_id = $WaId; last_context = $null; fase_conversa = "inicio" } | ConvertTo-Json -Compress
+  $url = "$SupabaseUrl/rest/v1/enova_state"
+  Invoke-RestMethod -Uri $url -Method Post -Headers $headers -Body $body | Out-Null
+  Write-Host "  [RESET] lead $WaId resetado (upsert)"
 }
 
 function Send-Turn {
@@ -121,7 +122,8 @@ Write-Host "`n==========================================="
 Write-Host "CENARIO 1 - Brasileiro solteiro solo CLT"
 Write-Host "==========================================="
 
-Reset-LeadContext -WaId $WaId
+Reset-LeadContext -WaId $WaId_C1
+Start-Sleep -Seconds 3
 $passes = 0; $fails = 0
 
 $turnos = @(
@@ -137,12 +139,12 @@ $turnos = @(
 
 foreach ($t in $turnos) {
   Write-Host "`n  -> Enviando: '$($t.msg)'"
-  Send-Turn -WaId $WaId -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
+  Send-Turn -WaId $WaId_C1 -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
   Start-Sleep -Seconds $t.delay
 }
 
 Start-Sleep -Seconds 2
-$facts = Get-LeadFacts -WaId $WaId
+$facts = Get-LeadFacts -WaId $WaId_C1
 
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts "nome_completo" "Bruno Vasques" "C1") { $passes++ } else { $fails++ }
@@ -158,8 +160,8 @@ Write-Host "`n==========================================="
 Write-Host "CENARIO 2 - Casado civil - processo conjunto"
 Write-Host "==========================================="
 
-Reset-LeadContext -WaId $WaId
-Start-Sleep -Seconds 2
+Reset-LeadContext -WaId $WaId_C2
+Start-Sleep -Seconds 3
 
 $turnos2 = @(
   @{ msg = "Oi" },
@@ -171,12 +173,12 @@ $turnos2 = @(
 
 foreach ($t in $turnos2) {
   Write-Host "`n  -> Enviando: '$($t.msg)'"
-  Send-Turn -WaId $WaId -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
+  Send-Turn -WaId $WaId_C2 -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
   Start-Sleep -Seconds $TurnDelay
 }
 
 Start-Sleep -Seconds 2
-$facts2 = Get-LeadFacts -WaId $WaId
+$facts2 = Get-LeadFacts -WaId $WaId_C2
 
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts2 "estado_civil" "casado_civil" "C2") { $passes++ } else { $fails++ }
