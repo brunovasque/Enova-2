@@ -1,4 +1,4 @@
-# enova-e2e-test.ps1 — Teste E2E real do funil Enova 2
+# enova-e2e-test.ps1 - Teste E2E real do funil Enova 2
 # Uso: .\scripts\enova-e2e-test.ps1
 # Requer: SUPABASE_URL, SUPABASE_SERVICE_KEY no ambiente
 
@@ -90,23 +90,23 @@ function Test-Fact {
   param($Facts, [string]$Key, $Expected, [string]$TurnDesc)
   $actual = $Facts.$Key
   if ($null -eq $actual) {
-    Write-Host "  [FAIL] $TurnDesc — $Key ausente (esperado: $Expected)" -ForegroundColor Red
+    Write-Host "  [FAIL] $TurnDesc - $Key ausente (esperado: $Expected)" -ForegroundColor Red
     return $false
   }
   if ("$actual" -ne "$Expected") {
-    Write-Host "  [FAIL] $TurnDesc — $Key='$actual' (esperado: '$Expected')" -ForegroundColor Red
+    Write-Host "  [FAIL] $TurnDesc - $Key='$actual' (esperado: '$Expected')" -ForegroundColor Red
     return $false
   }
-  Write-Host "  [PASS] $TurnDesc — $Key='$actual'" -ForegroundColor Green
+  Write-Host "  [PASS] $TurnDesc - $Key='$actual'" -ForegroundColor Green
   return $true
 }
 
-# ═══════════════════════════════════════════
-# CENÁRIO 1 — Solo CLT caminho dourado
-# ═══════════════════════════════════════════
-Write-Host "`n═══════════════════════════════════════════"
-Write-Host "CENÁRIO 1 — Brasileiro solteiro solo CLT"
-Write-Host "═══════════════════════════════════════════"
+# ===========================================
+# CENARIO 1 - Solo CLT caminho dourado
+# ===========================================
+Write-Host "`n==========================================="
+Write-Host "CENARIO 1 - Brasileiro solteiro solo CLT"
+Write-Host "==========================================="
 
 Reset-LeadContext -WaId $WaId
 $passes = 0; $fails = 0
@@ -138,12 +138,12 @@ if (Test-Fact $facts "estado_civil" "solteiro" "C1") { $passes++ } else { $fails
 if (Test-Fact $facts "processo" "solo" "C1") { $passes++ } else { $fails++ }
 if (Test-Fact $facts "regime_trabalho" "clt" "C1") { $passes++ } else { $fails++ }
 
-# ═══════════════════════════════════════════
-# CENÁRIO 2 — Casado civil força conjunto
-# ═══════════════════════════════════════════
-Write-Host "`n═══════════════════════════════════════════"
-Write-Host "CENÁRIO 2 — Casado civil — processo conjunto"
-Write-Host "═══════════════════════════════════════════"
+# ===========================================
+# CENARIO 2 - Casado civil - processo conjunto
+# ===========================================
+Write-Host "`n==========================================="
+Write-Host "CENARIO 2 - Casado civil - processo conjunto"
+Write-Host "==========================================="
 
 Reset-LeadContext -WaId $WaId
 Start-Sleep -Seconds 2
@@ -168,11 +168,11 @@ $facts2 = Get-LeadFacts -WaId $WaId
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts2 "estado_civil" "casado_civil" "C2") { $passes++ } else { $fails++ }
 
-# ═══════════════════════════════════════════
+# ===========================================
 # RESULTADO FINAL
-# ═══════════════════════════════════════════
-Write-Host "`n═══════════════════════════════════════════"
+# ===========================================
+Write-Host "`n==========================================="
 Write-Host "RESULTADO: $passes PASS / $fails FAIL" -ForegroundColor $(if ($fails -eq 0) { "Green" } else { "Red" })
-Write-Host "═══════════════════════════════════════════`n"
+Write-Host "===========================================`n"
 
 exit $(if ($fails -eq 0) { 0 } else { 1 })
