@@ -287,7 +287,13 @@ export async function callLlm(
     const latency_ms = Date.now() - t0;
 
     if (!response.ok) {
-      return { ok: false, error: `llm_api_error_${response.status}`, llm_invoked: true, latency_ms };
+      let errorDetail = '';
+      try {
+        const errBody = await response.text();
+        const errJson = JSON.parse(errBody);
+        errorDetail = errJson?.error?.message ?? errBody.slice(0, 200);
+      } catch { /* ignorar */ }
+      return { ok: false, error: `llm_api_error_${response.status}: ${errorDetail}`, llm_invoked: true, latency_ms };
     }
 
     const json = (await response.json()) as {
