@@ -174,7 +174,7 @@ export async function processMetaWebhookPost(input: {
 
   const testBypass =
     input.testBypassHeader === 'true' &&
-    readEnvString(input.env, 'MAINTENANCE_MODE') === 'false';
+    readEnvString(input.env, 'E2E_TEST_ENABLED') === 'true';
 
   if (!testBypass) {
     const sig = await verifyMetaSignature(input.rawBody, input.signatureHeader, appSecret ?? null);
