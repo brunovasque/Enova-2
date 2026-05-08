@@ -239,20 +239,6 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     }
   }
 
-  // estado_civil — captura contextual em discovery quando sistema aguardava estado civil (T9.17D)
-  if (facts['estado_civil'] === undefined) {
-    if (
-      pendingObjective === 'avancar_para_qualification_civil' ||
-      pendingObjective === 'Perguntar estado civil: solteiro, casado, união estável ou divorciado.'
-    ) {
-      if (contains(n, 'solteiro', 'solteira')) facts['estado_civil'] = 'solteiro';
-      else if (contains(n, 'casado', 'casada')) facts['estado_civil'] = 'casado_civil';
-      else if (contains(n, 'uniao', 'amasiado')) facts['estado_civil'] = 'uniao_estavel';
-      else if (contains(n, 'divorciado', 'divorciada', 'separado')) facts['estado_civil'] = 'divorciado';
-      else if (contains(n, 'viuvo', 'viuva')) facts['estado_civil'] = 'viuvo';
-    }
-  }
-
   return facts;
 }
 
