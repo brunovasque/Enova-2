@@ -1,5 +1,48 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.28 — 3 gaps C4/C6: guard P3 estado_civil, nacionalidade conservadora, normalizeAlternativaRnm (2026-05-09)
+
+**Tipo**: PR-IMPL / correcao_incidental / frente T9
+**Branch**: fix/t9.28-gaps-c4-c6
+**PR**: #265 — aberta, aguardando merge Vasques
+**Commit**: 3ac9f49
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.27 (fix/t9.27-residuais-e2e, aberta)
+**Próximo passo autorizado T9**: Vasques merge PRs T9.26+T9.27+T9.28 → Repetir E2E C1-C8
+
+### PROBLEMAS RESOLVIDOS
+
+1. **GAP-C4 — estado_civil contamina lead com resposta P3** — keyword block em `extractQualificationCivil` disparava para qualquer texto em `qualification_civil`, incluindo quando `pendingObjective='coletar_estado_civil_p3'`. "Casada no civil" (resposta do familiar) sobrescrevia `estado_civil` do lead. Fix: guard `pendingObjective !== 'coletar_estado_civil_p3'` adicionado ao outer if do bloco keyword.
+
+2. **GAP-C6A — "Nao tenho familiar brasileiro" capturava nacionalidade=brasileiro** — bloco `nacionalidade` em `extractDiscovery` usava keyword bare `'brasileiro'` sem pendingObjective guard. Fix: bloco reescrito com (a) contextual `pendingObjective === 'perguntar_nacionalidade'` que aceita bare keywords, (b) fallback conservador que exige `'sou brasileiro'`/`'sou estrangeiro'` — frases específicas que não aparecem em contexto de alternativa_rnm.
+
+3. **GAP-C6B — normalizeAlternativaRnm não reconhecia sem_familiar/sem_conjuge** — `topo-parser.ts` reconhecia apenas 3 valores; `sem_familiar_brasileiro` e `sem_conjuge_brasileiro` (adicionados em T9.27) retornavam `null` → Gate 4A ficava em loop infinito (null → verificar_alternativa_rnm → null → ...). Fix: ambos mapeados para `'sem_alternativa'` — Gate 4B dispara e encerra o fluxo.
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.28-gaps-c4-c6
+- Commit: `3ac9f49`
+- Review doc: `docs/diagnostics/FUNIL-QUALIFICACAO/PR-T9.28-review.md`
+- Diagnóstico base: `docs/diagnostics/FUNIL-QUALIFICACAO/32-gap-analysis-c4-c6.md`
+- 3 arquivos modificados: `text-extractor.ts`, `topo-parser.ts`, `text-extractor-smoke.ts`
+- Zero diff fora do escopo
+
+### SMOKE TESTS
+
+`smoke:core:text-extractor` **124/124 PASS** (era 118)
+CTX37a: "Casada no civil" + coletar_estado_civil_p3 + qualification_civil → estado_civil_p3=casado_civil ✓
+CTX37b: "Casada no civil" + coletar_estado_civil_p3 + qualification_civil → estado_civil=undefined (sem vazar) ✓
+CTX38a: "Nao tenho familiar brasileiro" + verificar_alternativa_rnm + discovery → alternativa_rnm=sem_familiar_brasileiro ✓
+CTX38b: "Nao tenho familiar brasileiro" + verificar_alternativa_rnm + discovery → nacionalidade=undefined ✓
+CTX39: "Sou brasileiro" sem pendingObjective + discovery → nacionalidade=brasileiro (fallback conservador) ✓
+CTX40: "Brasileiro" + perguntar_nacionalidade + discovery → nacionalidade=brasileiro (contextual) ✓
+
+### ROLLBACK
+
+`git revert 3ac9f49` — reverte text-extractor.ts, topo-parser.ts e smoke.ts sem afetar outros arquivos.
+
+---
+
 ## T9.27 — 4 fixes residuais E2E: renda flexivel, estado_civil_p3 discovery, rnm 3-tier, alternativa_rnm granular (2026-05-09)
 
 **Tipo**: PR-IMPL / correcao_incidental / frente T9
