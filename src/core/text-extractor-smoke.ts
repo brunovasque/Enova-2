@@ -466,6 +466,14 @@ eq('CTX23: "Não conheço, sou Bruno Vasques" + pendingObjective=apresentar_e_ve
   )['nome_completo'],
   'Bruno Vasques');
 
+eq('CTX24: "Solteiro" + pendingObjective=Perguntar APENAS o estado civil... + stage=discovery → estado_civil=solteiro',
+  extractFactsFromText(
+    'Solteiro',
+    'discovery',
+    'Perguntar APENAS o estado civil do cliente: solteiro(a), casado(a) no civil, união estável ou divorciado(a)/viúvo(a). Uma pergunta só. Não perguntar mais nada.',
+  )['estado_civil'],
+  'solteiro');
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 
