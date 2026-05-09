@@ -1,5 +1,45 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.26 — Captura cross-stage regime_trabalho/renda_principal + rnm negativas-primeiro + estado_civil_p3 semantic (2026-05-08)
+
+**Tipo**: PR-IMPL / correcao_incidental / frente T9
+**Branch**: fix/t9.26-captura-cross-stage
+**PR**: #263 — aberta, aguardando merge Vasques
+**Commit**: 08c2bec
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.24 (PR #262, aberta) — reativar estado_civil em discovery
+**Próximo passo autorizado T9**: Vasques merge PR #263 → Repetir T9.15B-PROVA-REAL-CANARY
+
+### PROBLEMAS RESOLVIDOS
+
+1. **rnm_valido falso positivo** — bloco contextual em `extractDiscovery` checava positivos antes de negativos; "Nao tenho RNM" contém "tenho" → capturava `rnm_valido=true` (errado). Fix: negativas primeiro + guard `=== undefined` + semantic alternative.
+
+2. **estado_civil_p3 casado order** — `casado` vinha antes de `casado no civil` → "casado no civil" era capturado como `casado_civil` via ramo errado (sem problema de valor mas sem distinção futura). Fix: `casado no civil` → `casado` em ordem, + semantic pendingObjective.
+
+3. **estado_civil_p3 uniao_estavel muito ampla** — keywords `junto`, `junta`, `namorado`, `namorada` podiam fazer falso positivo. Fix: removidos, mantidos `uniao estavel`, `uniao`, `amasiado`, `amasiada`.
+
+4. **regime_trabalho e renda_principal ausentes em qualification_civil** — cliente responde regime/renda no mesmo turno em que ainda está em `qualification_civil`. Stage avança no próximo turno, então o extractor não capturava esses facts. Fix: blocos cross-stage em `extractQualificationCivil`.
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.26-captura-cross-stage
+- Commit: `08c2bec`
+- Arquivo de review: `docs/diagnostics/FUNIL-QUALIFICACAO/PR-T9.26-review.md`
+- 2 arquivos modificados: `text-extractor.ts`, `text-extractor-smoke.ts`
+- `extractQualificationCivil` agora assina `(n, original, pendingObjective?)` (antes: `(n, pendingObjective?)`)
+- Zero diff fora do escopo
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke:core:text-extractor` | **111/111 PASS** (era 105) |
+| `npm run smoke` | **PASS** |
+| `npm run smoke:meta:canary` | **41/41 PASS** |
+| `npm run prove:t9.15h-facts-persistence` | **34/34 PASS** |
+
+---
+
 ## T9.24 — Reativar captura estado_civil em discovery com pendingObjective novo (2026-05-09)
 
 **Tipo**: PR-IMPL / correcao_incidental / frente T9

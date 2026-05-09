@@ -164,18 +164,23 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     facts['nacionalidade'] = 'naturalizado';
   }
 
-  // Confirmação contextual de RNM — quando sistema estava aguardando resposta sobre RNM (T9.16A)
-  if (pendingObjective === 'perguntar_rnm_e_validade') {
+  // Confirmação contextual de RNM — negativas primeiro: "Nao tenho" contém "tenho" (T9.16A/T9.26)
+  if (facts['rnm_valido'] === undefined) {
     if (
-      contains(n, 'sim', 'tenho', 'possuo', 'prazo indeterminado', 'indeterminado',
-        'sem prazo', 'permanente', 'por tempo indeterminado')
+      pendingObjective === 'perguntar_rnm_e_validade' ||
+      pendingObjective === 'Perguntar se o cliente possui RNM (Registro Nacional Migratório) por prazo indeterminado. Deixar claro que apenas RNM por prazo indeterminado é aceito pelo programa MCMV — RNM com data de validade não é permitido, independente de estar vigente.'
     ) {
-      facts['rnm_valido'] = true;
-    } else if (
-      contains(n, 'nao', 'nao tenho', 'nao possuo', 'determinado', 'tem validade',
-        'com validade', 'vence', 'expira', 'prazo determinado')
-    ) {
-      facts['rnm_valido'] = false;
+      if (
+        contains(n, 'nao tenho', 'nao possuo', 'nao', 'tem validade',
+          'com validade', 'vence', 'expira', 'prazo determinado')
+      ) {
+        facts['rnm_valido'] = false;
+      } else if (
+        contains(n, 'sim', 'tenho', 'possuo', 'prazo indeterminado', 'indeterminado',
+          'sem prazo', 'permanente', 'por tempo indeterminado')
+      ) {
+        facts['rnm_valido'] = true;
+      }
     }
   }
 
@@ -261,7 +266,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
   return facts;
 }
 
-function extractQualificationCivil(n: string, pendingObjective?: string): Record<string, unknown> {
+function extractQualificationCivil(n: string, original: string, pendingObjective?: string): Record<string, unknown> {
   const facts: Record<string, unknown> = {};
 
   // Confirmação contextual de estado civil — quando sistema estava aguardando estado civil (T9.16A)
@@ -360,19 +365,76 @@ function extractQualificationCivil(n: string, pendingObjective?: string): Record
 
   // estado_civil_p3 — estado civil do familiar/parceiro (nunca sobrescreve estado_civil do lead)
   if (facts['estado_civil_p3'] === undefined) {
-    if (pendingObjective === 'coletar_estado_civil_p3') {
+    if (
+      pendingObjective === 'coletar_estado_civil_p3' ||
+      pendingObjective === 'Perguntar qual é o estado civil do familiar ou pessoa que vai entrar na composição. Solteiro(a), casado(a) no civil, união estável ou divorciado(a).'
+    ) {
       if (contains(n, 'solteiro', 'solteira')) {
         facts['estado_civil_p3'] = 'solteiro';
-      } else if (contains(n, 'casado', 'casada', 'casamento civil')) {
+      } else if (contains(n, 'casado no civil', 'casada no civil', 'casamento civil')) {
+        facts['estado_civil_p3'] = 'casado_civil';
+      } else if (contains(n, 'casado', 'casada')) {
         facts['estado_civil_p3'] = 'casado_civil';
       } else if (
-        contains(n, 'uniao', 'junto', 'junta', 'amasiado', 'namorado', 'namorada')
+        contains(n, 'uniao estavel', 'uniao', 'amasiado', 'amasiada')
       ) {
         facts['estado_civil_p3'] = 'uniao_estavel';
       } else if (contains(n, 'divorciado', 'divorciada', 'separado', 'separada')) {
         facts['estado_civil_p3'] = 'divorciado';
       } else if (contains(n, 'viuvo', 'viuva')) {
         facts['estado_civil_p3'] = 'viuvo';
+      }
+    }
+  }
+
+  // regime_trabalho cross-stage: cliente responde em qualification_civil antes de avançar (T9.26)
+  if (facts['regime_trabalho'] === undefined) {
+    if (
+      pendingObjective === 'avancar_para_qualification_renda' ||
+      pendingObjective === 'coletar_regime_trabalho' ||
+      pendingObjective === 'Perguntar regime de trabalho e renda mensal.' ||
+      pendingObjective === 'Perguntar se trabalha CLT, autônomo, servidor público, aposentado ou outro regime.'
+    ) {
+      if (
+        contains(n, 'clt', 'carteira assinada', 'registrado', 'registrada',
+          'com carteira', 'empregado registrado', 'trabalho de carteira')
+      ) {
+        facts['regime_trabalho'] = 'clt';
+      } else if (
+        contains(n, 'autonomo', 'autonoma', 'freelancer', 'trabalho por conta',
+          'trabalho por minha conta', 'conta propria', 'prestador de servico')
+      ) {
+        facts['regime_trabalho'] = 'autonomo';
+      } else if (
+        contains(n, 'aposentado', 'aposentada', 'aposentadoria', 'recebo aposentadoria',
+          'sou aposentado', 'sou aposentada')
+      ) {
+        facts['regime_trabalho'] = 'aposentado';
+      } else if (
+        contains(n, 'servidor', 'servidora', 'funcionario publico', 'funcionaria publica',
+          'funcao publica', 'concursado', 'concursada', 'prefeitura', 'estado governo')
+      ) {
+        facts['regime_trabalho'] = 'servidor';
+      } else if (
+        contains(n, 'informal', 'bico', 'sem registro', 'sem carteira',
+          'nao tenho carteira', 'trabalho informal')
+      ) {
+        facts['regime_trabalho'] = 'informal';
+      }
+    }
+  }
+
+  // renda_principal cross-stage: cliente responde em qualification_civil antes de avançar (T9.26)
+  if (facts['renda_principal'] === undefined) {
+    if (
+      pendingObjective === 'avancar_para_qualification_renda' ||
+      pendingObjective === 'coletar_renda_principal' ||
+      pendingObjective === 'Perguntar regime de trabalho e renda mensal.' ||
+      pendingObjective === 'Perguntar a renda mensal aproximada.'
+    ) {
+      const renda = extractRenda(original);
+      if (renda !== null) {
+        facts['renda_principal'] = renda;
       }
     }
   }
@@ -637,7 +699,7 @@ export function extractFactsFromText(
       case 'discovery':
         return extractDiscovery(n, text, pendingObjective);
       case 'qualification_civil':
-        return extractQualificationCivil(n, pendingObjective);
+        return extractQualificationCivil(n, text, pendingObjective);
       case 'qualification_renda':
         return extractQualificationRenda(n, text, pendingObjective);
       case 'qualification_eligibility':

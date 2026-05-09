@@ -474,6 +474,54 @@ eq('CTX24: "Solteiro" + pendingObjective=Perguntar APENAS o estado civil... + st
   )['estado_civil'],
   'solteiro');
 
+eq('CTX25: "Nao tenho" + pendingObjective=perguntar_rnm_e_validade + stage=discovery → rnm_valido=false (negativas primeiro)',
+  extractFactsFromText(
+    'Nao tenho',
+    'discovery',
+    'perguntar_rnm_e_validade',
+  )['rnm_valido'],
+  false);
+
+eq('CTX26: "Tenho prazo indeterminado" + pendingObjective=perguntar_rnm_e_validade + stage=discovery → rnm_valido=true',
+  extractFactsFromText(
+    'Tenho prazo indeterminado',
+    'discovery',
+    'perguntar_rnm_e_validade',
+  )['rnm_valido'],
+  true);
+
+eq('CTX27: "casado no civil" + pendingObjective=coletar_estado_civil_p3 + stage=qualification_civil → estado_civil_p3=casado_civil',
+  extractFactsFromText(
+    'casado no civil',
+    'qualification_civil',
+    'coletar_estado_civil_p3',
+  )['estado_civil_p3'],
+  'casado_civil');
+
+eq('CTX28: "Estamos em uniao estavel" + pendingObjective=coletar_estado_civil_p3 + stage=qualification_civil → estado_civil_p3=uniao_estavel',
+  extractFactsFromText(
+    'Estamos em uniao estavel',
+    'qualification_civil',
+    'coletar_estado_civil_p3',
+  )['estado_civil_p3'],
+  'uniao_estavel');
+
+eq('CTX29: "carteira assinada" + pendingObjective=coletar_regime_trabalho + stage=qualification_civil → regime_trabalho=clt (cross-stage)',
+  extractFactsFromText(
+    'carteira assinada',
+    'qualification_civil',
+    'coletar_regime_trabalho',
+  )['regime_trabalho'],
+  'clt');
+
+eq('CTX30: "Ganho R$ 2.000 por mes" + pendingObjective=avancar_para_qualification_renda + stage=qualification_civil → renda_principal=2000 (cross-stage)',
+  extractFactsFromText(
+    'Ganho R$ 2.000 por mes',
+    'qualification_civil',
+    'avancar_para_qualification_renda',
+  )['renda_principal'],
+  2000);
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 
