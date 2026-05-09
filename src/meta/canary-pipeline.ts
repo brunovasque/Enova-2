@@ -35,7 +35,7 @@ import { applyOutputGuard } from '../llm/output-guard.ts';
 import { runCoreEngine } from '../core/engine.ts';
 import { getCrmBackend } from '../crm/store.ts';
 import { getLeadState, getLeadFacts, upsertLeadState, writeLeadFact, getLeadTimeline } from '../crm/service.ts';
-import { extractFactsFromText } from '../core/text-extractor.ts';
+import { extractFactsFromText, getLastExtractionDiagnostics } from '../core/text-extractor.ts';
 import { emitTelemetry } from '../telemetry/emit.ts';
 import { diagLog, maskId } from './prod-diag.ts';
 import { writeEnovaLog, readLeadAccumulatedFacts, writeLeadAccumulatedFacts } from '../supabase/crm-store.ts';
@@ -96,6 +96,13 @@ function sanitizeRecentTurnText(text: string, maxLen = 100): string {
 
 function readStr(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+// T11.1: Classifica formato do next_objective para invariant check
+function classifyNextObjectiveFormat(value: string | undefined): 'code' | 'pt_string' | 'null' {
+  if (value === undefined || value === null || value === '') return 'null';
+  if (value.length >= 40 && value.includes(' ')) return 'pt_string';
+  return 'code';
 }
 
 function emitCanary(
@@ -235,6 +242,7 @@ export async function runCanaryPipeline(
       // Função pura: sem I/O, nunca lança exceção.
       // Texto completo do cliente nunca é logado.
       const extractedFacts = extractFactsFromText(event.text_body ?? '', currentStage, pendingObjective);
+      const extractionDiag = getLastExtractionDiagnostics();
       const extractedKeys = Object.keys(extractedFacts);
 
       // Bloco [C] — Persistência de facts extraídos (status: 'pending')
@@ -273,6 +281,11 @@ export async function runCanaryPipeline(
         persisted_fact_keys: Object.keys(persistedFacts),
         pending_objective: pendingObjective ?? null,
         pending_objective_length: pendingObjective?.length ?? 0,
+        pending_objective_format: classifyNextObjectiveFormat(pendingObjective),
+        extractor_branch_taken: extractionDiag.branch,
+        extractor_branches_skipped: extractionDiag.skipped,
+        input_text_normalized: extractionDiag.normalized,
+        keyword_matches: extractionDiag.keywords,
       });
 
       const factsResult = await getLeadFacts(coreBackend, crmResult.lead_id);
@@ -348,12 +361,25 @@ export async function runCanaryPipeline(
         }
       }
 
+      const nextObjFormat = classifyNextObjectiveFormat(coreDecision.next_objective);
       diagLog('core.decision', {
         lead_id_present: true,
         stage_current: coreDecision.stage_current,
         stage_after: coreDecision.stage_after,
         block_advance: coreDecision.block_advance,
         decision_id: coreDecision.decision_id,
+        next_objective_emitted: coreDecision.next_objective,
+        next_objective_format: nextObjFormat,
+        gate_id_active: coreDecision.gates_activated[0] ?? null,
+        gates_activated_list: coreDecision.gates_activated,
+      });
+      diagLog('pipeline.invariant_check', {
+        invariant: 'next_objective_must_be_code',
+        next_objective_format: nextObjFormat,
+        invariant_violation: nextObjFormat === 'pt_string',
+        next_objective_value: nextObjFormat === 'pt_string'
+          ? coreDecision.next_objective.slice(0, 80)
+          : coreDecision.next_objective,
       });
 
       emitCanary(ctx, 'core.completed', 'completed', {
