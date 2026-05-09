@@ -320,6 +320,12 @@ function resolveRnmValido(rawRnmValido: unknown, rawRnmStatus: unknown): boolean
 function normalizeAlternativaRnm(raw: unknown): AlternativaRnm | null {
   if (raw === 'tem_conjuge_brasileiro') return 'tem_conjuge_brasileiro';
   if (raw === 'tem_familiar_brasileiro') return 'tem_familiar_brasileiro';
-  if (raw === 'sem_alternativa') return 'sem_alternativa';
+  if (
+    raw === 'sem_alternativa' ||
+    raw === 'sem_familiar_brasileiro' ||
+    raw === 'sem_conjuge_brasileiro'
+  ) {
+    return 'sem_alternativa';
+  }
   return null;
 }

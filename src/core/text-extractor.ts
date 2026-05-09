@@ -152,16 +152,35 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     facts['nome_completo'] = nomeCandidate;
   }
 
-  // nacionalidade no topo (rota canônica T9.15E: coletar antes de estado civil)
-  if (contains(n, 'brasileiro', 'brasileira', 'nasci no brasil', 'sou do brasil')) {
-    facts['nacionalidade'] = 'brasileiro';
-  } else if (
-    contains(n, 'estrangeiro', 'estrangeira', 'nao sou brasileiro', 'nao sou brasileira',
-      'sou de outro pais', 'sou imigrante')
-  ) {
-    facts['nacionalidade'] = 'estrangeiro';
-  } else if (contains(n, 'naturalizado', 'naturalizada', 'naturalizacao')) {
-    facts['nacionalidade'] = 'naturalizado';
+  // nacionalidade (T9.28: bloco contextual + fallback conservador para evitar falso positivo em
+  // "Nao tenho familiar brasileiro" quando pendingObjective=verificar_alternativa_rnm)
+  if (facts['nacionalidade'] === undefined) {
+    if (pendingObjective === 'perguntar_nacionalidade') {
+      if (contains(n, 'brasileiro', 'brasileira', 'nasci no brasil', 'sou do brasil')) {
+        facts['nacionalidade'] = 'brasileiro';
+      } else if (
+        contains(n, 'estrangeiro', 'estrangeira', 'nasci fora',
+          'nao sou brasileiro', 'nao sou brasileira')
+      ) {
+        facts['nacionalidade'] = 'estrangeiro';
+      } else if (contains(n, 'naturalizado', 'naturalizada', 'naturalizacao')) {
+        facts['nacionalidade'] = 'naturalizado';
+      }
+    }
+    if (facts['nacionalidade'] === undefined) {
+      if (
+        contains(n, 'sou brasileiro', 'sou brasileira', 'nasci no brasil', 'sou do brasil')
+      ) {
+        facts['nacionalidade'] = 'brasileiro';
+      } else if (
+        contains(n, 'sou estrangeiro', 'sou estrangeira',
+          'nao sou brasileiro', 'nao sou brasileira', 'sou de outro pais', 'sou imigrante')
+      ) {
+        facts['nacionalidade'] = 'estrangeiro';
+      } else if (contains(n, 'naturalizado', 'naturalizada', 'naturalizacao')) {
+        facts['nacionalidade'] = 'naturalizado';
+      }
+    }
   }
 
   // Confirmação contextual de RNM — 3 camadas (específico→explícito→genérico) (T9.16A/T9.26/T9.27)
@@ -340,7 +359,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
   }
 
   // estado_civil — keywords específicas (apenas quando contextual não resolveu)
-  if (facts['estado_civil'] === undefined) {
+  if (facts['estado_civil'] === undefined && pendingObjective !== 'coletar_estado_civil_p3') {
     if (contains(n, 'sou solteiro', 'sou solteira', 'estou solteiro', 'estou solteira')) {
       facts['estado_civil'] = 'solteiro';
     } else if (
