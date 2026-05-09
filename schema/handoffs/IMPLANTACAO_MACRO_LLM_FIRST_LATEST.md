@@ -1,5 +1,52 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.27 — 4 fixes residuais E2E: renda flexivel, estado_civil_p3 discovery, rnm 3-tier, alternativa_rnm granular (2026-05-09)
+
+**Tipo**: PR-IMPL / correcao_incidental / frente T9
+**Branch**: fix/t9.27-residuais-e2e
+**PR**: aberta — aguardando merge Vasques
+**Commit**: bd1b94d
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.26 (PR #263, aberta) — captura cross-stage
+**Próximo passo autorizado T9**: Vasques merge PR T9.27 → Repetir E2E completo (C1-C8)
+
+### PROBLEMAS RESOLVIDOS
+
+1. **renda_principal não aceita número puro** — `extractRenda("2500")` retornava null. `parseRendaFlexivel` adicionada com suporte a: extensos ("três mil", "três mil e quinhentos"), número puro (2500-100000), notação k ("3k"). Substitui `extractRenda` nos dois call-sites de `renda_principal`.
+
+2. **estado_civil_p3 não capturado em discovery** — quando stage ainda é `discovery` e pendingObjective é `coletar_estado_civil_p3`, não havia bloco de captura. Bloco adicionado em `extractDiscovery` com guard `=== undefined` + 2 pendingObjectives.
+
+3. **rnm_valido com ordenação plana** — "Sim tenho mas tem validade" poderia retornar `true` se "sim" ou "tenho" fossem checados antes de "tem validade". Reescrito com 4 camadas: específico negativo → explícito negativo → específico positivo → genérico.
+
+4. **alternativa_rnm sem granularidade** — E2E C6 "Nao tenho familiar brasileiro" esperava `sem_familiar_brasileiro` mas código emitia `sem_alternativa`. 5 valores distintos implementados com negações específicas checadas antes das genéricas.
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.27-residuais-e2e
+- Commit: `bd1b94d`
+- Discovery doc: `docs/diagnostics/FUNIL-QUALIFICACAO/T9.27-DESCOBERTA.md`
+- Review doc: `docs/diagnostics/FUNIL-QUALIFICACAO/PR-T9.27-review.md`
+- 2 arquivos modificados: `text-extractor.ts`, `text-extractor-smoke.ts`
+- EXTENSOS maps + `parseRendaFlexivel` inseridos antes de `extractQualificationEligibility`
+- Zero diff fora do escopo
+
+### SMOKE TESTS
+
+`smoke:core:text-extractor` **118/118 PASS** (era 111)
+CTX31: "2500" puro → renda_principal=2500
+CTX32: "tres mil" extenso → 3000
+CTX33: "tres mil e quinhentos" → 3500
+CTX34: "Nao tenho familiar" + verificar_alternativa_rnm → sem_familiar_brasileiro
+CTX34b: "solteiro" + coletar_estado_civil_p3 + discovery → estado_civil undefined (sem vazamento)
+CTX35: "solteiro" + coletar_estado_civil_p3 + discovery → estado_civil_p3=solteiro
+CTX36: "Sim tenho mas tem validade" → rnm_valido=false (camada1 específica vence)
+
+### ROLLBACK
+
+`git revert bd1b94d` — reverte apenas text-extractor.ts e smoke.
+
+---
+
 ## T9.26 — Captura cross-stage regime_trabalho/renda_principal + rnm negativas-primeiro + estado_civil_p3 semantic (2026-05-08)
 
 **Tipo**: PR-IMPL / correcao_incidental / frente T9
