@@ -152,6 +152,9 @@ if (Test-Fact $facts "nacionalidade" "brasileiro" "C1") { $passes++ } else { $fa
 if (Test-Fact $facts "estado_civil" "solteiro" "C1") { $passes++ } else { $fails++ }
 if (Test-Fact $facts "processo" "solo" "C1") { $passes++ } else { $fails++ }
 if (Test-Fact $facts "regime_trabalho" "clt" "C1") { $passes++ } else { $fails++ }
+if (Test-Fact $facts "renda_principal" "4500" "C1") { $passes++ } else { $fails++ }
+if (Test-Fact $facts "customer_goal" "comprar_imovel" "C1") { $passes++ } else { $fails++ }
+if (Test-Fact $facts "conhece_mcmv" "True" "C1") { $passes++ } else { $fails++ }
 
 # ===========================================
 # CENARIO 2 - Casado civil - processo conjunto
@@ -182,6 +185,8 @@ $facts2 = Get-LeadFacts -WaId $WaId_C2
 
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts2 "estado_civil" "casado_civil" "C2") { $passes++ } else { $fails++ }
+if (Test-Fact $facts2 "nome_completo" "Carlos Silva" "C2") { $passes++ } else { $fails++ }
+if (Test-Fact $facts2 "nacionalidade" "brasileiro" "C2") { $passes++ } else { $fails++ }
 
 # ===========================================
 # CENARIO 3 - Composicao familiar simples (mae solteira)
@@ -219,6 +224,10 @@ if (Test-Fact $facts3 "estado_civil" "solteiro" "C3") { $passes++ } else { $fail
 if (Test-Fact $facts3 "processo" "composicao_familiar" "C3") { $passes++ } else { $fails++ }
 if (Test-Fact $facts3 "composition_actor" "mae" "C3") { $passes++ } else { $fails++ }
 if (Test-Fact $facts3 "estado_civil_p3" "solteiro" "C3") { $passes++ } else { $fails++ }
+if (Test-Fact $facts3 "nome_completo" "Marta Costa" "C3") { $passes++ } else { $fails++ }
+if (Test-Fact $facts3 "nacionalidade" "brasileiro" "C3") { $passes++ } else { $fails++ }
+if (Test-Fact $facts3 "regime_trabalho" "clt" "C3") { $passes++ } else { $fails++ }
+if (Test-Fact $facts3 "renda_principal" "3500" "C3") { $passes++ } else { $fails++ }
 
 # ===========================================
 # CENARIO 4 - Composicao com mae CASADA CIVIL (P3 cascading)
@@ -252,6 +261,10 @@ $facts4 = Get-LeadFacts -WaId $WaId_C4
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts4 "composition_actor" "mae" "C4") { $passes++ } else { $fails++ }
 if (Test-Fact $facts4 "estado_civil_p3" "casado_civil" "C4") { $passes++ } else { $fails++ }
+if (Test-Fact $facts4 "nome_completo" "Pedro Lima" "C4") { $passes++ } else { $fails++ }
+if (Test-Fact $facts4 "nacionalidade" "brasileiro" "C4") { $passes++ } else { $fails++ }
+if (Test-Fact $facts4 "estado_civil" "solteiro" "C4") { $passes++ } else { $fails++ }
+if (Test-Fact $facts4 "processo" "composicao_familiar" "C4") { $passes++ } else { $fails++ }
 
 # ===========================================
 # CENARIO 5 - Estrangeiro com RNM indeterminado
@@ -282,6 +295,7 @@ $facts5 = Get-LeadFacts -WaId $WaId_C5
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts5 "nacionalidade" "estrangeiro" "C5") { $passes++ } else { $fails++ }
 if (Test-Fact $facts5 "rnm_valido" "True" "C5") { $passes++ } else { $fails++ }
+if (Test-Fact $facts5 "nome_completo" "Jean Pierre" "C5") { $passes++ } else { $fails++ }
 
 # ===========================================
 # CENARIO 6 - Estrangeiro sem RNM, sem familiar brasileiro
@@ -313,6 +327,8 @@ $facts6 = Get-LeadFacts -WaId $WaId_C6
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts6 "nacionalidade" "estrangeiro" "C6") { $passes++ } else { $fails++ }
 if (Test-Fact $facts6 "rnm_valido" "False" "C6") { $passes++ } else { $fails++ }
+if (Test-Fact $facts6 "nome_completo" "Luigi Rossi" "C6") { $passes++ } else { $fails++ }
+if (Test-Fact $facts6 "alternativa_rnm" "sem_familiar_brasileiro" "C6") { $passes++ } else { $fails++ }
 
 # ===========================================
 # CENARIO 7 - Autonomo com IR
@@ -347,6 +363,11 @@ $facts7 = Get-LeadFacts -WaId $WaId_C7
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts7 "regime_trabalho" "autonomo" "C7") { $passes++ } else { $fails++ }
 if (Test-Fact $facts7 "autonomo_tem_ir" "True" "C7") { $passes++ } else { $fails++ }
+if (Test-Fact $facts7 "nome_completo" "Ana Silva" "C7") { $passes++ } else { $fails++ }
+if (Test-Fact $facts7 "nacionalidade" "brasileiro" "C7") { $passes++ } else { $fails++ }
+if (Test-Fact $facts7 "estado_civil" "solteiro" "C7") { $passes++ } else { $fails++ }
+if (Test-Fact $facts7 "processo" "solo" "C7") { $passes++ } else { $fails++ }
+if (Test-Fact $facts7 "renda_principal" "5000" "C7") { $passes++ } else { $fails++ }
 
 # ===========================================
 # CENARIO 8 - Renda baixa solo (<= 3k)
@@ -380,6 +401,10 @@ $facts8 = Get-LeadFacts -WaId $WaId_C8
 Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts8 "regime_trabalho" "informal" "C8") { $passes++ } else { $fails++ }
 if (Test-Fact $facts8 "renda_principal" "2500" "C8") { $passes++ } else { $fails++ }
+if (Test-Fact $facts8 "nome_completo" "Joao Souza" "C8") { $passes++ } else { $fails++ }
+if (Test-Fact $facts8 "nacionalidade" "brasileiro" "C8") { $passes++ } else { $fails++ }
+if (Test-Fact $facts8 "estado_civil" "solteiro" "C8") { $passes++ } else { $fails++ }
+if (Test-Fact $facts8 "processo" "solo" "C8") { $passes++ } else { $fails++ }
 
 # ===========================================
 # RESULTADO FINAL
