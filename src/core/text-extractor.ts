@@ -164,22 +164,29 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     facts['nacionalidade'] = 'naturalizado';
   }
 
-  // Confirmação contextual de RNM — negativas primeiro: "Nao tenho" contém "tenho" (T9.16A/T9.26)
+  // Confirmação contextual de RNM — 3 camadas (específico→explícito→genérico) (T9.16A/T9.26/T9.27)
   if (facts['rnm_valido'] === undefined) {
     if (
       pendingObjective === 'perguntar_rnm_e_validade' ||
       pendingObjective === 'Perguntar se o cliente possui RNM (Registro Nacional Migratório) por prazo indeterminado. Deixar claro que apenas RNM por prazo indeterminado é aceito pelo programa MCMV — RNM com data de validade não é permitido, independente de estar vigente.'
     ) {
-      if (
-        contains(n, 'nao tenho', 'nao possuo', 'nao', 'tem validade',
-          'com validade', 'vence', 'expira', 'prazo determinado')
-      ) {
+      // camada 1: negativo específico — RNM com prazo/validade
+      if (contains(n, 'tem validade', 'com validade', 'vence', 'expira', 'prazo determinado')) {
         facts['rnm_valido'] = false;
+      // camada 2: negação explícita — "nao tenho", "nao possuo"
+      } else if (contains(n, 'nao tenho', 'nao possuo')) {
+        facts['rnm_valido'] = false;
+      // camada 3: positivo específico — prazo indeterminado e equivalentes
       } else if (
-        contains(n, 'sim', 'tenho', 'possuo', 'prazo indeterminado', 'indeterminado',
-          'sem prazo', 'permanente', 'por tempo indeterminado')
+        contains(n, 'prazo indeterminado', 'indeterminado', 'sem prazo',
+          'permanente', 'por tempo indeterminado')
       ) {
         facts['rnm_valido'] = true;
+      // camada 4: genérico — "sim"/"tenho" positivo, "nao" negativo
+      } else if (contains(n, 'sim', 'tenho', 'possuo')) {
+        facts['rnm_valido'] = true;
+      } else if (contains(n, 'nao')) {
+        facts['rnm_valido'] = false;
       }
     }
   }
@@ -197,25 +204,42 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     }
   }
 
-  // alternativa_rnm — quando RNM é inválido, verificar se tem cônjuge/familiar brasileiro (T9.16B)
-  if (pendingObjective === 'verificar_alternativa_rnm') {
+  // alternativa_rnm — quando RNM é inválido, verificar se tem cônjuge/familiar brasileiro (T9.16B/T9.27)
+  if (facts['alternativa_rnm'] === undefined) {
     if (
-      contains(n, 'nao tenho', 'nao tem', 'ninguem', 'sem alternativa', 'nenhum')
+      pendingObjective === 'verificar_alternativa_rnm' ||
+      pendingObjective === 'Informar ao cliente que o RNM com data de validade não é aceito pelo programa MCMV (financiamento de até 35 anos requer prazo indeterminado). Perguntar se possui cônjuge ou familiar brasileiro que possa fazer o financiamento, pois nesse caso é possível seguir o processo no nome dessa pessoa.'
     ) {
-      facts['alternativa_rnm'] = 'sem_alternativa';
-    } else if (
-      contains(n, 'esposa', 'marido', 'conjuge', 'companheiro', 'companheira',
-        'mae', 'ma', 'pai', 'irmao', 'irma', 'familiar', 'parente', 'brasileiro')
-    ) {
-      facts['alternativa_rnm'] = 'tem_familiar_brasileiro';
+      // negativo específico: sem familiar
+      if (contains(n, 'nao tenho familiar', 'nao tenho parente', 'sem familiar')) {
+        facts['alternativa_rnm'] = 'sem_familiar_brasileiro';
+      // negativo específico: sem cônjuge
+      } else if (
+        contains(n, 'nao tenho conjuge', 'nao tenho esposa', 'nao tenho marido',
+          'nao tenho companheiro', 'nao tenho companheira')
+      ) {
+        facts['alternativa_rnm'] = 'sem_conjuge_brasileiro';
+      // negativo genérico
+      } else if (contains(n, 'nao tenho', 'nao tem', 'ninguem', 'sem alternativa', 'nenhum')) {
+        facts['alternativa_rnm'] = 'sem_alternativa';
+      // positivo: cônjuge
+      } else if (
+        contains(n, 'esposa', 'marido', 'conjuge', 'companheiro', 'companheira')
+      ) {
+        facts['alternativa_rnm'] = 'tem_conjuge_brasileiro';
+      // positivo: familiar
+      } else if (
+        contains(n, 'mae', 'pai', 'irmao', 'irma', 'filho', 'filha', 'familiar', 'parente')
+      ) {
+        facts['alternativa_rnm'] = 'tem_familiar_brasileiro';
+      }
     }
   }
   // Keywords diretas sem contexto — apenas frases específicas para evitar falsos positivos
   if (facts['alternativa_rnm'] === undefined) {
-    if (
-      contains(n, 'minha esposa e brasileira', 'meu marido e brasileiro',
-        'conjuge brasileiro', 'familiar brasileiro', 'parente brasileiro')
-    ) {
+    if (contains(n, 'minha esposa e brasileira', 'meu marido e brasileiro')) {
+      facts['alternativa_rnm'] = 'tem_conjuge_brasileiro';
+    } else if (contains(n, 'conjuge brasileiro', 'familiar brasileiro', 'parente brasileiro')) {
       facts['alternativa_rnm'] = 'tem_familiar_brasileiro';
     }
   }
@@ -260,6 +284,22 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
       else if (contains(n, 'uniao estavel', 'união estável', 'amasiado', 'amasiada')) facts['estado_civil'] = 'uniao_estavel';
       else if (contains(n, 'divorciado', 'divorciada', 'separado', 'separada')) facts['estado_civil'] = 'divorciado';
       else if (contains(n, 'viuvo', 'viúva', 'viuva')) facts['estado_civil'] = 'viuvo';
+    }
+  }
+
+  // estado_civil_p3 contextual em discovery — stage pode ainda ser discovery quando LLM
+  // já perguntou estado civil do familiar (coletar_estado_civil_p3). (T9.27)
+  if (facts['estado_civil_p3'] === undefined) {
+    if (
+      pendingObjective === 'coletar_estado_civil_p3' ||
+      pendingObjective === 'Perguntar qual é o estado civil do familiar ou pessoa que vai entrar na composição. Solteiro(a), casado(a) no civil, união estável ou divorciado(a).'
+    ) {
+      if (contains(n, 'solteiro', 'solteira')) facts['estado_civil_p3'] = 'solteiro';
+      else if (contains(n, 'casado no civil', 'casada no civil', 'casamento civil')) facts['estado_civil_p3'] = 'casado_civil';
+      else if (contains(n, 'casado', 'casada')) facts['estado_civil_p3'] = 'casado_civil';
+      else if (contains(n, 'uniao estavel', 'uniao', 'amasiado', 'amasiada')) facts['estado_civil_p3'] = 'uniao_estavel';
+      else if (contains(n, 'divorciado', 'divorciada', 'separado', 'separada')) facts['estado_civil_p3'] = 'divorciado';
+      else if (contains(n, 'viuvo', 'viuva')) facts['estado_civil_p3'] = 'viuvo';
     }
   }
 
@@ -432,8 +472,8 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
       pendingObjective === 'Perguntar regime de trabalho e renda mensal.' ||
       pendingObjective === 'Perguntar a renda mensal aproximada.'
     ) {
-      const renda = extractRenda(original);
-      if (renda !== null) {
+      const renda = parseRendaFlexivel(original);
+      if (renda !== undefined) {
         facts['renda_principal'] = renda;
       }
     }
@@ -509,8 +549,8 @@ function extractQualificationRenda(n: string, original: string, pendingObjective
   }
 
   // renda_principal — opera no texto original para preservar R$, pontos e vírgulas
-  const renda = extractRenda(original);
-  if (renda !== null) {
+  const renda = parseRendaFlexivel(original);
+  if (renda !== undefined) {
     facts['renda_principal'] = renda;
   }
 
@@ -604,6 +644,76 @@ function parseBrMoney(raw: string): number | null {
 
   if (!isNaN(val) && val >= 100 && val <= 999999) return val;
   return null;
+}
+
+// Mapa de extensos numéricos em português para extração de renda
+const EXTENSOS_MIL: Readonly<Record<string, number>> = {
+  'um': 1, 'dois': 2, 'tres': 3, 'quatro': 4, 'cinco': 5,
+  'seis': 6, 'sete': 7, 'oito': 8, 'nove': 9, 'dez': 10,
+};
+const EXTENSOS_CENTENA: Readonly<Record<string, number>> = {
+  'cem': 100, 'duzentos': 200, 'trezentos': 300, 'quatrocentos': 400,
+  'quinhentos': 500, 'seiscentos': 600, 'setecentos': 700,
+  'oitocentos': 800, 'novecentos': 900,
+};
+
+/**
+ * Parser de renda estendido: aceita R$, "X mil", extensos, número puro e notação k.
+ * Range válido: 500–100000. Retorna undefined se não parsear.
+ */
+function parseRendaFlexivel(original: string): number | undefined {
+  // Normaliza acentos para matching de extensos ("três" → "tres")
+  const tn = original
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // 1. "[word|N] mil e [N|word_centena]" — "três mil e quinhentos", "3 mil e 500"
+  const milEMatch = tn.match(/(?:(\d+(?:[,.]\d+)?)|([a-z]+))\s+mil\s+e\s+(?:(\d+)|([a-z]+))/);
+  if (milEMatch) {
+    const milNum = milEMatch[1]
+      ? parseFloat(milEMatch[1].replace(',', '.'))
+      : (EXTENSOS_MIL[milEMatch[2] ?? ''] ?? NaN);
+    if (!isNaN(milNum)) {
+      let rest = 0;
+      if (milEMatch[3]) rest = parseInt(milEMatch[3], 10);
+      else if (milEMatch[4]) rest = EXTENSOS_CENTENA[milEMatch[4] ?? ''] ?? EXTENSOS_MIL[milEMatch[4] ?? ''] ?? 0;
+      const total = Math.round(milNum * 1000) + rest;
+      if (total >= 500 && total <= 100000) return total;
+    }
+  }
+
+  // 2. "[word] mil" — "três mil", "dois mil" (word extenso sem "e")
+  const milWordMatch = tn.match(/\b([a-z]+)\s+mil\b/);
+  if (milWordMatch) {
+    const milVal = EXTENSOS_MIL[milWordMatch[1]];
+    if (milVal !== undefined) {
+      const total = milVal * 1000;
+      if (total >= 500 && total <= 100000) return total;
+    }
+  }
+
+  // 3. Formatos R$, "N mil" numérico, keyword-preceded (extractRenda existente)
+  const via = extractRenda(original);
+  if (via !== null && via >= 500 && via <= 100000) return via;
+
+  // 4. Número puro: "2500", "4500"
+  const pureMatch = tn.match(/^(\d+)$/);
+  if (pureMatch) {
+    const v = parseInt(pureMatch[1], 10);
+    if (v >= 500 && v <= 100000) return v;
+  }
+
+  // 5. Notação k: "3k", "3,5k"
+  const kMatch = tn.match(/\b(\d+(?:[,.]\d+)?)\s*k\b/);
+  if (kMatch) {
+    const v = Math.round(parseFloat(kMatch[1].replace(',', '.')) * 1000);
+    if (v >= 500 && v <= 100000) return v;
+  }
+
+  return undefined;
 }
 
 function extractQualificationEligibility(n: string): Record<string, unknown> {

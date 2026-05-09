@@ -522,6 +522,53 @@ eq('CTX30: "Ganho R$ 2.000 por mes" + pendingObjective=avancar_para_qualificatio
   )['renda_principal'],
   2000);
 
+// ── T9.27: parseRendaFlexivel — extensos, número puro, notação k ─────────────
+console.log('\n── T9.27: renda flexivel ──');
+
+eq('CTX31: "2500" puro + qualification_renda → renda_principal=2500',
+  extractFactsFromText('2500', 'qualification_renda')['renda_principal'],
+  2500);
+
+eq('CTX32: "tres mil" extenso + qualification_renda → renda_principal=3000',
+  extractFactsFromText('tres mil', 'qualification_renda')['renda_principal'],
+  3000);
+
+eq('CTX33: "tres mil e quinhentos" + qualification_renda → renda_principal=3500',
+  extractFactsFromText('tres mil e quinhentos', 'qualification_renda')['renda_principal'],
+  3500);
+
+eq('CTX34: "Nao tenho familiar" + verificar_alternativa_rnm + discovery → alternativa_rnm=sem_familiar_brasileiro',
+  extractFactsFromText(
+    'Nao tenho familiar',
+    'discovery',
+    'verificar_alternativa_rnm',
+  )['alternativa_rnm'],
+  'sem_familiar_brasileiro');
+
+eq('CTX34b: "solteiro" + coletar_estado_civil_p3 + discovery → estado_civil_p3=solteiro (sem vazar estado_civil)',
+  extractFactsFromText(
+    'solteiro',
+    'discovery',
+    'coletar_estado_civil_p3',
+  )['estado_civil'],
+  undefined);
+
+eq('CTX35: "solteiro" + coletar_estado_civil_p3 + discovery → estado_civil_p3=solteiro',
+  extractFactsFromText(
+    'solteiro',
+    'discovery',
+    'coletar_estado_civil_p3',
+  )['estado_civil_p3'],
+  'solteiro');
+
+eq('CTX36: "tem validade" + perguntar_rnm_e_validade + discovery → rnm_valido=false (camada1 específica)',
+  extractFactsFromText(
+    'Sim tenho mas tem validade',
+    'discovery',
+    'perguntar_rnm_e_validade',
+  )['rnm_valido'],
+  false);
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 
