@@ -1,5 +1,38 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.29 — diagnóstico runtime: pending_objective em log text_extractor.result (2026-05-09)
+
+**Tipo**: PR-DIAG / telemetria / frente T9
+**Branch**: fix/t9.29-diag-pending-objective
+**PR**: aberta — aguardando merge Vasques
+**Commit**: (ver abaixo após push)
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.28 (PR #265, aberta)
+**Próximo passo autorizado T9**: Vasques merge PRs T9.26+T9.27+T9.28+T9.29 → Repetir E2E C1-C8 → wrangler tail confirma pending_objective em runtime
+
+### PROBLEMA RESOLVIDO
+
+`wrangler tail` não mostrava o `pendingObjective` recebido pelo extractor — impossível saber em runtime qual `_next_objective` estava sendo passado ao `extractFactsFromText`. Diagnóstico de C4/C6 em PROD exigia inferência indireta.
+
+### MUDANÇA
+
+`src/meta/canary-pipeline.ts:268` — 2 campos adicionados ao diagLog `text_extractor.result` existente:
+- `pending_objective: pendingObjective ?? null`
+- `pending_objective_length: pendingObjective?.length ?? 0`
+
+Nenhuma lógica alterada. Zero mudança comportamental.
+
+### SMOKE TESTS
+
+`smoke:core:text-extractor` **124/124 PASS** (inalterado)
+`smoke:meta:canary` **41/41 PASS** (inalterado)
+
+### ROLLBACK
+
+Remover os 2 campos do objeto diagLog em `canary-pipeline.ts:268`.
+
+---
+
 ## T9.28 — 3 gaps C4/C6: guard P3 estado_civil, nacionalidade conservadora, normalizeAlternativaRnm (2026-05-09)
 
 **Tipo**: PR-IMPL / correcao_incidental / frente T9

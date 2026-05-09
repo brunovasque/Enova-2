@@ -271,6 +271,8 @@ export async function runCanaryPipeline(
         fact_keys: extractedKeys,
         persisted_facts_count: Object.keys(persistedFacts).length,
         persisted_fact_keys: Object.keys(persistedFacts),
+        pending_objective: pendingObjective ?? null,
+        pending_objective_length: pendingObjective?.length ?? 0,
       });
 
       const factsResult = await getLeadFacts(coreBackend, crmResult.lead_id);
