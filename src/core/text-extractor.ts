@@ -239,6 +239,25 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     }
   }
 
+  // estado_civil contextual em discovery (T9.24)
+  // Reativado após T9.21 ter mudado avancar_para_qualification_civil para perguntar
+  // estado civil (não processo). Stage só muda no próximo turno — precisamos capturar
+  // estado_civil em discovery quando o LLM já perguntou estado civil neste turno.
+  if (facts['estado_civil'] === undefined) {
+    if (
+      pendingObjective === 'Perguntar APENAS o estado civil do cliente: solteiro(a), casado(a) no civil, união estável ou divorciado(a)/viúvo(a). Uma pergunta só. Não perguntar mais nada.' ||
+      pendingObjective === 'avancar_para_qualification_civil' ||
+      pendingObjective === 'coletar_estado_civil'
+    ) {
+      if (contains(n, 'solteiro', 'solteira')) facts['estado_civil'] = 'solteiro';
+      else if (contains(n, 'casado no civil', 'casada no civil', 'casamento civil')) facts['estado_civil'] = 'casado_civil';
+      else if (contains(n, 'casado', 'casada')) facts['estado_civil'] = 'casado_civil';
+      else if (contains(n, 'uniao estavel', 'união estável', 'amasiado', 'amasiada')) facts['estado_civil'] = 'uniao_estavel';
+      else if (contains(n, 'divorciado', 'divorciada', 'separado', 'separada')) facts['estado_civil'] = 'divorciado';
+      else if (contains(n, 'viuvo', 'viúva', 'viuva')) facts['estado_civil'] = 'viuvo';
+    }
+  }
+
   return facts;
 }
 
