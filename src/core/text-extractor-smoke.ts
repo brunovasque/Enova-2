@@ -569,6 +569,56 @@ eq('CTX36: "tem validade" + perguntar_rnm_e_validade + discovery → rnm_valido=
   )['rnm_valido'],
   false);
 
+// ── T9.28: guard P3, nacionalidade conservadora, normalizeAlternativaRnm ──────
+console.log('\n── T9.28: gaps C4/C6 ──');
+
+eq('CTX37a: "Casada no civil" + coletar_estado_civil_p3 + qualification_civil → estado_civil_p3=casado_civil',
+  extractFactsFromText(
+    'Casada no civil',
+    'qualification_civil',
+    'coletar_estado_civil_p3',
+  )['estado_civil_p3'],
+  'casado_civil');
+
+eq('CTX37b: "Casada no civil" + coletar_estado_civil_p3 + qualification_civil → estado_civil=undefined (sem vazar)',
+  extractFactsFromText(
+    'Casada no civil',
+    'qualification_civil',
+    'coletar_estado_civil_p3',
+  )['estado_civil'],
+  undefined);
+
+eq('CTX38a: "Nao tenho familiar brasileiro" + verificar_alternativa_rnm + discovery → alternativa_rnm=sem_familiar_brasileiro',
+  extractFactsFromText(
+    'Nao tenho familiar brasileiro',
+    'discovery',
+    'verificar_alternativa_rnm',
+  )['alternativa_rnm'],
+  'sem_familiar_brasileiro');
+
+eq('CTX38b: "Nao tenho familiar brasileiro" + verificar_alternativa_rnm + discovery → nacionalidade=undefined (sem capturar)',
+  extractFactsFromText(
+    'Nao tenho familiar brasileiro',
+    'discovery',
+    'verificar_alternativa_rnm',
+  )['nacionalidade'],
+  undefined);
+
+eq('CTX39: "Sou brasileiro" sem pendingObjective + discovery → nacionalidade=brasileiro (fallback conservador)',
+  extractFactsFromText(
+    'Sou brasileiro',
+    'discovery',
+  )['nacionalidade'],
+  'brasileiro');
+
+eq('CTX40: "Brasileiro" + perguntar_nacionalidade + discovery → nacionalidade=brasileiro (contextual)',
+  extractFactsFromText(
+    'Brasileiro',
+    'discovery',
+    'perguntar_nacionalidade',
+  )['nacionalidade'],
+  'brasileiro');
+
 // ── segurança ─────────────────────────────────────────────────────────────────
 console.log('\n── segurança ──');
 
