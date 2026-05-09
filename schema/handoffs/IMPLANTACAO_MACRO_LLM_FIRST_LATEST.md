@@ -1,5 +1,54 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T9.24 — Reativar captura estado_civil em discovery com pendingObjective novo (2026-05-09)
+
+**Tipo**: PR-IMPL / correcao_incidental / frente T9
+**Branch**: fix/t9.24-estado-civil-discovery-novo
+**PR**: #262 — aberta, aguardando merge Vasques
+**Commit**: 8451866
+**Contrato ativo T9**: schema/contracts/active/CONTRATO_T9_LLM_FUNIL_SUPABASE_RUNTIME.md (T9 aberto)
+**PR anterior**: T9.23 (PR #260, mergeada) — remover estado_civil em discovery (loop)
+**Próximo passo autorizado T9**: Vasques merge PR #262 → Repetir T9.15B-PROVA-REAL-CANARY com estado_civil capturado em discovery
+
+### PROBLEMA RESOLVIDO
+
+T9.23 removeu o bloco de `estado_civil` em `extractDiscovery` porque os pendingObjectives eram anteriores a T9.21. Após T9.21, `avancar_para_qualification_civil` no semantic mapper passa a emitir instrução de perguntar estado civil (não processo). Como o stage muda apenas no próximo turno, o extractor precisava capturar `estado_civil` em discovery quando o LLM já fez a pergunta neste turno.
+
+### ESTADO ENTREGUE
+
+- Branch: fix/t9.24-estado-civil-discovery-novo
+- Commit principal: `8451866`
+- Arquivo de review: `docs/diagnostics/FUNIL-QUALIFICACAO/PR-T9.24-review.md`
+- 2 arquivos modificados: `text-extractor.ts`, `text-extractor-smoke.ts`
+- Zero diff fora do escopo
+
+### O que esta PR fez
+
+**src/core/text-extractor.ts** — novo bloco em `extractDiscovery` após bloco processo:
+- Guard `facts['estado_civil'] === undefined` obrigatório
+- 3 pendingObjectives: semântico T9.21 (full string), opaco `avancar_para_qualification_civil`, direto `coletar_estado_civil`
+- 6 ramos: solteiro/a → casado no civil (antes de casado) → casado/a → uniao_estavel → divorciado/separado → viuvo
+
+**src/core/text-extractor-smoke.ts** — CTX24:
+- `'Solteiro'` + pendingObjective=`'Perguntar APENAS o estado civil...'` + stage=`discovery` → `estado_civil='solteiro'`
+
+### Testes / Evidências
+
+| Suite | Resultado |
+|-------|-----------|
+| `npm run smoke:core:text-extractor` | **105/105 PASS** (era 104) |
+| `npm run smoke` | **PASS** |
+| `npm run smoke:meta:canary` | **41/41 PASS** |
+| `npm run prove:t9.15h-facts-persistence` | **34/34 PASS** |
+
+### Rollback
+
+```bash
+git revert 8451866
+```
+
+---
+
 ## T9.16B — RNM Alternativa + Greeting para topo vazio (2026-05-05)
 
 **Tipo**: PR-IMPL / contratual / frente T9
