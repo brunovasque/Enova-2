@@ -184,6 +184,204 @@ Write-Host "`n  Validando facts finais:"
 if (Test-Fact $facts2 "estado_civil" "casado_civil" "C2") { $passes++ } else { $fails++ }
 
 # ===========================================
+# CENARIO 3 - Composicao familiar simples (mae solteira)
+# ===========================================
+# Testa: composition_actor + estado_civil_p3 (sem P3 cascading)
+$WaId_C3 = "554185260003"
+Write-Host "`n==========================================="
+Write-Host "CENARIO 3 - Composicao com mae solteira"
+Write-Host "==========================================="
+Reset-LeadContext -WaId $WaId_C3
+Start-Sleep -Seconds 3
+
+$turnos3 = @(
+  @{ msg = "Oi" },
+  @{ msg = "Sim" },
+  @{ msg = "Marta Costa" },
+  @{ msg = "Brasileiro" },
+  @{ msg = "Solteiro" },
+  @{ msg = "Com minha mae" },
+  @{ msg = "Solteira" },
+  @{ msg = "CLT" },
+  @{ msg = "3500" }
+)
+
+foreach ($t in $turnos3) {
+  Write-Host "`n  -> Enviando: '$($t.msg)'"
+  Send-Turn -WaId $WaId_C3 -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
+  Start-Sleep -Seconds $TurnDelay
+}
+
+Start-Sleep -Seconds 2
+$facts3 = Get-LeadFacts -WaId $WaId_C3
+Write-Host "`n  Validando facts finais:"
+if (Test-Fact $facts3 "estado_civil" "solteiro" "C3") { $passes++ } else { $fails++ }
+if (Test-Fact $facts3 "processo" "composicao_familiar" "C3") { $passes++ } else { $fails++ }
+if (Test-Fact $facts3 "composition_actor" "mae" "C3") { $passes++ } else { $fails++ }
+if (Test-Fact $facts3 "estado_civil_p3" "solteiro" "C3") { $passes++ } else { $fails++ }
+
+# ===========================================
+# CENARIO 4 - Composicao com mae CASADA CIVIL (P3 cascading)
+# ===========================================
+# Testa: P3 cascading - conjuge da mae entra obrigatoriamente
+$WaId_C4 = "554185260004"
+Write-Host "`n==========================================="
+Write-Host "CENARIO 4 - Composicao com mae casada civil (P3)"
+Write-Host "==========================================="
+Reset-LeadContext -WaId $WaId_C4
+Start-Sleep -Seconds 3
+
+$turnos4 = @(
+  @{ msg = "Oi" },
+  @{ msg = "Sim" },
+  @{ msg = "Pedro Lima" },
+  @{ msg = "Brasileiro" },
+  @{ msg = "Solteiro" },
+  @{ msg = "Com minha mae" },
+  @{ msg = "Casada no civil" }
+)
+
+foreach ($t in $turnos4) {
+  Write-Host "`n  -> Enviando: '$($t.msg)'"
+  Send-Turn -WaId $WaId_C4 -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
+  Start-Sleep -Seconds $TurnDelay
+}
+
+Start-Sleep -Seconds 2
+$facts4 = Get-LeadFacts -WaId $WaId_C4
+Write-Host "`n  Validando facts finais:"
+if (Test-Fact $facts4 "composition_actor" "mae" "C4") { $passes++ } else { $fails++ }
+if (Test-Fact $facts4 "estado_civil_p3" "casado_civil" "C4") { $passes++ } else { $fails++ }
+
+# ===========================================
+# CENARIO 5 - Estrangeiro com RNM indeterminado
+# ===========================================
+$WaId_C5 = "554185260005"
+Write-Host "`n==========================================="
+Write-Host "CENARIO 5 - Estrangeiro com RNM indeterminado"
+Write-Host "==========================================="
+Reset-LeadContext -WaId $WaId_C5
+Start-Sleep -Seconds 3
+
+$turnos5 = @(
+  @{ msg = "Oi" },
+  @{ msg = "Sim" },
+  @{ msg = "Jean Pierre" },
+  @{ msg = "Estrangeiro" },
+  @{ msg = "Sim, tenho RNM por prazo indeterminado" }
+)
+
+foreach ($t in $turnos5) {
+  Write-Host "`n  -> Enviando: '$($t.msg)'"
+  Send-Turn -WaId $WaId_C5 -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
+  Start-Sleep -Seconds $TurnDelay
+}
+
+Start-Sleep -Seconds 2
+$facts5 = Get-LeadFacts -WaId $WaId_C5
+Write-Host "`n  Validando facts finais:"
+if (Test-Fact $facts5 "nacionalidade" "estrangeiro" "C5") { $passes++ } else { $fails++ }
+if (Test-Fact $facts5 "rnm_valido" "True" "C5") { $passes++ } else { $fails++ }
+
+# ===========================================
+# CENARIO 6 - Estrangeiro sem RNM, sem familiar brasileiro
+# ===========================================
+$WaId_C6 = "554185260006"
+Write-Host "`n==========================================="
+Write-Host "CENARIO 6 - Estrangeiro sem RNM (encerramento porta aberta)"
+Write-Host "==========================================="
+Reset-LeadContext -WaId $WaId_C6
+Start-Sleep -Seconds 3
+
+$turnos6 = @(
+  @{ msg = "Oi" },
+  @{ msg = "Sim" },
+  @{ msg = "Luigi Rossi" },
+  @{ msg = "Estrangeiro" },
+  @{ msg = "Nao tenho RNM" },
+  @{ msg = "Nao tenho familiar brasileiro" }
+)
+
+foreach ($t in $turnos6) {
+  Write-Host "`n  -> Enviando: '$($t.msg)'"
+  Send-Turn -WaId $WaId_C6 -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
+  Start-Sleep -Seconds $TurnDelay
+}
+
+Start-Sleep -Seconds 2
+$facts6 = Get-LeadFacts -WaId $WaId_C6
+Write-Host "`n  Validando facts finais:"
+if (Test-Fact $facts6 "nacionalidade" "estrangeiro" "C6") { $passes++ } else { $fails++ }
+if (Test-Fact $facts6 "rnm_valido" "False" "C6") { $passes++ } else { $fails++ }
+
+# ===========================================
+# CENARIO 7 - Autonomo com IR
+# ===========================================
+$WaId_C7 = "554185260007"
+Write-Host "`n==========================================="
+Write-Host "CENARIO 7 - Autonomo com IR"
+Write-Host "==========================================="
+Reset-LeadContext -WaId $WaId_C7
+Start-Sleep -Seconds 3
+
+$turnos7 = @(
+  @{ msg = "Oi" },
+  @{ msg = "Sim" },
+  @{ msg = "Ana Silva" },
+  @{ msg = "Brasileiro" },
+  @{ msg = "Solteira" },
+  @{ msg = "Sozinha" },
+  @{ msg = "Autonomo" },
+  @{ msg = "5000" },
+  @{ msg = "Sim, declaro IR" }
+)
+
+foreach ($t in $turnos7) {
+  Write-Host "`n  -> Enviando: '$($t.msg)'"
+  Send-Turn -WaId $WaId_C7 -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
+  Start-Sleep -Seconds $TurnDelay
+}
+
+Start-Sleep -Seconds 2
+$facts7 = Get-LeadFacts -WaId $WaId_C7
+Write-Host "`n  Validando facts finais:"
+if (Test-Fact $facts7 "regime_trabalho" "autonomo" "C7") { $passes++ } else { $fails++ }
+if (Test-Fact $facts7 "autonomo_tem_ir" "True" "C7") { $passes++ } else { $fails++ }
+
+# ===========================================
+# CENARIO 8 - Renda baixa solo (<= 3k)
+# ===========================================
+$WaId_C8 = "554185260008"
+Write-Host "`n==========================================="
+Write-Host "CENARIO 8 - Renda baixa solo"
+Write-Host "==========================================="
+Reset-LeadContext -WaId $WaId_C8
+Start-Sleep -Seconds 3
+
+$turnos8 = @(
+  @{ msg = "Oi" },
+  @{ msg = "Sim" },
+  @{ msg = "Joao Souza" },
+  @{ msg = "Brasileiro" },
+  @{ msg = "Solteiro" },
+  @{ msg = "Sozinho" },
+  @{ msg = "Informal" },
+  @{ msg = "2500" }
+)
+
+foreach ($t in $turnos8) {
+  Write-Host "`n  -> Enviando: '$($t.msg)'"
+  Send-Turn -WaId $WaId_C8 -PhoneNumberId $PhoneNumberId -Message $t.msg -WorkerUrl $WorkerUrl | Out-Null
+  Start-Sleep -Seconds $TurnDelay
+}
+
+Start-Sleep -Seconds 2
+$facts8 = Get-LeadFacts -WaId $WaId_C8
+Write-Host "`n  Validando facts finais:"
+if (Test-Fact $facts8 "regime_trabalho" "informal" "C8") { $passes++ } else { $fails++ }
+if (Test-Fact $facts8 "renda_principal" "2500" "C8") { $passes++ } else { $fails++ }
+
+# ===========================================
 # RESULTADO FINAL
 # ===========================================
 Write-Host "`n==========================================="
