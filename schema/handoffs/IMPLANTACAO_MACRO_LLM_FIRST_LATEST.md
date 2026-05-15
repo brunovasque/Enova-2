@@ -1,5 +1,15 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## 2026-05-15 — Fix PII leak T11.1 (prod)
+
+**Branch:** fix/t11.1-pii-leak-diag-reset
+**Origem:** cherry-pick de bd5a2f7 do enova-2-staging
+**Identificado por:** Codex review na PR #1 do staging
+**Severidade:** alta técnica, sem impacto operacional (sem cliente em prod)
+**Fix:** Opção 1 — reset defensivo de _diag no início de extractFactsFromText
+**Smoke regressivo:** S-DIAG-REGRESSION (5 checks)
+**Próximo:** merge desta PR → T11.2
+
 ## T11.1 — telemetria estrutural completa (2026-05-09)
 
 **Tipo**: PR-DIAG / telemetria estrutural / frente T11
