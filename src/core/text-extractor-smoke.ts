@@ -2,7 +2,7 @@
 // Valida que extractFactsFromText extrai corretamente por stage.
 // Exit 0 = todos os checks passaram.
 
-import { extractFactsFromText } from './text-extractor.ts';
+import { extractFactsFromText, getLastExtractionDiagnostics } from './text-extractor.ts';
 
 let pass = 0;
 let fail = 0;
@@ -650,6 +650,47 @@ console.error = origErr;
 const joined = outputLines.join('\n');
 check('S9: não vaza OPENAI_API_KEY no output', !joined.includes('OPENAI_API_KEY'));
 check('S10: não vaza serviceRoleKey no output', !joined.includes('serviceRoleKey'));
+
+// ── S-DIAG-REGRESSION — cross-lead _diag stale prevention ────────────────────
+console.log('\n── S-DIAG-REGRESSION: cross-lead _diag stale prevention ──');
+{
+  // Lead A — texto válido: popula _diag com dados reais
+  extractFactsFromText('quero saber sobre o mcmv', 'discovery');
+  const diagA = getLastExtractionDiagnostics();
+
+  // Sanidade: Lead A deve ter populado _diag.normalized
+  check(
+    'S-DIAG-1: Lead A popula diag.normalized com texto normalizado',
+    diagA.normalized !== '' && diagA.normalized.length > 0,
+    `normalized: "${diagA.normalized}"`,
+  );
+
+  // Lead B — texto vazio (early return): _diag deve ser resetado antes do return
+  extractFactsFromText('', 'discovery');
+  const diagB = getLastExtractionDiagnostics();
+
+  // Crítico: Lead B NÃO pode carregar dados de Lead A
+  check(
+    'S-DIAG-2: Lead B não vaza normalized de Lead A (PII leak prevention)',
+    diagB.normalized === '',
+    `normalized: "${diagB.normalized}" (deve ser "")`,
+  );
+  check(
+    'S-DIAG-3: Lead B não vaza branch de Lead A',
+    diagB.branch === null,
+    `branch: ${JSON.stringify(diagB.branch)} (deve ser null)`,
+  );
+  check(
+    'S-DIAG-4: Lead B não vaza skipped de Lead A',
+    diagB.skipped.length === 0,
+    `skipped: [${diagB.skipped.join(', ')}] (deve ser [])`,
+  );
+  check(
+    'S-DIAG-5: Lead B não vaza keywords de Lead A',
+    diagB.keywords.length === 0,
+    `keywords: [${diagB.keywords.join(', ')}] (deve ser [])`,
+  );
+}
 
 // ── Resultado ─────────────────────────────────────────────────────────────────
 console.log(`\n=== Resultado: ${pass} PASS | ${fail} FAIL ===\n`);

@@ -877,12 +877,18 @@ export function extractFactsFromText(
   pendingObjective?: string,
 ): Record<string, unknown> {
   try {
+    // Reset defensivo no INÍCIO — previne vazamento de PII cross-lead via _diag stale.
+    // Sem isso, getLastExtractionDiagnostics() retorna dados de uma chamada anterior
+    // quando text é vazio (early return), o que vaza input_text_normalized entre leads.
+    // Ref: T11_1_BUG_INVESTIGATION.md
+    _diag.branch = null; _diag.skipped = []; _diag.keywords = []; _diag.normalized = '';
+
     if (!text || typeof text !== 'string' || !text.trim()) return {};
 
     const n = normalize(text);
     if (!n) return {};
 
-    _diag.branch = null; _diag.skipped = []; _diag.keywords = []; _diag.normalized = n;
+    _diag.normalized = n;
 
     switch (stage) {
       case 'discovery':
