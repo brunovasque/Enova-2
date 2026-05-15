@@ -18,6 +18,27 @@
 import type { StageId } from './types.ts';
 
 // ---------------------------------------------------------------------------
+// Diagnóstico de extração — T11.1
+// ---------------------------------------------------------------------------
+const _diag = {
+  branch: null as string | null,
+  skipped: [] as string[],
+  keywords: [] as string[],
+  normalized: '',
+};
+
+export function getLastExtractionDiagnostics(): {
+  branch: string | null; skipped: string[]; keywords: string[]; normalized: string;
+} {
+  return {
+    branch: _diag.branch,
+    skipped: [..._diag.skipped],
+    keywords: [..._diag.keywords],
+    normalized: _diag.normalized,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Normalização interna
 // ---------------------------------------------------------------------------
 
@@ -86,6 +107,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
   // PRIMEIRO bloco: captura resposta ao greeting antes de qualquer extração por keyword.
   // Guard: nunca sobrescreve customer_goal já capturado por outro mecanismo.
   if (facts['customer_goal'] === undefined && pendingObjective === 'apresentar_e_verificar_conhecimento') {
+    if (_diag.branch === null) _diag.branch = 'discovery.greeting';
     // Negação PRIMEIRO — "não conheço" contém "conheco" como substring; negativo tem prioridade
     if (
       contains(n, 'nao', 'nao conheco', 'nao sei', 'nunca ouvi', 'primeira vez',
@@ -113,6 +135,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
         'o que e o mcmv', 'o que e minha casa', 'saber sobre o programa',
         'quero informacoes', 'quero informacao', 'explica o programa')
     ) {
+      if (_diag.branch === null) _diag.branch = 'discovery.customer_goal_kw';
       facts['customer_goal'] = 'entender_programa';
     } else if (
       !isNegation &&
@@ -141,6 +164,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     ) {
       const nomeMatch = original.match(/(?:sou|me chamo|meu nome[eé é]+|chamo[- ]me)\s+([A-ZÀ-Ú][a-zà-ú]+(?:\s+[A-ZÀ-Ú][a-zà-ú]+)+)/i);
       if (nomeMatch) {
+        if (_diag.branch === null) _diag.branch = 'discovery.nome_ctx';
         facts['nome_completo'] = nomeMatch[1];
       }
     }
@@ -149,6 +173,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
   // nome_completo: heurística conservadora — texto simples que parece um nome próprio
   const nomeCandidate = extractNomeCompletoCandidato(n, original);
   if (nomeCandidate !== null) {
+    if (_diag.branch === null) _diag.branch = 'discovery.nome_heuristica';
     facts['nome_completo'] = nomeCandidate;
   }
 
@@ -156,6 +181,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
   // "Nao tenho familiar brasileiro" quando pendingObjective=verificar_alternativa_rnm)
   if (facts['nacionalidade'] === undefined) {
     if (pendingObjective === 'perguntar_nacionalidade') {
+      if (_diag.branch === null) _diag.branch = 'discovery.nacionalidade_ctx';
       if (contains(n, 'brasileiro', 'brasileira', 'nasci no brasil', 'sou do brasil')) {
         facts['nacionalidade'] = 'brasileiro';
       } else if (
@@ -171,6 +197,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
       if (
         contains(n, 'sou brasileiro', 'sou brasileira', 'nasci no brasil', 'sou do brasil')
       ) {
+        if (_diag.branch === null) _diag.branch = 'discovery.nacionalidade_kw';
         facts['nacionalidade'] = 'brasileiro';
       } else if (
         contains(n, 'sou estrangeiro', 'sou estrangeira',
@@ -189,8 +216,10 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
       pendingObjective === 'perguntar_rnm_e_validade' ||
       pendingObjective === 'Perguntar se o cliente possui RNM (Registro Nacional Migratório) por prazo indeterminado. Deixar claro que apenas RNM por prazo indeterminado é aceito pelo programa MCMV — RNM com data de validade não é permitido, independente de estar vigente.'
     ) {
+      if (_diag.branch === null) _diag.branch = 'discovery.rnm_valido_ctx';
       // camada 1: negativo específico — RNM com prazo/validade
       if (contains(n, 'tem validade', 'com validade', 'vence', 'expira', 'prazo determinado')) {
+        _diag.keywords.push('rnm:tem_validade');
         facts['rnm_valido'] = false;
       // camada 2: negação explícita — "nao tenho", "nao possuo"
       } else if (contains(n, 'nao tenho', 'nao possuo')) {
@@ -215,6 +244,8 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
     if (
       contains(n, 'sem rnm', 'nao tenho rnm', 'rnm invalido', 'rnm vencido', 'rnm expirado')
     ) {
+      if (_diag.branch === null) _diag.branch = 'discovery.rnm_valido_kw';
+      _diag.keywords.push('rnm:sem_rnm');
       facts['rnm_valido'] = false;
     } else if (
       contains(n, 'rnm valido', 'rnm ok', 'tenho rnm', 'meu rnm', 'registro valido', 'rnm em dia')
@@ -229,8 +260,10 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
       pendingObjective === 'verificar_alternativa_rnm' ||
       pendingObjective === 'Informar ao cliente que o RNM com data de validade não é aceito pelo programa MCMV (financiamento de até 35 anos requer prazo indeterminado). Perguntar se possui cônjuge ou familiar brasileiro que possa fazer o financiamento, pois nesse caso é possível seguir o processo no nome dessa pessoa.'
     ) {
+      if (_diag.branch === null) _diag.branch = 'discovery.alternativa_rnm_ctx';
       // negativo específico: sem familiar
       if (contains(n, 'nao tenho familiar', 'nao tenho parente', 'sem familiar')) {
+        _diag.keywords.push('alt:sem_familiar');
         facts['alternativa_rnm'] = 'sem_familiar_brasileiro';
       // negativo específico: sem cônjuge
       } else if (
@@ -257,6 +290,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
   // Keywords diretas sem contexto — apenas frases específicas para evitar falsos positivos
   if (facts['alternativa_rnm'] === undefined) {
     if (contains(n, 'minha esposa e brasileira', 'meu marido e brasileiro')) {
+      if (_diag.branch === null) _diag.branch = 'discovery.alternativa_rnm_kw';
       facts['alternativa_rnm'] = 'tem_conjuge_brasileiro';
     } else if (contains(n, 'conjuge brasileiro', 'familiar brasileiro', 'parente brasileiro')) {
       facts['alternativa_rnm'] = 'tem_familiar_brasileiro';
@@ -271,6 +305,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
       pendingObjective === 'Perguntar estado civil: solteiro, casado, união estável ou divorciado.' ||
       pendingObjective === 'Estado civil coletado. Agora perguntar se o cliente pretende comprar sozinho(a) ou se vai ter alguém junto no processo — cônjuge, familiar ou parceiro(a).'
     ) {
+      if (_diag.branch === null) _diag.branch = 'discovery.processo_ctx';
       if (contains(n, 'sozinho', 'sozinha', 'so eu', 'apenas eu', 'eu so', 'individual')) {
         facts['processo'] = 'solo';
       } else if (
@@ -297,6 +332,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
       pendingObjective === 'avancar_para_qualification_civil' ||
       pendingObjective === 'coletar_estado_civil'
     ) {
+      if (_diag.branch === null) _diag.branch = 'discovery.estado_civil_ctx';
       if (contains(n, 'solteiro', 'solteira')) facts['estado_civil'] = 'solteiro';
       else if (contains(n, 'casado no civil', 'casada no civil', 'casamento civil')) facts['estado_civil'] = 'casado_civil';
       else if (contains(n, 'casado', 'casada')) facts['estado_civil'] = 'casado_civil';
@@ -313,6 +349,7 @@ function extractDiscovery(n: string, original: string, pendingObjective?: string
       pendingObjective === 'coletar_estado_civil_p3' ||
       pendingObjective === 'Perguntar qual é o estado civil do familiar ou pessoa que vai entrar na composição. Solteiro(a), casado(a) no civil, união estável ou divorciado(a).'
     ) {
+      if (_diag.branch === null) _diag.branch = 'discovery.estado_civil_p3_ctx';
       if (contains(n, 'solteiro', 'solteira')) facts['estado_civil_p3'] = 'solteiro';
       else if (contains(n, 'casado no civil', 'casada no civil', 'casamento civil')) facts['estado_civil_p3'] = 'casado_civil';
       else if (contains(n, 'casado', 'casada')) facts['estado_civil_p3'] = 'casado_civil';
@@ -334,6 +371,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
     pendingObjective === 'avancar_para_qualification_civil' ||
     pendingObjective === 'Perguntar estado civil: solteiro(a), casado(a), união estável ou divorciado(a).'
   ) {
+    if (_diag.branch === null) _diag.branch = 'qual_civil.estado_civil_ctx';
     if (contains(n, 'solteiro', 'solteira')) {
       facts['estado_civil'] = 'solteiro';
     } else if (contains(n, 'casado', 'casada')) {
@@ -349,6 +387,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
 
   // Confirmação contextual de processo — quando sistema estava aguardando processo (T9.16A)
   if (pendingObjective === 'coletar_processo') {
+    if (_diag.branch === null) _diag.branch = 'qual_civil.processo_ctx';
     if (contains(n, 'sozinho', 'sozinha', 'so eu', 'apenas eu')) {
       facts['processo'] = 'solo';
     } else if (
@@ -359,6 +398,11 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
   }
 
   // estado_civil — keywords específicas (apenas quando contextual não resolveu)
+  if (facts['estado_civil'] === undefined && pendingObjective !== 'coletar_estado_civil_p3') {
+    if (_diag.branch === null) _diag.branch = 'qual_civil.estado_civil_kw';
+  } else if (facts['estado_civil'] === undefined && pendingObjective === 'coletar_estado_civil_p3') {
+    _diag.skipped.push('qual_civil.estado_civil_kw:p3_guard');
+  }
   if (facts['estado_civil'] === undefined && pendingObjective !== 'coletar_estado_civil_p3') {
     if (contains(n, 'sou solteiro', 'sou solteira', 'estou solteiro', 'estou solteira')) {
       facts['estado_civil'] = 'solteiro';
@@ -382,6 +426,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
   // processo — keywords específicas (apenas quando contextual não resolveu)
   if (facts['processo'] === undefined) {
     if (contains(n, 'sozinho', 'so eu', 'apenas eu', 'sou eu so', 'eu sozinha', 'eu sozinho')) {
+      if (_diag.branch === null) _diag.branch = 'qual_civil.processo_kw';
       facts['processo'] = 'solo';
     } else if (
       contains(n, 'eu e minha esposa', 'eu e meu marido', 'minha esposa', 'meu marido',
@@ -403,6 +448,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
       contains(n, 'minha mae', 'meu pai', 'minha irma', 'meu irmao',
         'minha filha', 'meu filho', 'minha avo', 'meu avo')
     ) {
+      if (_diag.branch === null) _diag.branch = 'qual_civil.composition_actor';
       if (contains(n, 'mae')) facts['composition_actor'] = 'mae';
       else if (contains(n, 'pai')) facts['composition_actor'] = 'pai';
       else if (contains(n, 'irma')) facts['composition_actor'] = 'irmao';
@@ -428,6 +474,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
       pendingObjective === 'coletar_estado_civil_p3' ||
       pendingObjective === 'Perguntar qual é o estado civil do familiar ou pessoa que vai entrar na composição. Solteiro(a), casado(a) no civil, união estável ou divorciado(a).'
     ) {
+      if (_diag.branch === null) _diag.branch = 'qual_civil.estado_civil_p3';
       if (contains(n, 'solteiro', 'solteira')) {
         facts['estado_civil_p3'] = 'solteiro';
       } else if (contains(n, 'casado no civil', 'casada no civil', 'casamento civil')) {
@@ -454,6 +501,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
       pendingObjective === 'Perguntar regime de trabalho e renda mensal.' ||
       pendingObjective === 'Perguntar se trabalha CLT, autônomo, servidor público, aposentado ou outro regime.'
     ) {
+      if (_diag.branch === null) _diag.branch = 'qual_civil.regime_cross';
       if (
         contains(n, 'clt', 'carteira assinada', 'registrado', 'registrada',
           'com carteira', 'empregado registrado', 'trabalho de carteira')
@@ -491,6 +539,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
       pendingObjective === 'Perguntar regime de trabalho e renda mensal.' ||
       pendingObjective === 'Perguntar a renda mensal aproximada.'
     ) {
+      if (_diag.branch === null) _diag.branch = 'qual_civil.renda_cross';
       const renda = parseRendaFlexivel(original);
       if (renda !== undefined) {
         facts['renda_principal'] = renda;
@@ -501,6 +550,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
   // dependents_applicable — tem dependente menor 18 anos ou parente até 3º grau sem renda/CNPJ
   if (facts['dependents_applicable'] === undefined) {
     if (pendingObjective === 'coletar_dependents_applicable') {
+      if (_diag.branch === null) _diag.branch = 'qual_civil.dependents_applicable';
       if (
         contains(n, 'sim', 'tenho', 'possuo', 'tenho filho', 'tenho filha', 'tenho dependente')
       ) {
@@ -520,6 +570,7 @@ function extractQualificationCivil(n: string, original: string, pendingObjective
   // dependents_count — quantos dependentes
   if (facts['dependents_count'] === undefined) {
     if (pendingObjective === 'coletar_dependents_count') {
+      if (_diag.branch === null) _diag.branch = 'qual_civil.dependents_count';
       const numMatch = n.match(/\b([1-9])\b/);
       if (numMatch) {
         facts['dependents_count'] = parseInt(numMatch[1], 10);
@@ -544,6 +595,7 @@ function extractQualificationRenda(n: string, original: string, pendingObjective
     contains(n, 'clt', 'carteira assinada', 'registrado', 'registrada',
       'com carteira', 'empregado registrado', 'trabalho de carteira')
   ) {
+    if (_diag.branch === null) _diag.branch = 'qual_renda.regime_kw';
     facts['regime_trabalho'] = 'clt';
   } else if (
     contains(n, 'autonomo', 'autonoma', 'freelancer', 'trabalho por conta',
@@ -570,12 +622,14 @@ function extractQualificationRenda(n: string, original: string, pendingObjective
   // renda_principal — opera no texto original para preservar R$, pontos e vírgulas
   const renda = parseRendaFlexivel(original);
   if (renda !== undefined) {
+    if (_diag.branch === null) _diag.branch = 'qual_renda.renda_principal';
     facts['renda_principal'] = renda;
   }
 
   // autonomo_tem_ir — autônomo declarou IR nos últimos 2 anos (T9.17A)
   if (facts['autonomo_tem_ir'] === undefined) {
     if (pendingObjective === 'coletar_autonomo_tem_ir') {
+      if (_diag.branch === null) _diag.branch = 'qual_renda.autonomo_tem_ir';
       if (
         contains(n, 'sim', 'declaro', 'declarei', 'tenho ir', 'faco ir')
       ) {
@@ -604,6 +658,7 @@ function extractQualificationRenda(n: string, original: string, pendingObjective
   // ctps_36 — CTPS ativa há pelo menos 36 meses (T9.17A)
   if (facts['ctps_36'] === undefined) {
     if (pendingObjective === 'coletar_ctps_36') {
+      if (_diag.branch === null) _diag.branch = 'qual_renda.ctps_36';
       if (
         contains(n, 'sim', 'tenho', 'mais de 3 anos', 'mais de tres anos')
       ) {
@@ -739,6 +794,7 @@ function extractQualificationEligibility(n: string): Record<string, unknown> {
   const facts: Record<string, unknown> = {};
 
   if (contains(n, 'brasileiro', 'brasileira', 'nasci no brasil', 'sou do brasil')) {
+    if (_diag.branch === null) _diag.branch = 'qual_eligibility.nacionalidade';
     facts['nacionalidade'] = 'brasileiro';
   } else if (
     contains(n, 'estrangeiro', 'estrangeira', 'nao sou brasileiro', 'nao sou brasileira',
@@ -759,6 +815,7 @@ function extractDocsPrep(n: string): Record<string, unknown> {
     contains(n, 'whatsapp', 'por aqui', 'te mando aqui', 'mando aqui',
       'pelo zap', 'pelo whats', 'nessa conversa')
   ) {
+    if (_diag.branch === null) _diag.branch = 'docs_prep.docs_channel';
     facts['docs_channel_choice'] = 'whatsapp';
   } else if (
     contains(n, 'site', 'link', 'portal', 'plataforma', 'pelo site', 'no site',
@@ -784,6 +841,7 @@ function extractVisit(n: string): Record<string, unknown> {
     contains(n, 'nao quero', 'nao tenho interesse', 'dispenso',
       'por enquanto nao', 'nao agora', 'nao quero visitar', 'sem interesse')
   ) {
+    if (_diag.branch === null) _diag.branch = 'visit.visit_interest';
     facts['visit_interest'] = 'nao';
   } else if (
     contains(n, 'talvez', 'vou ver', 'possivelmente', 'depende', 'quem sabe', 'vou pensar')
@@ -823,6 +881,8 @@ export function extractFactsFromText(
 
     const n = normalize(text);
     if (!n) return {};
+
+    _diag.branch = null; _diag.skipped = []; _diag.keywords = []; _diag.normalized = n;
 
     switch (stage) {
       case 'discovery':

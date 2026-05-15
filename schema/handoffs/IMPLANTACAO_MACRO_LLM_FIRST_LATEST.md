@@ -1,5 +1,50 @@
 ﻿# IMPLANTACAO_MACRO_LLM_FIRST_LATEST
 
+## T11.1 — telemetria estrutural completa (2026-05-09)
+
+**Tipo**: PR-DIAG / telemetria estrutural / frente T11
+**Branch**: feat/t11.1-telemetria-estrutural
+**PR**: aberta — aguardando merge Vasques
+**Commit**: 3c5c2a7
+**Contrato ativo T11**: schema/contracts/active/CONTRATO_MESTRE_T11.md §5 (T11.1)
+**PR anterior**: T9.29 (fix/t9.29-diag-pending-objective, aberta)
+**Próximo passo autorizado T11**: Vasques merge T11.1 → E2E pós-merge → preencher Bloco E em PR-T11.1-review.md → T11.2 (unificar AVANCAR_PARA_CIVIL para código curto)
+
+### PROBLEMA RESOLVIDO
+
+Sem telemetria estrutural era impossível saber em `wrangler tail`: (a) qual ramo do extractor foi tomado, (b) quais ramos foram ignorados por guard, (c) quais keywords foram reconhecidas, (d) se o `next_objective` emitido pelo core era código opaco ou string PT longa (violação de arquitetura).
+
+### MUDANÇAS
+
+**`src/core/text-extractor.ts`** (+68 linhas):
+- Módulo `_diag` (branch/skipped/keywords/normalized) reset por chamada de `extractFactsFromText`
+- `getLastExtractionDiagnostics()` export — retorna spread imutável
+- 30 marcadores `if (_diag.branch === null) _diag.branch = '<id>'` (first-set-wins) em todos os blocos fact-capturing
+- 3 `_diag.keywords.push(...)`: `rnm:tem_validade`, `rnm:sem_rnm`, `alt:sem_familiar`
+- 1 `_diag.skipped.push('qual_civil.estado_civil_kw:p3_guard')` no guard P3
+
+**`src/meta/canary-pipeline.ts`** (+19 linhas):
+- `classifyNextObjectiveFormat()`: classifica `next_objective` como `'code'` / `'pt_string'` (len≥40 + espaço) / `'null'`
+- `extractionDiag = getLastExtractionDiagnostics()` após extração
+- `text_extractor.result` +5: `pending_objective_format`, `extractor_branch_taken`, `extractor_branches_skipped`, `input_text_normalized`, `keyword_matches`
+- `core.decision` +4: `next_objective_emitted`, `next_objective_format`, `gate_id_active`, `gates_activated_list`
+- Novo log `pipeline.invariant_check`: `invariant_violation: true` quando `next_objective` é PT string
+
+### SMOKE TESTS
+
+`smoke:core:text-extractor` **124/124 PASS** (inalterado)
+`smoke:meta:canary` **41/41 PASS** (inalterado)
+
+### ROLLBACK
+
+Remover `_diag` e `getLastExtractionDiagnostics` de `text-extractor.ts`; remover `classifyNextObjectiveFormat`, `extractionDiag`, campos novos e `pipeline.invariant_check` de `canary-pipeline.ts`.
+
+### DOC
+
+`docs/diagnostics/FUNIL-QUALIFICACAO/PR-T11.1-review.md`
+
+---
+
 ## T9.29 — diagnóstico runtime: pending_objective em log text_extractor.result (2026-05-09)
 
 **Tipo**: PR-DIAG / telemetria / frente T9
