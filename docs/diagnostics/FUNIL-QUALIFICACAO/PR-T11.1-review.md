@@ -142,3 +142,23 @@ Telemetria nova adicionada: extractor_branch_taken, extractor_branches_skipped, 
 Telemetria nova consumida: [a preencher após E2E — verificar invariant_violation]
 Próxima PR autorizada: T11.2 (unificação AVANCAR_PARA_CIVIL para código curto)
 ```
+
+---
+
+## Fix aplicado (2026-05-15) — PII leak prevention
+
+**Bug identificado:** `_diag` (singleton de módulo) era resetado APÓS early returns em `extractFactsFromText`, causando vazamento cross-lead de `input_text_normalized` em telemetria.
+
+Quando `text_body = ""` acionava early return na linha 880, `_diag` carregava dados do lead anterior. `getLastExtractionDiagnostics()` retornava esses dados stale, logando `input_text_normalized` de Lead A no contexto do Lead B.
+
+**Fix:** reset defensivo no INÍCIO da função (Opção 1 da investigação), antes de qualquer early return. Coberto pelo comentário inline com referência ao relatório de investigação.
+
+**Smoke regressivo:** `S-DIAG-REGRESSION` adicionado em `text-extractor-smoke.ts` — 5 checks (S-DIAG-1 a S-DIAG-5) validam que `getLastExtractionDiagnostics()` retorna estado limpo após `extractFactsFromText('')`.
+
+**Resultado pós-fix:**
+- `smoke:core:text-extractor`: 129/129 PASS (124 anteriores + 5 novos S-DIAG)
+- `smoke:meta:canary`: 41/41 PASS (sem regressão)
+
+**Severidade real:** alta tecnicamente, mas SEM impacto operacional (Enova-2 sem tráfego de cliente em prod até esta data).
+
+**Identificado por:** ChatGPT Codex Connector na PR #1 do staging. Investigado e fixado via agente-nexus.
